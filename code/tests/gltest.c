@@ -1,10 +1,7 @@
-/*
-New File
-*/
-
 #define ZPL_IMPLEMENTATION
-#define ZPL_PLATFORM
+#define ZPL_PLATFORM_IMPLEMENTATION
 #include "zpl.h"
+#include "zpl_platform.h"
 
 #define ZPL_GL3W_IMPLEMENTATION
 #include "zpl_gl3w.h"
@@ -14,8 +11,8 @@ New File
 
 int
 main(void) {
-    zplPlatform p_ = {0};
-    zplPlatform*p  = &p_;
+    zpl_platform_t p_ = {0};
+    zpl_platform_t*p  = &p_;
     
     zpl_platform_init_with_opengl(p, "OpenGL test", WIN_WIDTH, WIN_HEIGHT, 0, 3, 3, false, true);
     
