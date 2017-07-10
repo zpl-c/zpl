@@ -9,7 +9,7 @@ library         | latest version | category | description
 **zpl.h**        | 1.40           | misc     | Helper library
 **zpl_platform.h** | 1.00         | platform | Platform layer handling window control, input from various devices, render buffer creation (SW/OpenGL).
 **zpl_math.h**   | 1.00           | math     | Vector math library that is gamedev friendly.
-**zpl_image.h**  | 1.10           | graphics | Image manipulation library &amp; GIF animation loader.
+**zpl_image.h**  | 1.20           | graphics | Image manipulation library &amp; GIF animation loader.
 **zpl_gl3w_gen.py** | 1.00        | graphics | OpenGL core bindings generator &amp; loader.
 
 ## FAQ

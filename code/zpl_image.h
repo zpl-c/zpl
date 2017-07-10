@@ -36,6 +36,7 @@ Credits:
     GitHub: urraka
     
 Version History:
+    1.20 - Slight refactor
     1.10 - Small changes
     1.00 - Initial version
     
@@ -48,17 +49,17 @@ Version History:
 extern "C" {
 #endif
     
-    typedef union zplRgbColour { 
+    typedef union zpl_rgb_color_t { 
         u32 colour;
         struct { u8 r, g, b;};
-    } zplRgbColour;
+    } zpl_rgb_color_t;
     
-    typedef struct zplHsvColour { 
+    typedef struct zpl_hsv_colour_t { 
         u32 colour;
         struct { u8 h, s, v; };
-    } zplHsvColour;
+    } zpl_hsv_colour_t;
     
-    ZPL_DEF zplRgbColour zpl_image_rgb_lerp(zplRgbColour a, zplRgbColour b, f32 t);
+    ZPL_DEF zpl_rgb_color_t zpl_image_rgb_lerp(zpl_rgb_color_t a, zpl_rgb_color_t b, f32 t);
     
     ////////////////////////////////////////////////////////////////
     //
@@ -68,14 +69,14 @@ extern "C" {
     //
     
 #ifndef ZPL_NO_GIF
-    typedef struct zplGifResult {
+    typedef struct zpl_gif_result_t {
         i32 delay;
         u8 *data;
-        struct zplGifResult *next;
-    } zplGifResult;
+        struct zpl_gif_result_t *next;
+    } zpl_gif_result_t;
     
-    ZPL_DEF zplGifResult *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames);
-    ZPL_DEF void          zpl_image_gif_free(zplGifResult *gif, b32 aligned);
+    ZPL_DEF zpl_gif_result_t *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames);
+    ZPL_DEF void          zpl_image_gif_free(zpl_gif_result_t *gif, b32 aligned);
 #endif
 
     ////////////////////////////////////////////////////////////////
@@ -105,9 +106,9 @@ extern "C" {
                                       f64 factor, f64 bias);
     
     ZPL_DEF void         zpl_image_init_srgb_table(u8 **table);
-    ZPL_DEF zplRgbColour zpl_image_lin_to_srgb    (u8 *table, f64 vals[3]);
-    ZPL_DEF zplHsvColour zpl_image_rgb_to_hsv     (zplRgbColour colour);
-    ZPL_DEF zplRgbColour zpl_image_hsv_to_rgb     (zplHsvColour colour);
+    ZPL_DEF zpl_rgb_color_t zpl_image_lin_to_srgb    (u8 *table, f64 vals[3]);
+    ZPL_DEF zpl_hsv_colour_t zpl_image_rgb_to_hsv     (zpl_rgb_color_t colour);
+    ZPL_DEF zpl_rgb_color_t zpl_image_hsv_to_rgb     (zpl_hsv_colour_t colour);
 #endif
     
 #if defined(__cplusplus)
@@ -121,9 +122,9 @@ extern "C" {
 extern "C" {
 #endif
     
-    zpl_inline zplRgbColour zpl_image_rgb_lerp(zplRgbColour a, zplRgbColour b, f32 t) {
+    zpl_inline zpl_rgb_color_t zpl_image_rgb_lerp(zpl_rgb_color_t a, zpl_rgb_color_t b, f32 t) {
 #define LERP(c1, c2, c3) c1*(1.0-c3) + c2*c3
-        zplRgbColour result = {0};
+        zpl_rgb_color_t result = {0};
         
         result.r = LERP(a.r, b.r, t);
         result.g = LERP(a.g, b.g, t);
@@ -136,10 +137,10 @@ extern "C" {
     // NOTE(ZaKlaus): Gif
     
 #ifndef ZPL_NO_GIF
-    zpl_inline zplGifResult *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
+    zpl_inline zpl_gif_result_t *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
         FILE *file;
         stbi__context s;
-        zplGifResult *result;
+        zpl_gif_result_t *result;
         
         if (!(file = stbi__fopen(filename, "rb"))) {
             stbi__errpuc("can't open file", "Unable to open file"); return 0;
@@ -150,8 +151,8 @@ extern "C" {
         if (stbi__gif_test(&s)) {
             i32 c;
             stbi__gif g;
-            zplGifResult *head = stbi__malloc(zpl_size_of(zplGifResult));
-            zplGifResult *prev = 0, *gr = head;
+            zpl_gif_result_t *head = stbi__malloc(zpl_size_of(zpl_gif_result_t));
+            zpl_gif_result_t *prev = 0, *gr = head;
             
             zpl_zero_item(&g);
             zpl_zero_item(head);
@@ -167,7 +168,7 @@ extern "C" {
                 if (prev) prev->next = gr;
                 gr->delay = g.delay;
                 prev = gr;
-                gr = cast(zplGifResult *)stbi__malloc(zpl_size_of(zplGifResult));
+                gr = cast(zpl_gif_result_t *)stbi__malloc(zpl_size_of(zpl_gif_result_t));
                 zpl_zero_item(gr);
                 ++(*frames);
             }
@@ -195,8 +196,8 @@ extern "C" {
         return result;
     }
     
-    zpl_inline void zpl_image_gif_free(zplGifResult *gif, b32 aligned) {
-        zplGifResult *elem, *prev = 0;
+    zpl_inline void zpl_image_gif_free(zpl_gif_result_t *gif, b32 aligned) {
+        zpl_gif_result_t *elem, *prev = 0;
         for (elem = gif; elem; elem = elem->next) {
             if (aligned) {
                 zpl_mfree(elem->data);
@@ -212,8 +213,8 @@ extern "C" {
     }
 #endif
     
-    zpl_inline zplHsvColour zpl_image_rgb_to_hsv(zplRgbColour colour) {
-        zplHsvColour result = {0};
+    zpl_inline zpl_hsv_colour_t zpl_image_rgb_to_hsv(zpl_rgb_color_t colour) {
+        zpl_hsv_colour_t result = {0};
         u8 rgb_min, rgb_max;
         
         rgb_min = colour.r < colour.g ? (colour.r < colour.b ? colour.r : colour.b) : (colour.g < colour.b ? colour.g : colour.b);
@@ -244,8 +245,8 @@ extern "C" {
         return result;
     }
     
-    zpl_inline zplRgbColour zpl_image_hsv_to_rgb(zplHsvColour colour) {
-        zplRgbColour result = {0};
+    zpl_inline zpl_rgb_color_t zpl_image_hsv_to_rgb(zpl_hsv_colour_t colour) {
+        zpl_rgb_color_t result = {0};
         u8 region, rem, p, q, t;
         
         if (colour.s == 0) {
@@ -278,8 +279,8 @@ extern "C" {
                                          u32 *dest, i32 dest_w, i32 dest_h,
                                          i32 blur_iter, u32 *blur_mem) {
         
-        zplRgbColour *src = cast(zplRgbColour *)&(source); 
-        zplRgbColour *dst = cast(zplRgbColour *)&(dest); 
+        zpl_rgb_color_t *src = cast(zpl_rgb_color_t *)&(source); 
+        zpl_rgb_color_t *dst = cast(zpl_rgb_color_t *)&(dest); 
         
         b32 x_down = dest_w < source_w;
         b32 y_down = dest_h < source_h;
@@ -305,7 +306,7 @@ extern "C" {
         
         for (i32 y = 0; y < dest_h; ++y) {
             for(i32 x = 0; x < dest_w; ++x) {
-                zplRgbColour colour = {0};
+                zpl_rgb_color_t colour = {0};
                 
                 i32 o_x = x/step_x;
                 if (x_down) o_x = x*step_x;
@@ -347,8 +348,8 @@ extern "C" {
                                          f64 *filter, i32 filter_w, i32 filter_h,
                                          f64 factor, f64 bias) {
         
-        zplRgbColour *src = cast(zplRgbColour *)(source); 
-        zplRgbColour *dst = cast(zplRgbColour *)(dest); 
+        zpl_rgb_color_t *src = cast(zpl_rgb_color_t *)(source); 
+        zpl_rgb_color_t *dst = cast(zpl_rgb_color_t *)(dest); 
         
         for (i32 y = 0; y < source_h; ++y) {
             for(i32 x = 0; x < source_w; ++x) {
