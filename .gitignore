@@ -1,0 +1,5 @@
+# project files & folders
+build
+
+# other
+.DS_Store
