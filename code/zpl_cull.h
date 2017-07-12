@@ -25,10 +25,27 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
+    1.15 - Commented on free_all for memory arena
     1.10 - Added free_all for memory allocator
     1.00 - Initial version
     
 */
+
+///////////////////////////////////////////////////////////
+//
+// NOTE(ZaKlaus): If you use memory arena, it gets reset 
+// when clear() is called, that means, 
+// if your tree shares memory with other systems
+// in the arena, the data might get corrupted!
+//
+// Due to the nature of how linear allocators work
+// you can't free single resource of the arena and
+// the only way to clear it is to completely,
+// reset it. Please, consider using either
+// a different allocator supporting _free_ operation
+// or make sure the (sub)arena's memory is
+// exclusive to the tree only.
+//
 
 #ifndef ZPL_INCLUDE_ZPL_CULL_H
 #define ZPL_INCLUDE_ZPL_CULL_H
