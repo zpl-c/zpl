@@ -25,6 +25,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
+    1.10 - Added free_all for memory allocator
     1.00 - Initial version
     
 */
@@ -219,6 +220,13 @@ extern "C" {
     }
     
     zpl_inline void zpl_cull_clear(zpl_cull_t *c) {
+        // TODO(ZaKlaus): Support more allocators?
+        if (c->allocator.proc == zpl_arena_allocator_proc) {
+            zpl_free_all(c->allocator);
+            c->nodes = NULL;
+            c->trees = NULL;
+            return;
+        }
         zpl_array_free(c->nodes);
         c->nodes = NULL;
         
