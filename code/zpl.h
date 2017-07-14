@@ -5047,7 +5047,7 @@ extern "C" {
 
                 zpl_stack_memory_header_t h;
 
-                h.a_u8 = curr;
+                h.a_u8 = cast(u8 *)curr;
                 *h.a_u64 = alloc_offset;
                 h.a_u8 += ZPL_STACK_ALLOC_OFFSET;
 
