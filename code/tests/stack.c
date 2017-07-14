@@ -6,18 +6,14 @@
 int
 main(void) {
     
-    // NOTE(ZaKlaus): Create stack buffer region
-    isize stack_size = zpl_kilobytes(16);
-    void *stack_buf = zpl_malloc(stack_size);
+    // NOTE(ZaKlaus): Create stack memory
+    zpl_stack_memory_t stack = {0};
+    zpl_stack_memory_init(&stack, zpl_heap_allocator(), 2);
     
-    // NOTE(ZaKlaus): Create stack memory allocator
-    zplStackMemory stack = {0};
-    zpl_stack_memory_init(&stack, stack_buf, stack_size);
-    
-    zplAllocator stack_alloc = zpl_stack_allocator(&stack);
+    zpl_allocator_t stack_alloc = zpl_stack_allocator(&stack);
     
     // NOTE(ZaKlaus): Create array container
-    zplArray(u32) arr;
+    zpl_array_t(u32) arr;
     zpl_array_init(arr, stack_alloc);
     
     // NOTE(ZaKlaus): Push 5 elements
@@ -45,6 +41,6 @@ main(void) {
     zpl_array_clear(arr);
     
     // NOTE(ZaKlaus): Release used resources
-    zpl_mfree(stack_buf);
+    zpl_stack_memory_free(&stack);
     return 0;
 }

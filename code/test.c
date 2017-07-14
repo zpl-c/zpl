@@ -1,49 +1,46 @@
+
+
 #define ZPL_IMPLEMENTATION
 #include "zpl.h"
 
-#define ZPL_CULL_IMPLEMENTATION
-#include "zpl_cull.h"
-
 int
 main(void) {
-    zpl_cull_bounds_t b = {0};
-    f32 center[3] = {0};
-    f32 half[3] = {100};
-    zpl_memcopy(b.E, center, 3*4);
-    zpl_memcopy(b.half, half, 3*4);
     
-    zpl_cull_t root = {0};
-    zpl_cull_init(&root, zpl_heap_allocator(), zpl_cull_dim_2d_ev, b, 2);
+    // NOTE(ZaKlaus): Create stack memory
+    zpl_stack_memory_t stack = {0};
+    zpl_stack_memory_init(&stack, zpl_heap_allocator(), 2);
     
-    zpl_cull_node_t e1 = {0};
-    e1.E[0] = 20;
-    zpl_cull_insert(&root, e1);
+    zpl_allocator_t stack_alloc = zpl_stack_allocator(&stack);
     
-    zpl_cull_node_t e2 = {0};
-    e2.E[0] = 30;
-    zpl_cull_insert(&root, e2);
+    // NOTE(ZaKlaus): Create array container
+    zpl_array_t(u32) arr;
+    zpl_array_init(arr, stack_alloc);
     
-    zpl_cull_node_t e3 = {0};
-    e3.E[0] = 35;
-    zpl_cull_insert(&root, e3);
+    // NOTE(ZaKlaus): Push 5 elements
+    for (i32 i = 0; i < 5; ++i) {
+        zpl_array_append(arr, i*2);
+    }
     
-    zpl_cull_node_t e4 = {0};
-    e4.E[0] = 12;
-    zpl_cull_insert(&root, e4);
+    // NOTE(ZaKlaus): List them
+    zpl_printf("Before removal:\n");
+    for (i32 i = 0; i < 5; ++i) {
+        zpl_printf("Value: %lld\n", arr[i]);
+    }
     
-    zpl_cull_bounds_t search_bounds = {
-        .E = {0,0,0},
-        .half = {20,20,20},
-    };
+    // NOTE(ZaKlaus): Pop 2 values
+    zpl_array_pop(arr);
+    zpl_array_pop(arr);
+
+    // NOTE(ZaKlaus): List them again
+    zpl_printf("\nAfter removal:\n");
+    for (i32 i = 0; i < 3; ++i) {
+        zpl_printf("Value: %lld\n", arr[i]);
+    }
     
-    zpl_array_t(zpl_cull_node_t) search_result;
-    zpl_array_init(search_result, zpl_heap_allocator());
+    // NOTE(ZaKlaus): Clear the array out
+    zpl_array_clear(arr);
     
-    zpl_cull_query(&root, search_bounds, search_result);
-    
-    isize result = zpl_array_count(search_result);
-    ZPL_ASSERT(result == 2);
-    
+    // NOTE(ZaKlaus): Release used resources
+    zpl_stack_memory_free(&stack);
     return 0;
 }
-

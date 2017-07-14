@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
 
 Version History:
+    1.45 - Stack memory allocator supports 'resize' now
     1.40 - Slight refactor
     1.30 - Added stack-based allocator
     1.20 - Small changes
@@ -1056,14 +1057,17 @@ extern "C" {
     //
 
     typedef struct zpl_stack_memory_t {
+        zpl_allocator_t backing;
+        
         void *physical_start;
         isize total_size;
-        void *current;
+        isize allocated;
     } zpl_stack_memory_t;
-
-    ZPL_DEF void zpl_stack_memory_init     (zpl_stack_memory_t *s, void *start, isize size);
-    ZPL_DEF b32  zpl_stack_memory_is_in_use(zpl_stack_memory_t *s, void *ptr);
-
+    
+    ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory_t *s, void *start, isize size);
+    ZPL_DEF void zpl_stack_memory_init            (zpl_stack_memory_t *s, zpl_allocator_t backing, isize size);
+    ZPL_DEF b32  zpl_stack_memory_is_in_use       (zpl_stack_memory_t *s, void *ptr);
+    ZPL_DEF void zpl_stack_memory_free            (zpl_stack_memory_t *s);
 
     // Allocation Types: alloc, free, free_all, resize
     ZPL_DEF zpl_allocator_t zpl_stack_allocator(zpl_stack_memory_t *s);
@@ -4974,20 +4978,34 @@ extern "C" {
 #define ZPL_STACK_ALLOC_OFFSET sizeof(u64)
     ZPL_STATIC_ASSERT(ZPL_STACK_ALLOC_OFFSET == 8);
 
-    zpl_inline void zpl_stack_memory_init(zpl_stack_memory_t *s, void *start, isize size) {
+    zpl_inline void zpl_stack_memory_init_from_memory(zpl_stack_memory_t *s, void *start, isize size) {
         s->physical_start = start;
         s->total_size = size;
-        s->current = s->physical_start;
+        s->allocated = 0;
+    }
+    
+    zpl_inline void zpl_stack_memory_init(zpl_stack_memory_t *s, zpl_allocator_t backing, isize size) {
+        s->backing = backing;
+        s->physical_start = zpl_alloc(backing, size);
+        s->total_size = size;
+        s->allocated = 0;
     }
 
     zpl_inline b32 zpl_stack_memory_is_in_use(zpl_stack_memory_t *s, void *ptr) {
-        if (s->physical_start == s->current) return false;
+        if (s->allocated == 0) return false;
 
         if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) {
             return true;
         }
 
         return false;
+    }
+    
+    zpl_inline void zpl_stack_memory_free(zpl_stack_memory_t *s) {
+        if (s->backing.proc) {
+            zpl_free(s->backing, s->physical_start);
+            s->physical_start = NULL;
+        }
     }
 
     typedef union zpl_stack_memory_header_t {
@@ -5011,15 +5029,21 @@ extern "C" {
         switch(type) {
             case zpl_allocation_alloc_ev: {
                 size += ZPL_STACK_ALLOC_OFFSET;
-                u64 alloc_offset = zpl_pointer_diff(s->current, s->physical_start);
+                u64 alloc_offset = s->allocated;
 
-                void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)s->current + ZPL_STACK_ALLOC_OFFSET, alignment) - ZPL_STACK_ALLOC_OFFSET;
+                void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)s->physical_start + s->allocated + ZPL_STACK_ALLOC_OFFSET, alignment) - ZPL_STACK_ALLOC_OFFSET;
 
                 if (cast(u64 *)curr + size > cast(u64 *)zpl_pointer_add(s->physical_start, s->total_size)) {
-                    return NULL;
+                    if (s->backing.proc) {
+                        s->physical_start = zpl_resize_align(s->backing, s->physical_start, s->total_size, s->total_size + size, alignment);
+                        s->total_size += size;
+                    }
+                    else {
+                        ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
+                    }
                 }
 
-                s->current = curr;
+                s->allocated = zpl_pointer_diff(curr, s->physical_start);
 
                 zpl_stack_memory_header_t h;
 
@@ -5028,7 +5052,7 @@ extern "C" {
                 h.a_u8 += ZPL_STACK_ALLOC_OFFSET;
 
                 ptr = h.a_ptr;
-                s->current = cast(u64 *)s->current + size;
+                s->allocated += size;
             }break;
 
             case zpl_allocation_free_ev: {
@@ -5040,16 +5064,16 @@ extern "C" {
 
                     u64 alloc_offset = *h.a_u64;
 
-                    s->current = cast(u64 *)s->physical_start + alloc_offset;
+                    s->allocated = alloc_offset;
                 }
             }break;
 
             case zpl_allocation_free_all_ev: {
-                s->current = s->physical_start;
+                s->allocated = 0;
             }break;
 
             case zpl_allocation_resize_ev: {
-                ZPL_PANIC("Unsupported resize operation on stack memory!");
+                ZPL_PANIC("You cannot resize something allocated by a stack.");
             }break;
         }
         return ptr;
@@ -5266,8 +5290,7 @@ extern "C" {
 
     zpl_inline char zpl_char_to_upper(char c) {
         if (c >= 'a' && c <= 'z')
-            return 'A' + (c - 'a');
-        return c;
+            return 'A' + (c - 'a');        return c;
     }
 
     zpl_inline b32 zpl_char_is_space(char c) {
