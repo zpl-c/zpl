@@ -14,13 +14,15 @@ int main() {
     zpl_bs_write_u32(bsp, 32);
 
     // NOTE(inlife): read a typed value
-    i32 boo = zpl_bs_read_i32(bsp);
+    f64 boo = zpl_bs_read_f64(bsp);
 
     // NOTE(inlife): read a data from a particular place
-    i32 foo = zpl_bs_read_i32_at(bsp, 4 + 8);
+    i32 foo = zpl_bs_read_i32_at(bsp, 8);
 
     // NOTE(inlife): write a data into particular place
-    zpl_bs_write_f32_at(bsp, 24.23232, 4);
+    zpl_bs_write_u32_at(bsp, 8, 8 + 4);
+    
+    zpl_printf("%f %d\n", boo, foo);
 
     // NOTE(inlife): helper methods
     zpl_bs_size(bsp); // get actual written size of the bitstream

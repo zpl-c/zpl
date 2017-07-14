@@ -17,7 +17,7 @@ int main() {
     f64 boo = zpl_bs_read_f64(bsp);
 
     // NOTE(inlife): read a data from a particular place
-    i32 foo = zpl_bs_read_i32_at(bsp, 0);
+    i32 foo = zpl_bs_read_i32_at(bsp, 8);
 
     // NOTE(inlife): write a data into particular place
     zpl_bs_write_u32_at(bsp, 8, 8 + 4);
