@@ -1,5 +1,5 @@
 #define ZPL_IMPLEMENTATION
-#include <zpl.h>
+#include "zpl.h"
 
 int main() {
     // NOTE(inlife): create and allocate a bitstream

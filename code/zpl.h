@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
 
 Version History:
+    1.50 - Added bitstream
     1.45 - Stack memory can be resized now
     1.40 - Slight refactor
     1.30 - Added stack-based allocator
@@ -1532,6 +1533,9 @@ extern "C" {
     // And then it appeared. From mighty inner minds of the higher species, it was a gift from gods,
     // to people...
     //
+    // Bitstream is a fixed-size buffer using LIFO scheme.
+    // It's purpose is to serialize data into sequential chunk
+    // which can be portable.
     //
 
 
@@ -1570,32 +1574,33 @@ extern "C" {
 
 #define zpl_bs_write_size_at(x, value, size, offset) do { \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        ZPL_ASSERT_MSG(zpl__bsh->write_pos + offset + size <= zpl_bs_capacity(x), \
+        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + size <= zpl_bs_capacity(x), \
             "zpl_bs_write: trying to write outside of the bounds"); \
-        zpl_memcopy(x + zpl__bsh->write_pos + offset, value, size); \
-        zpl__bsh->write_pos += size; \
+        zpl_memcopy(x + (offset == 0) ? zpl__bsh->write_pos : offset, value, size); \
+        if (offset == 0) zpl__bsh->write_pos += size; \
     } while (0)
 
 #define zpl_bs_read_size_at(x, value, size, offset) do { \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        ZPL_ASSERT_MSG(zpl__bsh->read_pos + offset + size <= zpl_bs_capacity(x), \
+        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->read_pos : offset) + size <= zpl_bs_capacity(x), \
             "zpl_bs_read: trying to read from outside of the bounds"); \
-        zpl_memcopy(value, x + zpl__bsh->read_pos + offset, size); \
-        zpl__bsh->read_pos += size; \
+        zpl_memcopy(value, x + ((offset == 0) ? zpl__bsh->read_pos : offset), size); \
+        if (offset == 0) zpl__bsh->read_pos += size; \
     } while (0)
 
 #define zpl_bs_write_value_at(x, value, type, offset) do { \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        ZPL_ASSERT_MSG(zpl__bsh->write_pos + offset + zpl_size_of(type) <= zpl_bs_capacity(x), \
+        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) <= zpl_bs_capacity(x), \
             "zpl_bs_write: trying to write outside of the bounds"); \
-        *(((type *)x) + zpl__bsh->write_pos + offset) = value; \
-        zpl__bsh->write_pos += zpl_size_of(type); \
+        *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value; \
+        if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type); \
     } while (0)
 
 #define zpl_bs_read_value_at(x, type, offset) \
-        ((ZPL_BS_HEADER(x)->read_pos + zpl_size_of(type) + offset) <= (zpl_bs_capacity(x))) \
-            ? *(((type *)x) + ZPL_BS_HEADER(x)->read_pos + offset) \
-            : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); ZPL_BS_HEADER(x)->read_pos += zpl_size_of(type);
+    (zpl_size_of(type) + ((offset == 0) ? zpl_bs_read_pos(x) : offset) <= (zpl_bs_capacity(x))) \
+    ? *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl_bs_read_pos(x) : offset)) \
+            : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); \
+    if (offset == 0) ZPL_BS_HEADER(x)->read_pos += zpl_size_of(type);
 
 #define zpl_bs_write_size(x, value, size)   zpl_bs_write_size_at(x, value, size, 0)
 #define zpl_bs_read_size(x, value, size)    zpl_bs_read_size_at(x, value, size, 0)

@@ -1,46 +1,37 @@
-
-
 #define ZPL_IMPLEMENTATION
 #include "zpl.h"
 
-int
-main(void) {
-    
-    // NOTE(ZaKlaus): Create stack memory
-    zpl_stack_memory_t stack = {0};
-    zpl_stack_memory_init(&stack, zpl_heap_allocator(), 2);
-    
-    zpl_allocator_t stack_alloc = zpl_stack_allocator(&stack);
-    
-    // NOTE(ZaKlaus): Create array container
-    zpl_array_t(u32) arr;
-    zpl_array_init(arr, stack_alloc);
-    
-    // NOTE(ZaKlaus): Push 5 elements
-    for (i32 i = 0; i < 5; ++i) {
-        zpl_array_append(arr, i*2);
-    }
-    
-    // NOTE(ZaKlaus): List them
-    zpl_printf("Before removal:\n");
-    for (i32 i = 0; i < 5; ++i) {
-        zpl_printf("Value: %lld\n", arr[i]);
-    }
-    
-    // NOTE(ZaKlaus): Pop 2 values
-    zpl_array_pop(arr);
-    zpl_array_pop(arr);
+int main() {
+    // NOTE(inlife): create and allocate a bitstream
+    // with size of 100 bytes
+    zpl_bs_t bsp;
+    zpl_bs_init(bsp, zpl_heap_allocator(), 100);
 
-    // NOTE(ZaKlaus): List them again
-    zpl_printf("\nAfter removal:\n");
-    for (i32 i = 0; i < 3; ++i) {
-        zpl_printf("Value: %lld\n", arr[i]);
-    }
+    // NOTE(inlife): write a typed values
+    // (values will be automatically casted)
+    zpl_bs_write_f64(bsp, 0.444548254);
+    zpl_bs_write_i32(bsp, -42230);
+    zpl_bs_write_u32(bsp, 32);
+
+    // NOTE(inlife): read a typed value
+    f64 boo = zpl_bs_read_f64(bsp);
+
+    // NOTE(inlife): read a data from a particular place
+    i32 foo = zpl_bs_read_i32_at(bsp, 0);
+
+    // NOTE(inlife): write a data into particular place
+    zpl_bs_write_u32_at(bsp, 8, 8 + 4);
     
-    // NOTE(ZaKlaus): Clear the array out
-    zpl_array_clear(arr);
-    
-    // NOTE(ZaKlaus): Release used resources
-    zpl_stack_memory_free(&stack);
+    zpl_printf("%f %d\n", boo, foo);
+
+    // NOTE(inlife): helper methods
+    zpl_bs_size(bsp); // get actual written size of the bitstream
+    zpl_bs_capacity(bsp); // get allocated capacity
+    zpl_bs_read_pos(bsp);
+    zpl_bs_write_pos(bsp);
+
+    // NOTE(inlife): free the resources
+    zpl_bs_free(bsp);
+
     return 0;
 }
