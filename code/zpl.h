@@ -624,7 +624,7 @@ extern "C" {
 #endif
 
     ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
-
+    ZPL_DEF i32  zpl_assert_crash(char const *condition);
 
 
     ////////////////////////////////////////////////////////////////
@@ -1433,8 +1433,8 @@ extern "C" {
 
     typedef struct zpl_array_header_t {
         zpl_allocator_t allocator;
-        isize       count;
-        isize       capacity;
+        isize           count;
+        isize           capacity;
     } zpl_array_header_t;
 
 #define zpl_array_t(Type) Type *
@@ -1519,6 +1519,144 @@ extern "C" {
         if (ZPL_ARRAY_HEADER(x)->capacity < (new_capacity)) \
         zpl_array_set_capacity(x, new_capacity); \
     } while (0)
+
+
+    ////////////////////////////////////////////////////////////////
+    //
+    // Bit stream
+    //
+    // After a long day, i just wanted to go to sleep but then, something happened
+    // something i totally didn't expect to happen. It was a miracle.
+    // Some people said it looked like a bird, some people - that it looked like a plane,
+    // however one of them said - it's a BITSTREAM!
+    // And then it appeared. From mighty inner minds of the higher species, it was a gift from gods,
+    // to people...
+    //
+    //
+
+
+    typedef void *zpl_bs_t;
+
+    typedef struct zpl_bs_header_t {
+        zpl_allocator_t allocator;
+
+        usize capacity;
+        usize read_pos;
+        usize write_pos;
+    } zpl_bs_header_t;
+
+#define ZPL_BS_HEADER(x) (cast(zpl_bs_header_t *)(x) - 1)
+
+#define zpl_bs_init(x, allocator_, size) do { \
+        void **zpl__bs_ = cast(void **)&(x); \
+        zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_bs_header_t) + size); \
+        zpl__bsh->allocator = allocator_; \
+        zpl__bsh->capacity  = size; \
+        zpl__bsh->read_pos  = 0; \
+        zpl__bsh->write_pos = 0; \
+        *zpl__bs_ = cast(void *)(zpl__bsh+1); \
+    } while (0)
+
+#define zpl_bs_free(x) do { \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+        zpl_free(zpl__bsh->allocator, zpl__bsh); \
+        x = NULL; \
+    } while (0)
+
+#define zpl_bs_capacity(x)  ZPL_BS_HEADER(x)->capacity
+#define zpl_bs_read_pos(x)  ZPL_BS_HEADER(x)->read_pos
+#define zpl_bs_write_pos(x) ZPL_BS_HEADER(x)->write_pos
+#define zpl_bs_size(x)      zpl_bs_write_pos(x)
+
+#define zpl_bs_write_size_at(x, value, size, offset) do { \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+        ZPL_ASSERT_MSG(zpl__bsh->write_pos + offset + size <= zpl_bs_capacity(x), \
+            "zpl_bs_write: trying to write outside of the bounds"); \
+        zpl_memcopy(x + zpl__bsh->write_pos + offset, value, size); \
+        zpl__bsh->write_pos += size; \
+    } while (0)
+
+#define zpl_bs_read_size_at(x, value, size, offset) do { \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+        ZPL_ASSERT_MSG(zpl__bsh->read_pos + offset + size <= zpl_bs_capacity(x), \
+            "zpl_bs_read: trying to read from outside of the bounds"); \
+        zpl_memcopy(value, x + zpl__bsh->read_pos + offset, size); \
+        zpl__bsh->read_pos += size; \
+    } while (0)
+
+#define zpl_bs_write_value_at(x, value, type, offset) do { \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+        ZPL_ASSERT_MSG(zpl__bsh->write_pos + offset + zpl_size_of(type) <= zpl_bs_capacity(x), \
+            "zpl_bs_write: trying to write outside of the bounds"); \
+        *(((type *)x) + zpl__bsh->write_pos + offset) = value; \
+        zpl__bsh->write_pos += zpl_size_of(type); \
+    } while (0)
+
+#define zpl_bs_read_value_at(x, type, offset) \
+        ((ZPL_BS_HEADER(x)->read_pos + zpl_size_of(type) + offset) <= (zpl_bs_capacity(x))) \
+            ? *(((type *)x) + ZPL_BS_HEADER(x)->read_pos + offset) \
+            : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); ZPL_BS_HEADER(x)->read_pos += zpl_size_of(type);
+
+#define zpl_bs_write_size(x, value, size)   zpl_bs_write_size_at(x, value, size, 0)
+#define zpl_bs_read_size(x, value, size)    zpl_bs_read_size_at(x, value, size, 0)
+#define zpl_bs_write_value(x, value, type)  zpl_bs_write_value_at(x, value, type, 0)
+#define zpl_bs_read_value(x, type)          zpl_bs_read_value_at(x, type, 0)
+
+#define zpl_bs_write_i8 (x, value) zpl_bs_write_value(x, cast(i8) value,  i8)
+#define zpl_bs_write_u8 (x, value) zpl_bs_write_value(x, cast(u8) value,  u8)
+#define zpl_bs_write_i16(x, value) zpl_bs_write_value(x, cast(i16)value, i16)
+#define zpl_bs_write_u16(x, value) zpl_bs_write_value(x, cast(u16)value, u16)
+#define zpl_bs_write_i32(x, value) zpl_bs_write_value(x, cast(i32)value, i32)
+#define zpl_bs_write_u32(x, value) zpl_bs_write_value(x, cast(u32)value, u32)
+#define zpl_bs_write_i64(x, value) zpl_bs_write_value(x, cast(i64)value, i64)
+#define zpl_bs_write_u64(x, value) zpl_bs_write_value(x, cast(u64)value, u64)
+#define zpl_bs_write_f32(x, value) zpl_bs_write_value(x, cast(f32)value, f32)
+#define zpl_bs_write_f64(x, value) zpl_bs_write_value(x, cast(f64)value, f64)
+#define zpl_bs_write_b8 (x, value) zpl_bs_write_value(x, cast(b8) value,  b8)
+#define zpl_bs_write_b16(x, value) zpl_bs_write_value(x, cast(b16)value, b16)
+#define zpl_bs_write_b32(x, value) zpl_bs_write_value(x, cast(b32)value, b32)
+
+#define zpl_bs_write_i8_at (x, value, offset) zpl_bs_write_value_at(x, cast(i8) value,  i8, offset)
+#define zpl_bs_write_u8_at (x, value, offset) zpl_bs_write_value_at(x, cast(u8) value,  u8, offset)
+#define zpl_bs_write_i16_at(x, value, offset) zpl_bs_write_value_at(x, cast(i16)value, i16, offset)
+#define zpl_bs_write_u16_at(x, value, offset) zpl_bs_write_value_at(x, cast(u16)value, u16, offset)
+#define zpl_bs_write_i32_at(x, value, offset) zpl_bs_write_value_at(x, cast(i32)value, i32, offset)
+#define zpl_bs_write_u32_at(x, value, offset) zpl_bs_write_value_at(x, cast(u32)value, u32, offset)
+#define zpl_bs_write_i64_at(x, value, offset) zpl_bs_write_value_at(x, cast(i64)value, i64, offset)
+#define zpl_bs_write_u64_at(x, value, offset) zpl_bs_write_value_at(x, cast(u64)value, u64, offset)
+#define zpl_bs_write_f32_at(x, value, offset) zpl_bs_write_value_at(x, cast(f32)value, f32, offset)
+#define zpl_bs_write_f64_at(x, value, offset) zpl_bs_write_value_at(x, cast(f64)value, f64, offset)
+#define zpl_bs_write_b8_at (x, value, offset) zpl_bs_write_value_at(x, cast(b8) value,  b8, offset)
+#define zpl_bs_write_b16_at(x, value, offset) zpl_bs_write_value_at(x, cast(b16)value, b16, offset)
+#define zpl_bs_write_b32_at(x, value, offset) zpl_bs_write_value_at(x, cast(b32)value, b32, offset)
+
+#define zpl_bs_read_i8 (x) zpl_bs_read_value(x,  i8)
+#define zpl_bs_read_u8 (x) zpl_bs_read_value(x,  u8)
+#define zpl_bs_read_i16(x) zpl_bs_read_value(x, i16)
+#define zpl_bs_read_u16(x) zpl_bs_read_value(x, u16)
+#define zpl_bs_read_i32(x) zpl_bs_read_value(x, i32)
+#define zpl_bs_read_u32(x) zpl_bs_read_value(x, u32)
+#define zpl_bs_read_i64(x) zpl_bs_read_value(x, i64)
+#define zpl_bs_read_u64(x) zpl_bs_read_value(x, u64)
+#define zpl_bs_read_f32(x) zpl_bs_read_value(x, f32)
+#define zpl_bs_read_f64(x) zpl_bs_read_value(x, f64)
+#define zpl_bs_read_b8 (x) zpl_bs_read_value(x,  b8)
+#define zpl_bs_read_b16(x) zpl_bs_read_value(x, b16)
+#define zpl_bs_read_b32(x) zpl_bs_read_value(x, b32)
+
+#define zpl_bs_read_i8_at (x, offset) zpl_bs_read_value_at(x,  i8, offset)
+#define zpl_bs_read_u8_at (x, offset) zpl_bs_read_value_at(x,  u8, offset)
+#define zpl_bs_read_i16_at(x, offset) zpl_bs_read_value_at(x, i16, offset)
+#define zpl_bs_read_u16_at(x, offset) zpl_bs_read_value_at(x, u16, offset)
+#define zpl_bs_read_i32_at(x, offset) zpl_bs_read_value_at(x, i32, offset)
+#define zpl_bs_read_u32_at(x, offset) zpl_bs_read_value_at(x, u32, offset)
+#define zpl_bs_read_i64_at(x, offset) zpl_bs_read_value_at(x, i64, offset)
+#define zpl_bs_read_u64_at(x, offset) zpl_bs_read_value_at(x, u64, offset)
+#define zpl_bs_read_f32_at(x, offset) zpl_bs_read_value_at(x, f32, offset)
+#define zpl_bs_read_f64_at(x, offset) zpl_bs_read_value_at(x, f64, offset)
+#define zpl_bs_read_b8_at (x, offset) zpl_bs_read_value_at(x,  b8, offset)
+#define zpl_bs_read_b16_at(x, offset) zpl_bs_read_value_at(x, b16, offset)
+#define zpl_bs_read_b32_at(x, offset) zpl_bs_read_value_at(x, b32, offset)
 
 
 
@@ -3026,6 +3164,12 @@ extern "C" {
         zpl_printf_err("\n");
     }
 
+    i32 zpl_assert_crash(char const *condition) {
+        ZPL_PANIC(condition);
+
+        return 0;
+    }
+
     b32 zpl_is_power_of_two(isize x) {
         if (x <= 0)
             return false;
@@ -3064,7 +3208,9 @@ extern "C" {
         // TODO: Is this good enough?
         __movsb(cast(u8 *)dest, cast(u8 *)source, n);
 #elif defined(ZPL_CPU_X86)
-        // __asm__ __volatile__("rep movsb" : "+D"(cast(u8 *)dest), "+S"(cast(u8 *)source), "+c"(n) : : "memory");
+        u8 *__dest8 = cast(u8 *)dest;
+        u8 *__source8 = cast(u8 *)source;
+        __asm__ __volatile__("rep movsb" : "+D"(__dest8), "+S"(__source8), "+c"(n) : : "memory");
 #else
         u8 *d = cast(u8 *)dest;
         u8 const *s = cast(u8 const *)source;
