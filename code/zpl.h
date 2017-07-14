@@ -26,7 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
 
 Version History:
-    1.45 - Stack memory allocator supports 'resize' now
+    1.45 - Stack memory can be resized now
     1.40 - Slight refactor
     1.30 - Added stack-based allocator
     1.20 - Small changes
