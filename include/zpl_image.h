@@ -49,17 +49,17 @@ Version History:
 extern "C" {
 #endif
     
-    typedef union zpl_rgb_color_t { 
+    typedef union zpl_rgb_colour_t { 
         u32 colour;
         struct { u8 r, g, b;};
-    } zpl_rgb_color_t;
+    } zpl_rgb_colour_t;
     
     typedef struct zpl_hsv_colour_t { 
         u32 colour;
         struct { u8 h, s, v; };
     } zpl_hsv_colour_t;
     
-    ZPL_DEF zpl_rgb_color_t zpl_image_rgb_lerp(zpl_rgb_color_t a, zpl_rgb_color_t b, f32 t);
+    ZPL_DEF zpl_rgb_colour_t zpl_image_rgb_lerp(zpl_rgb_colour_t a, zpl_rgb_colour_t b, f32 t);
     
     ////////////////////////////////////////////////////////////////
     //
@@ -83,8 +83,6 @@ extern "C" {
     //
     // Image Operations
     //
-    // Uses stb_image.h for loading gif frames.
-    //
     
 #ifndef ZPL_NO_IMAGE_OPS
     // NOTE(ZaKlaus): This is not sRGB aware!
@@ -105,10 +103,14 @@ extern "C" {
                                       f64 *filter, i32 filter_w, i32 filter_h,
                                       f64 factor, f64 bias);
     
+    // TODO(ZaKlaus): Implement this
+    /*
     ZPL_DEF void         zpl_image_init_srgb_table(u8 **table);
-    ZPL_DEF zpl_rgb_color_t zpl_image_lin_to_srgb    (u8 *table, f64 vals[3]);
-    ZPL_DEF zpl_hsv_colour_t zpl_image_rgb_to_hsv     (zpl_rgb_color_t colour);
-    ZPL_DEF zpl_rgb_color_t zpl_image_hsv_to_rgb     (zpl_hsv_colour_t colour);
+    ZPL_DEF zpl_rgb_colour_t zpl_image_lin_to_srgb    (u8 *table, f64 vals[3]);
+    */
+    
+    ZPL_DEF zpl_hsv_colour_t zpl_image_rgb_to_hsv     (zpl_rgb_colour_t colour);
+    ZPL_DEF zpl_rgb_colour_t zpl_image_hsv_to_rgb     (zpl_hsv_colour_t colour);
 #endif
     
 #if defined(__cplusplus)
@@ -122,9 +124,9 @@ extern "C" {
 extern "C" {
 #endif
     
-    zpl_inline zpl_rgb_color_t zpl_image_rgb_lerp(zpl_rgb_color_t a, zpl_rgb_color_t b, f32 t) {
+    zpl_inline zpl_rgb_colour_t zpl_image_rgb_lerp(zpl_rgb_colour_t a, zpl_rgb_colour_t b, f32 t) {
 #define LERP(c1, c2, c3) c1*(1.0-c3) + c2*c3
-        zpl_rgb_color_t result = {0};
+        zpl_rgb_colour_t result = {0};
         
         result.r = LERP(a.r, b.r, t);
         result.g = LERP(a.g, b.g, t);
@@ -213,7 +215,7 @@ extern "C" {
     }
 #endif
     
-    zpl_inline zpl_hsv_colour_t zpl_image_rgb_to_hsv(zpl_rgb_color_t colour) {
+    zpl_inline zpl_hsv_colour_t zpl_image_rgb_to_hsv(zpl_rgb_colour_t colour) {
         zpl_hsv_colour_t result = {0};
         u8 rgb_min, rgb_max;
         
@@ -245,8 +247,8 @@ extern "C" {
         return result;
     }
     
-    zpl_inline zpl_rgb_color_t zpl_image_hsv_to_rgb(zpl_hsv_colour_t colour) {
-        zpl_rgb_color_t result = {0};
+    zpl_inline zpl_rgb_colour_t zpl_image_hsv_to_rgb(zpl_hsv_colour_t colour) {
+        zpl_rgb_colour_t result = {0};
         u8 region, rem, p, q, t;
         
         if (colour.s == 0) {
@@ -279,8 +281,8 @@ extern "C" {
                                          u32 *dest, i32 dest_w, i32 dest_h,
                                          i32 blur_iter, u32 *blur_mem) {
         
-        zpl_rgb_color_t *src = cast(zpl_rgb_color_t *)&(source); 
-        zpl_rgb_color_t *dst = cast(zpl_rgb_color_t *)&(dest); 
+        zpl_rgb_colour_t *src = cast(zpl_rgb_colour_t *)&(source); 
+        zpl_rgb_colour_t *dst = cast(zpl_rgb_colour_t *)&(dest); 
         
         b32 x_down = dest_w < source_w;
         b32 y_down = dest_h < source_h;
@@ -306,7 +308,7 @@ extern "C" {
         
         for (i32 y = 0; y < dest_h; ++y) {
             for(i32 x = 0; x < dest_w; ++x) {
-                zpl_rgb_color_t colour = {0};
+                zpl_rgb_colour_t colour = {0};
                 
                 i32 o_x = x/step_x;
                 if (x_down) o_x = x*step_x;
@@ -348,8 +350,8 @@ extern "C" {
                                          f64 *filter, i32 filter_w, i32 filter_h,
                                          f64 factor, f64 bias) {
         
-        zpl_rgb_color_t *src = cast(zpl_rgb_color_t *)(source); 
-        zpl_rgb_color_t *dst = cast(zpl_rgb_color_t *)(dest); 
+        zpl_rgb_colour_t *src = cast(zpl_rgb_colour_t *)(source); 
+        zpl_rgb_colour_t *dst = cast(zpl_rgb_colour_t *)(dest); 
         
         for (i32 y = 0; y < source_h; ++y) {
             for(i32 x = 0; x < source_w; ++x) {

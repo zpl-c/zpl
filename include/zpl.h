@@ -186,12 +186,9 @@ extern "C" {
 #define _LARGEFILE64_SOURCE
 #endif
 
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-
-
 #if defined(ZPL_SYSTEM_WINDOWS)
+    #include <stdio.h>
+    
 #if !defined(ZPL_NO_WINDOWS_H)
 #define NOMINMAX            1
 #define WIN32_LEAN_AND_MEAN 1
@@ -207,10 +204,10 @@ extern "C" {
 #include <malloc.h> // NOTE: _aligned_*()
 #include <intrin.h>
 #else
+#include <pthread.h>
 #include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <pthread.h>
 #ifndef _IOSC11_SOURCE
 #define _IOSC11_SOURCE
 #endif
@@ -225,6 +222,7 @@ extern "C" {
 #include <time.h>
 #include <unistd.h>
 #include <spawn.h>
+#include <emmintrin.h>
 #endif
 
 #if defined(ZPL_SYSTEM_OSX)
@@ -242,6 +240,8 @@ extern "C" {
 #include <semaphore.h>
 #endif
 
+#include <stdarg.h>
+#include <stddef.h>
 
     ////////////////////////////////////////////////////////////////
     //
@@ -4301,7 +4301,7 @@ extern "C" {
         pthread_setname_np(name);
 #else
         // TODO: Test if this works
-        pthread_setname_np(t->posix_handle, name);
+//        pthread_set_name_np(t->posix_handle, name);
 #endif
     }
 
@@ -4586,7 +4586,8 @@ extern "C" {
         // Parsing /proc/cpuinfo to get the number of threads per core.
         // NOTE(zangent): This calls the CPU's threads "cores", although the wording
         // is kind of weird. This should be right, though.
-        if (fopen("/proc/cpuinfo", "r") != NULL) {
+        FILE *cpu_info = 0;
+        if ((cpu_info = fopen("/proc/cpuinfo", "r")) != NULL) {
             for (;;) {
                 // The 'temporary char'. Everything goes into this char,
                 // so that we can check against EOF at the end of this loop.
