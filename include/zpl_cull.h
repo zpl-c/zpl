@@ -25,6 +25,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
+    1.15 - Small changes
     1.10 - Fixed tree division bug
     1.00 - Initial version
     
@@ -111,7 +112,7 @@ extern "C" {
 extern "C" {
 #endif
 
-    zpl_inline void zpl_cull_init(zpl_cull_t *c, zpl_allocator_t a, isize dims, zpl_cull_bounds_t bounds, u32 max_nodes) {
+    void zpl_cull_init(zpl_cull_t *c, zpl_allocator_t a, isize dims, zpl_cull_bounds_t bounds, u32 max_nodes) {
         zpl_cull_t c_ = {0};
         *c = c_;
         c->allocator = a;
@@ -120,7 +121,7 @@ extern "C" {
         c->dimensions= dims;
     }
     
-    zpl_inline b32 zpl__cull_contains(isize dims, zpl_cull_bounds_t a, f32 *point) {
+    b32 zpl__cull_contains(isize dims, zpl_cull_bounds_t a, f32 *point) {
         for (i32 i = 0; i < dims; ++i) {
             if (!( a.E[i] - a.half[i] <= point[i]
                 && a.E[i] + a.half[i] >= point[i])) {
@@ -131,7 +132,7 @@ extern "C" {
         return true;
     }
     
-    zpl_inline b32 zpl__cull_intersects(isize dims, zpl_cull_bounds_t a, zpl_cull_bounds_t b) {
+    b32 zpl__cull_intersects(isize dims, zpl_cull_bounds_t a, zpl_cull_bounds_t b) {
         for (i32 i = 0; i < dims; ++i) {
             if (zpl_abs(a.E[i] - b.E[i]) > (a.half[i] + b.half[i])) return false;            
         }
@@ -139,7 +140,7 @@ extern "C" {
         return true;
     }
     
-    zpl_inline void zpl_cull_query(zpl_cull_t *c, zpl_cull_bounds_t bounds, zpl_array_t(zpl_cull_node_t) out_nodes) {
+    void zpl_cull_query(zpl_cull_t *c, zpl_cull_bounds_t bounds, zpl_array_t(zpl_cull_node_t) out_nodes) {
         if (c->nodes == NULL) return;
         if (!zpl__cull_intersects(c->dimensions, c->boundary, bounds)) return;
         
@@ -162,7 +163,7 @@ extern "C" {
         }
     }
     
-    zpl_inline b32 zpl_cull_insert(zpl_cull_t *c, zpl_cull_node_t node) {
+    b32 zpl_cull_insert(zpl_cull_t *c, zpl_cull_node_t node) {
         if(!zpl__cull_contains(c->dimensions, c->boundary, node.E)) return false;
 
         if (c->nodes == NULL) {
@@ -201,7 +202,7 @@ extern "C" {
         {+1, +1, +1},
     };
     
-    zpl_inline void zpl_cull_split(zpl_cull_t *c) {
+    void zpl_cull_split(zpl_cull_t *c) {
         zpl_cull_bounds_t hd = c->boundary;
         for (i32 i = 0; i < c->dimensions; ++i) {
             hd.half[i] /= 2;
@@ -235,7 +236,7 @@ extern "C" {
         }
     }
     
-    zpl_inline void zpl_cull_clear(zpl_cull_t *c) {
+    void zpl_cull_clear(zpl_cull_t *c) {
         // TODO(ZaKlaus): Support more allocators?
         if (c->allocator.proc == zpl_arena_allocator_proc) {
             zpl_free_all(c->allocator);

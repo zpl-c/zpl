@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
     
 Version History:
+    1.56 - Small changes
     1.55 - Linux fixes
     1.50 - Added bitstream
     1.47 - Commented on free_all for memory arena
@@ -437,7 +438,7 @@ extern "C" {
 #define zpl_inline __forceinline
 #endif
 #else
-#define zpl_inline inline //__attribute__ ((__always_inline__))
+#define zpl_inline __attribute__ ((__always_inline__))
 #endif
 #endif
 

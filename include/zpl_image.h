@@ -36,6 +36,7 @@ Credits:
     GitHub: urraka
     
 Version History:
+    1.25 - Small changes
     1.20 - Slight refactor
     1.10 - Small changes
     1.00 - Initial version
@@ -124,7 +125,7 @@ extern "C" {
 extern "C" {
 #endif
     
-    zpl_inline zpl_rgb_colour_t zpl_image_rgb_lerp(zpl_rgb_colour_t a, zpl_rgb_colour_t b, f32 t) {
+    zpl_rgb_colour_t zpl_image_rgb_lerp(zpl_rgb_colour_t a, zpl_rgb_colour_t b, f32 t) {
 #define LERP(c1, c2, c3) c1*(1.0-c3) + c2*c3
         zpl_rgb_colour_t result = {0};
         
@@ -139,7 +140,7 @@ extern "C" {
     // NOTE(ZaKlaus): Gif
     
 #ifndef ZPL_NO_GIF
-    zpl_inline zpl_gif_result_t *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
+    zpl_gif_result_t *zpl_image_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
         FILE *file;
         stbi__context s;
         zpl_gif_result_t *result;
@@ -198,7 +199,7 @@ extern "C" {
         return result;
     }
     
-    zpl_inline void zpl_image_gif_free(zpl_gif_result_t *gif, b32 aligned) {
+    void zpl_image_gif_free(zpl_gif_result_t *gif, b32 aligned) {
         zpl_gif_result_t *elem, *prev = 0;
         for (elem = gif; elem; elem = elem->next) {
             if (aligned) {
@@ -215,7 +216,7 @@ extern "C" {
     }
 #endif
     
-    zpl_inline zpl_hsv_colour_t zpl_image_rgb_to_hsv(zpl_rgb_colour_t colour) {
+    zpl_hsv_colour_t zpl_image_rgb_to_hsv(zpl_rgb_colour_t colour) {
         zpl_hsv_colour_t result = {0};
         u8 rgb_min, rgb_max;
         
@@ -247,7 +248,7 @@ extern "C" {
         return result;
     }
     
-    zpl_inline zpl_rgb_colour_t zpl_image_hsv_to_rgb(zpl_hsv_colour_t colour) {
+    zpl_rgb_colour_t zpl_image_hsv_to_rgb(zpl_hsv_colour_t colour) {
         zpl_rgb_colour_t result = {0};
         u8 region, rem, p, q, t;
         
@@ -277,7 +278,7 @@ extern "C" {
     }
     
 #ifndef ZPL_NO_IMAGE_OPS
-    zpl_inline void zpl_image_rgb_resize(u32 *source, i32 source_w, i32 source_h,
+    void zpl_image_rgb_resize(u32 *source, i32 source_w, i32 source_h,
                                          u32 *dest, i32 dest_w, i32 dest_h,
                                          i32 blur_iter, u32 *blur_mem) {
         
@@ -345,7 +346,7 @@ extern "C" {
         }
     }
 
-    zpl_inline void zpl_image_rgb_filter(u32 *source, i32 source_w, i32 source_h,
+    void zpl_image_rgb_filter(u32 *source, i32 source_w, i32 source_h,
                                          u32 *dest, 
                                          f64 *filter, i32 filter_w, i32 filter_h,
                                          f64 factor, f64 bias) {
