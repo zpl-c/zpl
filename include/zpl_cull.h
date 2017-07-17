@@ -25,9 +25,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
-    1.20 - Fixed tree division bug
-    1.15 - Commented on free_all for memory arena
-    1.10 - Added free_all for memory allocator
+    1.10 - Fixed tree division bug
     1.00 - Initial version
     
 */

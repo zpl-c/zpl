@@ -6,35 +6,37 @@ License:
     This software is dual-licensed to the public domain and under the following
     license: you are granted a perpetual, irrevocable license to copy, modify,
     publish, and distribute this file as you see fit.
-
+    
 Warranty:
     No warranty is implied, use at your own risk.
-
+    
 Usage:
     #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
-
+    
     #define ZPL_IMPLEMENTATION
     #include"zpl.h"
-
+    
 To include the platform layer:
     #define ZPL_PLATFORM before including the file.
-
+    
 Credits:
     Vladislav Gritsenko (GitHub: inlife)
     Dominik Madarasz (GitHub: zaklaus)
     Ginger Bill (GitHub: gingerBill)
     Sean Barrett (GitHub: nothings)
-
+    
 Version History:
     1.55 - Linux fixes
     1.50 - Added bitstream
+    1.47 - Commented on free_all for memory arena
+    1.46 - Added free_all for memory allocator
     1.45 - Stack memory can be resized now
     1.40 - Slight refactor
     1.30 - Added stack-based allocator
     1.20 - Small changes
     1.10 - Added zpl_system_command
     1.00 - Initial version
-
+    
 */
 
 
