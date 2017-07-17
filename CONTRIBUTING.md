@@ -25,3 +25,5 @@ large and to the detriment of my heirs and successors. I intend this
 dedication to be an overt act of relinquishment in perpetuity of all
 present and future rights to this software under copyright law.
 ```
+This does not apply to you, if you live in a country that does not recognize public domain. In such case, your contribution grants user the following license: `You are granted a perpetual, irrevocable license to copy, modify, publish, and distribute these libraries as you see fit. NO WARRANTY IS IMPLIED, USE AT YOUR OWN RISK!`
+    
