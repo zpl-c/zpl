@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
 
 Version History:
+    1.55 - Linux fixes
     1.50 - Added bitstream
     1.45 - Stack memory can be resized now
     1.40 - Slight refactor
@@ -434,7 +435,7 @@ extern "C" {
 #define zpl_inline __forceinline
 #endif
 #else
-#define zpl_inline __attribute__ ((__always_inline__))
+#define zpl_inline inline //__attribute__ ((__always_inline__))
 #endif
 #endif
 

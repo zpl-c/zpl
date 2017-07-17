@@ -25,6 +25,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
+    1.20 - Fixed tree division bug
     1.15 - Commented on free_all for memory arena
     1.10 - Added free_all for memory allocator
     1.00 - Initial version
@@ -220,9 +221,9 @@ extern "C" {
         for (i32 i = 0; i < loops; ++i) {
             zpl_cull_t tree = {0};
             zpl_cull_bounds_t bounds = {0};
-            p[0] = c->boundary.E[0] + hd.E[0]*zpl__cull_tpl[i][0];
-            p[1] = c->boundary.E[1] + hd.E[1]*zpl__cull_tpl[i][1];
-            p[2] = c->boundary.E[2] + hd.E[2]*zpl__cull_tpl[i][2];
+            p[0] = c->boundary.E[0] + hd.half[0] + (hd.half[0]/2.0)*zpl__cull_tpl[i][0];
+            p[1] = c->boundary.E[1] + hd.half[1] + (hd.half[1]/2.0)*zpl__cull_tpl[i][1];
+            p[2] = c->boundary.E[2] + hd.half[2] + (hd.half[2]/2.0)*zpl__cull_tpl[i][2];
             
             zpl_memcopy(bounds.E, p, 3*zpl_size_of(f32));
             zpl_memcopy(bounds.half, hd.half, 3*zpl_size_of(f32));
