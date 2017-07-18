@@ -110,6 +110,10 @@ extern "C" {
 #ifndef ZPL_SYSTEM_FREEBSD
 #define ZPL_SYSTEM_FREEBSD 1
 #endif
+#elif defined(__EMSCRIPTEN__)
+#ifndef ZPL_SYSTEM_EMSCRIPTEN
+#define ZPL_SYSTEM_EMSCRIPTEN 1
+#endif
 #else
 #error This UNIX operating system is not supported
 #endif
@@ -127,7 +131,7 @@ extern "C" {
 #error Unknown compiler
 #endif
 
-#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__)
+#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
 #ifndef ZPL_CPU_X86
 #define ZPL_CPU_X86 1
 #endif
@@ -192,7 +196,7 @@ extern "C" {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
     #include <stdio.h>
-    
+
 #if !defined(ZPL_NO_WINDOWS_H)
 #define NOMINMAX            1
 #define WIN32_LEAN_AND_MEAN 1
@@ -207,8 +211,13 @@ extern "C" {
 
 #include <malloc.h> // NOTE: _aligned_*()
 #include <intrin.h>
+
 #else
-#include <pthread.h>
+
+#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
+    #include <pthread.h>
+#endif
+
 #include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -217,19 +226,28 @@ extern "C" {
 #endif
 #include <stdlib.h> // NOTE: malloc on linux
 #include <sys/mman.h>
+
 #if !defined(ZPL_SYSTEM_OSX)
-#include <sys/sendfile.h>
+    #include <sys/sendfile.h>
 #endif
+
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 #include <spawn.h>
-#include <emmintrin.h>
+
+#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
+    #include <emmintrin.h>
+#else
+    #include <sched.h>
+#endif
+
 #endif
 
 #if defined(ZPL_SYSTEM_OSX)
+#include <stdio.h>
 #include <mach/mach.h>
 #include <mach/mach_init.h>
 #include <mach/mach_time.h>
@@ -851,7 +869,7 @@ extern "C" {
         isize threads_per_core;
     } zpl_affinity_t;
 
-#elif defined(ZPL_SYSTEM_LINUX)
+#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
     typedef struct zpl_affinity_t {
         b32   is_accurate;
         isize core_count;
@@ -2073,7 +2091,9 @@ extern "C" {
 
     ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
+#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_DEF u32 zpl_system_command(char const *command, char *buffer);
+#endif
 
 #if defined(__cplusplus)
 }
@@ -3216,7 +3236,7 @@ extern "C" {
 #if defined(_MSC_VER)
         // TODO: Is this good enough?
         __movsb(cast(u8 *)dest, cast(u8 *)source, n);
-#elif defined(ZPL_CPU_X86)
+#elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
         u8 *__dest8 = cast(u8 *)dest;
         u8 *__source8 = cast(u8 *)source;
         __asm__ __volatile__("rep movsb" : "+D"(__dest8), "+S"(__source8), "+c"(n) : : "memory");
@@ -3589,6 +3609,7 @@ extern "C" {
 
 
 
+#if !defined(ZPL_SYSTEM_EMSCRIPTEN) // disabled for __EMSCRIPTEN__
 
     ////////////////////////////////////////////////////////////////
     //
@@ -4310,6 +4331,7 @@ extern "C" {
     }
 
 
+#endif // !defined(ZPL_SYSTEM_EMSCRIPTEN)
 
 
     void zpl_sync_init(zpl_sync_t *s) {
@@ -4647,12 +4669,11 @@ extern "C" {
         ZPL_ASSERT(0 <= core && core < a->core_count);
         return a->threads_per_core;
     }
+#elif defined(ZPL_SYSTEM_EMSCRIPTEN)
+    // no code 4 u :(
 #else
 #error TODO: Unknown system
 #endif
-
-
-
 
 
 
@@ -8233,6 +8254,8 @@ extern "C" {
     extern char **environ;
 #endif
 
+#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
+
     zpl_inline u32 zpl_system_command(char const *command, char *buffer) {
 #if defined(ZPL_SYSTEM_WINDOWS)
         FILE *handle = _popen(command, "r");
@@ -8253,6 +8276,8 @@ extern "C" {
 #endif
         return 1;
     }
+
+#endif // !defined(ZPL_SYSTEM_EMSCRIPTEN)
 
 #if defined(ZPL_COMPILER_MSVC)
 #pragma warning(pop)

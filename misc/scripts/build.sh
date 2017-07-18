@@ -4,5 +4,5 @@ if [ -z ${1+x} ]; then
 fi
 
 mkdir -p build;
-gcc -g -I include -I vendor test/$1 -o build/test;
+gcc -std=c99 -g -I include -I vendor test/$1 -o build/test;
 ./build/test
