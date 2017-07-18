@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
     
 Version History:
+    1.60 - Added emscripten support
     1.56 - Small changes
     1.55 - Linux fixes
     1.50 - Added bitstream
