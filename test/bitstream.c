@@ -13,7 +13,7 @@ zpl_printf("sizeof f64: %zu\n", zpl_size_of(f64));
 
     // NOTE(inlife): write a typed values
     // (values will be automatically casted)
-    zpl_bs_write_f64(bsp, 0.1);
+    zpl_bs_write_u8(bsp, 1);
 
 zpl_printf("after: capacity %zu, size: %zu\n", zpl_bs_write_pos(bsp), zpl_bs_read_pos(bsp));
     // zpl_bs_write_i64(bsp, -42230);
