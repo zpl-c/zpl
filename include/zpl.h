@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
     
 Version History:
+    1.70 - Added zpl_array_remove_at
     1.60 - Added emscripten support
     1.56 - Small changes
     1.55 - Linux fixes
@@ -457,7 +458,7 @@ extern "C" {
 #define zpl_inline __forceinline
 #endif
 #else
-#define zpl_inline __attribute__ ((__always_inline__))
+#define zpl_inline inline //__attribute__ ((__always_inline__)) inline 
 #endif
 #endif
 
@@ -1525,6 +1526,14 @@ extern "C" {
         zpl_array_grow(x, zpl__ah->count+(item_count)); \
         zpl_memcopy(&(x)[zpl__ah->count], (items), zpl_size_of((x)[0])*(item_count));\
         zpl__ah->count += (item_count); \
+    } while (0)
+
+
+#define zpl_array_remove_at(x, index) do { \
+        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x); \
+        ZPL_ASSERT(index < zpl__ah->count); \
+        zpl_memcopy(x+index, x+index+1, zpl_size_of(x[0])*(zpl__ah->count - index)); \
+        --zpl__ah->count; \
     } while (0)
 
 
