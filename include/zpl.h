@@ -1565,7 +1565,7 @@ extern "C" {
     // And then it appeared. From mighty inner minds of the higher species, it was a gift from gods,
     // to people...
     //
-    // Bitstream is a fixed-size buffer using LIFO scheme.
+    // Bitstream is a fixed-size buffer using FIFO scheme.
     // It's purpose is to serialize data into sequential chunk
     // which can be portable.
     //
