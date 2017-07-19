@@ -6,11 +6,12 @@ It aims to extend the functionality by my personal tweaks and ideas helpful by b
 
 library         | latest version | category | description
 ----------------|----------------|----------|-------------
-**zpl.h**        | 1.60           | misc     | Helper library.
+**zpl.h**        | 1.70           | misc     | Helper library.
 **zpl_math.h**   | 1.00           | math     | Vector math library that is gamedev friendly..
 **zpl_image.h**  | 1.25           | graphics | Image manipulation library &amp; GIF animation. loader.
 **zpl_gl3w_gen.py** | 1.00        | graphics | OpenGL core bindings generator &amp; loader.
 **zpl_cull.h**   | 1.15           | misc     | Tree culling library.
+**zpl_event.h**  | 1.00           | misc     | Event handler library.
 
 ## FAQ
 
