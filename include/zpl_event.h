@@ -15,7 +15,10 @@ Usage:
     #define ZPL_EVENT_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
     
     #define ZPL_EVENT_IMPLEMENTATION
-    #include"zpl.h"
+    #include"zpl_event.h"
+
+Dependencies:
+    zpl.h
 
 Credits:
     Dominik Madarasz (GitHub: zaklaus)
