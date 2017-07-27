@@ -26,6 +26,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
     
 Version History:
+    1.75 - Added zpl_when macro
     1.70 - Added zpl_array_remove_at
     1.60 - Added emscripten support
     1.56 - Small changes
@@ -589,6 +590,10 @@ extern "C" {
 
 #ifndef hard_cast
 #define hard_cast(type) *cast(type)&
+#endif
+
+#ifndef zpl_when
+#define zpl_when(init, type, name) type name = init; if (name) 
 #endif
 
     /* NOTE: Very useful bit setting */
@@ -4297,7 +4302,9 @@ extern "C" {
 #elif defined(ZPL_ARCH_32_BIT) && defined(ZPL_CPU_X86)
         __asm__("mov %%gs:0x08,%0" : "=r"(thread_id));
 #elif defined(ZPL_ARCH_64_BIT) && defined(ZPL_CPU_X86)
-        __asm__("mov %%gs:0x10,%0" : "=r"(thread_id));
+        // TODO(ZaKlaus): @fixme
+        //__asm__("mov %%gs:0x10,%0" : "=r"(thread_id));
+        thread_id = pthread_self();
 #else
 #error Unsupported architecture for zpl_thread_current_id()
 #endif
