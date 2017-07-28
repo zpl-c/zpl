@@ -17,7 +17,14 @@ Usage:
     #include"zpl_ent.h"
     
 Optional Switches:
-    USE_128_BITS -- uses 128-bit storage for entity identification handle.
+    ZPL_USE_128_BITS -- uses 128-bit storage for entity identification handle.
+    
+Important note:
+    - Component pool of type X can be used ONLY BY ONE entity pool.
+    - Entity pool can use MULTIPLE component pools of type X.
+    - Entity handles SHALL NOT BE mixed-up with DIFFERENT entity pools / component pools.
+    - Entity's components HAVE TO BE detached BEFORE the entity gets destroyed.
+    
     
 Credits:
     Dominik Madarasz (GitHub: zaklaus)
@@ -85,28 +92,28 @@ extern "C" {
         ZPL_ENT_ID   used; \
     } ZPL_JOIN2(NAME, _meta_ent_t); \
     typedef struct ZPL_JOIN2(NAME, _meta_t) { \
-        zpl_allocator_t ent_a, data_a; \
+        zpl_allocator_t backing; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _meta_ent_t)) entities; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _t))         data; \
     } ZPL_JOIN2(NAME, _meta_t); \
     \
     \
-    void                  ZPL_JOIN2(NAME,_init)       (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t ent_a, zpl_allocator_t data_a); \
+    void                  ZPL_JOIN2(NAME,_init)       (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t a); \
     void                  ZPL_JOIN2(NAME,_free)       (ZPL_JOIN2(NAME, _meta_t) *h); \
     ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach)     (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data); \
     void                  ZPL_JOIN2(NAME,_detach)     (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle); \
     ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_fetch)      (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle);
 
 #define ZPL_ENT_COMP_DEFINE(NAME) \
-    void ZPL_JOIN2(NAME,_init) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t ent_a, zpl_allocator_t data_a) { \
-        ZPL_ASSERT(h&&p); h->ent_a = ent_a; h->data_a = data_a; \
-        zpl_buffer_init(h->entities, ent_a, p->count); \
-        zpl_buffer_init(h->data, data_a, p->count); \
+    void ZPL_JOIN2(NAME,_init) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t a) { \
+        ZPL_ASSERT(h&&p); h->backing = a; \
+        zpl_buffer_init(h->entities, a, p->count); \
+        zpl_buffer_init(h->data, a, p->count); \
     }\
     void ZPL_JOIN2(NAME,_free) (ZPL_JOIN2(NAME, _meta_t) *h) { \
         ZPL_ASSERT(h); \
-        zpl_buffer_free(h->entities, h->ent_a); \
-        zpl_buffer_free(h->data, h->data_a); \
+        zpl_buffer_free(h->entities, h->backing); \
+        zpl_buffer_free(h->data, h->backing); \
     } \
     ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data) { \
         ZPL_ASSERT(h); \
