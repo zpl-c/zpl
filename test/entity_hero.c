@@ -81,6 +81,8 @@ void hero_kill(world_t *world, zpl_entity_t hero) {
     position_detach(&world->position, hero);
     stats_detach(&world->stats, hero);
     armor_detach(&world->armor, hero);
+    
+    zpl_ent_destroy(&world->entities, hero);
 }
 
 void hero_dostuff(world_t *world, zpl_entity_t hero) {
