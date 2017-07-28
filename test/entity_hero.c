@@ -105,7 +105,7 @@ char *names[] = {
 int main(void) {
     
     world_t world = {0};
-    world_init(&world, zpl_heap_allocator(), 1000);
+    world_init(&world, zpl_heap_allocator(), 5);
     
     // NOTE(ZaKlaus): Our heroes will do stuff
     {
