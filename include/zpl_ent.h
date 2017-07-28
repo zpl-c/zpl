@@ -93,6 +93,7 @@ extern "C" {
     } ZPL_JOIN2(NAME, _meta_ent_t); \
     typedef struct ZPL_JOIN2(NAME, _meta_t) { \
         zpl_allocator_t backing; \
+        usize count; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _meta_ent_t)) entities; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _t))         data; \
     } ZPL_JOIN2(NAME, _meta_t); \
@@ -107,6 +108,7 @@ extern "C" {
 #define ZPL_ENT_COMP_DEFINE(NAME) \
     void ZPL_JOIN2(NAME,_init) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t a) { \
         ZPL_ASSERT(h&&p); h->backing = a; \
+        h->count = p->count; \
         zpl_buffer_init(h->entities, a, p->count); \
         zpl_buffer_init(h->data, a, p->count); \
     }\
