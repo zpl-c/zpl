@@ -141,7 +141,7 @@ extern "C" {
     }
     
 #define zpl_ent_foreach(pool, comp, cb) \
-    for (int i = 0; i < pool->count; ++i) { \
+    for (usize i = 0; i < pool->count; ++i) { \
         ZPL_JOIN2(comp, _meta_ent_t) ent = pool->entities[i]; \
         if (ent.used) { \
             cb(ent.handle, ZPL_JOIN2(comp, _fetch)(pool, ent.handle)); \
