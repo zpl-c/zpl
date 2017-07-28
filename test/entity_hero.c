@@ -37,7 +37,7 @@ typedef struct {
     armor_pool    armor;
 } world_t;
 
-//// NOTE(ZaKlaus): These are usually in exactly ONE source file
+//// NOTE(ZaKlaus): These are usually placed in exactly ONE source file
 ZPL_ENT_COMP_DEFINE(persona);
 ZPL_ENT_COMP_DEFINE(position);
 ZPL_ENT_COMP_DEFINE(stats);
