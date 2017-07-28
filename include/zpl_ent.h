@@ -72,7 +72,6 @@ extern "C" {
     ZPL_DEF zpl_ent_id_t    zpl_ent_create (zpl_ent_pool_t *pool);
     ZPL_DEF void            zpl_ent_destroy(zpl_ent_pool_t *pool, zpl_ent_id_t handle);
     
-    
     // NOTE(ZaKlaus): To be used as:
     #if 0
 
@@ -138,6 +137,14 @@ extern "C" {
         } \
         else { \
             return NULL; \
+        } \
+    }
+    
+#define zpl_ent_foreach(pool, comp, cb) \
+    for (int i = 0; i < pool->count; ++i) { \
+        ZPL_JOIN2(comp, _meta_ent_t) ent = pool->entities[i]; \
+        if (ent.used) { \
+            cb(ent.handle, ZPL_JOIN2(comp, _fetch)(pool, ent.handle)); \
         } \
     }
 

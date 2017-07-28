@@ -7,6 +7,10 @@ typedef struct {
     f32 x,y,z;
 } ZPL_ENT_COMP_DECLARE(transform);
 
+void transform_print_cb(zpl_ent_id_t handle, transform_t *tran) {
+    zpl_printf("%f, %f, %f\n", tran->x, tran->y, tran->z);
+}
+
 // NOTE(ZaKlaus): Put this EXACTLY to one source file!
 ZPL_ENT_COMP_DEFINE(transform);
 
@@ -23,8 +27,12 @@ int main(void) {
     
     // NOTE(ZaKlaus): Generate some entities.
     for (isize i = 0; i < 15; ++i) {
-        zpl_ent_create(&pool);
+        zpl_ent_id_t h = zpl_ent_create(&pool);
+        transform_attach(&tranpool, h, (transform_t){i, i*2, i*i});
     }
+    
+    // NOTE(ZaKlaus): Do foreach on our component pool
+    zpl_ent_foreach((&tranpool), transform, transform_print_cb);
     
     zpl_ent_id_t t = zpl_ent_create(&pool);
     ZPL_ASSERT(t.id == 15); // NOTE(ZaKlaus): This entity should be 16th.
@@ -38,7 +46,7 @@ int main(void) {
     
     // NOTE(ZaKlaus): Detach component from entity.
     // WARN(ZaKlaus): Do this each time when you destroy the entity!
-    zpl_ent_destroy(&pool, t);
+    transform_detach(&tranpool, t);
     
     // TODO(ZaKlaus): Remove entity
     zpl_ent_destroy(&pool, t);
