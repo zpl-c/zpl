@@ -60,17 +60,17 @@ extern "C" {
         struct zpl_ent_node_t *next;
     } zpl_ent_node_t;
     
-    typedef struct zpl_ent_pool_t {
+    typedef struct zpl_ent_pool {
         zpl_allocator_t backing;
         usize           count;
         zpl_buffer_t(zpl_ent_node_t)freelist;
         zpl_ent_node_t             *first_free;
-    } zpl_ent_pool_t;
+    } zpl_ent_pool;
     
-    ZPL_DEF void            zpl_ent_init   (zpl_ent_pool_t *pool, zpl_allocator_t allocator, isize count);
-    ZPL_DEF void            zpl_ent_free   (zpl_ent_pool_t *pool);
-    ZPL_DEF zpl_ent_id_t    zpl_ent_create (zpl_ent_pool_t *pool);
-    ZPL_DEF void            zpl_ent_destroy(zpl_ent_pool_t *pool, zpl_ent_id_t handle);
+    ZPL_DEF void            zpl_ent_init   (zpl_ent_pool *pool, zpl_allocator_t allocator, isize count);
+    ZPL_DEF void            zpl_ent_free   (zpl_ent_pool *pool);
+    ZPL_DEF zpl_ent_id_t    zpl_ent_create (zpl_ent_pool *pool);
+    ZPL_DEF void            zpl_ent_destroy(zpl_ent_pool *pool, zpl_ent_id_t handle);
     
     // NOTE(ZaKlaus): To be used as:
     #if 0
@@ -90,33 +90,33 @@ extern "C" {
         zpl_ent_id_t handle; \
         ZPL_ENT_ID   used; \
     } ZPL_JOIN2(NAME, _meta_ent_t); \
-    typedef struct ZPL_JOIN2(NAME, _meta_t) { \
+    typedef struct ZPL_JOIN2(NAME, _pool) { \
         zpl_allocator_t backing; \
         usize count; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _meta_ent_t)) entities; \
         zpl_buffer_t(ZPL_JOIN2(NAME, _t))         data; \
-    } ZPL_JOIN2(NAME, _meta_t); \
+    } ZPL_JOIN2(NAME, _pool); \
     \
     \
-    void                  ZPL_JOIN2(NAME,_init)       (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t a); \
-    void                  ZPL_JOIN2(NAME,_free)       (ZPL_JOIN2(NAME, _meta_t) *h); \
-    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach)     (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data); \
-    void                  ZPL_JOIN2(NAME,_detach)     (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle); \
-    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_fetch)      (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle);
+    void                  ZPL_JOIN2(NAME,_init)       (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_pool *p, zpl_allocator_t a); \
+    void                  ZPL_JOIN2(NAME,_free)       (ZPL_JOIN2(NAME, _pool) *h); \
+    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach)     (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data); \
+    void                  ZPL_JOIN2(NAME,_detach)     (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle); \
+    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_fetch)      (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle);
 
 #define ZPL_ENT_COMP_DEFINE(NAME) \
-    void ZPL_JOIN2(NAME,_init) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_pool_t *p, zpl_allocator_t a) { \
+    void ZPL_JOIN2(NAME,_init) (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_pool *p, zpl_allocator_t a) { \
         ZPL_ASSERT(h&&p); h->backing = a; \
         h->count = p->count; \
         zpl_buffer_init(h->entities, a, p->count); \
         zpl_buffer_init(h->data, a, p->count); \
     }\
-    void ZPL_JOIN2(NAME,_free) (ZPL_JOIN2(NAME, _meta_t) *h) { \
+    void ZPL_JOIN2(NAME,_free) (ZPL_JOIN2(NAME, _pool) *h) { \
         ZPL_ASSERT(h); \
         zpl_buffer_free(h->entities, h->backing); \
         zpl_buffer_free(h->data, h->backing); \
     } \
-    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data) { \
+    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME,_attach) (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle, ZPL_JOIN2(NAME, _t) data) { \
         ZPL_ASSERT(h); \
         ZPL_JOIN2(NAME, _meta_ent_t) *meta_ent = (h->entities+handle.id); \
         meta_ent->handle = handle; \
@@ -124,12 +124,12 @@ extern "C" {
         *(h->data+handle.id) = data; \
         return (h->data+handle.id); \
     } \
-    void ZPL_JOIN2(NAME,_detach) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle) { \
+    void ZPL_JOIN2(NAME,_detach) (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle) { \
         ZPL_ASSERT(h); \
         ZPL_JOIN2(NAME, _meta_ent_t) *meta_ent = (h->entities+handle.id); \
         meta_ent->used = false; \
     } \
-    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME, _fetch) (ZPL_JOIN2(NAME, _meta_t) *h, zpl_ent_id_t handle) { \
+    ZPL_JOIN2(NAME, _t) * ZPL_JOIN2(NAME, _fetch) (ZPL_JOIN2(NAME, _pool) *h, zpl_ent_id_t handle) { \
         ZPL_ASSERT(h); \
         ZPL_JOIN2(NAME, _meta_ent_t) *meta_ent = (h->entities+handle.id); \
         if ((meta_ent->used) && (meta_ent->handle.id == handle.id) && (meta_ent->handle.generation == handle.generation)) { \
@@ -159,7 +159,7 @@ extern "C" {
 extern "C" {
 #endif
 
-    void zpl_ent_init(zpl_ent_pool_t *pool, zpl_allocator_t allocator, isize count) {
+    void zpl_ent_init(zpl_ent_pool *pool, zpl_allocator_t allocator, isize count) {
         ZPL_ASSERT(pool);
         
         zpl_allocator_t a = pool->backing = allocator;
@@ -177,13 +177,13 @@ extern "C" {
         (pool->freelist+count-1)->next = NULL;
     }
     
-    void zpl_ent_free(zpl_ent_pool_t *pool) {
+    void zpl_ent_free(zpl_ent_pool *pool) {
         ZPL_ASSERT(pool);
         
         zpl_buffer_free(pool->freelist, pool->backing);
     }
     
-    zpl_ent_id_t zpl_ent_create(zpl_ent_pool_t *pool) {
+    zpl_ent_id_t zpl_ent_create(zpl_ent_pool *pool) {
         ZPL_ASSERT(pool);
         ZPL_ASSERT(pool->first_free);
         
@@ -194,7 +194,7 @@ extern "C" {
         return ent;
     }
     
-    void zpl_ent_destroy(zpl_ent_pool_t *pool, zpl_ent_id_t handle) {
+    void zpl_ent_destroy(zpl_ent_pool *pool, zpl_ent_id_t handle) {
         ZPL_ASSERT(pool);
         
         if (pool->first_free == NULL) {

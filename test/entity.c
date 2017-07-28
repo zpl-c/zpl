@@ -17,12 +17,12 @@ ZPL_ENT_COMP_DEFINE(transform);
 int main(void) {
     
     // NOTE(ZaKlaus): Initialize our entity pool
-    zpl_ent_pool_t pool = {0};
+    zpl_ent_pool pool = {0};
     zpl_ent_init(&pool, zpl_heap_allocator(), 100);
     
     // NOTE(ZaKlaus): Initialize our component pool
     // WARN(ZaKlaus): Component pool of type X can be used EXACTLY by ONE entity pool EXCLUSIVELY!!!
-    transform_meta_t tranpool = {0};
+    transform_pool tranpool = {0};
     transform_init(&tranpool, &pool, zpl_heap_allocator());
     
     // NOTE(ZaKlaus): Generate some entities.
