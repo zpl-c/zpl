@@ -15,10 +15,7 @@ Usage:
     
     #define ZPL_IMPLEMENTATION
     #include"zpl.h"
-    
-To include the platform layer:
-    #define ZPL_PLATFORM before including the file.
-    
+        
 Credits:
     Vladislav Gritsenko (GitHub: inlife)
     Dominik Madarasz (GitHub: zaklaus)

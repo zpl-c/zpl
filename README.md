@@ -12,6 +12,7 @@ library         | latest version | category | description
 **zpl_gl3w_gen.py** | 1.00        | graphics | OpenGL core bindings generator &amp; loader.
 **zpl_cull.h**   | 1.15           | misc     | Tree culling library.
 **zpl_event.h**  | 1.00           | misc     | Event handler library.
+**zpl_ent.h**    | 1.00           | misc     | Fast and small entity system.
 
 ## FAQ
 
