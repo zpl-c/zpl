@@ -19,7 +19,7 @@ int main(void) {
     // NOTE(ZaKlaus): Initialize our component pool
     // WARN(ZaKlaus): Component pool of type X can be used EXACTLY by ONE entity pool EXCLUSIVELY!!!
     transform_meta_t tranpool = {0};
-    transform_init(&tranpool, &pool, zpl_heap_allocator(), zpl_heap_allocator());
+    transform_init(&tranpool, &pool, zpl_heap_allocator());
     
     // NOTE(ZaKlaus): Generate some entities.
     for (isize i = 0; i < 15; ++i) {
