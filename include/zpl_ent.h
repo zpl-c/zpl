@@ -53,7 +53,7 @@ extern "C" {
     typedef struct zpl_ent_id_t {
         ZPL_ENT_ID id;
         ZPL_ENT_ID generation;
-    } zpl_ent_id_t;
+    } zpl_ent_id_t, zpl_entity_t;
     
     typedef struct zpl_ent_node_t {
         zpl_ent_id_t           handle;
