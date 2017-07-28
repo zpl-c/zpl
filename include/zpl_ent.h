@@ -24,6 +24,7 @@ Credits:
     Vladislav Gritsenko (GitHub: inlife)
     
 Version History:
+    1.06 - Added small example
     1.05 - Got rid of redundant field
     1.00 - Initial version
     
@@ -64,6 +65,19 @@ extern "C" {
     ZPL_DEF zpl_ent_id_t    zpl_ent_create (zpl_ent_pool_t *pool);
     ZPL_DEF void            zpl_ent_destroy(zpl_ent_pool_t *pool, zpl_ent_id_t handle);
     
+    
+    // NOTE(ZaKlaus): To be used as:
+    #if 0
+
+    // NOTE(ZaKlaus): Header file preferably
+    typedef struct {
+        i32 x,y,z;
+    } ZPL_ENT_COMP_DECLARE(position);
+    
+    // NOTE(ZaKlaus): Exactly 1 occurence in source file
+    ZPL_ENT_COMP_DEFINE(position);
+    
+    #endif
 #define ZPL_ENT_COMP_DECLARE(NAME) \
     ZPL_JOIN2(NAME, _t); \
     typedef struct ZPL_JOIN2(NAME, _meta_ent_t) { \
