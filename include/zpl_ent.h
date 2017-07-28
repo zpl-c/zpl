@@ -24,6 +24,7 @@ Credits:
     Vladislav Gritsenko (GitHub: inlife)
     
 Version History:
+    1.05 - Got rid of redundant field
     1.00 - Initial version
     
 */
@@ -47,14 +48,13 @@ extern "C" {
     } zpl_ent_id_t;
     
     typedef struct zpl_ent_node_t {
-        ZPL_ENT_ID             id;
+        zpl_ent_id_t           handle;
         struct zpl_ent_node_t *next;
     } zpl_ent_node_t;
     
     typedef struct zpl_ent_pool_t {
         zpl_allocator_t backing;
         usize           count;
-        zpl_buffer_t(zpl_ent_id_t)  entities;
         zpl_buffer_t(zpl_ent_node_t)freelist;
         zpl_ent_node_t             *first_free;
     } zpl_ent_pool_t;
@@ -135,21 +135,13 @@ extern "C" {
         zpl_allocator_t a = pool->backing = allocator;
         pool->count = count;
         
-        zpl_buffer_init(pool->entities, a, zpl_size_of(zpl_ent_id_t)  *count);
         zpl_buffer_init(pool->freelist, a, zpl_size_of(zpl_ent_node_t)*count);
-        
-        // NOTE(ZaKlaus): Initialize the entity pool
-        for (usize i = 0; i < count; ++i) {
-            zpl_ent_id_t *ent = (pool->entities+i);
-            ent->id = i;
-            ent->generation = 0;
-        }
         
         // NOTE(ZaKlaus): Build the freelist
         pool->first_free = pool->freelist;
         for (usize i = 0; i < count; ++i) {
             zpl_ent_node_t *f = (pool->freelist+i);
-            f->id = i;
+            f->handle = (zpl_ent_id_t) { i, 0 };
             f->next = (pool->freelist+i+1);
         }
         (pool->freelist+count-1)->next = NULL;
@@ -158,7 +150,6 @@ extern "C" {
     void zpl_ent_free(zpl_ent_pool_t *pool) {
         ZPL_ASSERT(pool);
         
-        zpl_buffer_free(pool->entities, pool->backing);
         zpl_buffer_free(pool->freelist, pool->backing);
     }
     
@@ -167,7 +158,7 @@ extern "C" {
         ZPL_ASSERT(pool->first_free);
         
         zpl_ent_node_t *f = pool->first_free;
-        zpl_ent_id_t ent = *(pool->entities+f->id);
+        zpl_ent_id_t ent = f->handle;
         pool->first_free = f->next;
         
         return ent;
@@ -176,16 +167,15 @@ extern "C" {
     void zpl_ent_destroy(zpl_ent_pool_t *pool, zpl_ent_id_t handle) {
         ZPL_ASSERT(pool);
         
-        ++(pool->entities+handle.id)->generation;
-        
         if (pool->first_free == NULL) {
             zpl_ent_node_t *f = pool->first_free = pool->freelist;
-            f->id   = handle.id;
-            f->next = NULL;
+            f->handle = handle;
+            f->next   = NULL;
+            ++f->handle.generation;
         }
         else {
             ZPL_ASSERT(pool->first_free - 1 >= pool->freelist);
-            zpl_ent_node_t f_ = { handle.id, pool->first_free };
+            zpl_ent_node_t f_ = { (zpl_ent_id_t){ handle.id, handle.generation+1 }, pool->first_free };
             zpl_ent_node_t *f = (pool->first_free - 1);
             *f = f_;
             pool->first_free = f;
