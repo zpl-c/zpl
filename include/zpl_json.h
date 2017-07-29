@@ -64,23 +64,23 @@ extern "C" {
     ZPL_DEF char*zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a);
     ZPL_DEF void zpl_json_free (zpl_json_object_t *obj, char *str);
     
-    ZPL_DEF char *zpl__json_trim        (char *str);
-    ZPL_DEF char *zpl__json_skip        (char *str, char c);
     ZPL_DEF char *zpl__json_parse_object(zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     ZPL_DEF char *zpl__json_parse_value (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     ZPL_DEF char *zpl__json_parse_array (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     
+    ZPL_DEF char *zpl__json_trim        (char *str);
+    ZPL_DEF char *zpl__json_skip        (char *str, char c, b32 validate);
 #ifdef __cplusplus
 }
 #endif 
 
 #if defined(ZPL_JSON_IMPLEMENTATION) && !defined(ZPL_JSON_IMPLEMENTATION_DONE)
 #define ZPL_JSON_IMPLEMENTATION_DONE
-  
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
     char *zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a) {
         ZPL_ASSERT(root && source);
         
@@ -152,7 +152,7 @@ extern "C" {
             b = p+1;
             obj->string = b;
             
-            e = zpl__json_skip(b, '"');
+            e = zpl__json_skip(b, '"', false);
             *e = '\0';
             p = e+1;
         }
@@ -239,7 +239,7 @@ extern "C" {
             
             node.name = b;
             
-            e = zpl__json_skip(b, '"');
+            e = zpl__json_skip(b, '"', true);
             *e = '\0';
             p = ++e;
             
@@ -277,8 +277,22 @@ extern "C" {
         return str;
     }
     
-    zpl_inline char *zpl__json_skip(char *str, char c) {
-        while (*str && *str != c) {
+    zpl_inline b32 zpl__json_is_control_char(char c) {
+        return (c == '"'  || c == '\\' || c == '/' || c == 'b' ||
+                c == 'f' || c == 'n' || c == 'r'|| c == 't');
+    }
+    
+#define jx(x) zpl_char_is_hex_digit(str[x])
+    zpl_inline b32 zpl__json_validate_name(char *str) {
+        return ((str[0] == '\\' && zpl__json_is_control_char(str[1])) ||
+                (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4)) ||
+                (zpl_char_is_alphanumeric(*str)) ||
+                (zpl_char_is_space(*str)));
+    }
+#undef jx
+    
+    zpl_inline char *zpl__json_skip(char *str, char c, b32 validate) {
+        while (*str && *str != c && (!validate || zpl__json_validate_name(str))) {
             ++str;
         }
         
