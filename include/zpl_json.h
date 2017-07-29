@@ -61,7 +61,7 @@ extern "C" {
         };
     } zpl_json_object_t;
 
-    ZPL_DEF char*zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a);
+    ZPL_DEF char*zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments);
     ZPL_DEF void zpl_json_free (zpl_json_object_t *obj, char *str);
     
     ZPL_DEF char *zpl__json_parse_object(zpl_json_object_t *obj, char *base, zpl_allocator_t a);
@@ -83,12 +83,59 @@ extern "C" {
 extern "C" {
 #endif
     
-    char *zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a) {
+    char *zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments) {
         ZPL_ASSERT(root && source);
         
         char *dest = zpl_alloc(a, len+1);
         zpl_strncpy(dest, source, len);
         dest[len] = '\0';
+        
+        if (strip_comments) {
+            b32 is_lit = false;
+            char *p = dest;
+            char *b = dest;
+            isize l = 0;
+            
+            while (*p) {
+                if (*p == '"') {
+                    is_lit = !is_lit;
+                    ++p;
+                    continue;
+                }
+                
+                if (!is_lit) {
+                    // NOTE(ZaKlaus): block comment
+                    if (p[0] == '/' && p[1] == '*') {
+                        b = p;
+                        l=2;
+                        p+=2;
+                        
+                        while (p[0] != '*' && p[1] != '/') {
+                            ++p; ++l;
+                        }
+                        p+=2;
+                        l+=2;
+                        zpl_memset(b, ' ', l);
+                    }
+                    
+                    // NOTE(ZaKlaus): inline comment
+                    if (p[0] == '/' && p[0] == '/') {
+                        b = p;
+                        l=2;
+                        p+=2;
+                        
+                        while (p[0] != '\n') {
+                            ++p; ++l;
+                        }
+                        ++p;
+                        ++l;
+                        zpl_memset(b, ' ', l);                        
+                    }
+                }
+                
+                ++p;
+            }
+        }
         
         zpl_json_object_t root_ = {0};
         zpl__json_parse_object(&root_, dest, a);

@@ -3,7 +3,7 @@
 #include <zpl.h>
 #include <zpl_json.h>
 
-char *source = "\"+ľščťžýáíé=\": true, \"huge\": 2.2239333e+5, \"array\": [+1,2,-3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
+char *source = "/* this is a comment */ \"+ľščťžýáíé=\": true, \"huge\": 2.2239333e5, // Hello, new comment \n \"array\": [+1,2,-3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
 
 #define ind(x) for (int i = 0; i < x; ++i) zpl_printf(" ");
 
@@ -83,7 +83,7 @@ void dump_json_contents(zpl_json_object_t *o, isize indent) {
 int main(void) {
 
     zpl_json_object_t root = {0};
-    char *modified = zpl_json_parse(&root, zpl_strlen(source), source, zpl_heap_allocator());
+    char *modified = zpl_json_parse(&root, zpl_strlen(source), source, zpl_heap_allocator(), true);
     
     dump_json_contents(&root, 0);
     
