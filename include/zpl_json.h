@@ -70,9 +70,17 @@ extern "C" {
     ZPL_DEF char *zpl__json_parse_value (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     ZPL_DEF char *zpl__json_parse_array (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     
+#ifdef __cplusplus
+}
+#endif 
+
 #if defined(ZPL_JSON_IMPLEMENTATION) && !defined(ZPL_JSON_IMPLEMENTATION_DONE)
 #define ZPL_JSON_IMPLEMENTATION_DONE
   
+#ifdef __cplusplus
+extern "C" {
+#endif
+
     char *zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a) {
         ZPL_ASSERT(root && source);
         
@@ -277,10 +285,11 @@ extern "C" {
         return str;
     }
     
-#endif
     
 #ifdef __cplusplus
 }
 #endif
+
+#endif // ZPL_JSON_IMPLEMENTATION
 
 #endif // ZPL_INCLUDE_ZPL_JSON_H
