@@ -177,7 +177,8 @@ extern "C" {
                 ZPL_ASSERT_MSG(false, "Failed to parse '%s'!\n", p);
             }
         }
-        else if (zpl_char_is_digit(*p)) {
+        else if (zpl_char_is_digit(*p) ||
+                 *p == '+' || *p == '-') {
             obj->type = zpl_json_type_integer_ev;
             
             b = p;
@@ -185,6 +186,11 @@ extern "C" {
             
             isize ib = 0;
             char buf[16] = {0};
+            
+            /**/ if (*e == '+') ++e;
+            else if (*e == '-') {
+                buf[ib++] = *e++;
+            }
             
             while(zpl_char_is_hex_digit(*e) || *e == 'x' || *e == 'X') {
                 buf[ib++] = *e++;

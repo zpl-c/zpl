@@ -3,7 +3,7 @@
 #include <zpl.h>
 #include <zpl_json.h>
 
-char *source = "\"+ľščťžýáíé=\": true, \"huge\": 2.23e-2, \"array\": [1,2,3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
+char *source = "\"+ľščťžýáíé=\": true, \"huge\": 2.2239333e+5, \"array\": [+1,2,-3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
 
 #define ind(x) for (int i = 0; i < x; ++i) zpl_printf(" ");
 
@@ -37,11 +37,11 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline) {
         }break;
         
         case zpl_json_type_integer_ev: {
-            zpl_printf("%u", node->integer);
+            zpl_printf("%lld", node->integer);
         }break;
         
         case zpl_json_type_real_ev: {
-            zpl_printf("%f", node->real);
+            zpl_printf("%.3llf", node->real);
         }break;
         
         case zpl_json_type_object_ev: {
@@ -75,7 +75,7 @@ void dump_json_contents(zpl_json_object_t *o, isize indent) {
     }
     
     ind(indent);
-    zpl_printf("},\n");
+    zpl_printf("}\n");
 }
 
 #undef ind
