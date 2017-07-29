@@ -282,10 +282,10 @@ extern "C" {
                 c == 'f' || c == 'n' || c == 'r'|| c == 't');
     }
     
-#define jx(x) zpl_char_is_hex_digit(str[x])
+#define jx(x) !zpl_char_is_hex_digit(str[x])
     zpl_inline b32 zpl__json_validate_name(char *str) {
-        return ((str[0] == '\\' && zpl__json_is_control_char(str[1])) ||
-                (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4)) ||
+        return (!(str[0] == '\\' && !zpl__json_is_control_char(str[1])) ||
+                !(str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4)) ||
                 (zpl_char_is_alphanumeric(*str)) ||
                 (zpl_char_is_space(*str)));
     }
