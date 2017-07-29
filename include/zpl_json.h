@@ -69,7 +69,9 @@ extern "C" {
     ZPL_DEF char *zpl__json_parse_array (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     
     ZPL_DEF char *zpl__json_trim        (char *str);
-    ZPL_DEF char *zpl__json_skip        (char *str, char c, b32 validate);
+    ZPL_DEF char *zpl__json_skip        (char *str, char c);
+    ZPL_DEF b32 zpl__json_validate_name (char *str, char *err);
+    
 #ifdef __cplusplus
 }
 #endif 
@@ -152,7 +154,7 @@ extern "C" {
             b = p+1;
             obj->string = b;
             
-            e = zpl__json_skip(b, '"', false);
+            e = zpl__json_skip(b, '"');
             *e = '\0';
             p = e+1;
         }
@@ -172,8 +174,7 @@ extern "C" {
                 p += 4;
             }
             else {
-                // TODO(ZaKlaus): Add better log
-                zpl_printf("zpl_json.h: Failed to parse: '%s'!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse name %s!\n", p);
             }
         }
         else if (zpl_char_is_digit(*p)) {
@@ -239,8 +240,12 @@ extern "C" {
             
             node.name = b;
             
-            e = zpl__json_skip(b, '"', true);
+            e = zpl__json_skip(b, '"');
             *e = '\0';
+            
+            char errc = 0;
+            ZPL_ASSERT_MSG(zpl__json_validate_name(b, &errc), "Failed to validate name '%s'!\n Invalid char: '%c'.\n", b, errc);
+            
             p = ++e;
             
             p = zpl__json_trim(p);
@@ -262,8 +267,7 @@ extern "C" {
                 return p;
             }
             else {
-                // TODO(ZaKlaus): Add better log
-                zpl_printf("zpl_json.h: Failed to parse: '%s'!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse name %s!\n", p);
             }
         }
         return p;
@@ -278,21 +282,28 @@ extern "C" {
     }
     
     zpl_inline b32 zpl__json_is_control_char(char c) {
-        return (c == '"'  || c == '\\' || c == '/' || c == 'b' ||
-                c == 'f' || c == 'n' || c == 'r'|| c == 't');
+        return (c == '"' || c == '\\' || c == '/' || c == 'b' ||
+                c == 'f' || c == 'n'  || c == 'r' || c == 't');
     }
     
 #define jx(x) !zpl_char_is_hex_digit(str[x])
-    zpl_inline b32 zpl__json_validate_name(char *str) {
-        return (!(str[0] == '\\' && !zpl__json_is_control_char(str[1])) ||
-                !(str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4)) ||
-                (zpl_char_is_alphanumeric(*str)) ||
-                (zpl_char_is_space(*str)));
+    zpl_inline b32 zpl__json_validate_name(char *str, char *err) {
+        while(*str) {
+            if ((str[0] == '\\' && !zpl__json_is_control_char(str[1])) &&
+                (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
+                *err = *str;
+                return false;
+            }
+            
+            ++str;
+        }
+        
+        return true;
     }
 #undef jx
     
-    zpl_inline char *zpl__json_skip(char *str, char c, b32 validate) {
-        while (*str && *str != c && (!validate || zpl__json_validate_name(str))) {
+    zpl_inline char *zpl__json_skip(char *str, char c) {
+        while (*str && *str != c) {
             ++str;
         }
         
