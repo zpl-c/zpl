@@ -269,7 +269,7 @@ extern "C" {
         return p;
     }
     
-    char *zpl__json_trim(char *str) {
+    zpl_inline char *zpl__json_trim(char *str) {
         while (*str && zpl_char_is_space(*str)) {
             ++str;
         }
@@ -277,7 +277,7 @@ extern "C" {
         return str;
     }
     
-    char *zpl__json_skip(char *str, char c) {
+    zpl_inline char *zpl__json_skip(char *str, char c) {
         while (*str && *str != c) {
             ++str;
         }
