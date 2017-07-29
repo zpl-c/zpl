@@ -75,7 +75,7 @@ void dump_json_contents(zpl_json_object_t *o, isize indent) {
     }
     
     ind(indent);
-    zpl_printf("}\n");
+    zpl_printf("},\n");
 }
 
 #undef ind
