@@ -3,7 +3,7 @@
 #include <zpl.h>
 #include <zpl_json.h>
 
-char *source = "\"yes\": true, \"array\": [1,2,3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
+char *source = "\"+ľščťžýáíé=\": true, \"huge\": 2.23e-2, \"array\": [1,2,3,4,5],     \"hello\": \"world\", \"abc\": 42.67, \"children\" : { \"a\": 1, \"b\": 2 }";
 
 #define ind(x) for (int i = 0; i < x; ++i) zpl_printf(" ");
 
