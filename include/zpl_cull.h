@@ -77,9 +77,12 @@ extern "C" {
     } zpl_cull_dim_e;
     
     typedef struct zpl_cull_node_t {
-        void             *ptr;
         f32               E[3];
         zpl_cull_bounds_t bounds;
+        
+        // NOTE(ZaKlaus): Custom data to be set by user.
+        void *ptr;
+        u64   tag;
     } zpl_cull_node_t;
     
     typedef struct zpl_cull_t {
