@@ -209,14 +209,17 @@ extern "C" {
             char expbuf[6] = {0};
             isize expi = 0;
             
-            if (*e == 'e') {
+            if (*e == 'e' || *e == 'E') {
                 ++e;
-                if (*e == '+' || *e == '-') {
+                if (*e == '+' || *e == '-' || zpl_char_is_digit(*e)) {
                     if (*e == '-') {
                         eb = 0.1;
                     }
                     
-                    ++e;
+                    if (!zpl_char_is_digit(*e)) {
+                        ++e;
+                    }
+                    
                     while(zpl_char_is_digit(*e)) {
                         expbuf[expi++] = *e++;
                     }
