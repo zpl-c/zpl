@@ -174,7 +174,7 @@ extern "C" {
                 p += 4;
             }
             else {
-                ZPL_ASSERT_MSG(false, "Failed to parse name %s!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse '%s'!\n", p);
             }
         }
         else if (zpl_char_is_digit(*p)) {
@@ -184,31 +184,59 @@ extern "C" {
             e = b;
             
             isize ib = 0;
-            zpl_local_persist char buf[128] = {0};
+            char buf[16] = {0};
             
             while(zpl_char_is_hex_digit(*e) || *e == 'x' || *e == 'X') {
                 buf[ib++] = *e++;
             }
-            
+
             if (*e == '.') {
                 obj->type = zpl_json_type_real_ev;
                 
                 do {
-                    buf[ib++] = *e++;
+                    buf[ib++] = *e;
                 }
-                while(zpl_char_is_hex_digit(*e));
+                while(zpl_char_is_digit(*++e));
+            }
+            
+            i64 exp = 0; f32 eb = 10;
+            char expbuf[6] = {0};
+            isize expi = 0;
+            
+            if (*e == 'e') {
+                ++e;
+                if (*e == '+' || *e == '-') {
+                    if (*e == '-') {
+                        eb = 0.1;
+                    }
+                    
+                    ++e;
+                    while(zpl_char_is_digit(*e)) {
+                        expbuf[expi++] = *e++;
+                    }
+                    
+                }
+                
+                exp = zpl_str_to_i64(expbuf, NULL, 10);
             }
             
             ZPL_ASSERT(*e);
-            buf[ib] = '\0';
-            
+
+            // NOTE(ZaKlaus): @enhance
             if (obj->type == zpl_json_type_integer_ev) {
                 obj->integer = zpl_str_to_i64(buf, 0, 0);
+                
+                while(--exp > 0) {
+                    obj->integer *= eb;
+                }
             }
             else {
                 obj->real = zpl_str_to_f64(buf, 0);            
+
+                while(--exp > 0) {
+                    obj->real *= eb;
+                }
             }
-            
             p = e;
         }
         else if (*p == '[') {
@@ -267,7 +295,7 @@ extern "C" {
                 return p;
             }
             else {
-                ZPL_ASSERT_MSG(false, "Failed to parse name %s!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse name '%s'!\n", p);
             }
         }
         return p;
