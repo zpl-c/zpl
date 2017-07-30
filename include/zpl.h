@@ -588,6 +588,11 @@ extern "C" {
 #ifndef hard_cast
 #define hard_cast(type) *cast(type)&
 #endif
+    
+    // WARN(ZaKlaus): Supported only on GCC via GNU extensions!!!
+#ifndef zpl_lambda
+#define zpl_lambda(b_) ({b_ _;})
+#endif
 
 #ifndef zpl_when
 #define zpl_when(init, type, name) type name = init; if (name) 
