@@ -1,3 +1,4 @@
+
 #define ZPL_IMPLEMENTATION
 #define ZPL_JSON_IMPLEMENTATION
 #include <zpl.h>
@@ -9,7 +10,7 @@ char *source = "/* this is a comment */ \"+ľščťžýáíé=\": true, \"huge\"
 
 void dump_json_contents(zpl_json_object_t *o, isize indent);
 
-void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline) {
+void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) {
     zpl_json_object_t *node = o;
     indent+=4;
     
@@ -27,7 +28,7 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline) {
             zpl_printf("[");
             isize elemn = zpl_array_count(node->elements);
             for (int j = 0; j < elemn; ++j) {
-                dump_value(node->elements + j, -4, true);
+                dump_value(node->elements + j, -4, true, true);
                 
                 if (j < elemn-1) {
                     zpl_printf(", ");
@@ -62,20 +63,38 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline) {
     }
     
     if (!is_inline) {
-        zpl_printf(",\n");
+        
+        if (!is_last) {
+            zpl_printf(",\n");
+        }
+        else {
+            zpl_printf("\n");
+        }
     }
 }
 
 void dump_json_contents(zpl_json_object_t *o, isize indent) {
     ind(indent-4);
     zpl_printf("{\n");
+    isize cnt = zpl_array_count(o->nodes);
     
-    for (int i = 0; i < zpl_array_count(o->nodes); ++i) {
-        dump_value(o->nodes + i, indent, false);
+    for (int i = 0; i < cnt; ++i) {
+        if (i < cnt-1) {
+            dump_value(o->nodes + i, indent, false, false);
+        }
+        else {
+            dump_value(o->nodes + i, indent, false, true);
+        }
     }
     
     ind(indent);
-    zpl_printf("}\n");
+    
+    if (indent > 0) {
+        zpl_printf("}");
+    }
+    else {
+        zpl_printf("}\n");
+    }
 }
 
 #undef ind
