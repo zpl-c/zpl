@@ -11,7 +11,7 @@ library         | latest version | category | description
 **zpl_cull.h**   | 1.15           | misc     | Tree culling library.
 **zpl_event.h**  | 1.00           | misc     | Event handler library.
 **zpl_ent.h**    | 1.06           | misc     | Fast and small entity system.
-**zpl_json.h"**  | 1.00           | misc     | Small and standard-friendly JSON parser.
+**zpl_json.h**  | 1.00           | misc     | Small and standard-friendly JSON parser.
 
 ## FAQ
 
