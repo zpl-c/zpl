@@ -103,6 +103,7 @@ extern "C" {
                     continue;
                 }
                 
+                // TODO(ZaKlaus): @fixme Better literal detection
                 if (!is_lit) {
                     // NOTE(ZaKlaus): block comment
                     if (p[0] == '/' && p[1] == '*') {
