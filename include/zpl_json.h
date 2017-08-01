@@ -179,6 +179,8 @@ extern "C" {
             p = zpl__json_parse_value(&elem, p, a);
             zpl_array_append(obj->elements, elem);
             
+            p = zpl__json_trim(p);
+            
             if (*p == ',') {
                 ++p;
                 continue;
@@ -221,7 +223,7 @@ extern "C" {
                 p += 4;
             }
             else {
-                ZPL_ASSERT_MSG(false, "Failed to parse '%s'!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse it!\n", p);
             }
         }
         else if (zpl_char_is_digit(*p) ||
@@ -296,11 +298,14 @@ extern "C" {
             p = e;
         }
         else if (*p == '[') {
-            p = zpl__json_parse_array(obj, p+1, a);
+            p = zpl__json_trim(p+1);
+            if (*p == ']') return p;
+            p = zpl__json_parse_array(obj, p, a);
             ++p;
         }
         else if (*p == '{') {
-            p = zpl__json_parse_object(obj, p+1, a);
+            p = zpl__json_trim(p+1);
+            p = zpl__json_parse_object(obj, p, a);
             ++p;
         }
         
@@ -316,9 +321,13 @@ extern "C" {
         zpl_array_init(obj->nodes, a);
         obj->backing = a;
         
+        p = zpl__json_trim(p);
+        if (*p == '{') p++;
+        
         while(*p) {
             zpl_json_object_t node = {0};
             p = zpl__json_trim(p);
+            if (*p == '}') return p;
             ZPL_ASSERT(*p == '"');
             b = ++p;
             
@@ -351,7 +360,7 @@ extern "C" {
                 return p;
             }
             else {
-                ZPL_ASSERT_MSG(false, "Failed to parse name '%s'!\n", p);
+                ZPL_ASSERT_MSG(false, "Failed to parse data!\n", p);
             }
         }
         return p;
@@ -368,6 +377,10 @@ extern "C" {
     zpl_inline b32 zpl__json_is_control_char(char c) {
         return (c == '"' || c == '\\' || c == '/' || c == 'b' ||
                 c == 'f' || c == 'n'  || c == 'r' || c == 't');
+    }
+    
+    zpl_inline b32 zpl__json_is_special_char(char c) {
+        return (c == '<' || c == '>' || c == ':' || c == '/');
     }
     
 #define jx(x) !zpl_char_is_hex_digit(str[x])
@@ -387,7 +400,7 @@ extern "C" {
 #undef jx
     
     zpl_inline char *zpl__json_skip(char *str, char c) {
-        while (*str && *str != c) {
+        while ((*str && *str != c) || (*(str-1) == '\\' && *str == c && zpl__json_is_control_char(c))) {
             ++str;
         }
         
