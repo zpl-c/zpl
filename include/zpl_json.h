@@ -20,6 +20,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
     
 Version History:
+    1.10 - Several fixes and performance improvements.
     1.00 - Initial version
     
 */
@@ -61,8 +62,8 @@ extern "C" {
         };
     } zpl_json_object_t;
 
-    ZPL_DEF char*zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments);
-    ZPL_DEF void zpl_json_free (zpl_json_object_t *obj, char *str);
+    ZPL_DEF void zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments);
+    ZPL_DEF void zpl_json_free (zpl_json_object_t *obj);
     
     ZPL_DEF char *zpl__json_parse_object(zpl_json_object_t *obj, char *base, zpl_allocator_t a);
     ZPL_DEF char *zpl__json_parse_value (zpl_json_object_t *obj, char *base, zpl_allocator_t a);
@@ -83,12 +84,10 @@ extern "C" {
 extern "C" {
 #endif
     
-    char *zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments) {
+    void zpl_json_parse(zpl_json_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments) {
         ZPL_ASSERT(root && source);
         
-        char *dest = zpl_alloc(a, len+1);
-        zpl_strncpy(dest, source, len);
-        dest[len] = '\0';
+        char *dest = source;
         
         if (strip_comments) {
             b32 is_lit = false;
@@ -142,27 +141,23 @@ extern "C" {
         zpl__json_parse_object(&root_, dest, a);
         
         *root = root_;
-        
-        return dest;
     }
     
-    void zpl_json_free(zpl_json_object_t *obj, char *str) {
+    void zpl_json_free(zpl_json_object_t *obj) {
         /**/ if (obj->type == zpl_json_type_array_ev) {
             for (isize i = 0; i < zpl_array_count(obj->elements); ++i) {
-                zpl_json_free(obj->elements+i, 0);
+                zpl_json_free(obj->elements+i);
             }
             
             zpl_array_free(obj->elements);
         }
         else if (obj->type == zpl_json_type_object_ev) {
             for (isize i = 0; i < zpl_array_count(obj->nodes); ++i) {
-                zpl_json_free(obj->nodes+i, 0);
+                zpl_json_free(obj->nodes+i);
             }
             
             zpl_array_free(obj->nodes);
         }
-        
-        zpl_free(obj->backing, str);
     }
     
     char *zpl__json_parse_array(zpl_json_object_t *obj, char *base, zpl_allocator_t a) {

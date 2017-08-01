@@ -102,11 +102,18 @@ void dump_json_contents(zpl_json_object_t *o, isize indent) {
 int main(void) {
 
     zpl_json_object_t root = {0};
-    char *modified = zpl_json_parse(&root, zpl_strlen(source), source, zpl_heap_allocator(), true);
+    
+    isize di = zpl_strlen(source);
+    char *d = zpl_malloc(di+1);
+    zpl_strcpy(d, source, di);
+    d[di] = 0;
+    
+    zpl_json_parse(&root, di, d, zpl_heap_allocator(), true);
     
     dump_json_contents(&root, 0);
     
-    zpl_json_free(&root, modified);
+    zpl_json_free(&root);
+    zpl_mfree(d);
     
     return 0;
 }
