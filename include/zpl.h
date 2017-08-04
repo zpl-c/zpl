@@ -6970,8 +6970,8 @@ extern "C" {
     zpl_internal ZPL_FILE_SEEK_PROC(zpl__posix_file_seek) {
 #if defined(ZPL_SYSTEM_OSX)
         i64 res = lseek(fd.i, offset, whence);
-#else
-        i64 res = lseek64(fd.i, offset, whence);
+#else // TODO(ZaKlaus): @fixme lseek64
+        i64 res = lseek(fd.i, offset, whence);
 #endif
         if (res < 0) return false;
         if (new_offset) *new_offset = res;

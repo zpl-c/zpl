@@ -97,12 +97,12 @@ with open('zpl_gl3w.h', 'wb') as f:
 extern "C" {
 #endif
 
-typedef void (*zplGL3WglProc)(void);
+typedef void (*zpl_gl3WglProc)(void);
 
 /* gl3w api */
 int zpl_gl3w_init(void);
 int zpl_gl3w_is_supported(int major, int minor);
-zplGL3WglProc zpl_gl3w_get_proc_address(char const *proc);
+zpl_gl3WglProc zpl_gl3w_get_proc_address(char const *proc);
 
 /* OpenGL functions */
 ''')
@@ -132,13 +132,13 @@ static HMODULE zpl__gl3w_libgl;
 static void zpl__gl3w_open_libgl (void) { zpl__gl3w_libgl = LoadLibraryA("opengl32.dll"); }
 static void zpl__gl3w_close_libgl(void) { FreeLibrary(zpl__gl3w_libgl); }
 
-static zplGL3WglProc zpl__gl3w_get_proc(char const *proc)
+static zpl_gl3WglProc zpl__gl3w_get_proc(char const *proc)
 {
-	zplGL3WglProc res;
+	zpl_gl3WglProc res;
 
-	res = (zplGL3WglProc) wglGetProcAddress(proc);
+	res = (zpl_gl3WglProc) wglGetProcAddress(proc);
 	if (!res)
-		res = (zplGL3WglProc) GetProcAddress(zpl__gl3w_libgl, proc);
+		res = (zpl_gl3WglProc) GetProcAddress(zpl__gl3w_libgl, proc);
 	return res;
 }
 
@@ -192,13 +192,13 @@ static void zpl__gl3w_open_libgl(void)
 
 static void zpl__gl3w_close_libgl(void) { dlclose(zpl__gl3w_libgl); }
 
-static GL3WglProc zpl__gl3w_get_proc(char const *proc)
+static zpl_gl3WglProc zpl__gl3w_get_proc(char const *proc)
 {
-	zplGL3WglProc res;
+	zpl_gl3WglProc res;
 
-	res = (zplGL3WglProc) zpl__gl3w_glx_get_proc_address((const GLubyte *) proc);
+	res = (zpl_gl3WglProc) zpl__gl3w_glx_get_proc_address((const GLubyte *) proc);
 	if (!res)
-		res = (zplGL3WglProc) dlsym(zpl__gl3w_libgl, proc);
+		res = (zpl_gl3WglProc) dlsym(zpl__gl3w_libgl, proc);
 	return res;
 }
 
@@ -240,7 +240,7 @@ int zpl_gl3w_is_supported(int major, int minor)
 	return zpl__gl3w_version.major >= major;
 }
 
-zplGL3WglProc zpl_gl3w_get_proc_address(char const *proc)
+zpl_gl3WglProc zpl_gl3w_get_proc_address(char const *proc)
 {
 	return zpl__gl3w_get_proc(proc);
 }
