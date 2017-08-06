@@ -23,8 +23,8 @@ Dependencies:
   Make sure you properly include them!
 
 Optional switches:
-  ZPL_NO_GIF
-  ZPL_NO_IMAGE_OPS
+  ZPLE_NO_GIF
+  ZPLE_NO_IMAGE_OPS
 
 Credits:
   Dominik Madarasz (GitHub: zaklaus)
@@ -32,6 +32,7 @@ Credits:
   GitHub: urraka
 
 Version History:
+  1.0.2 -- Switch fixes
   1.0.1 -- Got rid of unused switches and fixes
   1.0.0 -- Initial version
 */
@@ -62,7 +63,7 @@ extern "C" {
   // Uses stb_image.h for loading gif frames.
   //
 
-#ifndef ZPL_NO_GIF
+#ifndef ZPLE_NO_GIF
   typedef struct zpli_gif_result_t {
       i32 delay;
       u8 *data;
@@ -78,7 +79,7 @@ extern "C" {
   // Image Operations
   //
 
-#ifndef ZPL_NO_IMAGE_OPS
+#ifndef ZPLE_NO_IMAGE_OPS
   // NOTE(ZaKlaus): This is not sRGB aware!
   ZPL_DEF void zpli_rgb_resize(u32 *source, i32 source_w, i32 source_h,
                                     u32 *dest, i32 dest_w, i32 dest_h,

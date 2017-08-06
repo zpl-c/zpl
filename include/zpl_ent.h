@@ -17,7 +17,7 @@ Usage:
     #include"zpl_ent.h"
 
 Optional Switches:
-    ZPL_USE_128_BITS -- uses 128-bit storage for entity identification handle.
+    ZPLE_USE_128_BITS -- uses 128-bit storage for entity identification handle.
 
 Important note:
     - Component pool of type X can be used ONLY BY ONE entity pool.
@@ -31,6 +31,7 @@ Credits:
     Vladislav Gritsenko (GitHub: inlife)
 
 Version History:
+    1.0.1 -- Switch fixes
     1.0.0 -- Initial version
 */
 
