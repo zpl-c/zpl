@@ -23,20 +23,7 @@ Credits:
     Sean Barrett (GitHub: nothings)
     
 Version History:
-    1.75 - Added zpl_when macro
-    1.70 - Added zpl_array_remove_at
-    1.60 - Added emscripten support
-    1.56 - Small changes
-    1.55 - Linux fixes
-    1.50 - Added bitstream
-    1.47 - Commented on free_all for memory arena
-    1.46 - Added free_all for memory allocator
-    1.45 - Stack memory can be resized now
-    1.40 - Slight refactor
-    1.30 - Added stack-based allocator
-    1.20 - Small changes
-    1.10 - Added zpl_system_command
-    1.00 - Initial version
+    1.0.0 - Initial version
     
 */
 
