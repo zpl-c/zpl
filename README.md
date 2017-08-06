@@ -4,14 +4,14 @@ ZPL is a collection of single-file public domain header-only libraries for C and
 
 library             | latest version | category | description
 --------------------|----------------|----------|-------------
-**zpl.h**           | 1.75           | misc     | Helper library.
-**zpl_math.h**      | 1.00           | math     | Vector math library that is gamedev friendly..
-**zpl_image.h**     | 1.25           | graphics | Image manipulation library &amp; GIF animation. loader.
-**zpl_gl3w_gen.py** | 1.00           | graphics | OpenGL core bindings generator &amp; loader.
-**zpl_cull.h**      | 1.15           | misc     | Tree culling library.
-**zpl_event.h**     | 1.00           | misc     | Event handler library.
-**zpl_ent.h**       | 1.06           | misc     | Fast and small entity system.
-**zpl_json.h**      | 1.10           | misc     | Small, fast and standard-friendly JSON parser.
+**zpl.h**           | 1.0.0          | misc     | Helper library.
+**zpl_math.h**      | 1.0.0          | math     | Vector math library that is gamedev friendly..
+**zpl_image.h**     | 1.0.0          | graphics | Image manipulation library &amp; GIF animation. loader.
+**zpl_gl3w_gen.py** | 1.0.0          | graphics | OpenGL core bindings generator &amp; loader.
+**zpl_cull.h**      | 1.0.0          | misc     | Tree culling library.
+**zpl_event.h**     | 1.0.0          | misc     | Event handler library.
+**zpl_ent.h**       | 1.0.0          | misc     | Fast and small entity system.
+**zpl_json.h**      | 1.0.0          | parser   | Small, fast and standard-friendly JSON parser.
 
 ## FAQ
 
