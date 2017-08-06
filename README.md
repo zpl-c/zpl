@@ -8,7 +8,7 @@ library             | latest version | category | description
 **zpl_math.h**      | 1.0.0          | math     | Vector math library that is gamedev friendly..
 **zpl_image.h**     | 1.0.2          | graphics | Image manipulation library &amp; GIF animation. loader.
 **zpl_gl3w_gen.py** | 1.0.0          | graphics | OpenGL core bindings generator &amp; loader.
-**zpl_cull.h**      | 1.0.0          | misc     | Tree culling library.
+**zpl_cull.h**      | 1.0.1          | misc     | Tree culling library.
 **zpl_event.h**     | 1.0.0          | misc     | Event handler library.
 **zpl_ent.h**       | 1.0.1          | misc     | Fast and small entity system.
 **zpl_json.h**      | 1.0.0          | parser   | Small, fast and standard-friendly JSON parser.

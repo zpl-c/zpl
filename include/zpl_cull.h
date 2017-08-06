@@ -25,6 +25,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
 
 Version History:
+    1.0.1 - Fixes.
     1.0.0 - Initial version
 
 */
@@ -122,7 +123,7 @@ extern "C" {
         c->dimensions= dims;
     }
 
-    b32 zpl__cull_contains(isize dims, zplc_bounds_t a, f32 *point) {
+    b32 zplc__contains(isize dims, zplc_bounds_t a, f32 *point) {
         for (i32 i = 0; i < dims; ++i) {
             if (!( a.E[i] - a.half[i] <= point[i]
                 && a.E[i] + a.half[i] >= point[i])) {
@@ -133,7 +134,7 @@ extern "C" {
         return true;
     }
 
-    b32 zpl__cull_intersects(isize dims, zplc_bounds_t a, zplc_bounds_t b) {
+    b32 zplc__intersects(isize dims, zplc_bounds_t a, zplc_bounds_t b) {
         for (i32 i = 0; i < dims; ++i) {
             if (zpl_abs(a.E[i] - b.E[i]) > (a.half[i] + b.half[i])) return false;
         }
@@ -143,11 +144,11 @@ extern "C" {
 
     void zplc_query(zplc_t *c, zplc_bounds_t bounds, zpl_array_t(zplc_node_t) out_nodes) {
         if (c->nodes == NULL) return;
-        if (!zpl__cull_intersects(c->dimensions, c->boundary, bounds)) return;
+        if (!zplc__intersects(c->dimensions, c->boundary, bounds)) return;
 
         isize nodes_count = zpl_array_count(c->nodes);
         for (i32 i = 0; i < nodes_count; ++i) {
-            b32 inside = zpl__cull_contains(c->dimensions, bounds, c->nodes[i].E);
+            b32 inside = zplc__contains(c->dimensions, bounds, c->nodes[i].E);
 
             if (inside) {
                 zpl_array_append(out_nodes, c->nodes[i]);
@@ -165,7 +166,7 @@ extern "C" {
     }
 
     b32 zplc_insert(zplc_t *c, zplc_node_t node) {
-        if(!zpl__cull_contains(c->dimensions, c->boundary, node.E)) return false;
+        if(!zplc__contains(c->dimensions, c->boundary, node.E)) return false;
 
         if (c->nodes == NULL) {
             zpl_array_init(c->nodes, c->allocator);
@@ -192,7 +193,7 @@ extern "C" {
         return false;
     }
 
-    zpl_global f32 zpl__cull_tpl[][3] = {
+    zpl_global f32 zplc__tpl[][3] = {
         {-1, -1, -1},
         {+1, -1, -1},
         {-1, +1, -1},
@@ -221,9 +222,9 @@ extern "C" {
         for (i32 i = 0; i < loops; ++i) {
             zplc_t tree = {0};
             zplc_bounds_t bounds = {0};
-            p[0] = c->boundary.E[0] + hd.half[0] + (hd.half[0]/2.0)*zpl__cull_tpl[i][0];
-            p[1] = c->boundary.E[1] + hd.half[1] + (hd.half[1]/2.0)*zpl__cull_tpl[i][1];
-            p[2] = c->boundary.E[2] + hd.half[2] + (hd.half[2]/2.0)*zpl__cull_tpl[i][2];
+            p[0] = c->boundary.E[0] + hd.half[0] + (hd.half[0]/2.0)*zplc__tpl[i][0];
+            p[1] = c->boundary.E[1] + hd.half[1] + (hd.half[1]/2.0)*zplc__tpl[i][1];
+            p[2] = c->boundary.E[2] + hd.half[2] + (hd.half[2]/2.0)*zplc__tpl[i][2];
 
             zpl_memcopy(bounds.E, p, 3*zpl_size_of(f32));
             zpl_memcopy(bounds.half, hd.half, 3*zpl_size_of(f32));
