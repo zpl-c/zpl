@@ -1,30 +1,31 @@
 /*
 
-ZPL - Global module
+  ZPL - Global module
 
-License:
-    This software is dual-licensed to the public domain and under the following
-    license: you are granted a perpetual, irrevocable license to copy, modify,
-    publish, and distribute this file as you see fit.
-    
-Warranty:
-    No warranty is implied, use at your own risk.
-    
-Usage:
-    #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
-    
-    #define ZPL_IMPLEMENTATION
-    #include"zpl.h"
-        
-Credits:
-    Vladislav Gritsenko (GitHub: inlife)
-    Dominik Madarasz (GitHub: zaklaus)
-    Ginger Bill (GitHub: gingerBill)
-    Sean Barrett (GitHub: nothings)
-    
-Version History:
-    1.0.0 - Initial version
-    
+  License:
+  This software is dual-licensed to the public domain and under the following
+  license: you are granted a perpetual, irrevocable license to copy, modify,
+  publish, and distribute this file as you see fit.
+
+  Warranty:
+  No warranty is implied, use at your own risk.
+
+  Usage:
+  #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
+
+  #define ZPL_IMPLEMENTATION
+  #include"zpl.h"
+
+  Credits:
+  Vladislav Gritsenko (GitHub: inlife)
+  Dominik Madarasz (GitHub: zaklaus)
+  Ginger Bill (GitHub: gingerBill)
+  Sean Barrett (GitHub: nothings)
+
+  Version History:
+  1.1.0 - Added timer feature
+  1.0.0 - Initial version
+
 */
 
 
@@ -182,7 +183,7 @@ extern "C" {
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-    #include <stdio.h>
+#include <stdio.h>
 
 #if !defined(ZPL_NO_WINDOWS_H)
 #define NOMINMAX            1
@@ -202,7 +203,7 @@ extern "C" {
 #else
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-    #include <pthread.h>
+#include <pthread.h>
 #endif
 
 #include <dlfcn.h>
@@ -215,7 +216,7 @@ extern "C" {
 #include <sys/mman.h>
 
 #if !defined(ZPL_SYSTEM_OSX)
-    #include <sys/sendfile.h>
+#include <sys/sendfile.h>
 #endif
 
 #include <sys/stat.h>
@@ -226,9 +227,9 @@ extern "C" {
 #include <spawn.h>
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-    #include <emmintrin.h>
+#include <emmintrin.h>
 #else
-    #include <sched.h>
+#include <sched.h>
 #endif
 
 #endif
@@ -443,7 +444,7 @@ extern "C" {
 #define zpl_inline __forceinline
 #endif
 #else
-#define zpl_inline inline //__attribute__ ((__always_inline__)) inline 
+#define zpl_inline inline //__attribute__ ((__always_inline__)) inline
 #endif
 #endif
 
@@ -575,21 +576,21 @@ extern "C" {
 #ifndef hard_cast
 #define hard_cast(type) *cast(type)&
 #endif
-    
+
     // WARN(ZaKlaus): Supported only on GCC via GNU extensions!!!
 #ifndef zpl_lambda
 #define zpl_lambda(b_) ({b_ _;})
 #endif
 
 #ifndef zpl_when
-#define zpl_when(init, type, name) type name = init; if (name) 
+#define zpl_when(init, type, name) type name = init; if (name)
 #endif
 
     /* NOTE: Very useful bit setting */
 #ifndef ZPL_MASK_SET
-#define ZPL_MASK_SET(var, set, mask) do { \
-        if (set) (var) |=  (mask); \
-        else     (var) &= ~(mask); \
+#define ZPL_MASK_SET(var, set, mask) do {       \
+        if (set) (var) |=  (mask);              \
+        else     (var) &= ~(mask);              \
     } while (0)
 #endif
 
@@ -621,11 +622,11 @@ extern "C" {
 #endif
 
 #ifndef ZPL_ASSERT_MSG
-#define ZPL_ASSERT_MSG(cond, msg, ...) do { \
-        if (!(cond)) { \
+#define ZPL_ASSERT_MSG(cond, msg, ...) do {                             \
+        if (!(cond)) {                                                  \
             zpl_assert_handler(#cond, __FILE__, cast(i64)__LINE__, msg, ##__VA_ARGS__); \
-            ZPL_DEBUG_TRAP(); \
-        } \
+            ZPL_DEBUG_TRAP();                                           \
+        }                                                               \
     } while (0)
 #endif
 
@@ -680,9 +681,9 @@ extern "C" {
 
 
 #ifndef ZPL_BIT_CAST
-#define ZPL_BIT_CAST(dest, source) do { \
+#define ZPL_BIT_CAST(dest, source) do {                                 \
         ZPL_STATIC_ASSERT(zpl_size_of(*(dest)) <= zpl_size_of(source)); \
-        zpl_memcopy((dest), &(source), zpl_size_of(*dest)); \
+        zpl_memcopy((dest), &(source), zpl_size_of(*dest));             \
     } while (0)
 #endif
 
@@ -919,11 +920,11 @@ extern "C" {
     } zpl_allocation_type_e;
 
     // NOTE: This is useful so you can define an allocator of the same type and parameters
-#define ZPL_ALLOCATOR_PROC(name)                         \
-    void *name(void *allocator_data, zpl_allocation_type_e type, \
-    isize size, isize alignment,                 \
-    void *old_memory, isize old_size,            \
-    u64 flags)
+#define ZPL_ALLOCATOR_PROC(name)                                  \
+    void *name(void *allocator_data, zpl_allocation_type_e type,  \
+               isize size, isize alignment,                       \
+               void *old_memory, isize old_size,                  \
+               u64 flags)
     typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc_t);
 
     typedef struct zpl_allocator_t {
@@ -1077,12 +1078,12 @@ extern "C" {
 
     typedef struct zpl_stack_memory_t {
         zpl_allocator_t backing;
-        
+
         void *physical_start;
         isize total_size;
         isize allocated;
     } zpl_stack_memory_t;
-    
+
     ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory_t *s, void *start, isize size);
     ZPL_DEF void zpl_stack_memory_init            (zpl_stack_memory_t *s, zpl_allocator_t backing, isize size);
     ZPL_DEF b32  zpl_stack_memory_is_in_use       (zpl_stack_memory_t *s, void *ptr);
@@ -1222,57 +1223,57 @@ extern "C" {
     //
     //
     /*
-    Reasoning:
+      Reasoning:
 
-     By default, strings in C are null terminated which means you have to count
-     the number of character up to the null character to calculate the length.
-     Many "better" C string libraries will create a struct for a string.
-     i.e.
+      By default, strings in C are null terminated which means you have to count
+      the number of character up to the null character to calculate the length.
+      Many "better" C string libraries will create a struct for a string.
+      i.e.
 
-         struct String {
-          Allocator allocator;
-             size_t    length;
-             size_t    capacity;
-             char *    cstring;
-         };
+      struct String {
+      Allocator allocator;
+      size_t    length;
+      size_t    capacity;
+      char *    cstring;
+      };
 
-     This library tries to augment normal C strings in a better way that is still
-     compatible with C-style strings.
+      This library tries to augment normal C strings in a better way that is still
+      compatible with C-style strings.
 
-     +--------+-----------------------+-----------------+
-     | Header | Binary C-style String | Null Terminator |
-     +--------+-----------------------+-----------------+
-              |
-              +-> Pointer returned by functions
+      +--------+-----------------------+-----------------+
+      | Header | Binary C-style String | Null Terminator |
+      +--------+-----------------------+-----------------+
+      |
+      +-> Pointer returned by functions
 
-     Due to the meta-data being stored before the string pointer and every zpl string
-     having an implicit null terminator, zpl strings are full compatible with c-style
-     strings and read-only functions.
+      Due to the meta-data being stored before the string pointer and every zpl string
+      having an implicit null terminator, zpl strings are full compatible with c-style
+      strings and read-only functions.
 
-    Advantages:
+      Advantages:
 
-        * zpl strings can be passed to C-style string functions without accessing a struct
-          member of calling a function, i.e.
+      * zpl strings can be passed to C-style string functions without accessing a struct
+      member of calling a function, i.e.
 
-              zpl_printf("%s\n", zpl_str);
+      zpl_printf("%s\n", zpl_str);
 
-          Many other libraries do either of these:
+      Many other libraries do either of these:
 
-              zpl_printf("%s\n", string->cstr);
-              zpl_printf("%s\n", get_cstring(string));
+      zpl_printf("%s\n", string->cstr);
+      zpl_printf("%s\n", get_cstring(string));
 
-        * You can access each character just like a C-style string:
+      * You can access each character just like a C-style string:
 
-              zpl_printf("%c %c\n", str[0], str[13]);
+      zpl_printf("%c %c\n", str[0], str[13]);
 
-        * zpl strings are singularly allocated. The meta-data is next to the character
-          array which is better for the cache.
+      * zpl strings are singularly allocated. The meta-data is next to the character
+      array which is better for the cache.
 
-    Disadvantages:
+      Disadvantages:
 
-        * In the C version of these functions, many return the new string. i.e.
-              str = zpl_string_appendc(str, "another string");
-          This could be changed to zpl_string_appendc(&str, "another string"); but I'm still not sure.
+      * In the C version of these functions, many return the new string. i.e.
+      str = zpl_string_appendc(str, "another string");
+      This could be changed to zpl_string_appendc(&str, "another string"); but I'm still not sure.
     */
 
 #if 0
@@ -1367,12 +1368,12 @@ extern "C" {
 #define zpl_buffer_count(x)    (ZPL_BUFFER_HEADER(x)->count)
 #define zpl_buffer_capacity(x) (ZPL_BUFFER_HEADER(x)->capacity)
 
-#define zpl_buffer_init(x, allocator, cap) do { \
-        void **nx = cast(void **)&(x); \
+#define zpl_buffer_init(x, allocator, cap) do {                         \
+        void **nx = cast(void **)&(x);                                  \
         zpl_buffer_header_t *zpl__bh = cast(zpl_buffer_header_t *)zpl_alloc((allocator), (cap)*zpl_size_of(*(x))); \
-        zpl__bh->count = 0; \
-        zpl__bh->capacity = cap; \
-        *nx = cast(void *)(zpl__bh+1); \
+        zpl__bh->count = 0;                                             \
+        zpl__bh->capacity = cap;                                        \
+        *nx = cast(void *)(zpl__bh+1);                                  \
     } while (0)
 
 
@@ -1380,11 +1381,11 @@ extern "C" {
 
 #define zpl_buffer_append(x, item) do { (x)[zpl_buffer_count(x)++] = (item); } while (0)
 
-#define zpl_buffer_appendv(x, items, item_count) do { \
-        ZPL_ASSERT(zpl_size_of(*(items)) == zpl_size_of(*(x))); \
+#define zpl_buffer_appendv(x, items, item_count) do {                   \
+        ZPL_ASSERT(zpl_size_of(*(items)) == zpl_size_of(*(x)));         \
         ZPL_ASSERT(zpl_buffer_count(x)+item_count <= zpl_buffer_capacity(x)); \
         zpl_memcopy(&(x)[zpl_buffer_count(x)], (items), zpl_size_of(*(x))*(item_count)); \
-        zpl_buffer_count(x) += (item_count); \
+        zpl_buffer_count(x) += (item_count);                            \
     } while (0)
 
 #define zpl_buffer_pop(x)   do { ZPL_ASSERT(zpl_buffer_count(x) > 0); zpl_buffer_count(x)--; } while (0)
@@ -1470,28 +1471,28 @@ extern "C" {
 #define zpl_array_capacity(x)  (ZPL_ARRAY_HEADER(x)->capacity)
 
     // TODO: Have proper alignment!
-#define zpl_array_init_reserve(x, allocator_, cap) do { \
-        void **zpl__array_ = cast(void **)&(x); \
+#define zpl_array_init_reserve(x, allocator_, cap) do {                 \
+        void **zpl__array_ = cast(void **)&(x);                         \
         zpl_array_header_t *zpl__ah = cast(zpl_array_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_array_header_t)+zpl_size_of(*(x))*(cap)); \
-        zpl__ah->allocator = allocator_; \
-        zpl__ah->count = 0; \
-        zpl__ah->capacity = cap; \
-        *zpl__array_ = cast(void *)(zpl__ah+1); \
+        zpl__ah->allocator = allocator_;                                \
+        zpl__ah->count = 0;                                             \
+        zpl__ah->capacity = cap;                                        \
+        *zpl__array_ = cast(void *)(zpl__ah+1);                         \
     } while (0)
 
     // NOTE: Give it an initial default capacity
 #define zpl_array_init(x, allocator) zpl_array_init_reserve(x, allocator, ZPL_ARRAY_GROW_FORMULA(0))
 
-#define zpl_array_free(x) do { \
-        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x); \
-        zpl_free(zpl__ah->allocator, zpl__ah); \
+#define zpl_array_free(x) do {                              \
+        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x);  \
+        zpl_free(zpl__ah->allocator, zpl__ah);              \
     } while (0)
 
-#define zpl_array_set_capacity(x, capacity) do { \
-        if (x) { \
-            void **zpl__array_ = cast(void **)&(x); \
+#define zpl_array_set_capacity(x, capacity) do {                        \
+        if (x) {                                                        \
+            void **zpl__array_ = cast(void **)&(x);                     \
             *zpl__array_ = zpl__array_set_capacity((x), (capacity), zpl_size_of(*(x))); \
-        } \
+        }                                                               \
     } while (0)
 
     // NOTE: Do not use the thing below directly, use the macro
@@ -1499,35 +1500,35 @@ extern "C" {
 
 
     // TODO: Decide on a decent growing formula for zpl_array_t
-#define zpl_array_grow(x, min_capacity) do { \
+#define zpl_array_grow(x, min_capacity) do {                            \
         isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_array_capacity(x)); \
-        if (new_capacity < (min_capacity)) \
-        new_capacity = (min_capacity); \
-        zpl_array_set_capacity(x, new_capacity); \
+        if (new_capacity < (min_capacity))                              \
+            new_capacity = (min_capacity);                              \
+        zpl_array_set_capacity(x, new_capacity);                        \
     } while (0)
 
 
-#define zpl_array_append(x, item) do { \
+#define zpl_array_append(x, item) do {                    \
         if (zpl_array_capacity(x) < zpl_array_count(x)+1) \
-        zpl_array_grow(x, 0); \
-        (x)[zpl_array_count(x)++] = (item); \
+            zpl_array_grow(x, 0);                         \
+        (x)[zpl_array_count(x)++] = (item);               \
     } while (0)
 
-#define zpl_array_appendv(x, items, item_count) do { \
-        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x); \
-        ZPL_ASSERT(zpl_size_of((items)[0]) == zpl_size_of((x)[0])); \
-        if (zpl__ah->capacity < zpl__ah->count+(item_count)) \
-        zpl_array_grow(x, zpl__ah->count+(item_count)); \
-        zpl_memcopy(&(x)[zpl__ah->count], (items), zpl_size_of((x)[0])*(item_count));\
-        zpl__ah->count += (item_count); \
+#define zpl_array_appendv(x, items, item_count) do {                    \
+        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x);              \
+        ZPL_ASSERT(zpl_size_of((items)[0]) == zpl_size_of((x)[0]));     \
+        if (zpl__ah->capacity < zpl__ah->count+(item_count))            \
+            zpl_array_grow(x, zpl__ah->count+(item_count));             \
+        zpl_memcopy(&(x)[zpl__ah->count], (items), zpl_size_of((x)[0])*(item_count)); \
+        zpl__ah->count += (item_count);                                 \
     } while (0)
 
 
-#define zpl_array_remove_at(x, index) do { \
-        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x); \
-        ZPL_ASSERT(index < zpl__ah->count); \
+#define zpl_array_remove_at(x, index) do {                              \
+        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x);              \
+        ZPL_ASSERT(index < zpl__ah->count);                             \
         zpl_memcopy(x+index, x+index+1, zpl_size_of(x[0])*(zpl__ah->count - index)); \
-        --zpl__ah->count; \
+        --zpl__ah->count;                                               \
     } while (0)
 
 
@@ -1535,16 +1536,16 @@ extern "C" {
 #define zpl_array_pop(x)   do { ZPL_ASSERT(ZPL_ARRAY_HEADER(x)->count > 0); ZPL_ARRAY_HEADER(x)->count--; } while (0)
 #define zpl_array_clear(x) do { ZPL_ARRAY_HEADER(x)->count = 0; } while (0)
 
-#define zpl_array_resize(x, new_count) do { \
-        if (ZPL_ARRAY_HEADER(x)->capacity < (new_count)) \
-        zpl_array_grow(x, (new_count)); \
-        ZPL_ARRAY_HEADER(x)->count = (new_count); \
+#define zpl_array_resize(x, new_count) do {               \
+        if (ZPL_ARRAY_HEADER(x)->capacity < (new_count))  \
+            zpl_array_grow(x, (new_count));               \
+        ZPL_ARRAY_HEADER(x)->count = (new_count);         \
     } while (0)
 
 
-#define zpl_array_reserve(x, new_capacity) do { \
+#define zpl_array_reserve(x, new_capacity) do {             \
         if (ZPL_ARRAY_HEADER(x)->capacity < (new_capacity)) \
-        zpl_array_set_capacity(x, new_capacity); \
+            zpl_array_set_capacity(x, new_capacity);        \
     } while (0)
 
 
@@ -1577,20 +1578,20 @@ extern "C" {
 
 #define ZPL_BS_HEADER(x) (cast(zpl_bs_header_t *)(x) - 1)
 
-#define zpl_bs_init(x, allocator_, size) do { \
-        void **zpl__bs_ = cast(void **)&(x); \
+#define zpl_bs_init(x, allocator_, size) do {                           \
+        void **zpl__bs_ = cast(void **)&(x);                            \
         zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_bs_header_t) + size); \
-        zpl__bsh->allocator = allocator_; \
-        zpl__bsh->capacity  = size; \
-        zpl__bsh->read_pos  = 0; \
-        zpl__bsh->write_pos = 0; \
-        *zpl__bs_ = cast(void *)(zpl__bsh+1); \
+        zpl__bsh->allocator = allocator_;                               \
+        zpl__bsh->capacity  = size;                                     \
+        zpl__bsh->read_pos  = 0;                                        \
+        zpl__bsh->write_pos = 0;                                        \
+        *zpl__bs_ = cast(void *)(zpl__bsh+1);                           \
     } while (0)
 
-#define zpl_bs_free(x) do { \
+#define zpl_bs_free(x) do {                           \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        zpl_free(zpl__bsh->allocator, zpl__bsh); \
-        x = NULL; \
+        zpl_free(zpl__bsh->allocator, zpl__bsh);      \
+        x = NULL;                                     \
     } while (0)
 
 #define zpl_bs_capacity(x)  ZPL_BS_HEADER(x)->capacity
@@ -1598,34 +1599,34 @@ extern "C" {
 #define zpl_bs_write_pos(x) ZPL_BS_HEADER(x)->write_pos
 #define zpl_bs_size(x)      zpl_bs_write_pos(x)
 
-#define zpl_bs_write_size_at(x, value, size, offset) do { \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+#define zpl_bs_write_size_at(x, value, size, offset) do {               \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                   \
         ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + size <= zpl_bs_capacity(x), \
-            "zpl_bs_write: trying to write outside of the bounds"); \
+                       "zpl_bs_write: trying to write outside of the bounds"); \
         zpl_memcopy(x + (offset == 0) ? zpl__bsh->write_pos : offset, value, size); \
-        if (offset == 0) zpl__bsh->write_pos += size; \
+        if (offset == 0) zpl__bsh->write_pos += size;                   \
     } while (0)
 
-#define zpl_bs_read_size_at(x, value, size, offset) do { \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->read_pos : offset) + size <= zpl_bs_capacity(x), \
-            "zpl_bs_read: trying to read from outside of the bounds"); \
-        zpl_memcopy(value, x + ((offset == 0) ? zpl__bsh->read_pos : offset), size); \
-        if (offset == 0) zpl__bsh->read_pos += size; \
-    } while (0)
+#define zpl_bs_read_size_at(x, value, size, offset) do {                \
+            zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);               \
+            ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->read_pos : offset) + size <= zpl_bs_capacity(x), \
+                           "zpl_bs_read: trying to read from outside of the bounds"); \
+            zpl_memcopy(value, x + ((offset == 0) ? zpl__bsh->read_pos : offset), size); \
+            if (offset == 0) zpl__bsh->read_pos += size;                \
+        } while (0)
 
-#define zpl_bs_write_value_at(x, value, type, offset) do { \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
+#define zpl_bs_write_value_at(x, value, type, offset) do {              \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                   \
         ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) <= zpl_bs_capacity(x), \
-            "zpl_bs_write: trying to write outside of the bounds"); \
+                       "zpl_bs_write: trying to write outside of the bounds"); \
         *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value; \
-        if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type); \
+        if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type);      \
     } while (0)
 
-#define zpl_bs_read_value_at(x, type, offset) \
+#define zpl_bs_read_value_at(x, type, offset)                           \
     (zpl_size_of(type) + ((offset == 0) ? zpl_bs_read_pos(x) : offset) <= (zpl_bs_capacity(x))) \
     ? *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl_bs_read_pos(x) : offset)) \
-            : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); \
+    : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); \
     if (offset == 0) ZPL_BS_HEADER(x)->read_pos += zpl_size_of(type);
 
 #define zpl_bs_write_size(x, value, size)   zpl_bs_write_size_at(x, value, size, 0)
@@ -1740,135 +1741,135 @@ extern "C" {
         isize entry_index;
     } zpl_hash_table_find_result_t;
 
-#define ZPL_TABLE(PREFIX, NAME, FUNC, VALUE) \
+#define ZPL_TABLE(PREFIX, NAME, FUNC, VALUE)      \
     ZPL_TABLE_DECLARE(PREFIX, NAME, FUNC, VALUE); \
     ZPL_TABLE_DEFINE(NAME, FUNC, VALUE);
 
-#define ZPL_TABLE_DECLARE(PREFIX, NAME, FUNC, VALUE) \
-    typedef struct ZPL_JOIN2(NAME,Entry) { \
-        u64 key; \
-        isize next; \
-        VALUE value; \
-    } ZPL_JOIN2(NAME,Entry); \
-    \
-    typedef struct NAME { \
-        zpl_array_t(isize) hashes; \
-        zpl_array_t(ZPL_JOIN2(NAME,Entry)) entries; \
-    } NAME; \
-    \
+#define ZPL_TABLE_DECLARE(PREFIX, NAME, FUNC, VALUE)                    \
+    typedef struct ZPL_JOIN2(NAME,Entry) {                              \
+        u64 key;                                                        \
+        isize next;                                                     \
+        VALUE value;                                                    \
+    } ZPL_JOIN2(NAME,Entry);                                            \
+                                                                        \
+    typedef struct NAME {                                               \
+        zpl_array_t(isize) hashes;                                      \
+        zpl_array_t(ZPL_JOIN2(NAME,Entry)) entries;                     \
+    } NAME;                                                             \
+                                                                        \
     PREFIX void                  ZPL_JOIN2(FUNC,init)       (NAME *h, zpl_allocator_t a); \
-    PREFIX void                  ZPL_JOIN2(FUNC,destroy)    (NAME *h); \
+    PREFIX void                  ZPL_JOIN2(FUNC,destroy)    (NAME *h);  \
     PREFIX VALUE *               ZPL_JOIN2(FUNC,get)        (NAME *h, u64 key); \
     PREFIX void                  ZPL_JOIN2(FUNC,set)        (NAME *h, u64 key, VALUE value); \
-    PREFIX void                  ZPL_JOIN2(FUNC,grow)       (NAME *h); \
+    PREFIX void                  ZPL_JOIN2(FUNC,grow)       (NAME *h);  \
     PREFIX void                  ZPL_JOIN2(FUNC,rehash)     (NAME *h, isize new_count); \
 
 
 
 
 
-#define ZPL_TABLE_DEFINE(NAME, FUNC, VALUE) \
-    void ZPL_JOIN2(FUNC,init)(NAME *h, zpl_allocator_t a) { \
-        zpl_array_init(h->hashes,  a); \
-        zpl_array_init(h->entries, a); \
-    } \
-    \
-    void ZPL_JOIN2(FUNC,destroy)(NAME *h) { \
-        if (h->entries) zpl_array_free(h->entries); \
-        if (h->hashes)  zpl_array_free(h->hashes); \
-    } \
-    \
-    zpl_internal isize ZPL_JOIN2(FUNC,_add_entry)(NAME *h, u64 key) { \
-        isize index; \
-        ZPL_JOIN2(NAME,Entry) e = {0}; \
-        e.key = key; \
-        e.next = -1; \
-        index = zpl_array_count(h->entries); \
-        zpl_array_append(h->entries, e); \
-        return index; \
-    } \
-    \
+#define ZPL_TABLE_DEFINE(NAME, FUNC, VALUE)                             \
+    void ZPL_JOIN2(FUNC,init)(NAME *h, zpl_allocator_t a) {             \
+        zpl_array_init(h->hashes,  a);                                  \
+        zpl_array_init(h->entries, a);                                  \
+    }                                                                   \
+                                                                        \
+    void ZPL_JOIN2(FUNC,destroy)(NAME *h) {                             \
+        if (h->entries) zpl_array_free(h->entries);                     \
+        if (h->hashes)  zpl_array_free(h->hashes);                      \
+    }                                                                   \
+                                                                        \
+    zpl_internal isize ZPL_JOIN2(FUNC,_add_entry)(NAME *h, u64 key) {   \
+        isize index;                                                    \
+        ZPL_JOIN2(NAME,Entry) e = {0};                                  \
+        e.key = key;                                                    \
+        e.next = -1;                                                    \
+        index = zpl_array_count(h->entries);                            \
+        zpl_array_append(h->entries, e);                                \
+        return index;                                                   \
+    }                                                                   \
+                                                                        \
     zpl_internal zpl_hash_table_find_result_t ZPL_JOIN2(FUNC,_find)(NAME *h, u64 key) { \
-        zpl_hash_table_find_result_t r = {-1, -1, -1}; \
-        if (zpl_array_count(h->hashes) > 0) { \
-            r.hash_index  = key % zpl_array_count(h->hashes); \
-            r.entry_index = h->hashes[r.hash_index]; \
-            while (r.entry_index >= 0) { \
-                if (h->entries[r.entry_index].key == key) \
-                return r; \
-                r.entry_prev = r.entry_index; \
-                r.entry_index = h->entries[r.entry_index].next; \
-            } \
-        } \
-        return r; \
-    } \
-    \
-    zpl_internal b32 ZPL_JOIN2(FUNC,_full)(NAME *h) { \
+        zpl_hash_table_find_result_t r = {-1, -1, -1};                  \
+        if (zpl_array_count(h->hashes) > 0) {                           \
+            r.hash_index  = key % zpl_array_count(h->hashes);           \
+            r.entry_index = h->hashes[r.hash_index];                    \
+            while (r.entry_index >= 0) {                                \
+                if (h->entries[r.entry_index].key == key)               \
+                    return r;                                           \
+                r.entry_prev = r.entry_index;                           \
+                r.entry_index = h->entries[r.entry_index].next;         \
+            }                                                           \
+        }                                                               \
+        return r;                                                       \
+    }                                                                   \
+                                                                        \
+    zpl_internal b32 ZPL_JOIN2(FUNC,_full)(NAME *h) {                   \
         return 0.75f * zpl_array_count(h->hashes) < zpl_array_count(h->entries); \
-    } \
-    \
-    void ZPL_JOIN2(FUNC,grow)(NAME *h) { \
+    }                                                                   \
+                                                                        \
+    void ZPL_JOIN2(FUNC,grow)(NAME *h) {                                \
         isize new_count = ZPL_ARRAY_GROW_FORMULA(zpl_array_count(h->entries)); \
-        ZPL_JOIN2(FUNC,rehash)(h, new_count); \
-    } \
-    \
-    void ZPL_JOIN2(FUNC,rehash)(NAME *h, isize new_count) { \
-        isize i, j; \
-        NAME nh = {0}; \
-        ZPL_JOIN2(FUNC,init)(&nh, zpl_array_allocator(h->hashes)); \
-        zpl_array_resize(nh.hashes, new_count); \
-        zpl_array_reserve(nh.entries, zpl_array_count(h->entries)); \
-        for (i = 0; i < new_count; i++) \
-        nh.hashes[i] = -1; \
-        for (i = 0; i < zpl_array_count(h->entries); i++) { \
-            ZPL_JOIN2(NAME,Entry) *e; \
-            zpl_hash_table_find_result_t fr; \
-            if (zpl_array_count(nh.hashes) == 0) \
-            ZPL_JOIN2(FUNC,grow)(&nh); \
-            e = &nh.entries[i]; \
-            fr = ZPL_JOIN2(FUNC,_find)(&nh, e->key); \
-            j = ZPL_JOIN2(FUNC,_add_entry)(&nh, e->key); \
-            if (fr.entry_prev < 0) \
-            nh.hashes[fr.hash_index] = j; \
-            else \
-            nh.entries[fr.entry_prev].next = j; \
-            nh.entries[j].next = fr.entry_index; \
-            nh.entries[j].value = e->value; \
-            if (ZPL_JOIN2(FUNC,_full)(&nh)) \
-            ZPL_JOIN2(FUNC,grow)(&nh); \
-        } \
-        ZPL_JOIN2(FUNC,destroy)(h); \
-        h->hashes  = nh.hashes; \
-        h->entries = nh.entries; \
-    } \
-    \
-    VALUE *ZPL_JOIN2(FUNC,get)(NAME *h, u64 key) { \
-        isize index = ZPL_JOIN2(FUNC,_find)(h, key).entry_index; \
-        if (index >= 0) \
-        return &h->entries[index].value; \
-        return NULL; \
-    } \
-    \
-    void ZPL_JOIN2(FUNC,set)(NAME *h, u64 key, VALUE value) { \
-        isize index; \
-        zpl_hash_table_find_result_t fr; \
-        if (zpl_array_count(h->hashes) == 0) \
-        ZPL_JOIN2(FUNC,grow)(h); \
-        fr = ZPL_JOIN2(FUNC,_find)(h, key); \
-        if (fr.entry_index >= 0) { \
-            index = fr.entry_index; \
-        } else { \
-            index = ZPL_JOIN2(FUNC,_add_entry)(h, key); \
-            if (fr.entry_prev >= 0) { \
-                h->entries[fr.entry_prev].next = index; \
-            } else { \
-                h->hashes[fr.hash_index] = index; \
-            } \
-        } \
-        h->entries[index].value = value; \
-        if (ZPL_JOIN2(FUNC,_full)(h)) \
-        ZPL_JOIN2(FUNC,grow)(h); \
-    } \
+        ZPL_JOIN2(FUNC,rehash)(h, new_count);                           \
+    }                                                                   \
+                                                                        \
+    void ZPL_JOIN2(FUNC,rehash)(NAME *h, isize new_count) {             \
+        isize i, j;                                                     \
+        NAME nh = {0};                                                  \
+        ZPL_JOIN2(FUNC,init)(&nh, zpl_array_allocator(h->hashes));      \
+        zpl_array_resize(nh.hashes, new_count);                         \
+        zpl_array_reserve(nh.entries, zpl_array_count(h->entries));     \
+        for (i = 0; i < new_count; i++)                                 \
+            nh.hashes[i] = -1;                                          \
+        for (i = 0; i < zpl_array_count(h->entries); i++) {             \
+            ZPL_JOIN2(NAME,Entry) *e;                                   \
+            zpl_hash_table_find_result_t fr;                            \
+            if (zpl_array_count(nh.hashes) == 0)                        \
+                ZPL_JOIN2(FUNC,grow)(&nh);                              \
+            e = &nh.entries[i];                                         \
+            fr = ZPL_JOIN2(FUNC,_find)(&nh, e->key);                    \
+            j = ZPL_JOIN2(FUNC,_add_entry)(&nh, e->key);                \
+            if (fr.entry_prev < 0)                                      \
+                nh.hashes[fr.hash_index] = j;                           \
+            else                                                        \
+                nh.entries[fr.entry_prev].next = j;                     \
+            nh.entries[j].next = fr.entry_index;                        \
+            nh.entries[j].value = e->value;                             \
+            if (ZPL_JOIN2(FUNC,_full)(&nh))                             \
+                ZPL_JOIN2(FUNC,grow)(&nh);                              \
+        }                                                               \
+        ZPL_JOIN2(FUNC,destroy)(h);                                     \
+        h->hashes  = nh.hashes;                                         \
+        h->entries = nh.entries;                                        \
+    }                                                                   \
+                                                                        \
+    VALUE *ZPL_JOIN2(FUNC,get)(NAME *h, u64 key) {                      \
+        isize index = ZPL_JOIN2(FUNC,_find)(h, key).entry_index;        \
+        if (index >= 0)                                                 \
+            return &h->entries[index].value;                            \
+        return NULL;                                                    \
+    }                                                                   \
+                                                                        \
+    void ZPL_JOIN2(FUNC,set)(NAME *h, u64 key, VALUE value) {           \
+        isize index;                                                    \
+        zpl_hash_table_find_result_t fr;                                \
+        if (zpl_array_count(h->hashes) == 0)                            \
+            ZPL_JOIN2(FUNC,grow)(h);                                    \
+        fr = ZPL_JOIN2(FUNC,_find)(h, key);                             \
+        if (fr.entry_index >= 0) {                                      \
+            index = fr.entry_index;                                     \
+        } else {                                                        \
+            index = ZPL_JOIN2(FUNC,_add_entry)(h, key);                 \
+            if (fr.entry_prev >= 0) {                                   \
+                h->entries[fr.entry_prev].next = index;                 \
+            } else {                                                    \
+                h->hashes[fr.hash_index] = index;                       \
+            }                                                           \
+        }                                                               \
+        h->entries[index].value = value;                                \
+        if (ZPL_JOIN2(FUNC,_full)(h))                                   \
+            ZPL_JOIN2(FUNC,grow)(h);                                    \
+    }                                                                   \
 
 
 
@@ -1935,9 +1936,9 @@ extern "C" {
 
 
     // typedef struct zpl_dir_info_t {
-    // 	u8 *buf;
-    // 	isize buf_count;
-    // 	isize buf_pos;
+    //  u8 *buf;
+    //  isize buf_count;
+    //  isize buf_pos;
     // } zpl_dir_info_t;
 
     typedef u64 zpl_file_time_t;
@@ -2063,6 +2064,34 @@ extern "C" {
     ZPL_DEF void zpl_sleep_ms    (u32 ms);
 
 
+
+    /////////////////////////////////////////////////////////////
+    //
+    // Timer
+    //
+    //
+
+#define ZPL_TIMER_CB(name) void name()
+    typedef ZPL_TIMER_CB(zpl_timer_cb);
+
+    typedef struct zpl_timer_t {
+        zpl_timer_cb *callback;
+        b32           enabled;
+        i32           remaining_calls;
+        i32           initial_calls;
+        u64           next_call_ts;
+        u64           duration;
+    } zpl_timer_t;
+
+    typedef zpl_array_t(zpl_timer_t) zpl_timer_pool;
+
+    ZPL_DEF zpl_timer_t *zpl_timer_add(zpl_timer_pool pool);
+    ZPL_DEF void         zpl_timer_update(zpl_timer_pool pool);
+
+    ZPL_DEF void         zpl_timer_set(zpl_timer_t *timer, u64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count, zpl_timer_cb *callback);
+    ZPL_DEF void         zpl_timer_start(zpl_timer_t *timer, u64 delay_start);
+    ZPL_DEF void         zpl_timer_stop(zpl_timer_t *timer);
+
     ////////////////////////////////////////////////////////////////
     //
     // Miscellany
@@ -2095,9 +2124,7 @@ extern "C" {
 
     ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_DEF u32 zpl_system_command(char const *command, char *buffer);
-#endif
 
 #if defined(__cplusplus)
 }
@@ -2978,9 +3005,9 @@ extern "C" {
     ZPL_DLL_IMPORT UINT WINAPI MapVirtualKeyW(UINT code, UINT map_type);
 
 
-#define CS_DBLCLKS 		0x0008
-#define CS_VREDRAW 		0x0001
-#define CS_HREDRAW 		0x0002
+#define CS_DBLCLKS    0x0008
+#define CS_VREDRAW    0x0001
+#define CS_HREDRAW    0x0002
 
 #define MB_OK              0x0000l
 #define MB_ICONSTOP        0x0010l
@@ -3010,7 +3037,7 @@ extern "C" {
 #define WS_MINIMIZE         0x20000000
 #define WS_MINIMIZEBOX      0x00020000
 #define WS_POPUP            0x80000000
-#define WS_OVERLAPPED	    0
+#define WS_OVERLAPPED     0
 #define WS_OVERLAPPEDWINDOW	0xcf0000
 #define CW_USEDEFAULT       0x80000000
 #define WS_BORDER           0x800000
@@ -3140,11 +3167,11 @@ extern "C" {
     ZPL_DLL_IMPORT LRESULT WINAPI DispatchMessageW(MSG const *lpMsg);
 
     typedef  enum
-    {
-        DIB_RGB_COLORS  = 0x00,
-        DIB_PAL_COLORS  = 0x01,
-        DIB_PAL_INDICES = 0x02
-    } DIBColors;
+        {
+            DIB_RGB_COLORS  = 0x00,
+            DIB_PAL_COLORS  = 0x01,
+            DIB_PAL_INDICES = 0x02
+        } DIBColors;
 
 #define SRCCOPY     (u32)0x00CC0020
 #define SRCPAINT    (u32)0x00EE0086
@@ -3289,67 +3316,67 @@ extern "C" {
 #define RS <<
 #endif
             switch (cast(uintptr)d % 4) {
-                case 1: {
-                    w = *cast(u32 *)s;
-                    *d++ = *s++;
-                    *d++ = *s++;
-                    *d++ = *s++;
-                    n -= 3;
-                    while (n > 16) {
-                        x = *cast(u32 *)(s+1);
-                        *cast(u32 *)(d+0)  = (w LS 24) | (x RS 8);
-                        w = *cast(u32 *)(s+5);
-                        *cast(u32 *)(d+4)  = (x LS 24) | (w RS 8);
-                        x = *cast(u32 *)(s+9);
-                        *cast(u32 *)(d+8)  = (w LS 24) | (x RS 8);
-                        w = *cast(u32 *)(s+13);
-                        *cast(u32 *)(d+12) = (x LS 24) | (w RS 8);
+            case 1: {
+                w = *cast(u32 *)s;
+                *d++ = *s++;
+                *d++ = *s++;
+                *d++ = *s++;
+                n -= 3;
+                while (n > 16) {
+                    x = *cast(u32 *)(s+1);
+                    *cast(u32 *)(d+0)  = (w LS 24) | (x RS 8);
+                    w = *cast(u32 *)(s+5);
+                    *cast(u32 *)(d+4)  = (x LS 24) | (w RS 8);
+                    x = *cast(u32 *)(s+9);
+                    *cast(u32 *)(d+8)  = (w LS 24) | (x RS 8);
+                    w = *cast(u32 *)(s+13);
+                    *cast(u32 *)(d+12) = (x LS 24) | (w RS 8);
 
-                        s += 16;
-                        d += 16;
-                        n -= 16;
-                    }
-                } break;
-                case 2: {
-                    w = *cast(u32 *)s;
-                    *d++ = *s++;
-                    *d++ = *s++;
-                    n -= 2;
-                    while (n > 17) {
-                        x = *cast(u32 *)(s+2);
-                        *cast(u32 *)(d+0)  = (w LS 16) | (x RS 16);
-                        w = *cast(u32 *)(s+6);
-                        *cast(u32 *)(d+4)  = (x LS 16) | (w RS 16);
-                        x = *cast(u32 *)(s+10);
-                        *cast(u32 *)(d+8)  = (w LS 16) | (x RS 16);
-                        w = *cast(u32 *)(s+14);
-                        *cast(u32 *)(d+12) = (x LS 16) | (w RS 16);
+                    s += 16;
+                    d += 16;
+                    n -= 16;
+                }
+            } break;
+            case 2: {
+                w = *cast(u32 *)s;
+                *d++ = *s++;
+                *d++ = *s++;
+                n -= 2;
+                while (n > 17) {
+                    x = *cast(u32 *)(s+2);
+                    *cast(u32 *)(d+0)  = (w LS 16) | (x RS 16);
+                    w = *cast(u32 *)(s+6);
+                    *cast(u32 *)(d+4)  = (x LS 16) | (w RS 16);
+                    x = *cast(u32 *)(s+10);
+                    *cast(u32 *)(d+8)  = (w LS 16) | (x RS 16);
+                    w = *cast(u32 *)(s+14);
+                    *cast(u32 *)(d+12) = (x LS 16) | (w RS 16);
 
-                        s += 16;
-                        d += 16;
-                        n -= 16;
-                    }
-                } break;
-                case 3: {
-                    w = *cast(u32 *)s;
-                    *d++ = *s++;
-                    n -= 1;
-                    while (n > 18) {
-                        x = *cast(u32 *)(s+3);
-                        *cast(u32 *)(d+0)  = (w LS 8) | (x RS 24);
-                        w = *cast(u32 *)(s+7);
-                        *cast(u32 *)(d+4)  = (x LS 8) | (w RS 24);
-                        x = *cast(u32 *)(s+11);
-                        *cast(u32 *)(d+8)  = (w LS 8) | (x RS 24);
-                        w = *cast(u32 *)(s+15);
-                        *cast(u32 *)(d+12) = (x LS 8) | (w RS 24);
+                    s += 16;
+                    d += 16;
+                    n -= 16;
+                }
+            } break;
+            case 3: {
+                w = *cast(u32 *)s;
+                *d++ = *s++;
+                n -= 1;
+                while (n > 18) {
+                    x = *cast(u32 *)(s+3);
+                    *cast(u32 *)(d+0)  = (w LS 8) | (x RS 24);
+                    w = *cast(u32 *)(s+7);
+                    *cast(u32 *)(d+4)  = (x LS 8) | (w RS 24);
+                    x = *cast(u32 *)(s+11);
+                    *cast(u32 *)(d+8)  = (w LS 8) | (x RS 24);
+                    w = *cast(u32 *)(s+15);
+                    *cast(u32 *)(d+12) = (x LS 8) | (w RS 24);
 
-                        s += 16;
-                        d += 16;
-                        n -= 16;
-                    }
-                } break;
-                default: break; // NOTE: Do nowt!
+                    s += 16;
+                    d += 16;
+                    n -= 16;
+                }
+            } break;
+            default: break; // NOTE: Do nowt!
             }
 #undef LS
 #undef RS
@@ -3382,7 +3409,7 @@ extern "C" {
         if (d == s)
             return d;
         if (s+n <= d || d+n <= s) // NOTE: Non-overlapping
-        return zpl_memcopy(d, s, n);
+            return zpl_memcopy(d, s, n);
 
         if (d < s) {
             if (cast(uintptr)s % zpl_size_of(isize) == cast(uintptr)d % zpl_size_of(isize)) {
@@ -3671,7 +3698,7 @@ extern "C" {
             mov esi, a;
             mov ebx, dword ptr value;
             mov ecx, dword ptr value[4];
-            retry:
+        retry:
             cmpxchg8b [esi];
             jne retry;
         }
@@ -3758,10 +3785,10 @@ extern "C" {
     zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32_t volatile *a, i32 expected, i32 desired) {
         i32 original;
         __asm__ volatile(
-            "lock; cmpxchgl %2, %1"
-            : "=a"(original), "+m"(a->value)
-            : "q"(desired), "0"(expected)
-            );
+                         "lock; cmpxchgl %2, %1"
+                         : "=a"(original), "+m"(a->value)
+                         : "q"(desired), "0"(expected)
+                         );
         return original;
     }
 
@@ -3769,20 +3796,20 @@ extern "C" {
         // NOTE: No lock prefix is necessary for xchgl
         i32 original;
         __asm__ volatile(
-            "xchgl %0, %1"
-            : "=r"(original), "+m"(a->value)
-            : "0"(desired)
-            );
+                         "xchgl %0, %1"
+                         : "=r"(original), "+m"(a->value)
+                         : "0"(desired)
+                         );
         return original;
     }
 
     zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32_t volatile *a, i32 operand) {
         i32 original;
         __asm__ volatile(
-            "lock; xaddl %0, %1"
-            : "=r"(original), "+m"(a->value)
-            : "0"(operand)
-            );
+                         "lock; xaddl %0, %1"
+                         : "=r"(original), "+m"(a->value)
+                         : "0"(operand)
+                         );
         return original;
     }
 
@@ -3790,14 +3817,14 @@ extern "C" {
         i32 original;
         i32 tmp;
         __asm__ volatile(
-            "1:     movl    %1, %0\n"
-            "       movl    %0, %2\n"
-            "       andl    %3, %2\n"
-            "       lock; cmpxchgl %2, %1\n"
-            "       jne     1b"
-            : "=&a"(original), "+m"(a->value), "=&r"(tmp)
-            : "r"(operand)
-            );
+                         "1:     movl    %1, %0\n"
+                         "       movl    %0, %2\n"
+                         "       andl    %3, %2\n"
+                         "       lock; cmpxchgl %2, %1\n"
+                         "       jne     1b"
+                         : "=&a"(original), "+m"(a->value), "=&r"(tmp)
+                         : "r"(operand)
+                         );
         return original;
     }
 
@@ -3805,14 +3832,14 @@ extern "C" {
         i32 original;
         i32 temp;
         __asm__ volatile(
-            "1:     movl    %1, %0\n"
-            "       movl    %0, %2\n"
-            "       orl     %3, %2\n"
-            "       lock; cmpxchgl %2, %1\n"
-            "       jne     1b"
-            : "=&a"(original), "+m"(a->value), "=&r"(temp)
-            : "r"(operand)
-            );
+                         "1:     movl    %1, %0\n"
+                         "       movl    %0, %2\n"
+                         "       orl     %3, %2\n"
+                         "       lock; cmpxchgl %2, %1\n"
+                         "       jne     1b"
+                         : "=&a"(original), "+m"(a->value), "=&r"(temp)
+                         : "r"(operand)
+                         );
         return original;
     }
 
@@ -3823,12 +3850,12 @@ extern "C" {
 #else
         i64 original;
         __asm__ volatile(
-            "movl %%ebx, %%eax\n"
-            "movl %%ecx, %%edx\n"
-            "lock; cmpxchg8b %1"
-            : "=&A"(original)
-            : "m"(a->value)
-            );
+                         "movl %%ebx, %%eax\n"
+                         "movl %%ecx, %%edx\n"
+                         "lock; cmpxchg8b %1"
+                         : "=&A"(original)
+                         : "m"(a->value)
+                         );
         return original;
 #endif
     }
@@ -3839,11 +3866,11 @@ extern "C" {
 #else
         i64 expected = a->value;
         __asm__ volatile(
-            "1:    cmpxchg8b %0\n"
-            "      jne 1b"
-            : "=m"(a->value)
-            : "b"((i32)value), "c"((i32)(value >> 32)), "A"(expected)
-            );
+                         "1:    cmpxchg8b %0\n"
+                         "      jne 1b"
+                         : "=m"(a->value)
+                         : "b"((i32)value), "c"((i32)(value >> 32)), "A"(expected)
+                         );
 #endif
     }
 
@@ -3851,18 +3878,18 @@ extern "C" {
 #if defined(ZPL_ARCH_64_BIT)
         i64 original;
         __asm__ volatile(
-            "lock; cmpxchgq %2, %1"
-            : "=a"(original), "+m"(a->value)
-            : "q"(desired), "0"(expected)
-            );
+                         "lock; cmpxchgq %2, %1"
+                         : "=a"(original), "+m"(a->value)
+                         : "q"(desired), "0"(expected)
+                         );
         return original;
 #else
         i64 original;
         __asm__ volatile(
-            "lock; cmpxchg8b %1"
-            : "=A"(original), "+m"(a->value)
-            : "b"((i32)desired), "c"((i32)(desired >> 32)), "0"(expected)
-            );
+                         "lock; cmpxchg8b %1"
+                         : "=A"(original), "+m"(a->value)
+                         : "b"((i32)desired), "c"((i32)(desired >> 32)), "0"(expected)
+                         );
         return original;
 #endif
     }
@@ -3871,10 +3898,10 @@ extern "C" {
 #if defined(ZPL_ARCH_64_BIT)
         i64 original;
         __asm__ volatile(
-            "xchgq %0, %1"
-            : "=r"(original), "+m"(a->value)
-            : "0"(desired)
-            );
+                         "xchgq %0, %1"
+                         : "=r"(original), "+m"(a->value)
+                         : "0"(desired)
+                         );
         return original;
 #else
         i64 original = a->value;
@@ -3891,10 +3918,10 @@ extern "C" {
 #if defined(ZPL_ARCH_64_BIT)
         i64 original;
         __asm__ volatile(
-            "lock; xaddq %0, %1"
-            : "=r"(original), "+m"(a->value)
-            : "0"(operand)
-            );
+                         "lock; xaddq %0, %1"
+                         : "=r"(original), "+m"(a->value)
+                         : "0"(operand)
+                         );
         return original;
 #else
         for (;;) {
@@ -3910,14 +3937,14 @@ extern "C" {
         i64 original;
         i64 tmp;
         __asm__ volatile(
-            "1:     movq    %1, %0\n"
-            "       movq    %0, %2\n"
-            "       andq    %3, %2\n"
-            "       lock; cmpxchgq %2, %1\n"
-            "       jne     1b"
-            : "=&a"(original), "+m"(a->value), "=&r"(tmp)
-            : "r"(operand)
-            );
+                         "1:     movq    %1, %0\n"
+                         "       movq    %0, %2\n"
+                         "       andq    %3, %2\n"
+                         "       lock; cmpxchgq %2, %1\n"
+                         "       jne     1b"
+                         : "=&a"(original), "+m"(a->value), "=&r"(tmp)
+                         : "r"(operand)
+                         );
         return original;
 #else
         for (;;) {
@@ -3933,14 +3960,14 @@ extern "C" {
         i64 original;
         i64 temp;
         __asm__ volatile(
-            "1:     movq    %1, %0\n"
-            "       movq    %0, %2\n"
-            "       orq     %3, %2\n"
-            "       lock; cmpxchgq %2, %1\n"
-            "       jne     1b"
-            : "=&a"(original), "+m"(a->value), "=&r"(temp)
-            : "r"(operand)
-            );
+                         "1:     movq    %1, %0\n"
+                         "       movq    %0, %2\n"
+                         "       orq     %3, %2\n"
+                         "       lock; cmpxchgq %2, %1\n"
+                         "       jne     1b"
+                         : "=&a"(original), "+m"(a->value), "=&r"(temp)
+                         : "r"(operand)
+                         );
         return original;
 #else
         for (;;) {
@@ -4332,7 +4359,7 @@ extern "C" {
         pthread_setname_np(name);
 #else
         // TODO: Test if this works
-//        pthread_set_name_np(t->posix_handle, name);
+        //        pthread_set_name_np(t->posix_handle, name);
 #endif
     }
 
@@ -4428,38 +4455,38 @@ extern "C" {
         // TODO: Throughly test!
         switch (type) {
 #if defined(ZPL_COMPILER_MSVC)
-            case zpl_allocation_alloc_ev:
+        case zpl_allocation_alloc_ev:
             ptr = _aligned_malloc(size, alignment);
             if (flags & zpl_allocator_flag_clear_to_zero_ev)
                 zpl_zero_size(ptr, size);
             break;
-            case zpl_allocation_free_ev:
+        case zpl_allocation_free_ev:
             _aligned_free(old_memory);
             break;
-            case zpl_allocation_resize_ev:
+        case zpl_allocation_resize_ev:
             ptr = _aligned_realloc(old_memory, size, alignment);
             break;
 #else
             // TODO: *nix version that's decent
-            case zpl_allocation_alloc_ev: {
-                posix_memalign(&ptr, alignment, size);
+        case zpl_allocation_alloc_ev: {
+            posix_memalign(&ptr, alignment, size);
 
-                if (flags & zpl_allocator_flag_clear_to_zero_ev) {
-                    zpl_zero_size(ptr, size);
-                }
-            } break;
+            if (flags & zpl_allocator_flag_clear_to_zero_ev) {
+                zpl_zero_size(ptr, size);
+            }
+        } break;
 
-            case zpl_allocation_free_ev: {
-                free(old_memory);
-            } break;
+        case zpl_allocation_free_ev: {
+            free(old_memory);
+        } break;
 
-            case zpl_allocation_resize_ev: {
-                zpl_allocator_t a = zpl_heap_allocator();
-                ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
-            } break;
+        case zpl_allocation_resize_ev: {
+            zpl_allocator_t a = zpl_heap_allocator();
+            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
+        } break;
 #endif
 
-            case zpl_allocation_free_all_ev:
+        case zpl_allocation_free_all_ev:
             break;
         }
 
@@ -4886,36 +4913,36 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-            case zpl_allocation_alloc_ev: {
-                void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
-                isize total_size = size + alignment;
+        case zpl_allocation_alloc_ev: {
+            void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
+            isize total_size = size + alignment;
 
-                // NOTE: Out of memory
-                if (arena->total_allocated + total_size > cast(isize)arena->total_size) {
-                    zpl_printf_err("Arena out of memory\n");
-                    return NULL;
-                }
+            // NOTE: Out of memory
+            if (arena->total_allocated + total_size > cast(isize)arena->total_size) {
+                zpl_printf_err("Arena out of memory\n");
+                return NULL;
+            }
 
-                ptr = zpl_align_forward(end, alignment);
-                arena->total_allocated += total_size;
-                if (flags & zpl_allocator_flag_clear_to_zero_ev)
-                    zpl_zero_size(ptr, size);
-            } break;
+            ptr = zpl_align_forward(end, alignment);
+            arena->total_allocated += total_size;
+            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+                zpl_zero_size(ptr, size);
+        } break;
 
-            case zpl_allocation_free_ev:
+        case zpl_allocation_free_ev:
             // NOTE: Free all at once
             // Use Temp_Arena_Memory if you want to free a block
             break;
 
-            case zpl_allocation_free_all_ev:
+        case zpl_allocation_free_all_ev:
             arena->total_allocated = 0;
             break;
 
-            case zpl_allocation_resize_ev: {
-                // TODO: Check if ptr is on top of stack and just extend
-                zpl_allocator_t a = zpl_arena_allocator(arena);
-                ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
-            } break;
+        case zpl_allocation_resize_ev: {
+            // TODO: Check if ptr is on top of stack and just extend
+            zpl_allocator_t a = zpl_arena_allocator(arena);
+            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
+        } break;
         }
         return ptr;
     }
@@ -4999,35 +5026,35 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-            case zpl_allocation_alloc_ev: {
-                uintptr next_free;
-                ZPL_ASSERT(size      == pool->block_size);
-                ZPL_ASSERT(alignment == pool->block_align);
-                ZPL_ASSERT(pool->free_list != NULL);
+        case zpl_allocation_alloc_ev: {
+            uintptr next_free;
+            ZPL_ASSERT(size      == pool->block_size);
+            ZPL_ASSERT(alignment == pool->block_align);
+            ZPL_ASSERT(pool->free_list != NULL);
 
-                next_free = *cast(uintptr *)pool->free_list;
-                ptr = pool->free_list;
-                pool->free_list = cast(void *)next_free;
-                pool->total_size += pool->block_size;
-                if (flags & zpl_allocator_flag_clear_to_zero_ev)
-                    zpl_zero_size(ptr, size);
-            } break;
+            next_free = *cast(uintptr *)pool->free_list;
+            ptr = pool->free_list;
+            pool->free_list = cast(void *)next_free;
+            pool->total_size += pool->block_size;
+            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+                zpl_zero_size(ptr, size);
+        } break;
 
-            case zpl_allocation_free_ev: {
-                uintptr *next;
-                if (old_memory == NULL) return NULL;
+        case zpl_allocation_free_ev: {
+            uintptr *next;
+            if (old_memory == NULL) return NULL;
 
-                next = cast(uintptr *)old_memory;
-                *next = cast(uintptr)pool->free_list;
-                pool->free_list = old_memory;
-                pool->total_size -= pool->block_size;
-            } break;
+            next = cast(uintptr *)old_memory;
+            *next = cast(uintptr)pool->free_list;
+            pool->free_list = old_memory;
+            pool->total_size -= pool->block_size;
+        } break;
 
-            case zpl_allocation_free_all_ev:
+        case zpl_allocation_free_all_ev:
             // TODO:
             break;
 
-            case zpl_allocation_resize_ev:
+        case zpl_allocation_resize_ev:
             // NOTE: Cannot resize
             ZPL_PANIC("You cannot resize something allocated by with a pool.");
             break;
@@ -5088,65 +5115,65 @@ extern "C" {
         ZPL_ASSERT_NOT_NULL(s);
 
         switch (type) {
-            case zpl_allocation_alloc_ev: {
-                void *pt = s->alloc_point;
-                zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)pt;
-                void *data = zpl_align_forward(header+1, alignment);
-                void *end = zpl_pointer_add(s->physical_start, s->total_size);
+        case zpl_allocation_alloc_ev: {
+            void *pt = s->alloc_point;
+            zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)pt;
+            void *data = zpl_align_forward(header+1, alignment);
+            void *end = zpl_pointer_add(s->physical_start, s->total_size);
 
-                ZPL_ASSERT(alignment % 4 == 0);
-                size = ((size + 3)/4)*4;
+            ZPL_ASSERT(alignment % 4 == 0);
+            size = ((size + 3)/4)*4;
+            pt = zpl_pointer_add(pt, size);
+
+            // NOTE: Wrap around
+            if (pt > end) {
+                header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
+                pt = s->physical_start;
+                header = cast(zpl_allocation_header_ev *)pt;
+                data = zpl_align_forward(header+1, alignment);
                 pt = zpl_pointer_add(pt, size);
+            }
 
-                // NOTE: Wrap around
-                if (pt > end) {
-                    header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
-                    pt = s->physical_start;
-                    header = cast(zpl_allocation_header_ev *)pt;
-                    data = zpl_align_forward(header+1, alignment);
-                    pt = zpl_pointer_add(pt, size);
-                }
+            if (!zpl_scratch_memory_is_in_use(s, pt)) {
+                zpl_allocation_header_fill(header, pt, zpl_pointer_diff(header, pt));
+                s->alloc_point = cast(u8 *)pt;
+                ptr = data;
+            }
 
-                if (!zpl_scratch_memory_is_in_use(s, pt)) {
-                    zpl_allocation_header_fill(header, pt, zpl_pointer_diff(header, pt));
-                    s->alloc_point = cast(u8 *)pt;
-                    ptr = data;
-                }
+            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+                zpl_zero_size(ptr, size);
+        } break;
 
-                if (flags & zpl_allocator_flag_clear_to_zero_ev)
-                    zpl_zero_size(ptr, size);
-            } break;
+        case zpl_allocation_free_ev: {
+            if (old_memory) {
+                void *end = zpl_pointer_add(s->physical_start, s->total_size);
+                if (old_memory < s->physical_start || old_memory >= end) {
+                    ZPL_ASSERT(false);
+                } else {
+                    // NOTE: Mark as free
+                    zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
+                    ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
+                    h->size = h->size | ZPL_ISIZE_HIGH_BIT;
 
-            case zpl_allocation_free_ev: {
-                if (old_memory) {
-                    void *end = zpl_pointer_add(s->physical_start, s->total_size);
-                    if (old_memory < s->physical_start || old_memory >= end) {
-                        ZPL_ASSERT(false);
-                    } else {
-                        // NOTE: Mark as free
-                        zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
-                        ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
-                        h->size = h->size | ZPL_ISIZE_HIGH_BIT;
+                    while (s->free_point != s->alloc_point) {
+                        zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)s->free_point;
+                        if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0)
+                            break;
 
-                        while (s->free_point != s->alloc_point) {
-                            zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)s->free_point;
-                            if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0)
-                                break;
-
-                            s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
-                            if (s->free_point == end)
-                                s->free_point = s->physical_start;
-                        }
+                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
+                        if (s->free_point == end)
+                            s->free_point = s->physical_start;
                     }
                 }
-            } break;
+            }
+        } break;
 
-            case zpl_allocation_free_all_ev:
+        case zpl_allocation_free_all_ev:
             s->alloc_point = s->physical_start;
             s->free_point  = s->physical_start;
             break;
 
-            case zpl_allocation_resize_ev:
+        case zpl_allocation_resize_ev:
             ptr = zpl_default_resize_align(zpl_scratch_allocator(s), old_memory, old_size, size, alignment);
             break;
         }
@@ -5166,7 +5193,7 @@ extern "C" {
         s->total_size = size;
         s->allocated = 0;
     }
-    
+
     zpl_inline void zpl_stack_memory_init(zpl_stack_memory_t *s, zpl_allocator_t backing, isize size) {
         s->backing = backing;
         s->physical_start = zpl_alloc(backing, size);
@@ -5183,7 +5210,7 @@ extern "C" {
 
         return false;
     }
-    
+
     zpl_inline void zpl_stack_memory_free(zpl_stack_memory_t *s) {
         if (s->backing.proc) {
             zpl_free(s->backing, s->physical_start);
@@ -5210,54 +5237,54 @@ extern "C" {
         ZPL_ASSERT_NOT_NULL(s);
 
         switch(type) {
-            case zpl_allocation_alloc_ev: {
-                size += ZPL_STACK_ALLOC_OFFSET;
-                u64 alloc_offset = s->allocated;
+        case zpl_allocation_alloc_ev: {
+            size += ZPL_STACK_ALLOC_OFFSET;
+            u64 alloc_offset = s->allocated;
 
-                void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)s->physical_start + s->allocated + ZPL_STACK_ALLOC_OFFSET, alignment) - ZPL_STACK_ALLOC_OFFSET;
+            void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)s->physical_start + s->allocated + ZPL_STACK_ALLOC_OFFSET, alignment) - ZPL_STACK_ALLOC_OFFSET;
 
-                if (cast(u64 *)curr + size > cast(u64 *)zpl_pointer_add(s->physical_start, s->total_size)) {
-                    if (s->backing.proc) {
-                        s->physical_start = zpl_resize_align(s->backing, s->physical_start, s->total_size, s->total_size + size, alignment);
-                        s->total_size += size;
-                    }
-                    else {
-                        ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
-                    }
+            if (cast(u64 *)curr + size > cast(u64 *)zpl_pointer_add(s->physical_start, s->total_size)) {
+                if (s->backing.proc) {
+                    s->physical_start = zpl_resize_align(s->backing, s->physical_start, s->total_size, s->total_size + size, alignment);
+                    s->total_size += size;
                 }
+                else {
+                    ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
+                }
+            }
 
-                s->allocated = zpl_pointer_diff(curr, s->physical_start);
+            s->allocated = zpl_pointer_diff(curr, s->physical_start);
 
+            zpl_stack_memory_header_t h;
+
+            h.a_u8 = cast(u8 *)curr;
+            *h.a_u64 = alloc_offset;
+            h.a_u8 += ZPL_STACK_ALLOC_OFFSET;
+
+            ptr = h.a_ptr;
+            s->allocated += size;
+        }break;
+
+        case zpl_allocation_free_ev: {
+            if (old_memory) {
                 zpl_stack_memory_header_t h;
 
-                h.a_u8 = cast(u8 *)curr;
-                *h.a_u64 = alloc_offset;
-                h.a_u8 += ZPL_STACK_ALLOC_OFFSET;
+                h.a_ptr = old_memory;
+                h.a_u8 -= ZPL_STACK_ALLOC_OFFSET;
 
-                ptr = h.a_ptr;
-                s->allocated += size;
-            }break;
+                u64 alloc_offset = *h.a_u64;
 
-            case zpl_allocation_free_ev: {
-                if (old_memory) {
-                    zpl_stack_memory_header_t h;
+                s->allocated = alloc_offset;
+            }
+        }break;
 
-                    h.a_ptr = old_memory;
-                    h.a_u8 -= ZPL_STACK_ALLOC_OFFSET;
+        case zpl_allocation_free_all_ev: {
+            s->allocated = 0;
+        }break;
 
-                    u64 alloc_offset = *h.a_u64;
-
-                    s->allocated = alloc_offset;
-                }
-            }break;
-
-            case zpl_allocation_free_all_ev: {
-                s->allocated = 0;
-            }break;
-
-            case zpl_allocation_resize_ev: {
-                ZPL_PANIC("You cannot resize something allocated by a stack.");
-            }break;
+        case zpl_allocation_resize_ev: {
+            ZPL_PANIC("You cannot resize something allocated by a stack.");
+        }break;
         }
         return ptr;
     }
@@ -5270,15 +5297,15 @@ extern "C" {
 
     // TODO: Should I make all the macros local?
 
-#define ZPL__COMPARE_PROC(Type) \
+#define ZPL__COMPARE_PROC(Type)                                         \
     zpl_global isize zpl__##Type##_cmp_offset; ZPL_COMPARE_PROC(zpl__##Type##_cmp) { \
         Type const p = *cast(Type const *)zpl_pointer_add_const(a, zpl__##Type##_cmp_offset); \
         Type const q = *cast(Type const *)zpl_pointer_add_const(b, zpl__##Type##_cmp_offset); \
-        return p < q ? -1 : p > q; \
-    } \
-    ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(isize offset)) { \
-        zpl__##Type##_cmp_offset = offset; \
-        return &zpl__##Type##_cmp; \
+        return p < q ? -1 : p > q;                                      \
+    }                                                                   \
+    ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(isize offset)) {              \
+        zpl__##Type##_cmp_offset = offset;                              \
+        return &zpl__##Type##_cmp;                                      \
     }
 
 
@@ -5310,17 +5337,17 @@ extern "C" {
 #define ZPL__SORT_STACK_SIZE            64
 #define ZPL__SORT_INSERT_SORT_THRESHOLD  8
 
-#define ZPL__SORT_PUSH(_base, _limit) do { \
-        stack_ptr[0] = (_base); \
-        stack_ptr[1] = (_limit); \
-        stack_ptr += 2; \
+#define ZPL__SORT_PUSH(_base, _limit) do {      \
+        stack_ptr[0] = (_base);                 \
+        stack_ptr[1] = (_limit);                \
+        stack_ptr += 2;                         \
     } while (0)
 
 
-#define ZPL__SORT_POP(_base, _limit) do { \
-        stack_ptr -= 2; \
-        (_base)  = stack_ptr[0]; \
-        (_limit) = stack_ptr[1]; \
+#define ZPL__SORT_POP(_base, _limit) do {       \
+        stack_ptr -= 2;                         \
+        (_base)  = stack_ptr[0];                \
+        (_limit) = stack_ptr[1];                \
     } while (0)
 
 
@@ -5383,33 +5410,33 @@ extern "C" {
 #undef ZPL__SORT_POP
 
 
-#define ZPL_RADIX_SORT_PROC_GEN(Type) ZPL_RADIX_SORT_PROC(Type) { \
-        Type *source = items; \
-        Type *dest   = temp; \
-        isize byte_index, i, byte_max = 8*zpl_size_of(Type); \
-        for (byte_index = 0; byte_index < byte_max; byte_index += 8) { \
-            isize offsets[256] = {0}; \
-            isize total = 0; \
-            /* NOTE: First pass - count how many of each key */ \
-            for (i = 0; i < count; i++) { \
-                Type radix_value = source[i]; \
-                Type radix_piece = (radix_value >> byte_index) & 0xff; \
-                offsets[radix_piece]++; \
-            } \
-            /* NOTE: Change counts to offsets */ \
-            for (i = 0; i < zpl_count_of(offsets); i++) { \
-                isize skcount = offsets[i]; \
-                offsets[i] = total; \
-                total += skcount; \
-            } \
+#define ZPL_RADIX_SORT_PROC_GEN(Type) ZPL_RADIX_SORT_PROC(Type) {       \
+        Type *source = items;                                           \
+        Type *dest   = temp;                                            \
+        isize byte_index, i, byte_max = 8*zpl_size_of(Type);            \
+        for (byte_index = 0; byte_index < byte_max; byte_index += 8) {  \
+            isize offsets[256] = {0};                                   \
+            isize total = 0;                                            \
+            /* NOTE: First pass - count how many of each key */         \
+            for (i = 0; i < count; i++) {                               \
+                Type radix_value = source[i];                           \
+                Type radix_piece = (radix_value >> byte_index) & 0xff;  \
+                offsets[radix_piece]++;                                 \
+            }                                                           \
+            /* NOTE: Change counts to offsets */                        \
+            for (i = 0; i < zpl_count_of(offsets); i++) {               \
+                isize skcount = offsets[i];                             \
+                offsets[i] = total;                                     \
+                total += skcount;                                       \
+            }                                                           \
             /* NOTE: Second pass - place elements into the right location */ \
-            for (i = 0; i < count; i++) { \
-                Type radix_value = source[i]; \
-                Type radix_piece = (radix_value >> byte_index) & 0xff; \
-                dest[offsets[radix_piece]++] = source[i]; \
-            } \
-            zpl_swap(Type *, source, dest); \
-        } \
+            for (i = 0; i < count; i++) {                               \
+                Type radix_value = source[i];                           \
+                Type radix_piece = (radix_value >> byte_index) & 0xff;  \
+                dest[offsets[radix_piece]++] = source[i];               \
+            }                                                           \
+            zpl_swap(Type *, source, dest);                             \
+        }                                                               \
     }
 
     ZPL_RADIX_SORT_PROC_GEN(u8);
@@ -6163,7 +6190,7 @@ extern "C" {
                     (str[1] < 0xa0 || str[1] > 0xbf))
                     return NULL;
                 if (*str == 0xed && str[1] > 0x9f) // str[1] < 0x80 is checked below
-                return NULL;
+                    return NULL;
                 c = (*str++ & 0x0f) << 12;
                 if ((*str & 0xc0) != 0x80)
                     return NULL;
@@ -6177,7 +6204,7 @@ extern "C" {
                 if (*str == 0xf0 && (str[1] < 0x90 || str[1] > 0xbf))
                     return NULL;
                 if (*str == 0xf4 && str[1] > 0x8f) // str[1] < 0x80 is checked below
-                return NULL;
+                    return NULL;
                 c = (*str++ & 0x07) << 18;
                 if ((*str & 0xc0) != 0x80)
                     return NULL;
@@ -6346,12 +6373,12 @@ extern "C" {
             width = 4;
             goto end;
 
-            invalid_codepoint:
+        invalid_codepoint:
             codepoint = ZPL_RUNE_INVALID;
             width = 1;
         }
 
-        end:
+    end:
         if (codepoint_out) *codepoint_out = codepoint;
         return width;
     }
@@ -6706,11 +6733,11 @@ extern "C" {
         }
 
         switch (len & 3) {
-            case 3:
+        case 3:
             k1 ^= tail[2] << 16;
-            case 2:
+        case 2:
             k1 ^= tail[1] << 8;
-            case 1:
+        case 1:
             k1 ^= tail[0];
 
             k1 *= c1;
@@ -6752,13 +6779,13 @@ extern "C" {
         }
 
         switch (len & 7) {
-            case 7: h ^= cast(u64)(data2[6]) << 48;
-            case 6: h ^= cast(u64)(data2[5]) << 40;
-            case 5: h ^= cast(u64)(data2[4]) << 32;
-            case 4: h ^= cast(u64)(data2[3]) << 24;
-            case 3: h ^= cast(u64)(data2[2]) << 16;
-            case 2: h ^= cast(u64)(data2[1]) << 8;
-            case 1: h ^= cast(u64)(data2[0]);
+        case 7: h ^= cast(u64)(data2[6]) << 48;
+        case 6: h ^= cast(u64)(data2[5]) << 40;
+        case 5: h ^= cast(u64)(data2[4]) << 32;
+        case 4: h ^= cast(u64)(data2[3]) << 24;
+        case 3: h ^= cast(u64)(data2[2]) << 16;
+        case 2: h ^= cast(u64)(data2[1]) << 8;
+        case 1: h ^= cast(u64)(data2[0]);
             h *= m;
         };
 
@@ -6807,9 +6834,9 @@ extern "C" {
         }
 
         switch (len) {
-            case 3: h2 ^= (cast(u8 const *)data)[2] << 16;
-            case 2: h2 ^= (cast(u8 const *)data)[1] <<  8;
-            case 1: h2 ^= (cast(u8 const *)data)[0] <<  0;
+        case 3: h2 ^= (cast(u8 const *)data)[2] << 16;
+        case 2: h2 ^= (cast(u8 const *)data)[1] <<  8;
+        case 1: h2 ^= (cast(u8 const *)data)[0] <<  0;
             h2 *= m;
         };
 
@@ -6895,31 +6922,31 @@ extern "C" {
         u16 path[1024] = {0}; // TODO: Is this really enough or should I heap allocate this if it's too large?
 
         switch (mode & zpl_file_mode_modes_ev) {
-            case zpl_file_mode_read_ev:
+        case zpl_file_mode_read_ev:
             desired_access = GENERIC_READ;
             creation_disposition = OPEN_EXISTING;
             break;
-            case zpl_file_mode_write_ev:
+        case zpl_file_mode_write_ev:
             desired_access = GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-            case zpl_file_mode_append_ev:
+        case zpl_file_mode_append_ev:
             desired_access = GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
-            case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_EXISTING;
             break;
-            case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-            case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
-            default:
+        default:
             ZPL_PANIC("Invalid file mode");
             return zpl_file_error_invalid_ev;
         }
@@ -6932,10 +6959,10 @@ extern "C" {
         if (handle == INVALID_HANDLE_VALUE) {
             DWORD err = GetLastError();
             switch (err) {
-                case ERROR_FILE_NOT_FOUND: return zpl_file_error_not_exists_ev;
-                case ERROR_FILE_EXISTS:    return zpl_file_error_exists_ev;
-                case ERROR_ALREADY_EXISTS: return zpl_file_error_exists_ev;
-                case ERROR_ACCESS_DENIED:  return zpl_file_error_permission_ev;
+            case ERROR_FILE_NOT_FOUND: return zpl_file_error_not_exists_ev;
+            case ERROR_FILE_EXISTS:    return zpl_file_error_exists_ev;
+            case ERROR_ALREADY_EXISTS: return zpl_file_error_exists_ev;
+            case ERROR_ACCESS_DENIED:  return zpl_file_error_permission_ev;
             }
             return zpl_file_error_invalid_ev;
         }
@@ -7002,25 +7029,25 @@ extern "C" {
     zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
         i32 os_mode;
         switch (mode & zpl_file_mode_modes_ev) {
-            case zpl_file_mode_read_ev:
+        case zpl_file_mode_read_ev:
             os_mode = O_RDONLY;
             break;
-            case zpl_file_mode_write_ev:
+        case zpl_file_mode_write_ev:
             os_mode = O_WRONLY | O_CREAT | O_TRUNC;
             break;
-            case zpl_file_mode_append_ev:
+        case zpl_file_mode_append_ev:
             os_mode = O_WRONLY | O_APPEND | O_CREAT;
             break;
-            case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
             os_mode = O_RDWR;
             break;
-            case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
             os_mode = O_RDWR | O_CREAT | O_TRUNC;
             break;
-            case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
             os_mode = O_RDWR | O_APPEND | O_CREAT;
             break;
-            default:
+        default:
             ZPL_PANIC("Invalid file mode");
             return zpl_file_error_invalid_ev;
         }
@@ -7706,12 +7733,12 @@ extern "C" {
             if (*fmt == '%') {
                 do {
                     switch (*++fmt) {
-                        case '-': info.flags |= zpl_fmt_minus_ev; break;
-                        case '+': info.flags |= zpl_fmt_plus_ev;  break;
-                        case '#': info.flags |= zpl_fmt_alt_ev;   break;
-                        case ' ': info.flags |= zpl_fmt_space_ev; break;
-                        case '0': info.flags |= zpl_fmt_zero_ev;  break;
-                        default:  info.flags |= zpl_fmt_done_ev;  break;
+                    case '-': info.flags |= zpl_fmt_minus_ev; break;
+                    case '+': info.flags |= zpl_fmt_plus_ev;  break;
+                    case '#': info.flags |= zpl_fmt_alt_ev;   break;
+                    case ' ': info.flags |= zpl_fmt_space_ev; break;
+                    case '0': info.flags |= zpl_fmt_zero_ev;  break;
+                    default:  info.flags |= zpl_fmt_done_ev;  break;
                     }
                 } while (!(info.flags & zpl_fmt_done_ev));
             }
@@ -7744,7 +7771,7 @@ extern "C" {
 
 
             switch (*fmt++) {
-                case 'h':
+            case 'h':
                 if (*fmt == 'h') { // hh => char
                     info.flags |= zpl_fmt_char_ev;
                     fmt++;
@@ -7753,7 +7780,7 @@ extern "C" {
                 }
                 break;
 
-                case 'l':
+            case 'l':
                 if (*fmt == 'l') { // ll => long long
                     info.flags |= zpl_fmt_llong_ev;
                     fmt++;
@@ -7764,70 +7791,70 @@ extern "C" {
 
                 break;
 
-                case 'z': // NOTE: usize
+            case 'z': // NOTE: usize
                 info.flags |= zpl_fmt_unsigned_ev;
                 // fallthrough
-                case 't': // NOTE: isize
+            case 't': // NOTE: isize
                 info.flags |= zpl_fmt_size_ev;
                 break;
 
-                default: fmt--; break;
+            default: fmt--; break;
             }
 
 
             switch (*fmt) {
-                case 'u':
+            case 'u':
                 info.flags |= zpl_fmt_unsigned_ev;
                 // fallthrough
-                case 'd':
-                case 'i':
+            case 'd':
+            case 'i':
                 info.base = 10;
                 break;
 
-                case 'o':
+            case 'o':
                 info.base = 8;
                 break;
 
-                case 'x':
+            case 'x':
                 info.base = 16;
                 info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_lower_ev);
                 break;
 
-                case 'X':
+            case 'X':
                 info.base = 16;
                 info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_upper_ev);
                 break;
 
-                case 'f':
-                case 'F':
-                case 'g':
-                case 'G':
+            case 'f':
+            case 'F':
+            case 'g':
+            case 'G':
                 len = zpl__print_f64(text, remaining, &info, va_arg(va, f64));
                 break;
 
-                case 'a':
-                case 'A':
+            case 'a':
+            case 'A':
                 // TODO:
                 break;
 
-                case 'c':
+            case 'c':
                 len = zpl__print_char(text, remaining, &info, cast(char)va_arg(va, int));
                 break;
 
-                case 's':
+            case 's':
                 len = zpl__print_string(text, remaining, &info, va_arg(va, char *));
                 break;
 
-                case 'p':
+            case 'p':
                 info.base = 16;
                 info.flags |= (zpl_fmt_lower_ev|zpl_fmt_unsigned_ev|zpl_fmt_alt_ev|zpl_fmt_intptr_ev);
                 break;
 
-                case '%':
+            case '%':
                 len = zpl__print_char(text, remaining, &info, '%');
                 break;
 
-                default: fmt--; break;
+            default: fmt--; break;
             }
 
             fmt++;
@@ -7836,13 +7863,13 @@ extern "C" {
                 if (info.flags & zpl_fmt_unsigned_ev) {
                     u64 value = 0;
                     switch (info.flags & zpl_fmt_ints_ev) {
-                        case zpl_fmt_char_ev:   value = cast(u64)cast(u8) va_arg(va, int);       break;
-                        case zpl_fmt_short_ev:  value = cast(u64)cast(u16)va_arg(va, int);       break;
-                        case zpl_fmt_long_ev:   value = cast(u64)va_arg(va, unsigned long);      break;
-                        case zpl_fmt_llong_ev:  value = cast(u64)va_arg(va, unsigned long long); break;
-                        case zpl_fmt_size_ev:   value = cast(u64)va_arg(va, usize);              break;
-                        case zpl_fmt_intptr_ev: value = cast(u64)va_arg(va, uintptr);            break;
-                        default:             value = cast(u64)va_arg(va, unsigned int);       break;
+                    case zpl_fmt_char_ev:   value = cast(u64)cast(u8) va_arg(va, int);       break;
+                    case zpl_fmt_short_ev:  value = cast(u64)cast(u16)va_arg(va, int);       break;
+                    case zpl_fmt_long_ev:   value = cast(u64)va_arg(va, unsigned long);      break;
+                    case zpl_fmt_llong_ev:  value = cast(u64)va_arg(va, unsigned long long); break;
+                    case zpl_fmt_size_ev:   value = cast(u64)va_arg(va, usize);              break;
+                    case zpl_fmt_intptr_ev: value = cast(u64)va_arg(va, uintptr);            break;
+                    default:             value = cast(u64)va_arg(va, unsigned int);       break;
                     }
 
                     len = zpl__print_u64(text, remaining, &info, value);
@@ -7850,13 +7877,13 @@ extern "C" {
                 } else {
                     i64 value = 0;
                     switch (info.flags & zpl_fmt_ints_ev) {
-                        case zpl_fmt_char_ev:   value = cast(i64)cast(i8) va_arg(va, int); break;
-                        case zpl_fmt_short_ev:  value = cast(i64)cast(i16)va_arg(va, int); break;
-                        case zpl_fmt_long_ev:   value = cast(i64)va_arg(va, long);         break;
-                        case zpl_fmt_llong_ev:  value = cast(i64)va_arg(va, long long);    break;
-                        case zpl_fmt_size_ev:   value = cast(i64)va_arg(va, usize);        break;
-                        case zpl_fmt_intptr_ev: value = cast(i64)va_arg(va, uintptr);      break;
-                        default:             value = cast(i64)va_arg(va, int);          break;
+                    case zpl_fmt_char_ev:   value = cast(i64)cast(i8) va_arg(va, int); break;
+                    case zpl_fmt_short_ev:  value = cast(i64)cast(i16)va_arg(va, int); break;
+                    case zpl_fmt_long_ev:   value = cast(i64)va_arg(va, long);         break;
+                    case zpl_fmt_llong_ev:  value = cast(i64)va_arg(va, long long);    break;
+                    case zpl_fmt_size_ev:   value = cast(i64)va_arg(va, usize);        break;
+                    case zpl_fmt_intptr_ev: value = cast(i64)va_arg(va, uintptr);      break;
+                    default:             value = cast(i64)va_arg(va, int);          break;
                     }
 
                     len = zpl__print_i64(text, remaining, &info, value);
@@ -7929,14 +7956,14 @@ extern "C" {
         u64 result = 0;
         u32 upper, lower,tmp;
         __asm__ volatile(
-            "0:                   \n"
-            "\tmftbu   %0         \n"
-            "\tmftb    %1         \n"
-            "\tmftbu   %2         \n"
-            "\tcmpw    %2,%0      \n"
-            "\tbne     0b         \n"
-            : "=r"(upper),"=r"(lower),"=r"(tmp)
-            );
+                         "0:                   \n"
+                         "\tmftbu   %0         \n"
+                         "\tmftb    %1         \n"
+                         "\tmftbu   %2         \n"
+                         "\tcmpw    %2,%0      \n"
+                         "\tbne     0b         \n"
+                         : "=r"(upper),"=r"(lower),"=r"(tmp)
+                         );
         result = upper;
         result = result<<32;
         result = result|lower;
@@ -8032,6 +8059,71 @@ extern "C" {
 #endif
 
 
+    ////////////////////////////////////////////////////////////////
+    //
+    // Timer
+    //
+    //
+
+    zpl_inline zpl_timer_t *zpl_timer_add(zpl_timer_pool pool) {
+        ZPL_ASSERT(pool);
+
+        zpl_timer_t t = {0};
+        zpl_array_append(pool, t);
+        return pool + (zpl_array_count(pool) - 1);
+    }
+
+    zpl_inline void zpl_timer_set(zpl_timer_t *t, u64 duration, i32 count, zpl_timer_cb *cb) {
+        ZPL_ASSERT(t);
+
+        t->duration        = duration;
+        t->remaining_calls = t->initial_calls = count;
+        t->callback        = cb;
+        t->enabled         = false;
+    }
+
+    zpl_inline void zpl_timer_start(zpl_timer_t *t, u64 delay_start) {
+        ZPL_ASSERT(t && !t->enabled);
+
+        t->enabled = true;
+        t->remaining_calls = t->initial_calls;
+        t->next_call_ts = zpl_utc_time_now() + delay_start;
+    }
+
+    zpl_inline void zpl_timer_stop(zpl_timer_t *t) {
+        ZPL_ASSERT(t && t->enabled);
+
+        t->enabled = false;
+    }
+
+    zpl_inline void zpl_timer_update(zpl_timer_pool pool) {
+        ZPL_ASSERT(pool);
+
+        u64 now = zpl_utc_time_now();
+
+        for (isize i = 0; i < zpl_array_count(pool); ++i) {
+            zpl_timer_t *t = pool + i;
+
+            if (t->enabled) {
+                if (t->remaining_calls > 0 || t->initial_calls == -1) {
+                    if (t->next_call_ts <= now) {
+                        if (t->initial_calls != -1) {
+                            --t->remaining_calls;
+                        }
+
+                        if (t->remaining_calls == 0) {
+                            t->enabled = false;
+                        }
+                        else {
+                            t->next_call_ts = now + t->duration;
+                        }
+
+                        t->callback();
+                    }
+                }
+            }
+        }
+    }
 
     ////////////////////////////////////////////////////////////////
     //
@@ -8260,9 +8352,10 @@ extern "C" {
     extern char **environ;
 #endif
 
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-
     zpl_inline u32 zpl_system_command(char const *command, char *buffer) {
+#if defined(ZPL_SYSTEM_EMSCRIPTEN)
+        ZPL_PANIC();
+#endif
 #if defined(ZPL_SYSTEM_WINDOWS)
         FILE *handle = _popen(command, "r");
 #else
@@ -8278,12 +8371,10 @@ extern "C" {
 #if defined(ZPL_SYSTEM_WINDOWS)
         _pclose(handle);
 #else
-         pclose(handle);
+        pclose(handle);
 #endif
         return 1;
     }
-
-#endif // !defined(ZPL_SYSTEM_EMSCRIPTEN)
 
 #if defined(ZPL_COMPILER_MSVC)
 #pragma warning(pop)
