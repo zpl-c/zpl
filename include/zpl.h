@@ -2124,9 +2124,7 @@ extern "C" {
 
     ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_DEF u32 zpl_system_command(char const *command, char *buffer);
-#endif
 
 #if defined(__cplusplus)
 }
@@ -8354,9 +8352,10 @@ extern "C" {
     extern char **environ;
 #endif
 
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-
     zpl_inline u32 zpl_system_command(char const *command, char *buffer) {
+#if defined(ZPL_SYSTEM_EMSCRIPTEN)
+        ZPL_PANIC();
+#endif
 #if defined(ZPL_SYSTEM_WINDOWS)
         FILE *handle = _popen(command, "r");
 #else
@@ -8376,8 +8375,6 @@ extern "C" {
 #endif
         return 1;
     }
-
-#endif // !defined(ZPL_SYSTEM_EMSCRIPTEN)
 
 #if defined(ZPL_COMPILER_MSVC)
 #pragma warning(pop)
