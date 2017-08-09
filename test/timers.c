@@ -30,6 +30,11 @@ int main(void) {
     zpl_timer_set(t2, TO_MS * 1000, 10, test2_cb);
     zpl_timer_start(t2, TO_MS * 2000);
 
+    zpl_timer_t *t3 = zpl_timer_add(timers);
+    zpl_timer_set(t3, TO_MS * 1000, 10, test2_cb);
+    zpl_timer_start(t3, TO_MS * 2000);
+    zpl_timer_stop(t3); // NOTE(ZaKlaus): This won't be fired!
+
     while (1) {
         zpl_timer_update(timers);
     }
