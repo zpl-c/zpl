@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  1.2.0 - Added zpl_async macro
   1.1.0 - Added timer feature
   1.0.0 - Initial version
 
@@ -800,6 +801,25 @@ extern "C" {
 
 #define ZPL_THREAD_PROC(name) void name(void *data)
     typedef ZPL_THREAD_PROC(zpl_thread_proc_t);
+
+    ZPL_THREAD_PROC(zpl__async_handler);
+
+#ifndef zpl_async
+#define ZPL_ASYNC_CB(name) void name(void *data)
+    typedef ZPL_ASYNC_CB(zpl_async_cb);
+    typedef struct {
+        void *data;
+        zpl_async_cb *work;
+        zpl_async_cb *cb;
+    } zpl_async_ctl_t;
+#define zpl_async(data, work, cb) do {                                  \
+        zpl_thread_t td = {0};                                           \
+        zpl_thread_init(&td);                                            \
+        zpl_async_ctl_t  ctl_ = {data, work, cb};                        \
+        zpl_async_ctl_t *ctl = zpl_malloc(zpl_size_of(zpl_async_ctl_t)); \
+        *ctl = ctl_;                                                     \
+        zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
+#endif
 
     typedef struct zpl_thread_t {
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -4227,7 +4247,14 @@ extern "C" {
 
 
 
+    ZPL_THREAD_PROC(zpl__async_handler) {
+        zpl_async_ctl_t *ctl = cast(zpl_async_ctl_t *)data;
 
+        ctl->work(ctl->data);
+        ctl->cb(ctl->data);
+
+        zpl_mfree(ctl);
+    }
 
 
 
