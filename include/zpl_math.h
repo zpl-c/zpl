@@ -11,9 +11,9 @@ Warranty:
     No warranty is implied, use at your own risk.
 
 Usage:
-    #define ZPL_MATH_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
+    #define ZPLM_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
 
-    #define ZPL_MATH_IMPLEMENTATION
+    #define ZPLM_IMPLEMENTATION
     #include"zpl_math.h"
 
 Credits:
@@ -2185,4 +2185,4 @@ float zplm_random01(void) {
 
 
 
-#endif /* ZPL_MATH_IMPLEMENTATION */
+#endif /* ZPLM_IMPLEMENTATION */
