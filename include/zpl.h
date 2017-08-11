@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  1.2.1 - Macro fixes
   1.2.0 - Added zpl_async macro
   1.1.0 - Added timer feature
   1.0.0 - Initial version
@@ -1598,20 +1599,20 @@ extern "C" {
 
 #define ZPL_BS_HEADER(x) (cast(zpl_bs_header_t *)(x) - 1)
 
-#define zpl_bs_init(x, allocator_, size) do {                           \
-        void **zpl__bs_ = cast(void **)&(x);                            \
+#define zpl_bs_init(x, allocator_, size) do {                                                                          \
+        void **zpl__bs_ = cast(void **)&(x);                                                                           \
         zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_bs_header_t) + size); \
-        zpl__bsh->allocator = allocator_;                               \
-        zpl__bsh->capacity  = size;                                     \
-        zpl__bsh->read_pos  = 0;                                        \
-        zpl__bsh->write_pos = 0;                                        \
-        *zpl__bs_ = cast(void *)(zpl__bsh+1);                           \
+        zpl__bsh->allocator = allocator_;                                                                              \
+        zpl__bsh->capacity  = size;                                                                                    \
+        zpl__bsh->read_pos  = 0;                                                                                       \
+        zpl__bsh->write_pos = 0;                                                                                       \
+        *zpl__bs_ = cast(void *)(zpl__bsh+1);                                                                          \
     } while (0)
 
-#define zpl_bs_free(x) do {                           \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x); \
-        zpl_free(zpl__bsh->allocator, zpl__bsh);      \
-        x = NULL;                                     \
+#define zpl_bs_free(x) do {                                                                                            \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
+        zpl_free(zpl__bsh->allocator, zpl__bsh);                                                                       \
+        x = NULL;                                                                                                      \
     } while (0)
 
 #define zpl_bs_capacity(x)  ZPL_BS_HEADER(x)->capacity
@@ -1619,34 +1620,34 @@ extern "C" {
 #define zpl_bs_write_pos(x) ZPL_BS_HEADER(x)->write_pos
 #define zpl_bs_size(x)      zpl_bs_write_pos(x)
 
-#define zpl_bs_write_size_at(x, value, size, offset) do {               \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                   \
-        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + size <= zpl_bs_capacity(x), \
-                       "zpl_bs_write: trying to write outside of the bounds"); \
-        zpl_memcopy(x + (offset == 0) ? zpl__bsh->write_pos : offset, value, size); \
-        if (offset == 0) zpl__bsh->write_pos += size;                   \
+#define zpl_bs_write_size_at(x, value, size, offset) do {                                                              \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
+        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + size <= zpl_bs_capacity(x),                    \
+                       "zpl_bs_write: trying to write outside of the bounds");                                         \
+        zpl_memcopy(x + (offset == 0) ? zpl__bsh->write_pos : offset, value, size);                                    \
+        if (offset == 0) zpl__bsh->write_pos += size;                                                                  \
     } while (0)
 
-#define zpl_bs_read_size_at(x, value, size, offset) do {                \
-            zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);               \
-            ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->read_pos : offset) + size <= zpl_bs_capacity(x), \
-                           "zpl_bs_read: trying to read from outside of the bounds"); \
-            zpl_memcopy(value, x + ((offset == 0) ? zpl__bsh->read_pos : offset), size); \
-            if (offset == 0) zpl__bsh->read_pos += size;                \
+#define zpl_bs_read_size_at(x, value, size, offset) do {                                                               \
+            zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                              \
+            ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->read_pos : offset) + size <= zpl_bs_capacity(x),                 \
+                           "zpl_bs_read: trying to read from outside of the bounds");                                  \
+            zpl_memcopy(value, x + ((offset == 0) ? zpl__bsh->read_pos : offset), size);                               \
+            if (offset == 0) zpl__bsh->read_pos += size;                                                               \
         } while (0)
 
-#define zpl_bs_write_value_at(x, value, type, offset) do {              \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                   \
-        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) <= zpl_bs_capacity(x), \
-                       "zpl_bs_write: trying to write outside of the bounds"); \
-        *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value; \
-        if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type);      \
+#define zpl_bs_write_value_at(x, value, type, offset) do {                                                             \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
+        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) <= zpl_bs_capacity(x),       \
+                       "zpl_bs_write: trying to write outside of the bounds");                                         \
+        *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value;                           \
+        if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type);                                                     \
     } while (0)
 
-#define zpl_bs_read_value_at(x, type, offset)                           \
-    (zpl_size_of(type) + ((offset == 0) ? zpl_bs_read_pos(x) : offset) <= (zpl_bs_capacity(x))) \
-    ? *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl_bs_read_pos(x) : offset)) \
-    : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds"); \
+#define zpl_bs_read_value_at(x, type, offset)                                                                          \
+    (zpl_size_of(type) + ((offset == 0) ? zpl_bs_read_pos(x) : offset) <= (zpl_bs_capacity(x)))                        \
+    ? *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl_bs_read_pos(x) : offset))                                       \
+    : zpl_assert_crash("zpl_bs_read: trying to read from outside of the bounds");                                      \
     if (offset == 0) ZPL_BS_HEADER(x)->read_pos += zpl_size_of(type);
 
 #define zpl_bs_write_size(x, value, size)   zpl_bs_write_size_at(x, value, size, 0)
@@ -1668,8 +1669,8 @@ extern "C" {
 #define zpl_bs_write_b16(x, value) zpl_bs_write_value(x, cast(b16)value, b16)
 #define zpl_bs_write_b32(x, value) zpl_bs_write_value(x, cast(b32)value, b32)
 
-#define zpl_bs_write_i8_at (x, value, offset) zpl_bs_write_value_at(x, cast(i8) value,  i8, offset)
-#define zpl_bs_write_u8_at (x, value, offset) zpl_bs_write_value_at(x, cast(u8) value,  u8, offset)
+#define zpl_bs_write_i8_at(x, value, offset) zpl_bs_write_value_at(x, cast(i8) value,  i8, offset)
+#define zpl_bs_write_u8_at(x, value, offset) zpl_bs_write_value_at(x, cast(u8) value,  u8, offset)
 #define zpl_bs_write_i16_at(x, value, offset) zpl_bs_write_value_at(x, cast(i16)value, i16, offset)
 #define zpl_bs_write_u16_at(x, value, offset) zpl_bs_write_value_at(x, cast(u16)value, u16, offset)
 #define zpl_bs_write_i32_at(x, value, offset) zpl_bs_write_value_at(x, cast(i32)value, i32, offset)
@@ -1678,7 +1679,7 @@ extern "C" {
 #define zpl_bs_write_u64_at(x, value, offset) zpl_bs_write_value_at(x, cast(u64)value, u64, offset)
 #define zpl_bs_write_f32_at(x, value, offset) zpl_bs_write_value_at(x, cast(f32)value, f32, offset)
 #define zpl_bs_write_f64_at(x, value, offset) zpl_bs_write_value_at(x, cast(f64)value, f64, offset)
-#define zpl_bs_write_b8_at (x, value, offset) zpl_bs_write_value_at(x, cast(b8) value,  b8, offset)
+#define zpl_bs_write_b8_at(x, value, offset) zpl_bs_write_value_at(x, cast(b8) value,  b8, offset)
 #define zpl_bs_write_b16_at(x, value, offset) zpl_bs_write_value_at(x, cast(b16)value, b16, offset)
 #define zpl_bs_write_b32_at(x, value, offset) zpl_bs_write_value_at(x, cast(b32)value, b32, offset)
 
