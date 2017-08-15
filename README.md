@@ -6,7 +6,7 @@ ZPL is a collection of single-file public domain header-only libraries for C and
 
 library             | latest version | category | description
 --------------------|----------------|----------|-------------
-**zpl.h**           | 1.2.2          | misc     | Helper library.
+![zpl.h](https://www.npmjs.com/package/zpl.c)          | [![npm version](https://badge.fury.io/js/zpl.c.svg)](https://badge.fury.io/js/zpl.c)          | misc     | Helper library.
 **zpl_math.h**      | 1.0.0          | math     | Vector math library that is gamedev friendly..
 **zpl_image.h**     | 1.0.2          | graphics | Image manipulation library &amp; GIF animation. loader.
 **zpl_gl3w_gen.py** | 1.0.0          | graphics | OpenGL core bindings generator &amp; loader.
