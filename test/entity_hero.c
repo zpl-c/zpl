@@ -70,7 +70,7 @@ zple_entity_t hero_spawn(world_t *world, char *const name, i32 age, position_t p
     position_attach(&world->position, hero, pos);
     armor_attach(&world->armor, hero, (armor_t){0});
 
-    stats_t stats = { strength: 2*strength_factor, wisdom: 7*(age/cast(f32)12), agility: 6*(8.0/age) };
+    stats_t stats = { .strength = 2*strength_factor, .wisdom = 7*(age/cast(f32)12), .agility = 6*(8.0/age) };
     stats_attach(&world->stats, hero, stats);
 
     return hero;
@@ -89,7 +89,7 @@ void hero_dostuff(world_t *world, zple_entity_t hero) {
     zpl_when (persona_fetch(&world->persona, hero), persona_t*, persona) {
         stats_t *stats = stats_fetch(&world->stats, hero);
 
-        zpl_printf("Hero called %s and aged %d with strength: %d, wisdom: %d and agility: %d was here!\n",
+        zpl_printf("Hero called %s and aged %d with strength: %f, wisdom: %f and agility: %f was here!\n",
                    persona->name, persona->age, stats->strength, stats->wisdom, stats->agility);
     }
 }
