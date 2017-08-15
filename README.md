@@ -2,8 +2,6 @@
 
 ZPL is a collection of single-file public domain header-only libraries for C and C++.
 
-@TODO: Replace names with URLs to their repositories and version numbers by NPM badge.
-
 library                                         | latest version                                                                       | category | description
 ------------------------------------------------|--------------------------------------------------------------------------------------|----------|-------------
 [zpl.h](https://www.npmjs.com/package/zpl.c)    | [![npm version](https://badge.fury.io/js/zpl.c.svg)](https://badge.fury.io/js/zpl.c) | misc     | Helper library.
