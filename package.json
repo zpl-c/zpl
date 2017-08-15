@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Single-file public domain header-only C and C++ helper library.",
   "main": "include/zpl.h",
   "directories": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zaklaus/zpl.git"
+    "url": "git+https://github.com/zpl-c/zpl.git"
   },
   "keywords": [
     "zpl",
@@ -20,10 +20,10 @@
     "c++",
     "small"
   ],
-  "author": "Dominik Madarasz <zaklaus@outlook.com>",
+  "author": "Dominik Madarasz <zaklaus@outlook.com> (madaraszd.net)",
   "license": "Unlicense",
   "bugs": {
-    "url": "https://github.com/zaklaus/zpl/issues"
+    "url": "https://github.com/zpl-c/zpl/issues"
   },
-  "homepage": "https://github.com/zaklaus/zpl#readme"
+  "homepage": "https://github.com/zpl-c/zpl#readme"
 }
