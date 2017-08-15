@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.0.0 - New NPM based version
   1.2.2 - Small fix
   1.2.1 - Macro fixes
   1.2.0 - Added zpl_async macro
