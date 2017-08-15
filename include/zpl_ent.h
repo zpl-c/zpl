@@ -16,9 +16,6 @@ Usage:
     #define ZPLE_IMPLEMENTATION
     #include"zpl_ent.h"
 
-Optional Switches:
-    ZPLE_USE_128_BITS -- uses 128-bit storage for entity identification handle.
-
 Important note:
     - Component pool of type X can be used ONLY BY ONE entity pool.
     - Entity pool can use MULTIPLE component pools of type X.
@@ -31,26 +28,27 @@ Credits:
     Vladislav Gritsenko (GitHub: inlife)
 
 Version History:
-    1.0.1 -- Switch fixes
-    1.0.0 -- Initial version
+    2.0.0 - Got rid of 128-bit version, added entity metadata.
+    1.0.1 - Switch fixes
+    1.0.0 - Initial version
 */
 
 #ifndef ZPL_INCLUDE_ZPL_ENT_H
 #define ZPL_INCLUDE_ZPL_ENT_H
 
-#ifdef  ZPLE_USE_128_BITS
-#define ZPLE_ID u64
-#else
-#define ZPLE_ID u32
-#endif
+#include "zpl.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
     typedef struct zple_id_t {
-        ZPLE_ID id;
-        ZPLE_ID generation;
+        u32 id;
+        u16 generation;
+        union {
+            u16 meta;
+            u8  part[2];
+        };
     } zple_id_t, zple_entity_t;
 
     typedef struct zple_node_t {
@@ -67,7 +65,7 @@ extern "C" {
 
     ZPL_DEF void            zple_init   (zple_pool *pool, zpl_allocator_t allocator, isize count);
     ZPL_DEF void            zple_free   (zple_pool *pool);
-    ZPL_DEF zple_id_t    zple_create (zple_pool *pool);
+    ZPL_DEF zple_id_t       zple_create (zple_pool *pool);
     ZPL_DEF void            zple_destroy(zple_pool *pool, zple_id_t handle);
 
     // NOTE(ZaKlaus): To be used as:
@@ -86,7 +84,7 @@ extern "C" {
     ZPL_JOIN2(NAME, _t); \
     typedef struct ZPL_JOIN2(NAME, _meta_ent_t) { \
         zple_id_t handle; \
-        ZPLE_ID   used; \
+        u32       used; \
     } ZPL_JOIN2(NAME, _meta_ent_t); \
     typedef struct ZPL_JOIN2(NAME, _pool) { \
         zpl_allocator_t backing; \
@@ -169,7 +167,7 @@ extern "C" {
         pool->first_free = pool->freelist;
         for (usize i = 0; i < count; ++i) {
             zple_node_t *f = (pool->freelist+i);
-            f->handle = (zple_id_t) { i, 0 };
+            f->handle = (zple_id_t) { i, 0, 0 };
             f->next = (pool->freelist+i+1);
         }
         (pool->freelist+count-1)->next = NULL;
@@ -203,7 +201,7 @@ extern "C" {
         }
         else {
             ZPL_ASSERT(pool->first_free - 1 >= pool->freelist);
-            zple_node_t f_ = { (zple_id_t){ handle.id, handle.generation+1 }, pool->first_free };
+            zple_node_t f_ = { (zple_id_t){ handle.id, handle.generation+1, 0 }, pool->first_free };
             zple_node_t *f = (pool->first_free - 1);
             *f = f_;
             pool->first_free = f;
