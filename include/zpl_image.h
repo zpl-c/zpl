@@ -40,6 +40,8 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_IMAGE_H
 #define ZPL_INCLUDE_ZPL_IMAGE_H
 
+#include "zpl.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

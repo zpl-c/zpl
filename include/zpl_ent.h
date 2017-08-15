@@ -36,6 +36,8 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_ENT_H
 #define ZPL_INCLUDE_ZPL_ENT_H
 
+#include "zpl.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

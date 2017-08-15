@@ -1982,7 +1982,7 @@ extern "C" {
         zpl_file_standard_count_ev,
     } zpl_file_standard_type_e;
 
-    ZPL_DEF zpl_file_t *const zpl_file_get_standard(zpl_file_standard_type_e std);
+    ZPL_DEF zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std);
 
     ZPL_DEF zpl_file_error_e zpl_file_create        (zpl_file_t *file, char const *filename);
     ZPL_DEF zpl_file_error_e zpl_file_open          (zpl_file_t *file, char const *filename);

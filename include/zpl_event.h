@@ -31,6 +31,8 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_EVENT_H
 #define ZPL_INCLUDE_ZPL_EVENT_H
 
+#include "zpl.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

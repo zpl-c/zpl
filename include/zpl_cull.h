@@ -49,9 +49,7 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_CULL_H
 #define ZPL_INCLUDE_ZPL_CULL_H
 
-#ifndef ZPL_IMPLEMENTATION
-#error You must include zpl.h !!!
-#endif
+#include "zpl.h"
 
 #if defined(__cplusplus)
 extern "C" {

@@ -27,6 +27,8 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_JSON_H
 #define ZPL_INCLUDE_ZPL_JSON_H
 
+#include "zpl.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
