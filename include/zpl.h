@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  1.2.2 - Small fix
   1.2.1 - Macro fixes
   1.2.0 - Added zpl_async macro
   1.1.0 - Added timer feature
@@ -7258,7 +7259,7 @@ extern "C" {
 
 #else // POSIX
 
-    zpl_inline zpl_file_t *const zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.i = v; zpl__std_files[type].ops = zpl_default_file_operations_t
             ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  0);
