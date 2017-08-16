@@ -7221,7 +7221,7 @@ extern "C" {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-    zpl_inline zpl_file_t *const zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.p = v; zpl__std_files[type].ops = zpl_default_file_operations_t
             ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  GetStdHandle(STD_INPUT_HANDLE));
