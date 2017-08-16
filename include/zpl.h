@@ -4484,7 +4484,7 @@ extern "C" {
         zpl_unused(old_size);
         // TODO: Throughly test!
         switch (type) {
-#if defined(ZPL_COMPILER_MSVC)
+#if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
         case zpl_allocation_alloc_ev:
             ptr = _aligned_malloc(size, alignment);
             if (flags & zpl_allocator_flag_clear_to_zero_ev)
