@@ -3,7 +3,6 @@
 
 int main() {
     // NOTE(inlife): create and allocate a bitstream
-    // with size of 100 bytes
     zpl_bs_t bsp;
     zpl_bs_init(bsp, zpl_heap_allocator(), 0);
 
@@ -13,6 +12,8 @@ int main() {
 
     zpl_bs_write_i64(bsp, -42230);
     zpl_bs_write_u64(bsp, 322);
+
+    zpl_printf("current capacity: %d\n", zpl_bs_capacity(bsp));
 
     // // NOTE(inlife): read a typed value
     f64 boo = zpl_bs_read_f32(bsp);

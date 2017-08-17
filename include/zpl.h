@@ -1608,7 +1608,7 @@ extern "C" {
 
 #define ZPL_BS_HEADER(x) (cast(zpl_bs_header_t *)(x) - 1)
 
-#define zpl_bs_init(x, allocator_, size) do {                                                                          \
+#define zpl_bs_init(x, allocator_, size) do {                                                                             \
         void **zpl__bs_ = cast(void **)&(x);                                                                           \
         zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_bs_header_t) + size); \
         zpl__bsh->allocator = allocator_;                                                                              \
@@ -1629,28 +1629,39 @@ extern "C" {
 #define zpl_bs_write_pos(x) ZPL_BS_HEADER(x)->write_pos
 #define zpl_bs_size(x)      zpl_bs_write_pos(x)
 
-#define zpl_bs_set_capacity(x, new_capacity) do {                                                                      \
-        void **zpl__bs_ = cast(void **)&(x);                                                                           \
-        zpl_bs_header_t *zpl__bsho = ZPL_BS_HEADER(*zpl__bs_);                                                         \
-        zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_resize((zpl__bsho)->allocator, zpl__bsho,               \
-                                                                      (zpl__bsho)->capacity, new_capacity);            \
-        (zpl__bsh)->capacity = new_capacity;                                                                           \
-        *zpl__bs_ = cast(void *)(zpl__bsh+1);                                                                          \
+#define zpl_bs_set_capacity(x, new_capacity) do {                                                                                        \
+        void **zpl__bs_ = cast(void **)&(x);                                                                                             \
+        zpl_bs_header_t *zpl__bs_h = ZPL_BS_HEADER(x);                                                                                   \
+        zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_alloc(zpl__bs_h->allocator, zpl_size_of(zpl_bs_header_t) + new_capacity); \
+        *zpl__bsh = *zpl__bs_h;                                                                                                          \
+        zpl__bsh->capacity = new_capacity;                                                                                               \
+        void *zpl__bs = cast(void *)(zpl__bsh+1);                                                                                        \
+        zpl_memmove(zpl__bs, x, zpl_bs_capacity(x));                                                                                     \
+        zpl_free(zpl__bs_h->allocator, zpl__bs_h);                                                                                       \
+        *zpl__bs_ = cast(void *)(zpl__bsh+1);                                                                                            \
     } while (0)
 
-#define zpl_bs_grow(x, min_capacity) do {                                                                              \
-        isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_bs_capacity(x));                                               \
-        if (new_capacity < (min_capacity))                                                                             \
-            new_capacity = (min_capacity);                                                                             \
-        zpl_bs_set_capacity(x, new_capacity);                                                                          \
+#define zpl_bs_grow(x, min_capacity) do {                                                                                                \
+        isize new_capacity = ZPL_BS_GROW_FORMULA(zpl_bs_capacity(x));                                                                    \
+        if (new_capacity < (min_capacity))                                                                                               \
+            new_capacity = (min_capacity);                                                                                               \
+        zpl_bs_set_capacity(x, new_capacity);                                                                                            \
     } while (0)
 
-#define zpl_bs_write_size_at(x, value, size, offset) do {                                                              \
-        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
-        if (((offset == 0) ? zpl__bsh->write_pos : offset) + size > zpl_bs_capacity(x))                                \
-            zpl_bs_grow(x, zpl_bs_capacity(x) + size + offset);                                                        \
-        zpl_memcopy(x + ((offset == 0) ? zpl__bsh->write_pos : offset), value, size);                                  \
-        if (offset == 0) zpl__bsh->write_pos += size;                                                                  \
+#define zpl_bs_fits(x, size) do {                                                                                                        \
+        if (size > zpl_bs_capacity(x)) {                                                                                                 \
+            zpl_bs_grow(x, zpl_bs_capacity(x) + size);                                                                                   \
+        }                                                                                                                                \
+    } while (0)
+
+#define zpl_bs_write_size_at(x, value, size, offset) do {                                                   \
+    if (offset == 0) zpl_bs_fits(x, zpl_bs_write_pos(x) + size); \
+        else             zpl_bs_fits(x, offset + size);                                                     \
+        zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                       \
+        if (((offset == 0) ? zpl__bsh->write_pos : offset) + size > zpl_bs_capacity(x))                     \
+            zpl_bs_grow(x, zpl_bs_capacity(x) + size + offset);                                             \
+        zpl_memcopy(x + ((offset == 0) ? zpl__bsh->write_pos : offset), value, size);                       \
+        if (offset == 0) zpl__bsh->write_pos += size;                                                       \
     } while (0)
 
 #define zpl_bs_read_size_at(x, value, size, offset) do {                                                               \
@@ -1662,6 +1673,8 @@ extern "C" {
         } while (0)
 
 #define zpl_bs_write_value_at(x, value, type, offset) do {                                                             \
+        if (offset == 0) zpl_bs_fits(x, zpl_bs_write_pos(x) + zpl_size_of(type));                                      \
+        else             zpl_bs_fits(x, offset + zpl_size_of(type));                                                   \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
         if (((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) > zpl_bs_capacity(x))                   \
             zpl_bs_grow(x, zpl_bs_capacity(x) + zpl_size_of(type) + offset);                                           \
