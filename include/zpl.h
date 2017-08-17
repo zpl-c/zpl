@@ -1622,11 +1622,23 @@ extern "C" {
 #define zpl_bs_write_pos(x) ZPL_BS_HEADER(x)->write_pos
 #define zpl_bs_size(x)      zpl_bs_write_pos(x)
 
+#define zpl_bs_set_capacity(x, new_capacity) do {                                                                      \
+        ZPL_ASSERT_MSG(0, "todo");                                                                                     \
+    } while (0)
+
+#define zpl_bs_grow(x, min_capacity) do {                                                                              \
+        isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_bs_capacity(x));                                               \
+        if (new_capacity < (min_capacity))                                                                             \
+            new_capacity = (min_capacity);                                                                             \
+            zpl_printf("growing to capacity: %ld\n", new_capacity);                                                    \
+        zpl_bs_set_capacity(x, new_capacity);                                                                          \
+    } while (0)
+
 #define zpl_bs_write_size_at(x, value, size, offset) do {                                                              \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
-        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + size <= zpl_bs_capacity(x),                    \
-                       "zpl_bs_write: trying to write outside of the bounds");                                         \
-        zpl_memcopy(x + ((offset == 0) ? zpl__bsh->write_pos : offset), value, size);                                    \
+        if (((offset == 0) ? zpl__bsh->write_pos : offset) + size > zpl_bs_capacity(x))                                \
+            zpl_bs_grow(x, zpl_bs_capacity(x) + size + offset);                                                        \
+        zpl_memcopy(x + ((offset == 0) ? zpl__bsh->write_pos : offset), value, size);                                  \
         if (offset == 0) zpl__bsh->write_pos += size;                                                                  \
     } while (0)
 
@@ -1640,8 +1652,8 @@ extern "C" {
 
 #define zpl_bs_write_value_at(x, value, type, offset) do {                                                             \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
-        ZPL_ASSERT_MSG(((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) <= zpl_bs_capacity(x),       \
-                       "zpl_bs_write: trying to write outside of the bounds");                                         \
+        if (((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) > zpl_bs_capacity(x))                   \
+            zpl_bs_grow(x, zpl_bs_capacity(x) + zpl_size_of(type) + offset);                                           \
         *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value;                           \
         if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type);                                                     \
     } while (0)
