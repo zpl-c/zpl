@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.1.0 - Added the ability to resize bitstream
   2.0.8 - Small adjustments
   2.0.7 - MinGW related fixes
   2.0.0 - New NPM based version
@@ -1601,6 +1602,10 @@ extern "C" {
         usize write_pos;
     } zpl_bs_header_t;
 
+#ifndef ZPL_BS_GROW_FORMULA
+#define ZPL_BS_GROW_FORMULA(x) (2*(x) + 16)
+#endif
+
 #define ZPL_BS_HEADER(x) (cast(zpl_bs_header_t *)(x) - 1)
 
 #define zpl_bs_init(x, allocator_, size) do {                                                                          \
@@ -1625,14 +1630,18 @@ extern "C" {
 #define zpl_bs_size(x)      zpl_bs_write_pos(x)
 
 #define zpl_bs_set_capacity(x, new_capacity) do {                                                                      \
-        ZPL_ASSERT_MSG(0, "todo");                                                                                     \
+        void **zpl__bs_ = cast(void **)&(x);                                                                           \
+        zpl_bs_header_t *zpl__bsho = ZPL_BS_HEADER(*zpl__bs_);                                                         \
+        zpl_bs_header_t *zpl__bsh = cast(zpl_bs_header_t *)zpl_resize((zpl__bsho)->allocator, zpl__bsho,               \
+                                                                      (zpl__bsho)->capacity, new_capacity);            \
+        (zpl__bsh)->capacity = new_capacity;                                                                           \
+        *zpl__bs_ = cast(void *)(zpl__bsh+1);                                                                          \
     } while (0)
 
 #define zpl_bs_grow(x, min_capacity) do {                                                                              \
         isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_bs_capacity(x));                                               \
         if (new_capacity < (min_capacity))                                                                             \
             new_capacity = (min_capacity);                                                                             \
-            zpl_printf("growing to capacity: %ld\n", new_capacity);                                                    \
         zpl_bs_set_capacity(x, new_capacity);                                                                          \
     } while (0)
 
