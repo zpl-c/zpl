@@ -23,6 +23,8 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.0.8 - Small adjustments
+  2.0.7 - MinGW related fixes
   2.0.0 - New NPM based version
   1.2.2 - Small fix
   1.2.1 - Macro fixes
@@ -3300,7 +3302,6 @@ extern "C" {
 
     zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
 #if defined(_MSC_VER)
-        // TODO: Is this good enough?
         __movsb(cast(u8 *)dest, cast(u8 *)source, n);
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
         u8 *__dest8 = cast(u8 *)dest;
@@ -3542,14 +3543,12 @@ extern "C" {
     }
 
     zpl_inline i32 zpl_memcompare(void const *s1, void const *s2, isize size) {
-        // TODO: Heavily optimize
-
         u8 const *s1p8 = cast(u8 const *)s1;
         u8 const *s2p8 = cast(u8 const *)s2;
         while (size--) {
-            if (*s1p8 != *s2p8)
-                return (*s1p8 - *s2p8);
-            s1p8++, s2p8++;
+            isize d;
+            if ((d = (*s1p8++ - *s2p8++)) != 0)
+                return d;
         }
         return 0;
     }
@@ -3566,8 +3565,7 @@ extern "C" {
             u8 *b = cast(u8 *)j;
             if (a != b) {
                 while (size--) {
-                    zpl_swap(u8, *a, *b);
-                    a++, b++;
+                    zpl_swap(u8, *a++, *b++);
                 }
             }
         } else {
