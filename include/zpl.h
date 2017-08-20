@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.1.1 - Very small fix (forgive me)
   2.1.0 - Added the ability to resize bitstream
   2.0.8 - Small adjustments
   2.0.7 - MinGW related fixes
@@ -843,7 +844,7 @@ extern "C" {
     } zpl_thread_t;
 
     ZPL_DEF void zpl_thread_init            (zpl_thread_t *t);
-    ZPL_DEF void zpl_thread_destory         (zpl_thread_t *t);
+    ZPL_DEF void zpl_thread_destroy         (zpl_thread_t *t);
     ZPL_DEF void zpl_thread_start           (zpl_thread_t *t, zpl_thread_proc_t *proc, void *data);
     ZPL_DEF void zpl_thread_start_with_stack(zpl_thread_t *t, zpl_thread_proc_t *proc, void *data, isize stack_size);
     ZPL_DEF void zpl_thread_join            (zpl_thread_t *t);
@@ -4303,7 +4304,7 @@ extern "C" {
         zpl_semaphore_init(&t->semaphore);
     }
 
-    void zpl_thread_destory(zpl_thread_t *t) {
+    void zpl_thread_destroy(zpl_thread_t *t) {
         if (t->is_running) zpl_thread_join(t);
         zpl_semaphore_destroy(&t->semaphore);
     }
