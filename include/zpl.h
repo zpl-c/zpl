@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.2.1 - Used tmpfile() for Windows
   2.2.0 - Added zpl_file_temp
   2.1.1 - Very small fix (forgive me)
   2.1.0 - Added the ability to resize bitstream
@@ -7291,14 +7292,6 @@ extern "C" {
         return found;
     }
 
-    zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
-        char temp_path[MAX_PATH] = { 0 };
-        char temp_fn[MAX_PATH] = { 0 };
-        GetTempPath(MAX_PATH, temp_path);
-        GetTempFileName(temp_path, NULL, 0, temp_fn);
-        return zpl_file_create(file, temp_fn);
-    }
-
 #else // POSIX
 
     zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
@@ -7333,22 +7326,19 @@ extern "C" {
         return access(name, F_OK) != -1;
     }
 
+#endif
+
     zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
         zpl_zero_item(file);
-
         FILE *fd = tmpfile();
-
+        
         if (fd == NULL) {
             return zpl_file_error_invalid_ev;
         }
-
+        
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
     }
-
-#endif
-
-
 
 #if defined(ZPL_SYSTEM_WINDOWS)
     zpl_file_time_t zpl_file_last_write_time(char const *filepath) {
