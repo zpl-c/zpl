@@ -2012,8 +2012,16 @@ extern "C" {
         zpl_file_time_t       last_write_time;
         // zpl_dir_info_t *   dir_info; // TODO: Get directory info
     } zpl_file_t;
-
-    // TODO: zpl_async_file_t
+    
+    typedef struct zpl_async_file_t {
+        zpl_file_t file;
+        b32 done;
+        isize size;
+        void *data;
+    } zpl_async_file_t;
+    
+#define ZPL_ASYNC_FILE_CB(name) void name(zpl_async_file_t *file)
+    typedef ZPL_ASYNC_FILE_CB(zpl_async_file_cb);
 
     typedef enum zpl_file_standard_type_e {
         zpl_file_standard_input_ev,
@@ -2044,6 +2052,9 @@ extern "C" {
     ZPL_DEF char const *zpl_file_name          (zpl_file_t *file);
     ZPL_DEF zpl_file_error_e zpl_file_truncate      (zpl_file_t *file, i64 size);
     ZPL_DEF b32         zpl_file_has_changed   (zpl_file_t *file); // NOTE: Changed since lasted checked
+
+    ZPL_DEF void zpl_async_file_read(zpl_file_t *file, zpl_async_file_cb *proc);
+    ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc);
 
     zpl_file_error_e zpl_file_temp(zpl_file_t *file);
 
@@ -7246,6 +7257,39 @@ extern "C" {
             f->last_write_time = last_write_time;
         }
         return result;
+    }
+    
+    typedef struct {
+        zpl_async_file_t f;
+        zpl_async_file_cb *proc;
+        zpl_thread_t td;
+    } zpl__async_file_ctl_t;
+    
+    void zpl__async_file_read_proc(zpl_async_file_t *file, zpl_async_file_cb *proc) {
+        // TODO(ZaKlaus): 
+    }
+    
+    
+    ZPL_DEF void zpl_async_file_read(zpl_file_t *file, zpl_async_file_cb *proc) {
+        ZPL_ASSERT(file && proc);
+        
+        zpl_async_file_t *a = zpl_malloc(sizeof(zpl_async_file_t));
+        zpl_async_file_t a_ = {0};
+        *a = a_;
+        
+        //a->file = file;
+        
+        zpl_thread_t td = {0};
+        zpl_thread_init(&td);
+        
+        // TODO(ZaKlaus): 
+        //zpl_thread_start(&td, 
+        
+        zpl_mfree(a);
+    }
+    
+    ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc) {
+        ZPL_PANIC("NotImplemented");
     }
 
     // TODO: Is this a bad idea?
