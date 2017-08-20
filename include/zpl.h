@@ -23,6 +23,7 @@
   Sean Barrett (GitHub: nothings)
 
   Version History:
+  2.2.0 - Added zpl_file_temp
   2.1.1 - Very small fix (forgive me)
   2.1.0 - Added the ability to resize bitstream
   2.0.8 - Small adjustments
@@ -2042,9 +2043,8 @@ extern "C" {
     ZPL_DEF char const *zpl_file_name          (zpl_file_t *file);
     ZPL_DEF zpl_file_error_e zpl_file_truncate      (zpl_file_t *file, i64 size);
     ZPL_DEF b32         zpl_file_has_changed   (zpl_file_t *file); // NOTE: Changed since lasted checked
-    // TODO:
-    // zpl_file_error_e zpl_file_temp(zpl_file_t *file);
-    //
+
+    zpl_file_error_e zpl_file_temp(zpl_file_t *file);
 
     typedef struct zpl_file_contents_t {
         zpl_allocator_t allocator;
@@ -7291,6 +7291,14 @@ extern "C" {
         return found;
     }
 
+    zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
+        char temp_path[MAX_PATH] = { 0 };
+        char temp_fn[MAX_PATH] = { 0 };
+        GetTempPath(MAX_PATH, temp_path);
+        GetTempFileName(temp_path, NULL, 0, temp_fn);
+        return zpl_file_create(file, temp_fn);
+    }
+
 #else // POSIX
 
     zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
@@ -7324,6 +7332,20 @@ extern "C" {
     zpl_inline b32 zpl_file_exists(char const *name) {
         return access(name, F_OK) != -1;
     }
+
+    zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
+        zpl_zero_item(file);
+
+        FILE *fd = tmpfile();
+
+        if (fd == NULL) {
+            return zpl_file_error_invalid_ev;
+        }
+
+        file->fd.p = fd;
+        file->ops = zpl_default_file_operations_t;
+    }
+
 #endif
 
 
