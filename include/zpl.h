@@ -24,6 +24,7 @@
 
 
   Version History:
+  2.4.0 - Added remove to hash table
   2.3.3 - Removed redundant code
   2.3.2 - Eliminated extra warnings
   2.3.1 - Warning hunt
@@ -1838,7 +1839,7 @@ extern "C" {
     PREFIX void                  ZPL_JOIN2(FUNC,set)        (NAME *h, u64 key, VALUE value); \
     PREFIX void                  ZPL_JOIN2(FUNC,grow)       (NAME *h);  \
     PREFIX void                  ZPL_JOIN2(FUNC,rehash)     (NAME *h, isize new_count); \
-
+    PREFIX void                  ZPL_JOIN2(FUNC,remove)     (NAME *h, u64 key); \
 
 
 
@@ -1921,6 +1922,20 @@ extern "C" {
         if (index >= 0)                                                 \
             return &h->entries[index].value;                            \
         return NULL;                                                    \
+    }                                                                   \
+                                                                        \
+    void ZPL_JOIN2(FUNC,remove)(NAME *h, u64 key) {                     \
+        zpl_hash_table_find_result_t fr = ZPL_JOIN2(FUNC,_find)(h, key);\
+        if (fr.entry_index >= 0) {                                      \
+            if (fr.entry_prev >= 0) {                                   \
+                h->entries[fr.entry_prev].next = h->entries[fr.entry_index].next; \
+            }                                                           \
+            else {                                                      \
+                h->hashes[fr.hash_index] = fr.entry_index;              \
+            }                                                           \
+            zpl_array_remove_at(h->entries, fr.entry_index);            \
+        }                                                               \
+        ZPL_JOIN2(FUNC,rehash)(h, zpl_array_count(h->entries));         \
     }                                                                   \
                                                                         \
     void ZPL_JOIN2(FUNC,set)(NAME *h, u64 key, VALUE value) {           \
