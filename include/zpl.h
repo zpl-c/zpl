@@ -24,6 +24,7 @@
 
 
   Version History:
+  2.3.2 - Eliminated extra warnings
   2.3.1 - Warning hunt
   2.3.0 - Added the ability to copy array/buffer and fixed bug in hash table.
   2.2.1 - Used tmpfile() for Windows
@@ -4440,12 +4441,16 @@ extern "C" {
         }
 
 #elif defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_MSVC)
+        zpl_unused(t);
+        zpl_unused(name);
         // IMPORTANT TODO: Set thread name for GCC/Clang on windows
         return;
 #elif defined(ZPL_SYSTEM_OSX)
         // TODO: Test if this works
         pthread_setname_np(name);
 #else
+        zpl_unused(t);
+        zpl_unused(name);
         // TODO: Test if this works
         //        pthread_set_name_np(t->posix_handle, name);
 #endif
@@ -5323,6 +5328,8 @@ extern "C" {
         zpl_stack_memory_t *s = cast(zpl_stack_memory_t *)allocator_data;
         void *ptr = NULL;
         ZPL_ASSERT_NOT_NULL(s);
+        zpl_unused(old_size);
+        zpl_unused(flags);
 
         switch(type) {
         case zpl_allocation_alloc_ev: {
@@ -6969,6 +6976,7 @@ extern "C" {
     }
 
     zpl_internal ZPL_FILE_READ_AT_PROC(zpl__win32_file_read) {
+        zpl_unused(stop_at_newline);
         b32 result = false;
         zpl__win32_file_seek(fd, offset, zpl_seek_whence_begin_ev, NULL);
         DWORD size_ = cast(DWORD)(size > I32_MAX ? I32_MAX : size);
@@ -7280,6 +7288,9 @@ extern "C" {
     
     void zpl__async_file_read_proc(zpl_async_file_t *file, zpl_async_file_cb *proc) {
         // TODO(ZaKlaus): 
+        zpl_unused(proc);
+        zpl_unused(file);
+        
     }
     
     
@@ -7302,6 +7313,10 @@ extern "C" {
     }
     
     ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc) {
+        zpl_unused(file);
+        zpl_unused(buffer);
+        zpl_unused(size);
+        zpl_unused(proc);
         ZPL_PANIC("NotImplemented");
     }
 
