@@ -24,6 +24,7 @@
 
 
   Version History:
+  2.3.3 - Removed redundant code
   2.3.2 - Eliminated extra warnings
   2.3.1 - Warning hunt
   2.3.0 - Added the ability to copy array/buffer and fixed bug in hash table.
@@ -1677,8 +1678,6 @@ extern "C" {
     if (offset == 0) zpl_bs_fits(x, zpl_bs_write_pos(x) + size); \
         else             zpl_bs_fits(x, offset + size);                                                     \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                       \
-        if (((offset == 0) ? zpl__bsh->write_pos : offset) + size > zpl_bs_capacity(x))                     \
-            zpl_bs_grow(x, zpl_bs_capacity(x) + size + offset);                                             \
         zpl_memcopy(x + ((offset == 0) ? zpl__bsh->write_pos : offset), value, size);                       \
         if (offset == 0) zpl__bsh->write_pos += size;                                                       \
     } while (0)
@@ -1695,8 +1694,6 @@ extern "C" {
         if (offset == 0) zpl_bs_fits(x, zpl_bs_write_pos(x) + zpl_size_of(type));                                      \
         else             zpl_bs_fits(x, offset + zpl_size_of(type));                                                   \
         zpl_bs_header_t *zpl__bsh = ZPL_BS_HEADER(x);                                                                  \
-        if (((offset == 0) ? zpl__bsh->write_pos : offset) + zpl_size_of(type) > zpl_bs_capacity(x))                   \
-            zpl_bs_grow(x, zpl_bs_capacity(x) + zpl_size_of(type) + offset);                                           \
         *(type *)(zpl_pointer_add(x, (offset == 0) ? zpl__bsh->write_pos : offset)) = value;                           \
         if (offset == 0) zpl__bsh->write_pos += zpl_size_of(type);                                                     \
     } while (0)
