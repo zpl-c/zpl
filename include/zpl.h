@@ -22,7 +22,9 @@
   Ginger Bill (GitHub: gingerBill)
   Sean Barrett (GitHub: nothings)
 
+
   Version History:
+  2.3.0 - Added the ability to copy array/buffer and fixed bug in hash table.
   2.2.1 - Used tmpfile() for Windows
   2.2.0 - Added zpl_file_temp
   2.1.1 - Very small fix (forgive me)
@@ -1416,6 +1418,12 @@ extern "C" {
         zpl_memcopy(&(x)[zpl_buffer_count(x)], (items), zpl_size_of(*(x))*(item_count)); \
         zpl_buffer_count(x) += (item_count);                            \
     } while (0)
+    
+#define zpl_buffer_copy_init(y, x) do { \
+        zpl_buffer_init_reserve(y, zpl_buffer_allocator(x), zpl_buffer_capacity(x)); \
+        zpl_memcopy(y, x, zpl_buffer_capacity(x) * zpl_size_of(*x)); \
+        zpl_buffer_count(y) = zpl_buffer_count(x); \
+    } while (0)
 
 #define zpl_buffer_pop(x)   do { ZPL_ASSERT(zpl_buffer_count(x) > 0); zpl_buffer_count(x)--; } while (0)
 #define zpl_buffer_clear(x) do { zpl_buffer_count(x) = 0; } while (0)
@@ -1558,6 +1566,12 @@ extern "C" {
         ZPL_ASSERT(index < zpl__ah->count);                             \
         zpl_memcopy(x+index, x+index+1, zpl_size_of(x[0])*(zpl__ah->count - index)); \
         --zpl__ah->count;                                               \
+    } while (0)
+    
+#define zpl_array_copy_init(y, x) do { \
+        zpl_array_init_reserve(y, zpl_array_allocator(x), zpl_array_capacity(x)); \
+        zpl_memcopy(y, x, zpl_array_capacity(x) * zpl_size_of(*x)); \
+        zpl_array_count(y) = zpl_array_count(x); \
     } while (0)
 
 
@@ -1888,7 +1902,7 @@ extern "C" {
             zpl_hash_table_find_result_t fr;                            \
             if (zpl_array_count(nh.hashes) == 0)                        \
                 ZPL_JOIN2(FUNC,grow)(&nh);                              \
-            e = &nh.entries[i];                                         \
+            e = &h->entries[i];                                         \
             fr = ZPL_JOIN2(FUNC,_find)(&nh, e->key);                    \
             j = ZPL_JOIN2(FUNC,_add_entry)(&nh, e->key);                \
             if (fr.entry_prev < 0)                                      \
@@ -1897,8 +1911,6 @@ extern "C" {
                 nh.entries[fr.entry_prev].next = j;                     \
             nh.entries[j].next = fr.entry_index;                        \
             nh.entries[j].value = e->value;                             \
-            if (ZPL_JOIN2(FUNC,_full)(&nh))                             \
-                ZPL_JOIN2(FUNC,grow)(&nh);                              \
         }                                                               \
         ZPL_JOIN2(FUNC,destroy)(h);                                     \
         h->hashes  = nh.hashes;                                         \
