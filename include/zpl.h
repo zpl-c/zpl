@@ -24,6 +24,7 @@
 
 
   Version History:
+  2.3.1 - Warning hunt
   2.3.0 - Added the ability to copy array/buffer and fixed bug in hash table.
   2.2.1 - Used tmpfile() for Windows
   2.2.0 - Added zpl_file_temp
@@ -3634,7 +3635,7 @@ extern "C" {
 
 #define ZPL__ONES        (cast(usize)-1/U8_MAX)
 #define ZPL__HIGHS       (ZPL__ONES * (U8_MAX/2+1))
-#define ZPL__HAS_ZERO(x) ((x)-ZPL__ONES & ~(x) & ZPL__HIGHS)
+#define ZPL__HAS_ZERO(x) (((x)-ZPL__ONES) & ~(x) & ZPL__HIGHS)
 
 
     void const *zpl_memchr(void const *data, u8 c, isize n) {
@@ -7394,6 +7395,7 @@ extern "C" {
         
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
+        return 0;
     }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -7517,7 +7519,7 @@ extern "C" {
         b32 result = false;
         ZPL_ASSERT_NOT_NULL(path);
 #if defined(ZPL_SYSTEM_WINDOWS)
-        result == (zpl_strlen(path) > 2) &&
+        result = (zpl_strlen(path) > 2) &&
             zpl_char_is_alpha(path[0]) &&
             (path[1] == ':' && path[2] == ZPL_PATH_SEPARATOR);
 #else
