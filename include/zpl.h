@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.1 - Small bugfix in zpl_file_open
   3.0.0 - Added several fixes and features
   2.4.0 - Added remove to hash table
   2.3.3 - Removed redundant code
@@ -7075,7 +7076,7 @@ extern "C" {
             if (w_len_) *w_len_ = w_len;
             return NULL;
         }
-        w_text = zpl_alloc_array(a, wchar_t, w_len1);
+        w_text = zpl_alloc_array(a, wchar_t, w_len+1);
         w_len1 = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text, cast(int)len, w_text, cast(int)w_len);
         if (w_len1 == 0) {
             zpl_free(a, w_text);
