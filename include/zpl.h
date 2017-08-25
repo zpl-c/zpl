@@ -217,12 +217,12 @@ extern "C" {
 
 #include <malloc.h> // NOTE: _aligned_*()
 #include <intrin.h>
-    
+
     // TODO(ZaKlaus): Find a better way to get this flag in MinGW.
 #if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
 #define WC_ERR_INVALID_CHARS 0x0080
 #endif
-    
+
 #else
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
@@ -279,7 +279,7 @@ extern "C" {
 #include <stdarg.h>
 #include <stddef.h>
 #endif
-    
+
     ////////////////////////////////////////////////////////////////
     //
     // Base Types
@@ -709,7 +709,7 @@ extern "C" {
 #ifndef zpl_memcopy_array
 #define zpl_memcopy_array(dst, src, count) zpl_memcopy((dst), (src), zpl_size_of(*(dst))*(count))
 #endif
-    
+
 #ifndef zpl_memmove_array
 #define zpl_memmove_array(dst, src, count) zpl_memmove((dst), (src), zpl_size_of(*(dst))*(count))
 #endif
@@ -820,7 +820,7 @@ extern "C" {
     // Mutex
     typedef struct zpl_mutex_t {
 #if defined(ZPL_SYSTEM_WINDOWS)
-        CRITICAL_SECTION win32_critical_section;        
+        CRITICAL_SECTION win32_critical_section;
 #else
         pthread_mutex_t pthread_mutex;
 #endif
@@ -833,7 +833,7 @@ extern "C" {
     ZPL_DEF void zpl_mutex_unlock  (zpl_mutex_t *m);
 
     struct zpl_thread_t;
-    
+
 #define ZPL_THREAD_PROC(name) isize name(struct zpl_thread_t *thread)
     typedef ZPL_THREAD_PROC(zpl_thread_proc_t);
 
@@ -1446,7 +1446,7 @@ extern "C" {
         zpl_memcopy(&(x)[zpl_buffer_count(x)], (items), zpl_size_of(*(x))*(item_count)); \
         zpl_buffer_count(x) += (item_count);                            \
     } while (0)
-    
+
 #define zpl_buffer_copy_init(y, x) do { \
         zpl_buffer_init_reserve(y, zpl_buffer_allocator(x), zpl_buffer_capacity(x)); \
         zpl_memcopy(y, x, zpl_buffer_capacity(x) * zpl_size_of(*x)); \
@@ -1595,7 +1595,7 @@ extern "C" {
         zpl_memcopy(x+index, x+index+1, zpl_size_of(x[0])*(zpl__ah->count - index)); \
         --zpl__ah->count;                                               \
     } while (0)
-    
+
 #define zpl_array_copy_init(y, x) do { \
         zpl_array_init_reserve(y, zpl_array_allocator(x), zpl_array_capacity(x)); \
         zpl_memcopy(y, x, zpl_array_capacity(x) * zpl_size_of(*x)); \
@@ -2063,14 +2063,14 @@ extern "C" {
         zpl_file_time_t       last_write_time;
         // zpl_dir_info_t *   dir_info; // TODO: Get directory info
     } zpl_file_t;
-    
+
     typedef struct zpl_async_file_t {
         zpl_file_t file;
         b32 done;
         isize size;
         void *data;
     } zpl_async_file_t;
-    
+
 #define ZPL_ASYNC_FILE_CB(name) void name(zpl_async_file_t *file)
     typedef ZPL_ASYNC_FILE_CB(zpl_async_file_cb);
 
@@ -3530,7 +3530,7 @@ extern "C" {
         if (dest == NULL) {
             return NULL;
         }
-        
+
         u8 *d = cast(u8 *)dest;
         u8 const *s = cast(u8 const *)source;
 
@@ -3575,7 +3575,7 @@ extern "C" {
         if (dest == NULL) {
             return NULL;
         }
-        
+
         u8 *s = cast(u8 *)dest;
         isize k;
         u32 c32 = ((u32)-1)/255 * c;
@@ -3641,11 +3641,11 @@ extern "C" {
     zpl_inline i32 zpl_memcompare(void const *s1, void const *s2, isize size) {
         u8 const *s1p8 = cast(u8 const *)s1;
         u8 const *s2p8 = cast(u8 const *)s2;
-        
+
         if (s1 == NULL || s2 == NULL) {
             return 0;
         }
-        
+
         while (size--) {
             isize d;
             if ((d = (*s1p8++ - *s2p8++)) != 0)
@@ -4314,7 +4314,7 @@ extern "C" {
 #endif
     }
 
-    zpl_inline void zpl_mutex_destroy(zpl_mutex_t *m) { 
+    zpl_inline void zpl_mutex_destroy(zpl_mutex_t *m) {
 #if defined(ZPL_SYSTEM_WINDOWS)
         DeleteCriticalSection(&m->win32_critical_section);
 #else
@@ -4355,7 +4355,7 @@ extern "C" {
         ctl->cb(ctl->data);
 
         zpl_mfree(ctl);
-        
+
         return true;
     }
 
@@ -4385,16 +4385,16 @@ extern "C" {
 #if defined(ZPL_SYSTEM_WINDOWS)
     zpl_inline DWORD __stdcall zpl__thread_proc(void *arg) {
         zpl_thread_t *t = cast(zpl_thread_t *)arg;
-        zpl__thread_run(t); 
+        zpl__thread_run(t);
         t->is_running = false;
-        return 0; 
+        return 0;
     }
 #else
-    zpl_inline void *          zpl__thread_proc(void *arg) { 
+    zpl_inline void *          zpl__thread_proc(void *arg) {
         zpl_thread_t *t = cast(zpl_thread_t *)arg;
-        zpl__thread_run(t); 
+        zpl__thread_run(t);
         t->is_running = false;
-        return NULL; 
+        return NULL;
     }
 #endif
 
@@ -4608,24 +4608,24 @@ extern "C" {
         case zpl_allocation_resize_ev:
             ptr = _aligned_realloc(old_memory, size, alignment);
             break;
-            
+
 #elif defined(ZPL_SYSTEM_LINUX)
             case zpl_allocation_alloc_ev: {
                 ptr = aligned_alloc(alignment, size);
-                
+
                 if (flags & zpl_allocator_flag_clear_to_zero_ev) {
                     zpl_zero_size(ptr, size);
                 }
             } break;
-            
+
             case zpl_allocation_free_ev: {
                 free(old_memory);
             } break;
-            
+
             case zpl_allocation_resize_ev: {
                 zpl_allocator_t a = zpl_heap_allocator();
                 ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
-            } break;            
+            } break;
 #else
         case zpl_allocation_alloc_ev: {
             posix_memalign(&ptr, alignment, size);
@@ -4836,7 +4836,7 @@ extern "C" {
                 }
 #undef AF__CHECK
             }
-            
+
             fclose(cpu_info);
         }
 
@@ -5738,9 +5738,9 @@ extern "C" {
 
     zpl_inline isize zpl_strlen(char const *str) {
         if (str == NULL) {
-            return NULL;
+            return 0;
         }
-        
+
         char const *begin = str;
         isize const *w;
         while (cast(uintptr)str % sizeof(usize)) {
@@ -6049,12 +6049,12 @@ extern "C" {
         char *buf = string;
         b32 negative = false;
         u64 v;
-        
+
         if (value < 0) {
             negative = true;
             value = -value;
         }
-        
+
         v = cast(u64)value;
         if (v != 0) {
             while (v > 0) {
@@ -6336,10 +6336,10 @@ extern "C" {
             isize len = zpl_utf8_encode_rune(buf, r);
             return zpl_string_append_length(str, buf, len);
         }
-        
+
         return str;
     }
-    
+
     zpl_string_t zpl_string_append_fmt(zpl_string_t str, char const *fmt, ...) {
         isize res;
         char buf[4096] = {0};
@@ -7058,7 +7058,7 @@ extern "C" {
     //
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-    
+
     zpl_internal wchar_t *zpl__alloc_utf8_to_ucs2(zpl_allocator_t a, char const *text, isize *w_len_) {
         wchar_t *w_text = NULL;
         isize len = 0, w_len = 0, w_len1 = 0;
@@ -7087,8 +7087,8 @@ extern "C" {
         if (w_len_) *w_len_ = w_len;
         return w_text;
     }
-    
-    
+
+
     zpl_internal ZPL_FILE_SEEK_PROC(zpl__win32_file_seek) {
         LARGE_INTEGER li_offset;
         li_offset.QuadPart = offset;
@@ -7141,7 +7141,7 @@ extern "C" {
         DWORD creation_disposition;
         void *handle;
         wchar_t *w_text;
-        
+
         switch (mode & zpl_file_mode_modes_ev) {
         case zpl_file_mode_read_ev:
             desired_access = GENERIC_READ;
@@ -7177,7 +7177,7 @@ extern "C" {
                              desired_access,
                              FILE_SHARE_READ|FILE_SHARE_DELETE, NULL,
                              creation_disposition, FILE_ATTRIBUTE_NORMAL, NULL);
-        
+
         zpl_free(zpl_heap_allocator(), w_text);
 
         if (handle == INVALID_HANDLE_VALUE) {
@@ -7409,39 +7409,39 @@ extern "C" {
         }
         return result;
     }
-    
+
     typedef struct {
         zpl_async_file_t f;
         zpl_async_file_cb *proc;
         zpl_thread_t td;
     } zpl__async_file_ctl_t;
-    
+
     void zpl__async_file_read_proc(zpl_async_file_t *file, zpl_async_file_cb *proc) {
-        // TODO(ZaKlaus): 
+        // TODO(ZaKlaus):
         zpl_unused(proc);
         zpl_unused(file);
-        
+
     }
-    
-    
+
+
     ZPL_DEF void zpl_async_file_read(zpl_file_t *file, zpl_async_file_cb *proc) {
         ZPL_ASSERT(file && proc);
-        
+
         zpl_async_file_t *a = zpl_malloc(sizeof(zpl_async_file_t));
         zpl_async_file_t a_ = {0};
         *a = a_;
-        
+
         //a->file = file;
-        
+
         zpl_thread_t td = {0};
         zpl_thread_init(&td);
-        
-        // TODO(ZaKlaus): 
-        //zpl_thread_start(&td, 
-        
+
+        // TODO(ZaKlaus):
+        //zpl_thread_start(&td,
+
         zpl_mfree(a);
     }
-    
+
     ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc) {
         zpl_unused(file);
         zpl_unused(buffer);
@@ -7492,7 +7492,7 @@ extern "C" {
         void *handle;
         b32 found = false;
         zpl_allocator_t a = zpl_heap_allocator();
-        
+
         w_text = zpl__alloc_utf8_to_ucs2(a, name, NULL);
         if (w_text == NULL) {
             return false;
@@ -7543,11 +7543,11 @@ extern "C" {
     zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
         zpl_zero_item(file);
         FILE *fd = tmpfile();
-        
+
         if (fd == NULL) {
             return zpl_file_error_invalid_ev;
         }
-        
+
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
         return 0;
@@ -7566,7 +7566,7 @@ extern "C" {
         }
         if (GetFileAttributesExW(w_text, GetFileExInfoStandard, &data))
             last_write_time = data.ftLastWriteTime;
-        
+
         zpl_free(a, w_text);
 
         li.LowPart = last_write_time.dwLowDateTime;
@@ -7578,17 +7578,17 @@ extern "C" {
     zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
         b32 result = false;
         zpl_allocator_t a = zpl_heap_allocator();
-        
+
         wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
         if (w_old == NULL) {
             return false;
         }
-        
+
         wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
         if (w_new != NULL) {
             result = CopyFileW(w_old, w_new, fail_if_exists);
         }
-        
+
         zpl_free(a, w_old);
         zpl_free(a, w_new);
         return result;
@@ -7597,33 +7597,33 @@ extern "C" {
     zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_filename) {
         b32 result = false;
         zpl_allocator_t a = zpl_heap_allocator();
-        
+
         wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
         if (w_old == NULL) {
             return false;
         }
-        
+
         wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
         if (w_new != NULL) {
             result = MoveFileW(w_old, w_new);
         }
-        
+
         zpl_free(a, w_old);
         zpl_free(a, w_new);
         return result;
     }
-    
+
     zpl_inline b32 zpl_file_remove(char const *filename) {
         b32 result = false;
         zpl_allocator_t a = zpl_heap_allocator();
-        
+
         wchar_t *w_filename = zpl__alloc_utf8_to_ucs2(a, filename, NULL);
         if (w_filename == NULL) {
             return false;
         }
-        
+
         result = DeleteFileW(w_filename);
-        
+
         zpl_free(a, w_filename);
         return result;
     }
@@ -7669,7 +7669,7 @@ extern "C" {
         }
         return false;
     }
-    
+
     zpl_inline b32 zpl_file_remove(char const *filename) {
 #if defined(ZPL_SYSTEM_OSX)
         return (unlink(filename) != -1);
@@ -7784,7 +7784,7 @@ extern "C" {
         GetFullPathNameW(w_path, cast(int)w_len, w_fullpath, NULL);
         w_fullpath[w_len] = 0;
         zpl_free(zpl_heap_allocator(), w_path);
-        
+
         new_len = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int)w_len, NULL, 0, NULL, NULL);
         if (new_len == 0) {
             zpl_free(zpl_heap_allocator(), w_fullpath);
@@ -7808,14 +7808,14 @@ extern "C" {
             // NOTE(bill): File does not exist
             fullpath = cast(char *)path;
         }
-        
+
         len = zpl_strlen(fullpath);
-        
-        result = gb_alloc_array(a, char, len + 1);
-        gb_memmove(result, fullpath, len);
+
+        result = zpl_alloc_array(a, char, len + 1);
+        zpl_memmove(result, fullpath, len);
         result[len] = 0;
         zpl_free(a, p);
-        
+
         return result;
 #endif
     }
