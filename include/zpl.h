@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.3 - Small fixes for various cpp warnings and errors
   3.0.2 - Fixed linux part, and removed trailing spaces
   3.0.1 - Small bugfix in zpl_file_open
   3.0.0 - Added several fixes and features
@@ -8761,4 +8762,3 @@ extern "C" {
 #endif
 
 #endif // ZPL_IMPLEMENTATION
-
