@@ -1,4 +1,4 @@
-/*
+﻿/*
 
   ZPL - Global module
 
@@ -7428,7 +7428,7 @@ extern "C" {
     ZPL_DEF void zpl_async_file_read(zpl_file_t *file, zpl_async_file_cb *proc) {
         ZPL_ASSERT(file && proc);
 
-        zpl_async_file_t *a = zpl_malloc(sizeof(zpl_async_file_t));
+        zpl_async_file_t *a = (zpl_async_file_t *)zpl_malloc(sizeof(zpl_async_file_t));
         zpl_async_file_t a_ = {0};
         *a = a_;
 
@@ -7551,7 +7551,8 @@ extern "C" {
 
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
-        return 0;
+
+        return zpl_file_error_none_ev;
     }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
