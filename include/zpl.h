@@ -1,4 +1,4 @@
-﻿/*
+/*
 
   ZPL - Global module
 
@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.4 - Small fixes for tiny cpp warnings
   3.0.3 - Small fixes for various cpp warnings and errors
   3.0.2 - Fixed linux part, and removed trailing spaces
   3.0.1 - Small bugfix in zpl_file_open
@@ -1140,8 +1141,8 @@ extern "C" {
         zpl_allocator_t backing;
 
         void *physical_start;
-        isize total_size;
-        isize allocated;
+        usize total_size;
+        usize allocated;
     } zpl_stack_memory_t;
 
     ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory_t *s, void *start, isize size);
@@ -1689,7 +1690,7 @@ extern "C" {
     } while (0)
 
 #define zpl_bs_grow(x, min_capacity) do {                                                                                                \
-        isize new_capacity = ZPL_BS_GROW_FORMULA(zpl_bs_capacity(x));                                                                    \
+        usize new_capacity = ZPL_BS_GROW_FORMULA(zpl_bs_capacity(x));                                                                    \
         if (new_capacity < (min_capacity))                                                                                               \
             new_capacity = (min_capacity);                                                                                               \
         zpl_bs_set_capacity(x, new_capacity);                                                                                            \
@@ -5439,7 +5440,7 @@ extern "C" {
 
                 u64 alloc_offset = *h.a_u64;
 
-                s->allocated = alloc_offset;
+                s->allocated = (usize)alloc_offset;
             }
         }break;
 
