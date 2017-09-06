@@ -10,7 +10,7 @@
 
 <br />
 <div align="center">
-  Pure C library for building simple and elegant cross-platform mmo client-server solutions.
+  A collection of single-file public domain header-only libraries for C and C++.
 </div>
 
 <div align="center">
@@ -22,8 +22,6 @@
   </sub>
 </div>
 <hr/>
-
-A collection of single-file public domain header-only libraries for C and C++.
 
 library                                         | latest version                                                                       | category | description
 ------------------------------------------------|--------------------------------------------------------------------------------------|----------|-------------
