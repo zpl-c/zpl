@@ -1,4 +1,6 @@
-# zpl
+<div align="center">
+<h1>zpl</h1>
+</div>
 
 <div align="center">
     <a href="https://github.com/zpl-c/zpl"><img src="https://img.shields.io/npm/v/zpl.c.svg?maxAge=3600" alt="NPM version" /></a>
@@ -19,7 +21,7 @@
     and other contributors!
   </sub>
 </div>
-
+<hr/>
 
 A collection of single-file public domain header-only libraries for C and C++.
 
