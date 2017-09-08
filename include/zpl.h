@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.4 - Fixed compilation for emscripten
   3.0.3 - Small fixes for various cpp warnings and errors
   3.0.2 - Fixed linux part, and removed trailing spaces
   3.0.1 - Small bugfix in zpl_file_open
@@ -253,7 +254,7 @@ extern "C" {
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <emmintrin.h>
-#elif defined(ZPL_CPU_X86)
+#elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <xmmintrin.h>
 #else
 #include <sched.h>
@@ -7543,6 +7544,9 @@ extern "C" {
 #endif
 
     zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
+#if defined(ZPL_SYSTEM_EMSCRIPTEN)
+        ZPL_PANIC("zpl_file_temp is not supported for emscripten");
+#else
         zpl_zero_item(file);
         FILE *fd = tmpfile();
 
@@ -7552,7 +7556,7 @@ extern "C" {
 
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
-
+#endif
         return zpl_file_error_none_ev;
     }
 
@@ -7674,7 +7678,7 @@ extern "C" {
     }
 
     zpl_inline b32 zpl_file_remove(char const *filename) {
-#if defined(ZPL_SYSTEM_OSX)
+#if defined(ZPL_SYSTEM_OSX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
         return (unlink(filename) != -1);
 #else
         return (remove(filename) == 0);
@@ -8727,8 +8731,9 @@ extern "C" {
 
     zpl_inline u32 zpl_system_command(char const *command, char *buffer) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
-        ZPL_PANIC();
-#endif
+        ZPL_PANIC("zpl_system_command not supported");
+#else
+
 #if defined(ZPL_SYSTEM_WINDOWS)
         FILE *handle = _popen(command, "r");
 #else
@@ -8745,6 +8750,8 @@ extern "C" {
         _pclose(handle);
 #else
         pclose(handle);
+#endif
+
 #endif
         return 1;
     }
