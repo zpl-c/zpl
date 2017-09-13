@@ -1,5 +1,6 @@
 # project files & folders
 build
+build.*
 include/project.4coder
 include/build.sh
 include/quick.c

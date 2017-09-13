@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.5 - Small changes
   3.0.4 - Small fixes for tiny cpp warnings
   3.0.3 - Small fixes for various cpp warnings and errors
   3.0.2 - Fixed linux part, and removed trailing spaces
