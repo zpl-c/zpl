@@ -4,15 +4,15 @@
 zpl_global u8 counter = 0;
 
 ZPL_TIMER_CB(test1_cb) {
-    printf("Hello, Sailor!\n");
+    zpl_printf("Hello, Sailor!\n");
 
     if (counter == 10) {
-        printf("The second timer is done, press ^C to terminate the process.\n");
+        zpl_printf("The second timer is done, press ^C to terminate the process.\n");
     }
 }
 
 ZPL_TIMER_CB(test2_cb) {
-    printf("This has been called %d/10 times!\n", ++counter);
+    zpl_printf("This has been called %d/10 times!\n", ++counter);
 }
 
 #define TO_MS 1000
