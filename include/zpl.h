@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.0.7 - Added timer userptr as argument to callback
   3.0.6 - Small changes
   3.0.5 - Fixed compilation for emscripten
   3.0.4 - Small fixes for tiny cpp warnings
@@ -2199,7 +2200,7 @@ extern "C" {
     //
     //
 
-#define ZPL_TIMER_CB(name) void name()
+#define ZPL_TIMER_CB(name) void name(void *userptr)
     typedef ZPL_TIMER_CB(zpl_timer_cb);
 
     typedef struct zpl_timer_t {
@@ -2209,6 +2210,7 @@ extern "C" {
         i32           initial_calls;
         u64           next_call_ts;
         u64           duration;
+        void         *userptr;
     } zpl_timer_t;
 
     typedef zpl_array_t(zpl_timer_t) zpl_timer_pool;
@@ -8497,7 +8499,7 @@ extern "C" {
                             t->next_call_ts = now + t->duration;
                         }
 
-                        t->callback();
+                        t->callback(t->userptr);
                     }
                 }
             }
