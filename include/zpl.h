@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.1.1 - Added char* conversion for data field in zpl_array_header_t
   3.1.0 - Added data field to zpl_array_header_t
   3.0.7 - Added timer userptr as argument to callback
   3.0.6 - Small changes
@@ -1549,7 +1550,7 @@ extern "C" {
         zpl_array_header_t *zpl__ah = cast(zpl_array_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_array_header_t)+zpl_size_of(*(x))*(cap)); \
         zpl__ah->allocator = allocator_;                                \
         zpl__ah->count = 0;                                             \
-        zpl__ah->data = x;                                              \
+        zpl__ah->data = (char *)x;                                      \
         zpl__ah->capacity = cap;                                        \
         *zpl__array_ = cast(void *)(zpl__ah+1);                         \
     } while (0)
@@ -6663,7 +6664,7 @@ extern "C" {
             zpl_memmove(nh, h, zpl_size_of(zpl_array_header_t) + element_size*h->count);
             nh->allocator = h->allocator;
             nh->count     = h->count;
-            nh->data = nh+1;
+            nh->data      = cast(char *)(nh+1);
             nh->capacity  = capacity;
             zpl_free(h->allocator, h);
             return nh+1;
