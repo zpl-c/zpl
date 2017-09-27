@@ -25,6 +25,7 @@
 
   Version History:
   3.1.2 - Small fix in zpl_memcompare
+  3.1.1 - Added char* conversion for data field in zpl_array_header_t
   3.1.0 - Added data field to zpl_array_header_t
   3.0.7 - Added timer userptr as argument to callback
   3.0.6 - Small changes
