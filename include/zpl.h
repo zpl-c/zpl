@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.1.4 - Fix for zpl_buffer_t not allocating correctly
   3.1.2 - Small fix in zpl_memcompare
   3.1.1 - Added char* conversion for data field in zpl_array_header_t
   3.1.0 - Added data field to zpl_array_header_t
@@ -1438,7 +1439,7 @@ extern "C" {
 
 #define zpl_buffer_init(x, allocator, cap) do {                         \
         void **nx = cast(void **)&(x);                                  \
-        zpl_buffer_header_t *zpl__bh = cast(zpl_buffer_header_t *)zpl_alloc((allocator), (cap)*zpl_size_of(*(x))); \
+        zpl_buffer_header_t *zpl__bh = cast(zpl_buffer_header_t *)zpl_alloc((allocator), sizeof(zpl_buffer_header_t)+(cap)*zpl_size_of(*(x))); \
         zpl__bh->count = 0;                                             \
         zpl__bh->capacity = cap;                                        \
         *nx = cast(void *)(zpl__bh+1);                                  \

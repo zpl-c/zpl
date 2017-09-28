@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "3.1.3",
+  "version": "3.1.4",
   "description": "Single-file public domain header-only C and C++ helper library.",
   "main": "include/zpl.h",
   "directories": {
