@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.1.5 - Renamed userptr to user_data in timer
   3.1.4 - Fix for zpl_buffer_t not allocating correctly
   3.1.2 - Small fix in zpl_memcompare
   3.1.1 - Added char* conversion for data field in zpl_array_header_t
@@ -2206,7 +2207,7 @@ extern "C" {
     //
     //
 
-#define ZPL_TIMER_CB(name) void name(void *userptr)
+#define ZPL_TIMER_CB(name) void name(void *user_data)
     typedef ZPL_TIMER_CB(zpl_timer_cb);
 
     typedef struct zpl_timer_t {
@@ -2216,7 +2217,7 @@ extern "C" {
         i32           initial_calls;
         u64           next_call_ts;
         u64           duration;
-        void         *userptr;
+        void         *user_data;
     } zpl_timer_t;
 
     typedef zpl_array_t(zpl_timer_t) zpl_timer_pool;
@@ -8506,7 +8507,7 @@ extern "C" {
                             t->next_call_ts = now + t->duration;
                         }
 
-                        t->callback(t->userptr);
+                        t->callback(t->user_data);
                     }
                 }
             }
