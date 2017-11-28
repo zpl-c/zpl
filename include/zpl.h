@@ -110,6 +110,10 @@ extern "C" {
 #ifndef ZPL_SYSTEM_WINDOWS
 #define ZPL_SYSTEM_WINDOWS 1
 #endif
+#elif defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
+#endif
 #elif defined(__APPLE__) && defined(__MACH__)
 #ifndef ZPL_SYSTEM_OSX
 #define ZPL_SYSTEM_OSX 1
@@ -119,12 +123,7 @@ extern "C" {
 #define ZPL_SYSTEM_UNIX 1
 #endif
 
-
-#if defined(ANDROID) || defined(__ANDROID__)
-#ifndef ZPL_SYSTEM_ANDROID
-#define ZPL_SYSTEM_ANDROID 1
-#endif
-#elif defined(__linux__)
+#if defined(__linux__)
 #ifndef ZPL_SYSTEM_LINUX
 #define ZPL_SYSTEM_LINUX 1
 #endif
