@@ -119,7 +119,12 @@ extern "C" {
 #define ZPL_SYSTEM_UNIX 1
 #endif
 
-#if defined(__linux__)
+
+#if defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
+#endif
+#elif defined(__linux__)
 #ifndef ZPL_SYSTEM_LINUX
 #define ZPL_SYSTEM_LINUX 1
 #endif
@@ -130,10 +135,6 @@ extern "C" {
 #elif defined(__EMSCRIPTEN__)
 #ifndef ZPL_SYSTEM_EMSCRIPTEN
 #define ZPL_SYSTEM_EMSCRIPTEN 1
-#endif
-#elif defined(ANDROID) || defined(__ANDROID__)
-#ifndef ZPL_SYSTEM_ANDROID
-#define ZPL_SYSTEM_ANDROID 1
 #endif
 #else
 #error This UNIX operating system is not supported
