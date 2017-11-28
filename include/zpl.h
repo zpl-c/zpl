@@ -87,7 +87,7 @@ extern "C" {
 #endif
 #endif
 
-#if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__)
+#if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__) || defined(__aarch64__)
 #ifndef ZPL_ARCH_64_BIT
 #define ZPL_ARCH_64_BIT 1
 #endif
@@ -130,6 +130,10 @@ extern "C" {
 #elif defined(__EMSCRIPTEN__)
 #ifndef ZPL_SYSTEM_EMSCRIPTEN
 #define ZPL_SYSTEM_EMSCRIPTEN 1
+#endif
+#elif defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
 #endif
 #else
 #error This UNIX operating system is not supported
@@ -207,7 +211,9 @@ extern "C" {
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX)
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #define _LARGEFILE64_SOURCE
 #endif
 
@@ -258,7 +264,10 @@ extern "C" {
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+
+#if !defined(ZPL_SYSTEM_ANDROID)
 #include <spawn.h>
+#endif
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <emmintrin.h>
