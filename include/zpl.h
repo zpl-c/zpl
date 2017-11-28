@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.2.0 - Added Android support
   3.1.5 - Renamed userptr to user_data in timer
   3.1.4 - Fix for zpl_buffer_t not allocating correctly
   3.1.2 - Small fix in zpl_memcompare
@@ -87,7 +88,7 @@ extern "C" {
 #endif
 #endif
 
-#if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__)
+#if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__) || defined(__aarch64__)
 #ifndef ZPL_ARCH_64_BIT
 #define ZPL_ARCH_64_BIT 1
 #endif
@@ -119,7 +120,14 @@ extern "C" {
 #define ZPL_SYSTEM_UNIX 1
 #endif
 
-#if defined(__linux__)
+#if defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
+#endif
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
+#elif defined(__linux__)
 #ifndef ZPL_SYSTEM_LINUX
 #define ZPL_SYSTEM_LINUX 1
 #endif
@@ -148,7 +156,15 @@ extern "C" {
 #error Unknown compiler
 #endif
 
-#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#if defined(__arm__) || defined(__aarch64__)
+#ifndef ZPL_CPU_ARM
+#define ZPL_CPU_ARM 1
+#endif
+#ifndef ZPL_CACHE_LINE_SIZE
+#define ZPL_CACHE_LINE_SIZE 64
+#endif
+
+#elif defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
 #ifndef ZPL_CPU_X86
 #define ZPL_CPU_X86 1
 #endif
@@ -162,14 +178,6 @@ extern "C" {
 #endif
 #ifndef ZPL_CACHE_LINE_SIZE
 #define ZPL_CACHE_LINE_SIZE 128
-#endif
-
-#elif defined(__arm__)
-#ifndef ZPL_CPU_ARM
-#define ZPL_CPU_ARM 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 64
 #endif
 
 #elif defined(__MIPSEL__) || defined(__mips_isa_rev)
@@ -207,7 +215,9 @@ extern "C" {
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX)
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #define _LARGEFILE64_SOURCE
 #endif
 
@@ -258,14 +268,19 @@ extern "C" {
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-#include <spawn.h>
 
+#if !defined(ZPL_SYSTEM_ANDROID)
+#include <spawn.h>
+#endif
+
+#if !defined(ZPL_SYSTEM_ANDROID)
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <emmintrin.h>
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <xmmintrin.h>
 #else
 #include <sched.h>
+#endif
 #endif
 
 #endif
