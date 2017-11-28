@@ -152,7 +152,15 @@ extern "C" {
 #error Unknown compiler
 #endif
 
-#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#if defined(__arm__) || defined(__aarch64__)
+#ifndef ZPL_CPU_ARM
+#define ZPL_CPU_ARM 1
+#endif
+#ifndef ZPL_CACHE_LINE_SIZE
+#define ZPL_CACHE_LINE_SIZE 64
+#endif
+
+#elif defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
 #ifndef ZPL_CPU_X86
 #define ZPL_CPU_X86 1
 #endif
@@ -166,14 +174,6 @@ extern "C" {
 #endif
 #ifndef ZPL_CACHE_LINE_SIZE
 #define ZPL_CACHE_LINE_SIZE 128
-#endif
-
-#elif defined(__arm__) || defined(__aarch64__)
-#ifndef ZPL_CPU_ARM
-#define ZPL_CPU_ARM 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 64
 #endif
 
 #elif defined(__MIPSEL__) || defined(__mips_isa_rev)
