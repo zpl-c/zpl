@@ -123,6 +123,9 @@ extern "C" {
 #ifndef ZPL_SYSTEM_ANDROID
 #define ZPL_SYSTEM_ANDROID 1
 #endif
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
 #elif defined(__linux__)
 #ifndef ZPL_SYSTEM_LINUX
 #define ZPL_SYSTEM_LINUX 1
