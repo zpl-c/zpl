@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.2.0 - Added Android support
   3.1.5 - Renamed userptr to user_data in timer
   3.1.4 - Fix for zpl_buffer_t not allocating correctly
   3.1.2 - Small fix in zpl_memcompare
