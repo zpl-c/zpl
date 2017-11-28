@@ -168,7 +168,7 @@ extern "C" {
 #define ZPL_CACHE_LINE_SIZE 128
 #endif
 
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 #ifndef ZPL_CPU_ARM
 #define ZPL_CPU_ARM 1
 #endif
@@ -269,12 +269,14 @@ extern "C" {
 #include <spawn.h>
 #endif
 
+#if !defined(ZPL_SYSTEM_ANDROID)
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <emmintrin.h>
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #include <xmmintrin.h>
 #else
 #include <sched.h>
+#endif
 #endif
 
 #endif
