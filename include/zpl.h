@@ -24,7 +24,8 @@
 
 
   Version History:
-  3.2.0 - Added Android support
+  3.3.1 - Fixed some type cast warnings
+  3.3.0 - Added Android support
   3.1.5 - Renamed userptr to user_data in timer
   3.1.4 - Fix for zpl_buffer_t not allocating correctly
   3.1.2 - Small fix in zpl_memcompare
@@ -7452,10 +7453,10 @@ extern "C" {
         zpl_async_file_t *f = afops->f;
 
         i64 file_size = zpl_file_size(&f->handle);
-        void *file_contents = zpl_malloc(file_size);
-        zpl_file_read(&f->handle, file_contents, file_size);
+        void *file_contents = zpl_malloc((isize)file_size);
+        zpl_file_read(&f->handle, file_contents, (isize)file_size);
 
-        f->size = file_size;
+        f->size = (isize)file_size;
         f->data = file_contents;
 
         afops->proc(f);
@@ -7473,9 +7474,9 @@ extern "C" {
 
         i64 file_size = afops->data_size;
         void *file_contents = afops->data;
-        zpl_file_write(&f->handle, file_contents, file_size);
+        zpl_file_write(&f->handle, file_contents, (isize)file_size);
 
-        f->size = file_size;
+        f->size = (isize)file_size;
         f->data = file_contents;
 
         afops->proc(f);
