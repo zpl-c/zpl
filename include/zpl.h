@@ -14,16 +14,17 @@
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
 
   #define ZPL_IMPLEMENTATION
-  #include"zpl.h"
+  #include "zpl.h"
 
   Credits:
-  Vladislav Gritsenko (GitHub: inlife)
+  Vladyslav Hrytsenko (GitHub: inlife)
   Dominik Madarasz (GitHub: zaklaus)
   Ginger Bill (GitHub: gingerBill)
   Sean Barrett (GitHub: nothings)
 
 
   Version History:
+  3.3.2 - Fixes for android arm
   3.3.1 - Fixed some type cast warnings
   3.3.0 - Added Android support
   3.1.5 - Renamed userptr to user_data in timer
