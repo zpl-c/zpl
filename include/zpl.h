@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.3.3 - Small macro formatting changes + ZPL_SYSTEM_IOS
   3.3.2 - Fixes for android arm
   3.3.1 - Fixed some type cast warnings
   3.3.0 - Added Android support
@@ -65,40 +66,39 @@
 #define ZPL_INCLUDE_ZPL_H
 
 #if defined(__cplusplus)
-extern "C" {
+  extern "C" {
 #endif
 
 #if defined(__cplusplus)
-#define ZPL_EXTERN extern "C"
+  #define ZPL_EXTERN extern "C"
 #else
-#define ZPL_EXTERN extern
+  #define ZPL_EXTERN extern
 #endif
 
 #if defined(_WIN32)
-#define ZPL_DLL_EXPORT ZPL_EXTERN __declspec(dllexport)
-#define ZPL_DLL_IMPORT ZPL_EXTERN __declspec(dllimport)
+  #define ZPL_DLL_EXPORT ZPL_EXTERN __declspec(dllexport)
+  #define ZPL_DLL_IMPORT ZPL_EXTERN __declspec(dllimport)
 #else
-#define ZPL_DLL_EXPORT ZPL_EXTERN __attribute__((visibility("default")))
-#define ZPL_DLL_IMPORT ZPL_EXTERN
+  #define ZPL_DLL_EXPORT ZPL_EXTERN __attribute__((visibility("default")))
+  #define ZPL_DLL_IMPORT ZPL_EXTERN
 #endif
 
 #ifndef ZPL_DEF
-#ifdef ZPL_STATIC
-#define ZPL_DEF static
-#else
-#define ZPL_DEF extern
-#endif
+  #ifdef ZPL_STATIC
+    #define ZPL_DEF static
+  #else
+    #define ZPL_DEF extern
+  #endif
 #endif
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__) || defined(__aarch64__)
-#ifndef ZPL_ARCH_64_BIT
-#define ZPL_ARCH_64_BIT 1
-#endif
+  #ifndef ZPL_ARCH_64_BIT
+  #define ZPL_ARCH_64_BIT 1
+  #endif
 #else
-
-#ifndef ZPL_ARCH_32_BIT
-#define ZPL_ARCH_32_BIT 1
-#endif
+  #ifndef ZPL_ARCH_32_BIT
+  #define ZPL_ARCH_32_BIT 1
+  #endif
 #endif
 
 
@@ -110,101 +110,106 @@ extern "C" {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-#ifndef ZPL_SYSTEM_WINDOWS
-#define ZPL_SYSTEM_WINDOWS 1
-#endif
+  #ifndef ZPL_SYSTEM_WINDOWS
+  #define ZPL_SYSTEM_WINDOWS 1
+  #endif
 #elif defined(__APPLE__) && defined(__MACH__)
-#ifndef ZPL_SYSTEM_OSX
-#define ZPL_SYSTEM_OSX 1
-#endif
+  #ifndef ZPL_SYSTEM_OSX
+  #define ZPL_SYSTEM_OSX 1
+  #endif
+  #ifndef ZPL_SYSTEM_MACOS
+  #define ZPL_SYSTEM_MACOS 1
+  #endif
+  #include <TargetConditionals.h>
+  #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+    #ifndef ZPL_SYSTEM_IOS
+    #define ZPL_SYSTEM_IOS 1
+    #endif
+  #endif
 #elif defined(__unix__)
-#ifndef ZPL_SYSTEM_UNIX
-#define ZPL_SYSTEM_UNIX 1
-#endif
+  #ifndef ZPL_SYSTEM_UNIX
+  #define ZPL_SYSTEM_UNIX 1
+  #endif
 
-#if defined(ANDROID) || defined(__ANDROID__)
-#ifndef ZPL_SYSTEM_ANDROID
-#define ZPL_SYSTEM_ANDROID 1
-#endif
-#ifndef ZPL_SYSTEM_LINUX
-#define ZPL_SYSTEM_LINUX 1
-#endif
-#elif defined(__linux__)
-#ifndef ZPL_SYSTEM_LINUX
-#define ZPL_SYSTEM_LINUX 1
-#endif
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-#ifndef ZPL_SYSTEM_FREEBSD
-#define ZPL_SYSTEM_FREEBSD 1
-#endif
-#elif defined(__EMSCRIPTEN__)
-#ifndef ZPL_SYSTEM_EMSCRIPTEN
-#define ZPL_SYSTEM_EMSCRIPTEN 1
-#endif
+  #if defined(ANDROID) || defined(__ANDROID__)
+    #ifndef ZPL_SYSTEM_ANDROID
+    #define ZPL_SYSTEM_ANDROID 1
+    #endif
+    #ifndef ZPL_SYSTEM_LINUX
+    #define ZPL_SYSTEM_LINUX 1
+    #endif
+  #elif defined(__linux__)
+    #ifndef ZPL_SYSTEM_LINUX
+    #define ZPL_SYSTEM_LINUX 1
+    #endif
+  #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+    #ifndef ZPL_SYSTEM_FREEBSD
+    #define ZPL_SYSTEM_FREEBSD 1
+    #endif
+  #elif defined(__EMSCRIPTEN__)
+    #ifndef ZPL_SYSTEM_EMSCRIPTEN
+    #define ZPL_SYSTEM_EMSCRIPTEN 1
+    #endif
+  #else
+    #error This UNIX operating system is not supported
+  #endif
 #else
-#error This UNIX operating system is not supported
-#endif
-#else
-#error This operating system is not supported
+  #error This operating system is not supported
 #endif
 
 #if defined(_MSC_VER)
-#define ZPL_COMPILER_MSVC 1
+  #define ZPL_COMPILER_MSVC 1
 #elif defined(__GNUC__)
-#define ZPL_COMPILER_GCC 1
+  #define ZPL_COMPILER_GCC 1
 #elif defined(__clang__)
-#define ZPL_COMPILER_CLANG 1
+  #define ZPL_COMPILER_CLANG 1
 #else
-#error Unknown compiler
+  #error Unknown compiler
 #endif
 
 #if defined(__arm__) || defined(__aarch64__)
-#ifndef ZPL_CPU_ARM
-#define ZPL_CPU_ARM 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 64
-#endif
-
+  #ifndef ZPL_CPU_ARM
+  #define ZPL_CPU_ARM 1
+  #endif
+  #ifndef ZPL_CACHE_LINE_SIZE
+  #define ZPL_CACHE_LINE_SIZE 64
+  #endif
 #elif defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__) || defined(ZPL_SYSTEM_EMSCRIPTEN)
-#ifndef ZPL_CPU_X86
-#define ZPL_CPU_X86 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 64
-#endif
-
+  #ifndef ZPL_CPU_X86
+  #define ZPL_CPU_X86 1
+  #endif
+  #ifndef ZPL_CACHE_LINE_SIZE
+  #define ZPL_CACHE_LINE_SIZE 64
+  #endif
 #elif defined(_M_PPC) || defined(__powerpc__) || defined(__powerpc64__)
-#ifndef ZPL_CPU_PPC
-#define ZPL_CPU_PPC 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 128
-#endif
-
+  #ifndef ZPL_CPU_PPC
+  #define ZPL_CPU_PPC 1
+  #endif
+  #ifndef ZPL_CACHE_LINE_SIZE
+  #define ZPL_CACHE_LINE_SIZE 128
+  #endif
 #elif defined(__MIPSEL__) || defined(__mips_isa_rev)
-#ifndef ZPL_CPU_MIPS
-#define ZPL_CPU_MIPS 1
-#endif
-#ifndef ZPL_CACHE_LINE_SIZE
-#define ZPL_CACHE_LINE_SIZE 64
-#endif
-
+  #ifndef ZPL_CPU_MIPS
+  #define ZPL_CPU_MIPS 1
+  #endif
+  #ifndef ZPL_CACHE_LINE_SIZE
+  #define ZPL_CACHE_LINE_SIZE 64
+  #endif
 #else
-#error Unknown CPU Type
+  #error Unknown CPU Type
 #endif
 
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN) && !defined(ZPL_CPU_ARM) // disabled for __EMSCRIPTEN__
-#ifndef ZPL_THREADING
-#define ZPL_THREADING 1
-#endif
+  #ifndef ZPL_THREADING
+  #define ZPL_THREADING 1
+  #endif
 #endif
 
 #ifndef ZPL_STATIC_ASSERT
-#define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond))*2-1]
-#define ZPL_STATIC_ASSERT2(cond, line) ZPL_STATIC_ASSERT3(cond, static_assertion_at_line_##line)
-#define ZPL_STATIC_ASSERT1(cond, line) ZPL_STATIC_ASSERT2(cond, line)
-#define ZPL_STATIC_ASSERT(cond)        ZPL_STATIC_ASSERT1(cond, __LINE__)
+  #define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond))*2-1]
+  #define ZPL_STATIC_ASSERT2(cond, line) ZPL_STATIC_ASSERT3(cond, static_assertion_at_line_##line)
+  #define ZPL_STATIC_ASSERT1(cond, line) ZPL_STATIC_ASSERT2(cond, line)
+  #define ZPL_STATIC_ASSERT(cond)        ZPL_STATIC_ASSERT1(cond, __LINE__)
 #endif
 
 
@@ -215,101 +220,101 @@ extern "C" {
     //
 
 #if defined(_WIN32) && !defined(__MINGW32__)
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+  #ifndef _CRT_SECURE_NO_WARNINGS
+  #define _CRT_SECURE_NO_WARNINGS
+  #endif
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX)
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#define _LARGEFILE64_SOURCE
+  #ifndef _GNU_SOURCE
+  #define _GNU_SOURCE
+  #endif
+  #define _LARGEFILE64_SOURCE
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-#include <stdio.h>
+  #include <stdio.h>
 
-#if !defined(ZPL_NO_WINDOWS_H)
-#define NOMINMAX            1
-#define WIN32_LEAN_AND_MEAN 1
-#define WIN32_MEAN_AND_LEAN 1
-#define VC_EXTRALEAN        1
-#include <windows.h>
-#undef NOMINMAX
-#undef WIN32_LEAN_AND_MEAN
-#undef WIN32_MEAN_AND_LEAN
-#undef VC_EXTRALEAN
-#endif
+  #if !defined(ZPL_NO_WINDOWS_H)
+    #define NOMINMAX            1
+    #define WIN32_LEAN_AND_MEAN 1
+    #define WIN32_MEAN_AND_LEAN 1
+    #define VC_EXTRALEAN        1
+    #include <windows.h>
+    #undef NOMINMAX
+    #undef WIN32_LEAN_AND_MEAN
+    #undef WIN32_MEAN_AND_LEAN
+    #undef VC_EXTRALEAN
+  #endif
 
-#include <malloc.h> // NOTE: _aligned_*()
-#include <intrin.h>
+  #include <malloc.h> // NOTE: _aligned_*()
+  #include <intrin.h>
 
     // TODO(ZaKlaus): Find a better way to get this flag in MinGW.
-#if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
-#define WC_ERR_INVALID_CHARS 0x0080
-#endif
+  #if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
+    #define WC_ERR_INVALID_CHARS 0x0080
+  #endif
 
 #else
 
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-#include <pthread.h>
-#endif
+  #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
+    #include <pthread.h>
+  #endif
 
-#include <dlfcn.h>
-#include <errno.h>
-#include <fcntl.h>
-#ifndef _IOSC11_SOURCE
-#define _IOSC11_SOURCE
-#endif
-#include <stdlib.h> // NOTE: malloc on linux
-#include <sys/mman.h>
+  #include <dlfcn.h>
+  #include <errno.h>
+  #include <fcntl.h>
+  #ifndef _IOSC11_SOURCE
+  #define _IOSC11_SOURCE
+  #endif
+  #include <stdlib.h> // NOTE: malloc on linux
+  #include <sys/mman.h>
 
-#if !defined(ZPL_SYSTEM_OSX)
-#include <sys/sendfile.h>
-#endif
+  #if !defined(ZPL_SYSTEM_OSX)
+    #include <sys/sendfile.h>
+  #endif
 
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
+  #include <sys/stat.h>
+  #include <sys/time.h>
+  #include <sys/types.h>
+  #include <time.h>
+  #include <unistd.h>
 
-#if !defined(ZPL_SYSTEM_ANDROID)
-#include <spawn.h>
-#endif
+  #if !defined(ZPL_SYSTEM_ANDROID)
+    #include <spawn.h>
+  #endif
 
-#if !defined(ZPL_SYSTEM_ANDROID)
-#if !defined(ZPL_SYSTEM_EMSCRIPTEN)
-#include <emmintrin.h>
-#elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
-#include <xmmintrin.h>
-#else
-#include <sched.h>
-#endif
-#endif
+  #if !defined(ZPL_SYSTEM_ANDROID) && !defined(ZPL_SYSTEM_IOS)
+    #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
+      #include <emmintrin.h>
+    #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
+      #include <xmmintrin.h>
+    #else
+      #include <sched.h>
+    #endif
+  #endif
 
 #endif
 
 #if defined(ZPL_SYSTEM_OSX)
-#include <stdio.h>
-#include <mach/mach.h>
-#include <mach/mach_init.h>
-#include <mach/mach_time.h>
-#include <mach/thread_act.h>
-#include <mach/thread_policy.h>
-#include <sys/sysctl.h>
-#include <copyfile.h>
-#include <mach/clock.h>
+  #include <stdio.h>
+  #include <mach/mach.h>
+  #include <mach/mach_init.h>
+  #include <mach/mach_time.h>
+  #include <mach/thread_act.h>
+  #include <mach/thread_policy.h>
+  #include <sys/sysctl.h>
+  #include <copyfile.h>
+  #include <mach/clock.h>
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX)
-#include <semaphore.h>
+  #include <semaphore.h>
 #endif
 
 #if !defined(ZPL_SYSTEM_WINDOWS)
-#include <stdarg.h>
-#include <stddef.h>
+  #include <stdarg.h>
+  #include <stddef.h>
 #endif
 
     ////////////////////////////////////////////////////////////////
@@ -370,11 +375,11 @@ extern "C" {
 #elif defined(_WIN32)
     // NOTE; To mark types changing their size, e.g. intptr
 #ifndef _W64
-#if !defined(__midl) && (defined(_X86_) || defined(_M_IX86)) && _MSC_VER >= 1300
-#define _W64 __w64
-#else
-#define _W64
-#endif
+  #if !defined(__midl) && (defined(_X86_) || defined(_M_IX86)) && _MSC_VER >= 1300
+    #define _W64 __w64
+  #else
+    #define _W64
+  #endif
 #endif
 
     typedef _W64   signed int  intptr;
@@ -405,54 +410,54 @@ extern "C" {
     typedef i32 b32;
 
 #if !defined(__cplusplus)
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && !defined(__STDC_VERSION__))
-#ifndef true
-#define true  (0 == 0)
-#endif
-#ifndef false
-#define false (0 != 0)
-#endif
-    typedef b8 bool;
-#else
-#include <stdbool.h>
-#endif
+  #if (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && !defined(__STDC_VERSION__))
+    #ifndef true
+    #define true  (0 == 0)
+    #endif
+    #ifndef false
+    #define false (0 != 0)
+    #endif
+      typedef b8 bool;
+  #else
+    #include <stdbool.h>
+  #endif
 #endif
 
 #ifndef U8_MIN
-#define U8_MIN 0u
-#define U8_MAX 0xffu
-#define I8_MIN (-0x7f - 1)
-#define I8_MAX 0x7f
+  #define U8_MIN 0u
+  #define U8_MAX 0xffu
+  #define I8_MIN (-0x7f - 1)
+  #define I8_MAX 0x7f
 
-#define U16_MIN 0u
-#define U16_MAX 0xffffu
-#define I16_MIN (-0x7fff - 1)
-#define I16_MAX 0x7fff
+  #define U16_MIN 0u
+  #define U16_MAX 0xffffu
+  #define I16_MIN (-0x7fff - 1)
+  #define I16_MAX 0x7fff
 
-#define U32_MIN 0u
-#define U32_MAX 0xffffffffu
-#define I32_MIN (-0x7fffffff - 1)
-#define I32_MAX 0x7fffffff
+  #define U32_MIN 0u
+  #define U32_MAX 0xffffffffu
+  #define I32_MIN (-0x7fffffff - 1)
+  #define I32_MAX 0x7fffffff
 
-#define U64_MIN 0ull
-#define U64_MAX 0xffffffffffffffffull
-#define I64_MIN (-0x7fffffffffffffffll - 1)
-#define I64_MAX 0x7fffffffffffffffll
+  #define U64_MIN 0ull
+  #define U64_MAX 0xffffffffffffffffull
+  #define I64_MIN (-0x7fffffffffffffffll - 1)
+  #define I64_MAX 0x7fffffffffffffffll
 
-#if defined(ZPL_ARCH_32_BIT)
-#define USIZE_MIX U32_MIN
-#define USIZE_MAX U32_MAX
+  #if defined(ZPL_ARCH_32_BIT)
+  #define USIZE_MIX U32_MIN
+  #define USIZE_MAX U32_MAX
 
-#define ISIZE_MIX S32_MIN
-#define ISIZE_MAX S32_MAX
-#elif defined(ZPL_ARCH_64_BIT)
-#define USIZE_MIX U64_MIN
-#define USIZE_MAX U64_MAX
+  #define ISIZE_MIX S32_MIN
+  #define ISIZE_MAX S32_MAX
+  #elif defined(ZPL_ARCH_64_BIT)
+  #define USIZE_MIX U64_MIN
+  #define USIZE_MAX U64_MAX
 
-#define ISIZE_MIX I64_MIN
-#define ISIZE_MAX I64_MAX
+  #define ISIZE_MIX I64_MIN
+  #define ISIZE_MAX I64_MAX
 #else
-#error Unknown architecture size. This library only supports 32 bit and 64 bit architectures.
+  #error Unknown architecture size. This library only supports 32 bit and 64 bit architectures.
 #endif
 
 #define F32_MIN 1.17549435e-38f
