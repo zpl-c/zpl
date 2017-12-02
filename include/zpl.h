@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.3.4 - Added Travis CI config
   3.3.3 - Small macro formatting changes + ZPL_SYSTEM_IOS
   3.3.2 - Fixes for android arm
   3.3.1 - Fixed some type cast warnings
