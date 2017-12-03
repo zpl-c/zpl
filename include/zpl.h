@@ -24,6 +24,7 @@
 
 
   Version History:
+  3.4.1 - zpl_memcopy now uses memcpy for ARM arch-family
   3.4.0 - Removed obsolete code
   3.3.4 - Added Travis CI config
   3.3.3 - Small macro formatting changes + ZPL_SYSTEM_IOS
@@ -3268,6 +3269,8 @@ extern "C" {
         u8 *__dest8 = cast(u8 *)dest;
         u8 *__source8 = cast(u8 *)source;
         __asm__ __volatile__("rep movsb" : "+D"(__dest8), "+S"(__source8), "+c"(n) : : "memory");
+#elif defined(ZPL_CPU_ARM)
+        return memcpy(dest, source, n);
 #else
         u8 *d = cast(u8 *)dest;
         u8 const *s = cast(u8 const *)source;
