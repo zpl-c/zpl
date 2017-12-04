@@ -2114,10 +2114,11 @@
     ZPL_DEF isize zpl_random_range_isize   (zpl_random_t *r, isize lower_inc, isize higher_inc);
     ZPL_DEF f64   zpl_random_range_f64     (zpl_random_t *r, f64 lower_inc, f64 higher_inc);
 
-    ZPL_DEF void zpl_exit     (u32 code);
-    ZPL_DEF void zpl_yield    (void);
-    ZPL_DEF void zpl_set_env  (char const *name, char const *value);
-    ZPL_DEF void zpl_unset_env(char const *name);
+    ZPL_DEF void        zpl_exit     (u32 code);
+    ZPL_DEF void        zpl_yield    (void);
+    ZPL_DEF char const *zpl_get_env  (char const *name);
+    ZPL_DEF void        zpl_set_env  (char const *name, char const *value);
+    ZPL_DEF void        zpl_unset_env(char const *name);
 
     ZPL_DEF u16 zpl_endian_swap16(u16 i);
     ZPL_DEF u32 zpl_endian_swap32(u32 i);
@@ -8647,6 +8648,12 @@ extern "C" {
 #else
         sched_yield();
 #endif
+    }
+
+    zpl_inline char const *zpl_get_env(char const *name) {
+        return getenv(name);
+
+        // TODO: Use GetEnvironmentVariable on Windows?
     }
 
     zpl_inline void zpl_set_env(char const *name, char const *value) {
