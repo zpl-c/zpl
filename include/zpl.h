@@ -24,6 +24,8 @@
 
 
   Version History:
+  4.0.0 - ARM support, coding style changes and various improvements
+
   3.4.1 - zpl_memcopy now uses memcpy for ARM arch-family
   3.4.0 - Removed obsolete code
   3.3.4 - Added Travis CI config
@@ -44,6 +46,7 @@
   3.0.2 - Fixed linux part, and removed trailing spaces
   3.0.1 - Small bugfix in zpl_file_open
   3.0.0 - Added several fixes and features
+
   2.4.0 - Added remove to hash table
   2.3.3 - Removed redundant code
   2.3.2 - Eliminated extra warnings
@@ -56,6 +59,7 @@
   2.0.8 - Small adjustments
   2.0.7 - MinGW related fixes
   2.0.0 - New NPM based version
+
   1.2.2 - Small fix
   1.2.1 - Macro fixes
   1.2.0 - Added zpl_async macro
@@ -996,10 +1000,10 @@
 
     ZPL_DEF zpl_virtual_memory_t zpl_virtual_memory(void *data, isize size);
     ZPL_DEF zpl_virtual_memory_t zpl_vm_alloc      (void *addr, isize size);
-    ZPL_DEF b32             zpl_vm_free       (zpl_virtual_memory_t vm);
+    ZPL_DEF b32                  zpl_vm_free       (zpl_virtual_memory_t vm);
     ZPL_DEF zpl_virtual_memory_t zpl_vm_trim       (zpl_virtual_memory_t vm, isize lead_size, isize size);
-    ZPL_DEF b32             zpl_vm_purge      (zpl_virtual_memory_t vm);
-    ZPL_DEF isize zpl_virtual_memory_page_size(isize *alignment_out);
+    ZPL_DEF b32                  zpl_vm_purge      (zpl_virtual_memory_t vm);
+    ZPL_DEF isize zpl_virtual_memory_page_size     (isize *alignment_out);
 
 
 
@@ -1010,16 +1014,16 @@
     //
     //
 
-    typedef enum zpl_allocation_type_e {
+    typedef enum zplAllocationType {
         ZPL_ALLOCATION_ALLOC,
         ZPL_ALLOCATION_FREE,
         ZPL_ALLOCATION_FREE_ALL,
         ZPL_ALLOCATION_RESIZE,
-    } zpl_allocation_type_e;
+    } zplAllocationType;
 
     // NOTE: This is useful so you can define an allocator of the same type and parameters
 #define ZPL_ALLOCATOR_PROC(name)                                  \
-    void *name(void *allocator_data, zpl_allocation_type_e type,  \
+    void *name(void *allocator_data, zplAllocationType type,  \
                isize size, isize alignment,                       \
                void *old_memory, isize old_size,                  \
                u64 flags)
@@ -1030,9 +1034,9 @@
         void *           data;
     } zpl_allocator_t;
 
-    typedef enum zpl_allocator_flag_e {
+    typedef enum zplAllocatorFlag {
         ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO = ZPL_BIT(0),
-    } zpl_allocator_flag_e;
+    } zplAllocatorFlag;
 
     // TODO: Is this a decent default alignment?
 #ifndef ZPL_DEFAULT_MEMORY_ALIGNMENT
@@ -1861,31 +1865,31 @@
 
 
     typedef u32 zpl_file_mode_t;
-    typedef enum zpl_file_mode_flag_e {
+    typedef enum zplFileModeFlag {
         ZPL_FILE_MODE_READ       = ZPL_BIT(0),
         ZPL_FILE_MODE_WRITE      = ZPL_BIT(1),
         ZPL_FILE_MODE_APPEND     = ZPL_BIT(2),
         ZPL_FILE_MODE_RW         = ZPL_BIT(3),
 
         zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
-    } zpl_file_mode_flag_e;
+    } zplFileModeFlag;
 
     // NOTE: Only used internally and for the file operations
-    typedef enum zpl_seek_whence_type_e {
+    typedef enum zplSeekWhenceType {
         ZPL_SEEK_WHENCE_BEGIN   = 0,
         ZPL_SEEK_WHENCE_CURRENT = 1,
         ZPL_SEEK_WHENCE_END     = 2,
-    } zpl_seek_whence_type_e;
+    } zplSeekWhenceType;
 
-    typedef enum zpl_file_error_e {
+    typedef enum zplFileError {
         ZPL_FILE_ERROR_NONE,
         ZPL_FILE_ERROR_INVALID,
         ZPL_FILE_ERROR_INVALID_FILENAME,
-        ZPL_FILE_ERROR_EXISTS,
+        zplFileErrorXISTS,
         ZPL_FILE_ERROR_NOT_EXISTS,
         ZPL_FILE_ERROR_PERMISSION,
-        ZPL_FILE_ERROR_ERUNCATION_FAILURE,
-    } zpl_file_error_e;
+        zplFileErrorRUNCATION_FAILURE,
+    } zplFileError;
 
     typedef union zpl_file_descriptor_t {
         void *  p;
@@ -1895,10 +1899,10 @@
 
     typedef struct zpl_file_operations_t zpl_file_operations_t;
 
-#define ZPL_FILE_OPEN_PROC(name)     zpl_file_error_e name(zpl_file_descriptor_t *fd, zpl_file_operations_t *ops, zpl_file_mode_t mode, char const *filename)
+#define ZPL_FILE_OPEN_PROC(name)     zplFileError name(zpl_file_descriptor_t *fd, zpl_file_operations_t *ops, zpl_file_mode_t mode, char const *filename)
 #define ZPL_FILE_READ_AT_PROC(name)  b32         name(zpl_file_descriptor_t fd, void *buffer, isize size, i64 offset, isize *bytes_read, b32 stop_at_newline)
 #define ZPL_FILE_WRITE_AT_PROC(name) b32         name(zpl_file_descriptor_t fd, void const *buffer, isize size, i64 offset, isize *bytes_written)
-#define ZPL_FILE_SEEK_PROC(name)     b32         name(zpl_file_descriptor_t fd, i64 offset, zpl_seek_whence_type_e whence, i64 *new_offset)
+#define ZPL_FILE_SEEK_PROC(name)     b32         name(zpl_file_descriptor_t fd, i64 offset, zplSeekWhenceType whence, i64 *new_offset)
 #define ZPL_FILE_CLOSE_PROC(name)    void        name(zpl_file_descriptor_t fd)
     typedef ZPL_FILE_OPEN_PROC(zpl_file_open_proc_t);
     typedef ZPL_FILE_READ_AT_PROC(zpl_file_read_proc_t);
@@ -1945,20 +1949,20 @@
 
 #endif // ZPL_THREADING
 
-    typedef enum zpl_file_standard_type_e {
+    typedef enum zplFileStandardType {
         ZPL_FILE_STANDARD_INPUT,
         ZPL_FILE_STANDARD_OUTPUT,
         ZPL_FILE_STANDARD_ERROR,
 
         ZPL_FILE_STANDARD_COUNT,
-    } zpl_file_standard_type_e;
+    } zplFileStandardType;
 
-    ZPL_DEF zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std);
+    ZPL_DEF zpl_file_t *zpl_file_get_standard(zplFileStandardType std);
 
-    ZPL_DEF zpl_file_error_e zpl_file_create        (zpl_file_t *file, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_open          (zpl_file_t *file, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_open_mode     (zpl_file_t *file, zpl_file_mode_t mode, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_new           (zpl_file_t *file, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename);
+    ZPL_DEF zplFileError zpl_file_create        (zpl_file_t *file, char const *filename);
+    ZPL_DEF zplFileError zpl_file_open          (zpl_file_t *file, char const *filename);
+    ZPL_DEF zplFileError zpl_file_open_mode     (zpl_file_t *file, zpl_file_mode_t mode, char const *filename);
+    ZPL_DEF zplFileError zpl_file_new           (zpl_file_t *file, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename);
     ZPL_DEF b32         zpl_file_read_at_check (zpl_file_t *file, void *buffer, isize size, i64 offset, isize *bytes_read);
     ZPL_DEF b32         zpl_file_write_at_check(zpl_file_t *file, void const *buffer, isize size, i64 offset, isize *bytes_written);
     ZPL_DEF b32         zpl_file_read_at       (zpl_file_t *file, void *buffer, isize size, i64 offset);
@@ -1967,12 +1971,12 @@
     ZPL_DEF i64         zpl_file_seek_to_end   (zpl_file_t *file);
     ZPL_DEF i64         zpl_file_skip          (zpl_file_t *file, i64 bytes); // NOTE: Skips a certain amount of bytes
     ZPL_DEF i64         zpl_file_tell          (zpl_file_t *file);
-    ZPL_DEF zpl_file_error_e zpl_file_close         (zpl_file_t *file);
+    ZPL_DEF zplFileError zpl_file_close         (zpl_file_t *file);
     ZPL_DEF b32         zpl_file_read          (zpl_file_t *file, void *buffer, isize size);
     ZPL_DEF b32         zpl_file_write         (zpl_file_t *file, void const *buffer, isize size);
     ZPL_DEF i64         zpl_file_size          (zpl_file_t *file);
     ZPL_DEF char const *zpl_file_name          (zpl_file_t *file);
-    ZPL_DEF zpl_file_error_e zpl_file_truncate      (zpl_file_t *file, i64 size);
+    ZPL_DEF zplFileError zpl_file_truncate      (zpl_file_t *file, i64 size);
     ZPL_DEF b32         zpl_file_has_changed   (zpl_file_t *file); // NOTE: Changed since lasted checked
 
 #ifdef ZPL_THREADING
@@ -1980,7 +1984,7 @@
     ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc);
 #endif
 
-    zpl_file_error_e zpl_file_temp(zpl_file_t *file);
+    zplFileError zpl_file_temp(zpl_file_t *file);
 
     typedef struct zpl_file_contents_t {
         zpl_allocator_t allocator;
@@ -7057,8 +7061,8 @@ extern "C" {
             DWORD err = GetLastError();
             switch (err) {
             case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
-            case ERROR_FILE_EXISTS:    return ZPL_FILE_ERROR_EXISTS;
-            case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_FILE_EXISTS:    return zplFileErrorXISTS;
+            case ERROR_ALREADY_EXISTS: return zplFileErrorXISTS;
             case ERROR_ACCESS_DENIED:  return ZPL_FILE_ERROR_PERMISSION;
             }
             return ZPL_FILE_ERROR_INVALID;
@@ -7163,8 +7167,8 @@ extern "C" {
 
 
 
-    zpl_file_error_e zpl_file_new(zpl_file_t *f, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename) {
-        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
+    zplFileError zpl_file_new(zpl_file_t *f, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         isize len = zpl_strlen(filename);
 
         f->ops = ops;
@@ -7178,8 +7182,8 @@ extern "C" {
 
 
 
-    zpl_file_error_e zpl_file_open_mode(zpl_file_t *f, zpl_file_mode_t mode, char const *filename) {
-        zpl_file_error_e err;
+    zplFileError zpl_file_open_mode(zpl_file_t *f, zpl_file_mode_t mode, char const *filename) {
+        zplFileError err;
 #if defined(ZPL_SYSTEM_WINDOWS)
         err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
 #else
@@ -7190,7 +7194,7 @@ extern "C" {
         return err;
     }
 
-    zpl_file_error_e zpl_file_close(zpl_file_t *f) {
+    zplFileError zpl_file_close(zpl_file_t *f) {
         if (!f)
             return ZPL_FILE_ERROR_INVALID;
 
@@ -7261,12 +7265,12 @@ extern "C" {
     zpl_inline b32 zpl_file_write      (zpl_file_t *f, void const *buffer, isize size) { return zpl_file_write_at(f, buffer, size, zpl_file_tell(f)); }
 
 
-    zpl_file_error_e zpl_file_create(zpl_file_t *f, char const *filename) {
+    zplFileError zpl_file_create(zpl_file_t *f, char const *filename) {
         return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE|ZPL_FILE_MODE_RW, filename);
     }
 
 
-    zpl_file_error_e zpl_file_open(zpl_file_t *f, char const *filename) {
+    zplFileError zpl_file_open(zpl_file_t *f, char const *filename) {
         return zpl_file_open_mode(f, ZPL_FILE_MODE_READ, filename);
     }
 
@@ -7387,7 +7391,7 @@ extern "C" {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zplFileStandardType std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.p = v; zpl__std_files[type].ops = zpl_default_file_operations_t
             ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  GetStdHandle(STD_INPUT_HANDLE));
@@ -7405,12 +7409,12 @@ extern "C" {
         return size.QuadPart;
     }
 
-    zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
+    zplFileError zpl_file_truncate(zpl_file_t *f, i64 size) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         i64 prev_offset = zpl_file_tell(f);
         zpl_file_seek(f, size);
         if (!SetEndOfFile(f))
-            err = ZPL_FILE_ERROR_ERUNCATION_FAILURE;
+            err = zplFileErrorRUNCATION_FAILURE;
         zpl_file_seek(f, prev_offset);
         return err;
     }
@@ -7436,7 +7440,7 @@ extern "C" {
 
 #else // POSIX
 
-    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zplFileStandardType std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.i = v; zpl__std_files[type].ops = zpl_default_file_operations_t
             ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  0);
@@ -7457,10 +7461,10 @@ extern "C" {
         return size;
     }
 
-    zpl_inline zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
+    zpl_inline zplFileError zpl_file_truncate(zpl_file_t *f, i64 size) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         int i = ftruncate(f->fd.i, size);
-        if (i != 0) err = ZPL_FILE_ERROR_ERUNCATION_FAILURE;
+        if (i != 0) err = zplFileErrorRUNCATION_FAILURE;
         return err;
     }
 
@@ -7470,7 +7474,7 @@ extern "C" {
 
 #endif
 
-    zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
+    zplFileError zpl_file_temp(zpl_file_t *file) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_PANIC("zpl_file_temp is not supported for emscripten");
 #else
