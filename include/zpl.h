@@ -1011,10 +1011,10 @@
     //
 
     typedef enum zpl_allocation_type_e {
-        zpl_allocation_alloc_ev,
-        zpl_allocation_free_ev,
-        zpl_allocation_free_all_ev,
-        zpl_allocation_resize_ev,
+        ZPL_ALLOCATION_ALLOC,
+        ZPL_ALLOCATION_FREE,
+        ZPL_ALLOCATION_FREE_ALL,
+        ZPL_ALLOCATION_RESIZE,
     } zpl_allocation_type_e;
 
     // NOTE: This is useful so you can define an allocator of the same type and parameters
@@ -1031,7 +1031,7 @@
     } zpl_allocator_t;
 
     typedef enum zpl_allocator_flag_e {
-        zpl_allocator_flag_clear_to_zero_ev = ZPL_BIT(0),
+        ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO = ZPL_BIT(0),
     } zpl_allocator_flag_e;
 
     // TODO: Is this a decent default alignment?
@@ -1040,7 +1040,7 @@
 #endif
 
 #ifndef ZPL_DEFAULT_ALLOCATOR_FLAGS
-#define ZPL_DEFAULT_ALLOCATOR_FLAGS (zpl_allocator_flag_clear_to_zero_ev)
+#define ZPL_DEFAULT_ALLOCATOR_FLAGS (ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
 #endif
 
     ZPL_DEF void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment);
@@ -1862,29 +1862,29 @@
 
     typedef u32 zpl_file_mode_t;
     typedef enum zpl_file_mode_flag_e {
-        zpl_file_mode_read_ev       = ZPL_BIT(0),
-        zpl_file_mode_write_ev      = ZPL_BIT(1),
-        zpl_file_mode_append_ev     = ZPL_BIT(2),
-        zpl_file_mode_rw_ev         = ZPL_BIT(3),
+        ZPL_FILE_MODE_READ       = ZPL_BIT(0),
+        ZPL_FILE_MODE_WRITE      = ZPL_BIT(1),
+        ZPL_FILE_MODE_APPEND     = ZPL_BIT(2),
+        ZPL_FILE_MODE_RW         = ZPL_BIT(3),
 
-        zpl_file_mode_modes_ev = zpl_file_mode_read_ev | zpl_file_mode_write_ev | zpl_file_mode_append_ev | zpl_file_mode_rw_ev,
+        zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
     } zpl_file_mode_flag_e;
 
     // NOTE: Only used internally and for the file operations
     typedef enum zpl_seek_whence_type_e {
-        zpl_seek_whence_begin_ev   = 0,
-        zpl_seek_whence_current_ev = 1,
-        zpl_seek_whence_end_ev     = 2,
+        ZPL_SEEK_WHENCE_BEGIN   = 0,
+        ZPL_SEEK_WHENCE_CURRENT = 1,
+        ZPL_SEEK_WHENCE_END     = 2,
     } zpl_seek_whence_type_e;
 
     typedef enum zpl_file_error_e {
-        zpl_file_error_none_ev,
-        zpl_file_error_invalid_ev,
-        zpl_file_error_invalid_filename_ev,
-        zpl_file_error_exists_ev,
-        zpl_file_error_not_exists_ev,
-        zpl_file_error_permission_ev,
-        zpl_file_error_eruncation_failure_ev,
+        ZPL_FILE_ERROR_NONE,
+        ZPL_FILE_ERROR_INVALID,
+        ZPL_FILE_ERROR_INVALID_FILENAME,
+        ZPL_FILE_ERROR_EXISTS,
+        ZPL_FILE_ERROR_NOT_EXISTS,
+        ZPL_FILE_ERROR_PERMISSION,
+        ZPL_FILE_ERROR_ERUNCATION_FAILURE,
     } zpl_file_error_e;
 
     typedef union zpl_file_descriptor_t {
@@ -1946,11 +1946,11 @@
 #endif // ZPL_THREADING
 
     typedef enum zpl_file_standard_type_e {
-        zpl_file_standard_input_ev,
-        zpl_file_standard_output_ev,
-        zpl_file_standard_error_ev,
+        ZPL_FILE_STANDARD_INPUT,
+        ZPL_FILE_STANDARD_OUTPUT,
+        ZPL_FILE_STANDARD_ERROR,
 
-        zpl_file_standard_count_ev,
+        ZPL_FILE_STANDARD_COUNT,
     } zpl_file_standard_type_e;
 
     ZPL_DEF zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std);
@@ -3604,12 +3604,12 @@ extern "C" {
 
 
 
-    zpl_inline void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment)                                { return a.proc(a.data, zpl_allocation_alloc_ev, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment)                                { return a.proc(a.data, ZPL_ALLOCATION_ALLOC, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
     zpl_inline void *zpl_alloc       (zpl_allocator_t a, isize size)                                                 { return zpl_alloc_align(a, size, ZPL_DEFAULT_MEMORY_ALIGNMENT); }
-    zpl_inline void  zpl_free        (zpl_allocator_t a, void *ptr)                                                  { if (ptr != NULL) a.proc(a.data, zpl_allocation_free_ev, 0, 0, ptr, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
-    zpl_inline void  zpl_free_all    (zpl_allocator_t a)                                                             { a.proc(a.data, zpl_allocation_free_all_ev, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void  zpl_free        (zpl_allocator_t a, void *ptr)                                                  { if (ptr != NULL) a.proc(a.data, ZPL_ALLOCATION_FREE, 0, 0, ptr, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void  zpl_free_all    (zpl_allocator_t a)                                                             { a.proc(a.data, ZPL_ALLOCATION_FREE_ALL, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
     zpl_inline void *zpl_resize      (zpl_allocator_t a, void *ptr, isize old_size, isize new_size)                  { return zpl_resize_align(a, ptr, old_size, new_size, ZPL_DEFAULT_MEMORY_ALIGNMENT); }
-    zpl_inline void *zpl_resize_align(zpl_allocator_t a, void *ptr, isize old_size, isize new_size, isize alignment) { return a.proc(a.data, zpl_allocation_resize_ev, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void *zpl_resize_align(zpl_allocator_t a, void *ptr, isize old_size, isize new_size, isize alignment) { return a.proc(a.data, ZPL_ALLOCATION_RESIZE, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
 
     zpl_inline void *zpl_alloc_copy      (zpl_allocator_t a, void const *src, isize size)                  { return zpl_memcopy(zpl_alloc(a, size), src, size); }
     zpl_inline void *zpl_alloc_copy_align(zpl_allocator_t a, void const *src, isize size, isize alignment) { return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size); }
@@ -4819,55 +4819,55 @@ extern "C" {
         // TODO: Throughly test!
         switch (type) {
     #if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
-            case zpl_allocation_alloc_ev:
+            case ZPL_ALLOCATION_ALLOC:
                 ptr = _aligned_malloc(size, alignment);
-                if (flags & zpl_allocator_flag_clear_to_zero_ev)
+                if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                     zpl_zero_size(ptr, size);
                 break;
-            case zpl_allocation_free_ev:
+            case ZPL_ALLOCATION_FREE:
                 _aligned_free(old_memory);
                 break;
-            case zpl_allocation_resize_ev:
+            case ZPL_ALLOCATION_RESIZE:
                 ptr = _aligned_realloc(old_memory, size, alignment);
                 break;
 
     #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
-            case zpl_allocation_alloc_ev: {
+            case ZPL_ALLOCATION_ALLOC: {
                     ptr = aligned_alloc(alignment, size);
 
-                    if (flags & zpl_allocator_flag_clear_to_zero_ev) {
+                    if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) {
                         zpl_zero_size(ptr, size);
                     }
                 } break;
 
-                case zpl_allocation_free_ev: {
+                case ZPL_ALLOCATION_FREE: {
                     free(old_memory);
                 } break;
 
-                case zpl_allocation_resize_ev: {
+                case ZPL_ALLOCATION_RESIZE: {
                     zpl_allocator_t a = zpl_heap_allocator();
                     ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
                 } break;
     #else
-            case zpl_allocation_alloc_ev: {
+            case ZPL_ALLOCATION_ALLOC: {
                 posix_memalign(&ptr, alignment, size);
 
-                if (flags & zpl_allocator_flag_clear_to_zero_ev) {
+                if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) {
                     zpl_zero_size(ptr, size);
                 }
             } break;
 
-            case zpl_allocation_free_ev: {
+            case ZPL_ALLOCATION_FREE: {
                 free(old_memory);
             } break;
 
-            case zpl_allocation_resize_ev: {
+            case ZPL_ALLOCATION_RESIZE: {
                 zpl_allocator_t a = zpl_heap_allocator();
                 ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
             } break;
     #endif
 
-            case zpl_allocation_free_all_ev:
+            case ZPL_ALLOCATION_FREE_ALL:
                 break;
         }
 
@@ -4946,7 +4946,7 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
             isize total_size = size + alignment;
 
@@ -4958,20 +4958,20 @@ extern "C" {
 
             ptr = zpl_align_forward(end, alignment);
             arena->total_allocated += total_size;
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev:
+        case ZPL_ALLOCATION_FREE:
             // NOTE: Free all at once
             // Use Temp_Arena_Memory if you want to free a block
             break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             arena->total_allocated = 0;
             break;
 
-        case zpl_allocation_resize_ev: {
+        case ZPL_ALLOCATION_RESIZE: {
             // TODO: Check if ptr is on top of stack and just extend
             zpl_allocator_t a = zpl_arena_allocator(arena);
             ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
@@ -5059,7 +5059,7 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             uintptr next_free;
             ZPL_ASSERT(size      == pool->block_size);
             ZPL_ASSERT(alignment == pool->block_align);
@@ -5069,11 +5069,11 @@ extern "C" {
             ptr = pool->free_list;
             pool->free_list = cast(void *)next_free;
             pool->total_size += pool->block_size;
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             uintptr *next;
             if (old_memory == NULL) return NULL;
 
@@ -5083,11 +5083,11 @@ extern "C" {
             pool->total_size -= pool->block_size;
         } break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             // TODO:
             break;
 
-        case zpl_allocation_resize_ev:
+        case ZPL_ALLOCATION_RESIZE:
             // NOTE: Cannot resize
             ZPL_PANIC("You cannot resize something allocated by with a pool.");
             break;
@@ -5148,7 +5148,7 @@ extern "C" {
         ZPL_ASSERT_NOT_NULL(s);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             void *pt = s->alloc_point;
             zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)pt;
             void *data = zpl_align_forward(header+1, alignment);
@@ -5173,11 +5173,11 @@ extern "C" {
                 ptr = data;
             }
 
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 void *end = zpl_pointer_add(s->physical_start, s->total_size);
                 if (old_memory < s->physical_start || old_memory >= end) {
@@ -5201,12 +5201,12 @@ extern "C" {
             }
         } break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             s->alloc_point = s->physical_start;
             s->free_point  = s->physical_start;
             break;
 
-        case zpl_allocation_resize_ev:
+        case ZPL_ALLOCATION_RESIZE:
             ptr = zpl_default_resize_align(zpl_scratch_allocator(s), old_memory, old_size, size, alignment);
             break;
         }
@@ -5272,7 +5272,7 @@ extern "C" {
         zpl_unused(flags);
 
         switch(type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             size += ZPL_STACK_ALLOC_OFFSET;
             u64 alloc_offset = s->allocated;
 
@@ -5300,7 +5300,7 @@ extern "C" {
             s->allocated += size;
         }break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 zpl_stack_memory_header_t h;
 
@@ -5313,11 +5313,11 @@ extern "C" {
             }
         }break;
 
-        case zpl_allocation_free_all_ev: {
+        case ZPL_ALLOCATION_FREE_ALL: {
             s->allocated = 0;
         }break;
 
-        case zpl_allocation_resize_ev: {
+        case ZPL_ALLOCATION_RESIZE: {
             ZPL_PANIC("You cannot resize something allocated by a stack.");
         }break;
         }
@@ -6976,7 +6976,7 @@ extern "C" {
     zpl_internal ZPL_FILE_READ_AT_PROC(zpl__win32_file_read) {
         zpl_unused(stop_at_newline);
         b32 result = false;
-        zpl__win32_file_seek(fd, offset, zpl_seek_whence_begin_ev, NULL);
+        zpl__win32_file_seek(fd, offset, ZPL_SEEK_WHENCE_BEGIN, NULL);
         DWORD size_ = cast(DWORD)(size > I32_MAX ? I32_MAX : size);
         DWORD bytes_read_;
         if (ReadFile(fd.p, buffer, size_, &bytes_read_, NULL)) {
@@ -6990,7 +6990,7 @@ extern "C" {
     zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__win32_file_write) {
         DWORD size_ = cast(DWORD)(size > I32_MAX ? I32_MAX : size);
         DWORD bytes_written_;
-        zpl__win32_file_seek(fd, offset, zpl_seek_whence_begin_ev, NULL);
+        zpl__win32_file_seek(fd, offset, ZPL_SEEK_WHENCE_BEGIN, NULL);
         if (WriteFile(fd.p, buffer, size_, &bytes_written_, NULL)) {
             if (bytes_written) *bytes_written = bytes_written_;
             return true;
@@ -7016,33 +7016,33 @@ extern "C" {
         wchar_t *w_text;
 
         switch (mode & zpl_file_mode_modes_ev) {
-        case zpl_file_mode_read_ev:
+        case ZPL_FILE_MODE_READ:
             desired_access = GENERIC_READ;
             creation_disposition = OPEN_EXISTING;
             break;
-        case zpl_file_mode_write_ev:
+        case ZPL_FILE_MODE_WRITE:
             desired_access = GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-        case zpl_file_mode_append_ev:
+        case ZPL_FILE_MODE_APPEND:
             desired_access = GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
-        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_EXISTING;
             break;
-        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
         default:
             ZPL_PANIC("Invalid file mode");
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         w_text = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator(), filename, NULL);
@@ -7056,25 +7056,25 @@ extern "C" {
         if (handle == INVALID_HANDLE_VALUE) {
             DWORD err = GetLastError();
             switch (err) {
-            case ERROR_FILE_NOT_FOUND: return zpl_file_error_not_exists_ev;
-            case ERROR_FILE_EXISTS:    return zpl_file_error_exists_ev;
-            case ERROR_ALREADY_EXISTS: return zpl_file_error_exists_ev;
-            case ERROR_ACCESS_DENIED:  return zpl_file_error_permission_ev;
+            case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
+            case ERROR_FILE_EXISTS:    return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ACCESS_DENIED:  return ZPL_FILE_ERROR_PERMISSION;
             }
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
-        if (mode & zpl_file_mode_append_ev) {
+        if (mode & ZPL_FILE_MODE_APPEND) {
             LARGE_INTEGER offset = {0};
-            if (!SetFilePointerEx(handle, offset, NULL, zpl_seek_whence_end_ev)) {
+            if (!SetFilePointerEx(handle, offset, NULL, ZPL_SEEK_WHENCE_END)) {
                 CloseHandle(handle);
-                return zpl_file_error_invalid_ev;
+                return ZPL_FILE_ERROR_INVALID;
             }
         }
 
         fd->p = handle;
         *ops = zpl_default_file_operations_t;
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #else // POSIX
@@ -7099,7 +7099,7 @@ extern "C" {
     zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__posix_file_write) {
         isize res;
         i64 curr_offset = 0;
-        zpl__posix_file_seek(fd, 0, zpl_seek_whence_current_ev, &curr_offset);
+        zpl__posix_file_seek(fd, 0, ZPL_SEEK_WHENCE_CURRENT, &curr_offset);
         if (curr_offset == offset) {
             // NOTE: Writing to stdout et al. doesn't like pwrite for numerous reasons
             res = write(cast(int)fd.i, buffer, size);
@@ -7126,37 +7126,37 @@ extern "C" {
     zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
         i32 os_mode;
         switch (mode & zpl_file_mode_modes_ev) {
-        case zpl_file_mode_read_ev:
+        case ZPL_FILE_MODE_READ:
             os_mode = O_RDONLY;
             break;
-        case zpl_file_mode_write_ev:
+        case ZPL_FILE_MODE_WRITE:
             os_mode = O_WRONLY | O_CREAT | O_TRUNC;
             break;
-        case zpl_file_mode_append_ev:
+        case ZPL_FILE_MODE_APPEND:
             os_mode = O_WRONLY | O_APPEND | O_CREAT;
             break;
-        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR;
             break;
-        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR | O_CREAT | O_TRUNC;
             break;
-        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR | O_APPEND | O_CREAT;
             break;
         default:
             ZPL_PANIC("Invalid file mode");
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         fd->i = open(filename, os_mode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
         if (fd->i < 0) {
             // TODO: More file errors
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         *ops = zpl_default_file_operations_t;
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #endif
@@ -7164,7 +7164,7 @@ extern "C" {
 
 
     zpl_file_error_e zpl_file_new(zpl_file_t *f, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
         isize len = zpl_strlen(filename);
 
         f->ops = ops;
@@ -7185,29 +7185,29 @@ extern "C" {
 #else
         err = zpl__posix_file_open(&f->fd, &f->ops, mode, filename);
 #endif
-        if (err == zpl_file_error_none_ev)
+        if (err == ZPL_FILE_ERROR_NONE)
             return zpl_file_new(f, f->fd, f->ops, filename);
         return err;
     }
 
     zpl_file_error_e zpl_file_close(zpl_file_t *f) {
         if (!f)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 
         if (f->filename) zpl_free(zpl_heap_allocator(), cast(char *)f->filename);
 
 #if defined(ZPL_SYSTEM_WINDOWS)
         if (f->fd.p == INVALID_HANDLE_VALUE)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 #else
         if (f->fd.i < 0)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 #endif
 
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
         f->ops.close(f->fd);
 
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
     zpl_inline b32 zpl_file_read_at_check(zpl_file_t *f, void *buffer, isize size, i64 offset, isize *bytes_read) {
@@ -7232,14 +7232,14 @@ extern "C" {
     zpl_inline i64 zpl_file_seek(zpl_file_t *f, i64 offset) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, offset, zpl_seek_whence_begin_ev, &new_offset);
+        f->ops.seek(f->fd, offset, ZPL_SEEK_WHENCE_BEGIN, &new_offset);
         return new_offset;
     }
 
     zpl_inline i64 zpl_file_seek_to_end(zpl_file_t *f) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, 0, zpl_seek_whence_end_ev, &new_offset);
+        f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_END, &new_offset);
         return new_offset;
     }
 
@@ -7247,14 +7247,14 @@ extern "C" {
     zpl_inline i64 zpl_file_skip(zpl_file_t *f, i64 bytes) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, bytes, zpl_seek_whence_current_ev, &new_offset);
+        f->ops.seek(f->fd, bytes, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
         return new_offset;
     }
 
     zpl_inline i64 zpl_file_tell(zpl_file_t *f) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, 0, zpl_seek_whence_current_ev, &new_offset);
+        f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
         return new_offset;
     }
     zpl_inline b32 zpl_file_read       (zpl_file_t *f, void *buffer, isize size)       { return zpl_file_read_at(f, buffer, size, zpl_file_tell(f)); }
@@ -7262,12 +7262,12 @@ extern "C" {
 
 
     zpl_file_error_e zpl_file_create(zpl_file_t *f, char const *filename) {
-        return zpl_file_open_mode(f, zpl_file_mode_write_ev|zpl_file_mode_rw_ev, filename);
+        return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE|ZPL_FILE_MODE_RW, filename);
     }
 
 
     zpl_file_error_e zpl_file_open(zpl_file_t *f, char const *filename) {
-        return zpl_file_open_mode(f, zpl_file_mode_read_ev, filename);
+        return zpl_file_open_mode(f, ZPL_FILE_MODE_READ, filename);
     }
 
 
@@ -7382,7 +7382,7 @@ extern "C" {
 
     // TODO: Is this a bad idea?
     zpl_global b32    zpl__std_file_set = false;
-    zpl_global zpl_file_t zpl__std_files[zpl_file_standard_count_ev] = {{0}};
+    zpl_global zpl_file_t zpl__std_files[ZPL_FILE_STANDARD_COUNT] = {{0}};
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -7390,9 +7390,9 @@ extern "C" {
     zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.p = v; zpl__std_files[type].ops = zpl_default_file_operations_t
-            ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  GetStdHandle(STD_INPUT_HANDLE));
-            ZPL__SET_STD_FILE(zpl_file_standard_output_ev, GetStdHandle(STD_OUTPUT_HANDLE));
-            ZPL__SET_STD_FILE(zpl_file_standard_error_ev,  GetStdHandle(STD_ERROR_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  GetStdHandle(STD_INPUT_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, GetStdHandle(STD_OUTPUT_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR,  GetStdHandle(STD_ERROR_HANDLE));
 #undef ZPL__SET_STD_FILE
             zpl__std_file_set = true;
         }
@@ -7406,11 +7406,11 @@ extern "C" {
     }
 
     zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
         i64 prev_offset = zpl_file_tell(f);
         zpl_file_seek(f, size);
         if (!SetEndOfFile(f))
-            err = zpl_file_error_eruncation_failure_ev;
+            err = ZPL_FILE_ERROR_ERUNCATION_FAILURE;
         zpl_file_seek(f, prev_offset);
         return err;
     }
@@ -7439,9 +7439,9 @@ extern "C" {
     zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.i = v; zpl__std_files[type].ops = zpl_default_file_operations_t
-            ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  0);
-            ZPL__SET_STD_FILE(zpl_file_standard_output_ev, 1);
-            ZPL__SET_STD_FILE(zpl_file_standard_error_ev,  2);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  0);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, 1);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR,  2);
 #undef ZPL__SET_STD_FILE
             zpl__std_file_set = true;
         }
@@ -7458,9 +7458,9 @@ extern "C" {
     }
 
     zpl_inline zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+        zpl_file_error_e err = ZPL_FILE_ERROR_NONE;
         int i = ftruncate(f->fd.i, size);
-        if (i != 0) err = zpl_file_error_eruncation_failure_ev;
+        if (i != 0) err = ZPL_FILE_ERROR_ERUNCATION_FAILURE;
         return err;
     }
 
@@ -7478,13 +7478,13 @@ extern "C" {
         FILE *fd = tmpfile();
 
         if (fd == NULL) {
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
 #endif
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -7624,7 +7624,7 @@ extern "C" {
 
         result.allocator = a;
 
-        if (zpl_file_open(&file, filepath) == zpl_file_error_none_ev) {
+        if (zpl_file_open(&file, filepath) == ZPL_FILE_ERROR_NONE) {
             isize file_size = cast(isize)zpl_file_size(&file);
             if (file_size > 0) {
                 result.data = zpl_alloc(a, zero_terminate ? file_size+1 : file_size);
@@ -7814,11 +7814,11 @@ extern "C" {
 
 
     zpl_inline isize zpl_printf_va(char const *fmt, va_list va) {
-        return zpl_fprintf_va(zpl_file_get_standard(zpl_file_standard_output_ev), fmt, va);
+        return zpl_fprintf_va(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), fmt, va);
     }
 
     zpl_inline isize zpl_printf_err_va(char const *fmt, va_list va) {
-        return zpl_fprintf_va(zpl_file_get_standard(zpl_file_standard_error_ev), fmt, va);
+        return zpl_fprintf_va(zpl_file_get_standard(ZPL_FILE_STANDARD_ERROR), fmt, va);
     }
 
     zpl_inline isize zpl_fprintf_va(struct zpl_file_t *f, char const *fmt, va_list va) {
@@ -7837,28 +7837,28 @@ extern "C" {
 
 
     enum {
-        zpl_fmt_minus_ev     = ZPL_BIT(0),
-        zpl_fmt_plus_ev      = ZPL_BIT(1),
-        zpl_fmt_alt_ev       = ZPL_BIT(2),
-        zpl_fmt_space_ev     = ZPL_BIT(3),
-        zpl_fmt_zero_ev      = ZPL_BIT(4),
+        ZPL_FMT_MINUS     = ZPL_BIT(0),
+        ZPL_FMT_PLUS      = ZPL_BIT(1),
+        ZPL_FMT_ALT       = ZPL_BIT(2),
+        ZPL_FMT_SPACE     = ZPL_BIT(3),
+        ZPL_FMT_ZERO      = ZPL_BIT(4),
 
-        zpl_fmt_char_ev      = ZPL_BIT(5),
-        zpl_fmt_short_ev     = ZPL_BIT(6),
-        zpl_fmt_int_ev       = ZPL_BIT(7),
-        zpl_fmt_long_ev      = ZPL_BIT(8),
-        zpl_fmt_llong_ev     = ZPL_BIT(9),
-        zpl_fmt_size_ev      = ZPL_BIT(10),
-        zpl_fmt_intptr_ev    = ZPL_BIT(11),
+        ZPL_FMT_CHAR      = ZPL_BIT(5),
+        ZPL_FMT_SHORT     = ZPL_BIT(6),
+        ZPL_FMT_INT       = ZPL_BIT(7),
+        ZPL_FMT_LONG      = ZPL_BIT(8),
+        ZPL_FMT_LLONG     = ZPL_BIT(9),
+        ZPL_FMT_SIZE      = ZPL_BIT(10),
+        ZPL_FMT_INTPTR    = ZPL_BIT(11),
 
-        zpl_fmt_unsigned_ev  = ZPL_BIT(12),
-        zpl_fmt_lower_ev     = ZPL_BIT(13),
-        zpl_fmt_upper_ev     = ZPL_BIT(14),
+        ZPL_FMT_UNSIGNED  = ZPL_BIT(12),
+        ZPL_FMT_LOWER     = ZPL_BIT(13),
+        ZPL_FMT_UPPER     = ZPL_BIT(14),
 
 
-        zpl_fmt_done_ev      = ZPL_BIT(30),
+        ZPL_FMT_DONE      = ZPL_BIT(30),
 
-        zpl_fmt_ints_ev = zpl_fmt_char_ev|zpl_fmt_short_ev|zpl_fmt_int_ev|zpl_fmt_long_ev|zpl_fmt_llong_ev|zpl_fmt_size_ev|zpl_fmt_intptr_ev
+        ZPL_FMT_INTS = ZPL_FMT_CHAR|ZPL_FMT_SHORT|ZPL_FMT_INT|ZPL_FMT_LONG|ZPL_FMT_LLONG|ZPL_FMT_SIZE|ZPL_FMT_INTPTR
     };
 
     typedef struct {
@@ -7880,7 +7880,7 @@ extern "C" {
         else
             len = zpl_strlen(str);
 
-        if (info && (info->width == 0 || info->flags & zpl_fmt_minus_ev)) {
+        if (info && (info->width == 0 || info->flags & ZPL_FMT_MINUS)) {
             if (info->precision > 0)
                 len = info->precision < len ? info->precision : len;
 
@@ -7888,14 +7888,14 @@ extern "C" {
 
             if (info->width > res) {
                 isize padding = info->width - len;
-                char pad = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+                char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
                 while (padding --> 0 && remaining --> 0)
                     *text++ = pad, res++;
             }
         } else {
             if (info && (info->width > res)) {
                 isize padding = info->width - len;
-                char pad = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+                char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
                 while (padding --> 0 && remaining --> 0)
                     *text++ = pad, res++;
             }
@@ -7905,9 +7905,9 @@ extern "C" {
 
 
         if (info) {
-            if (info->flags & zpl_fmt_upper_ev)
+            if (info->flags & ZPL_FMT_UPPER)
                 zpl_str_to_upper(text);
-            else if (info->flags & zpl_fmt_lower_ev)
+            else if (info->flags & ZPL_FMT_LOWER)
                 zpl_str_to_lower(text);
         }
 
@@ -7946,7 +7946,7 @@ extern "C" {
                     *text = '-', remaining--;
                 text++;
                 arg = -arg;
-            } else if (info->flags & zpl_fmt_minus_ev) {
+            } else if (info->flags & ZPL_FMT_MINUS) {
                 if (remaining > 1)
                     *text = '+', remaining--;
                 text++;
@@ -7965,7 +7965,7 @@ extern "C" {
             if (info->precision < 0)
                 info->precision = 6;
 
-            if ((info->flags & zpl_fmt_alt_ev) || info->precision > 0) {
+            if ((info->flags & ZPL_FMT_ALT) || info->precision > 0) {
                 i64 mult = 10;
                 if (remaining > 1)
                     *text = '.', remaining--;
@@ -7986,7 +7986,7 @@ extern "C" {
             if (remaining > 1)
                 *text = '0', remaining--;
             text++;
-            if (info->flags & zpl_fmt_alt_ev) {
+            if (info->flags & ZPL_FMT_ALT) {
                 if (remaining > 1)
                     *text = '.', remaining--;
                 text++;
@@ -7995,7 +7995,7 @@ extern "C" {
 
         width = info->width - (text - text_begin);
         if (width > 0) {
-            char fill = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+            char fill = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
             char *end = text+remaining-1;
             len = (text - text_begin);
 
@@ -8037,21 +8037,21 @@ extern "C" {
             if (*fmt == '%') {
                 do {
                     switch (*++fmt) {
-                    case '-': info.flags |= zpl_fmt_minus_ev; break;
-                    case '+': info.flags |= zpl_fmt_plus_ev;  break;
-                    case '#': info.flags |= zpl_fmt_alt_ev;   break;
-                    case ' ': info.flags |= zpl_fmt_space_ev; break;
-                    case '0': info.flags |= zpl_fmt_zero_ev;  break;
-                    default:  info.flags |= zpl_fmt_done_ev;  break;
+                    case '-': info.flags |= ZPL_FMT_MINUS; break;
+                    case '+': info.flags |= ZPL_FMT_PLUS;  break;
+                    case '#': info.flags |= ZPL_FMT_ALT;   break;
+                    case ' ': info.flags |= ZPL_FMT_SPACE; break;
+                    case '0': info.flags |= ZPL_FMT_ZERO;  break;
+                    default:  info.flags |= ZPL_FMT_DONE;  break;
                     }
-                } while (!(info.flags & zpl_fmt_done_ev));
+                } while (!(info.flags & ZPL_FMT_DONE));
             }
 
             // NOTE: Optional Width
             if (*fmt == '*') {
                 int width = va_arg(va, int);
                 if (width < 0) {
-                    info.flags |= zpl_fmt_minus_ev;
+                    info.flags |= ZPL_FMT_MINUS;
                     info.width = -info.width;
                 } else {
                     info.width = -info.width;
@@ -8070,36 +8070,36 @@ extern "C" {
                 } else {
                     info.precision = cast(i32)zpl_str_to_i64(fmt, cast(char **)&fmt, 10);
                 }
-                info.flags &= ~zpl_fmt_zero_ev;
+                info.flags &= ~ZPL_FMT_ZERO;
             }
 
 
             switch (*fmt++) {
             case 'h':
                 if (*fmt == 'h') { // hh => char
-                    info.flags |= zpl_fmt_char_ev;
+                    info.flags |= ZPL_FMT_CHAR;
                     fmt++;
                 } else { // h => short
-                    info.flags |= zpl_fmt_short_ev;
+                    info.flags |= ZPL_FMT_SHORT;
                 }
                 break;
 
             case 'l':
                 if (*fmt == 'l') { // ll => long long
-                    info.flags |= zpl_fmt_llong_ev;
+                    info.flags |= ZPL_FMT_LLONG;
                     fmt++;
                 } else { // l => long
-                    info.flags |= zpl_fmt_long_ev;
+                    info.flags |= ZPL_FMT_LONG;
                 }
                 break;
 
                 break;
 
             case 'z': // NOTE: usize
-                info.flags |= zpl_fmt_unsigned_ev;
+                info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 't': // NOTE: isize
-                info.flags |= zpl_fmt_size_ev;
+                info.flags |= ZPL_FMT_SIZE;
                 break;
 
             default: fmt--; break;
@@ -8108,7 +8108,7 @@ extern "C" {
 
             switch (*fmt) {
             case 'u':
-                info.flags |= zpl_fmt_unsigned_ev;
+                info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 'd':
             case 'i':
@@ -8121,12 +8121,12 @@ extern "C" {
 
             case 'x':
                 info.base = 16;
-                info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_lower_ev);
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_LOWER);
                 break;
 
             case 'X':
                 info.base = 16;
-                info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_upper_ev);
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_UPPER);
                 break;
 
             case 'f':
@@ -8151,7 +8151,7 @@ extern "C" {
 
             case 'p':
                 info.base = 16;
-                info.flags |= (zpl_fmt_lower_ev|zpl_fmt_unsigned_ev|zpl_fmt_alt_ev|zpl_fmt_intptr_ev);
+                info.flags |= (ZPL_FMT_LOWER|ZPL_FMT_UNSIGNED|ZPL_FMT_ALT|ZPL_FMT_INTPTR);
                 break;
 
             case '%':
@@ -8164,15 +8164,15 @@ extern "C" {
             fmt++;
 
             if (info.base != 0) {
-                if (info.flags & zpl_fmt_unsigned_ev) {
+                if (info.flags & ZPL_FMT_UNSIGNED) {
                     u64 value = 0;
-                    switch (info.flags & zpl_fmt_ints_ev) {
-                    case zpl_fmt_char_ev:   value = cast(u64)cast(u8) va_arg(va, int);       break;
-                    case zpl_fmt_short_ev:  value = cast(u64)cast(u16)va_arg(va, int);       break;
-                    case zpl_fmt_long_ev:   value = cast(u64)va_arg(va, unsigned long);      break;
-                    case zpl_fmt_llong_ev:  value = cast(u64)va_arg(va, unsigned long long); break;
-                    case zpl_fmt_size_ev:   value = cast(u64)va_arg(va, usize);              break;
-                    case zpl_fmt_intptr_ev: value = cast(u64)va_arg(va, uintptr);            break;
+                    switch (info.flags & ZPL_FMT_INTS) {
+                    case ZPL_FMT_CHAR:   value = cast(u64)cast(u8) va_arg(va, int);       break;
+                    case ZPL_FMT_SHORT:  value = cast(u64)cast(u16)va_arg(va, int);       break;
+                    case ZPL_FMT_LONG:   value = cast(u64)va_arg(va, unsigned long);      break;
+                    case ZPL_FMT_LLONG:  value = cast(u64)va_arg(va, unsigned long long); break;
+                    case ZPL_FMT_SIZE:   value = cast(u64)va_arg(va, usize);              break;
+                    case ZPL_FMT_INTPTR: value = cast(u64)va_arg(va, uintptr);            break;
                     default:             value = cast(u64)va_arg(va, unsigned int);       break;
                     }
 
@@ -8180,13 +8180,13 @@ extern "C" {
 
                 } else {
                     i64 value = 0;
-                    switch (info.flags & zpl_fmt_ints_ev) {
-                    case zpl_fmt_char_ev:   value = cast(i64)cast(i8) va_arg(va, int); break;
-                    case zpl_fmt_short_ev:  value = cast(i64)cast(i16)va_arg(va, int); break;
-                    case zpl_fmt_long_ev:   value = cast(i64)va_arg(va, long);         break;
-                    case zpl_fmt_llong_ev:  value = cast(i64)va_arg(va, long long);    break;
-                    case zpl_fmt_size_ev:   value = cast(i64)va_arg(va, usize);        break;
-                    case zpl_fmt_intptr_ev: value = cast(i64)va_arg(va, uintptr);      break;
+                    switch (info.flags & ZPL_FMT_INTS) {
+                    case ZPL_FMT_CHAR:   value = cast(i64)cast(i8) va_arg(va, int); break;
+                    case ZPL_FMT_SHORT:  value = cast(i64)cast(i16)va_arg(va, int); break;
+                    case ZPL_FMT_LONG:   value = cast(i64)va_arg(va, long);         break;
+                    case ZPL_FMT_LLONG:  value = cast(i64)va_arg(va, long long);    break;
+                    case ZPL_FMT_SIZE:   value = cast(i64)va_arg(va, usize);        break;
+                    case ZPL_FMT_INTPTR: value = cast(i64)va_arg(va, uintptr);      break;
                     default:             value = cast(i64)va_arg(va, int);          break;
                     }
 
