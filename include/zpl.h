@@ -24,6 +24,8 @@
 
 
   Version History:
+  4.0.0 - ARM support, coding style changes and various improvements
+
   3.4.1 - zpl_memcopy now uses memcpy for ARM arch-family
   3.4.0 - Removed obsolete code
   3.3.4 - Added Travis CI config
@@ -44,6 +46,7 @@
   3.0.2 - Fixed linux part, and removed trailing spaces
   3.0.1 - Small bugfix in zpl_file_open
   3.0.0 - Added several fixes and features
+
   2.4.0 - Added remove to hash table
   2.3.3 - Removed redundant code
   2.3.2 - Eliminated extra warnings
@@ -56,6 +59,7 @@
   2.0.8 - Small adjustments
   2.0.7 - MinGW related fixes
   2.0.0 - New NPM based version
+
   1.2.2 - Small fix
   1.2.1 - Macro fixes
   1.2.0 - Added zpl_async macro
@@ -996,10 +1000,10 @@
 
     ZPL_DEF zpl_virtual_memory_t zpl_virtual_memory(void *data, isize size);
     ZPL_DEF zpl_virtual_memory_t zpl_vm_alloc      (void *addr, isize size);
-    ZPL_DEF b32             zpl_vm_free       (zpl_virtual_memory_t vm);
+    ZPL_DEF b32                  zpl_vm_free       (zpl_virtual_memory_t vm);
     ZPL_DEF zpl_virtual_memory_t zpl_vm_trim       (zpl_virtual_memory_t vm, isize lead_size, isize size);
-    ZPL_DEF b32             zpl_vm_purge      (zpl_virtual_memory_t vm);
-    ZPL_DEF isize zpl_virtual_memory_page_size(isize *alignment_out);
+    ZPL_DEF b32                  zpl_vm_purge      (zpl_virtual_memory_t vm);
+    ZPL_DEF isize zpl_virtual_memory_page_size     (isize *alignment_out);
 
 
 
@@ -1010,16 +1014,16 @@
     //
     //
 
-    typedef enum zpl_allocation_type_e {
-        zpl_allocation_alloc_ev,
-        zpl_allocation_free_ev,
-        zpl_allocation_free_all_ev,
-        zpl_allocation_resize_ev,
-    } zpl_allocation_type_e;
+    typedef enum zplAllocationType {
+        ZPL_ALLOCATION_ALLOC,
+        ZPL_ALLOCATION_FREE,
+        ZPL_ALLOCATION_FREE_ALL,
+        ZPL_ALLOCATION_RESIZE,
+    } zplAllocationType;
 
     // NOTE: This is useful so you can define an allocator of the same type and parameters
 #define ZPL_ALLOCATOR_PROC(name)                                  \
-    void *name(void *allocator_data, zpl_allocation_type_e type,  \
+    void *name(void *allocator_data, zplAllocationType type,  \
                isize size, isize alignment,                       \
                void *old_memory, isize old_size,                  \
                u64 flags)
@@ -1030,9 +1034,9 @@
         void *           data;
     } zpl_allocator_t;
 
-    typedef enum zpl_allocator_flag_e {
-        zpl_allocator_flag_clear_to_zero_ev = ZPL_BIT(0),
-    } zpl_allocator_flag_e;
+    typedef enum zplAllocatorFlag {
+        ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO = ZPL_BIT(0),
+    } zplAllocatorFlag;
 
     // TODO: Is this a decent default alignment?
 #ifndef ZPL_DEFAULT_MEMORY_ALIGNMENT
@@ -1040,7 +1044,7 @@
 #endif
 
 #ifndef ZPL_DEFAULT_ALLOCATOR_FLAGS
-#define ZPL_DEFAULT_ALLOCATOR_FLAGS (zpl_allocator_flag_clear_to_zero_ev)
+#define ZPL_DEFAULT_ALLOCATOR_FLAGS (ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
 #endif
 
     ZPL_DEF void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment);
@@ -1861,31 +1865,31 @@
 
 
     typedef u32 zpl_file_mode_t;
-    typedef enum zpl_file_mode_flag_e {
-        zpl_file_mode_read_ev       = ZPL_BIT(0),
-        zpl_file_mode_write_ev      = ZPL_BIT(1),
-        zpl_file_mode_append_ev     = ZPL_BIT(2),
-        zpl_file_mode_rw_ev         = ZPL_BIT(3),
+    typedef enum zplFileModeFlag {
+        ZPL_FILE_MODE_READ       = ZPL_BIT(0),
+        ZPL_FILE_MODE_WRITE      = ZPL_BIT(1),
+        ZPL_FILE_MODE_APPEND     = ZPL_BIT(2),
+        ZPL_FILE_MODE_RW         = ZPL_BIT(3),
 
-        zpl_file_mode_modes_ev = zpl_file_mode_read_ev | zpl_file_mode_write_ev | zpl_file_mode_append_ev | zpl_file_mode_rw_ev,
-    } zpl_file_mode_flag_e;
+        zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
+    } zplFileModeFlag;
 
     // NOTE: Only used internally and for the file operations
-    typedef enum zpl_seek_whence_type_e {
-        zpl_seek_whence_begin_ev   = 0,
-        zpl_seek_whence_current_ev = 1,
-        zpl_seek_whence_end_ev     = 2,
-    } zpl_seek_whence_type_e;
+    typedef enum zplSeekWhenceType {
+        ZPL_SEEK_WHENCE_BEGIN   = 0,
+        ZPL_SEEK_WHENCE_CURRENT = 1,
+        ZPL_SEEK_WHENCE_END     = 2,
+    } zplSeekWhenceType;
 
-    typedef enum zpl_file_error_e {
-        zpl_file_error_none_ev,
-        zpl_file_error_invalid_ev,
-        zpl_file_error_invalid_filename_ev,
-        zpl_file_error_exists_ev,
-        zpl_file_error_not_exists_ev,
-        zpl_file_error_permission_ev,
-        zpl_file_error_eruncation_failure_ev,
-    } zpl_file_error_e;
+    typedef enum zplFileError {
+        ZPL_FILE_ERROR_NONE,
+        ZPL_FILE_ERROR_INVALID,
+        ZPL_FILE_ERROR_INVALID_FILENAME,
+        ZPL_FILE_ERROR_EXISTS,
+        ZPL_FILE_ERROR_NOT_EXISTS,
+        ZPL_FILE_ERROR_PERMISSION,
+        zplFileErrorRUNCATION_FAILURE,
+    } zplFileError;
 
     typedef union zpl_file_descriptor_t {
         void *  p;
@@ -1895,10 +1899,10 @@
 
     typedef struct zpl_file_operations_t zpl_file_operations_t;
 
-#define ZPL_FILE_OPEN_PROC(name)     zpl_file_error_e name(zpl_file_descriptor_t *fd, zpl_file_operations_t *ops, zpl_file_mode_t mode, char const *filename)
+#define ZPL_FILE_OPEN_PROC(name)     zplFileError name(zpl_file_descriptor_t *fd, zpl_file_operations_t *ops, zpl_file_mode_t mode, char const *filename)
 #define ZPL_FILE_READ_AT_PROC(name)  b32         name(zpl_file_descriptor_t fd, void *buffer, isize size, i64 offset, isize *bytes_read, b32 stop_at_newline)
 #define ZPL_FILE_WRITE_AT_PROC(name) b32         name(zpl_file_descriptor_t fd, void const *buffer, isize size, i64 offset, isize *bytes_written)
-#define ZPL_FILE_SEEK_PROC(name)     b32         name(zpl_file_descriptor_t fd, i64 offset, zpl_seek_whence_type_e whence, i64 *new_offset)
+#define ZPL_FILE_SEEK_PROC(name)     b32         name(zpl_file_descriptor_t fd, i64 offset, zplSeekWhenceType whence, i64 *new_offset)
 #define ZPL_FILE_CLOSE_PROC(name)    void        name(zpl_file_descriptor_t fd)
     typedef ZPL_FILE_OPEN_PROC(zpl_file_open_proc_t);
     typedef ZPL_FILE_READ_AT_PROC(zpl_file_read_proc_t);
@@ -1945,20 +1949,20 @@
 
 #endif // ZPL_THREADING
 
-    typedef enum zpl_file_standard_type_e {
-        zpl_file_standard_input_ev,
-        zpl_file_standard_output_ev,
-        zpl_file_standard_error_ev,
+    typedef enum zplFileStandardType {
+        ZPL_FILE_STANDARD_INPUT,
+        ZPL_FILE_STANDARD_OUTPUT,
+        ZPL_FILE_STANDARD_ERROR,
 
-        zpl_file_standard_count_ev,
-    } zpl_file_standard_type_e;
+        ZPL_FILE_STANDARD_COUNT,
+    } zplFileStandardType;
 
-    ZPL_DEF zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std);
+    ZPL_DEF zpl_file_t *zpl_file_get_standard(zplFileStandardType std);
 
-    ZPL_DEF zpl_file_error_e zpl_file_create        (zpl_file_t *file, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_open          (zpl_file_t *file, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_open_mode     (zpl_file_t *file, zpl_file_mode_t mode, char const *filename);
-    ZPL_DEF zpl_file_error_e zpl_file_new           (zpl_file_t *file, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename);
+    ZPL_DEF zplFileError zpl_file_create        (zpl_file_t *file, char const *filename);
+    ZPL_DEF zplFileError zpl_file_open          (zpl_file_t *file, char const *filename);
+    ZPL_DEF zplFileError zpl_file_open_mode     (zpl_file_t *file, zpl_file_mode_t mode, char const *filename);
+    ZPL_DEF zplFileError zpl_file_new           (zpl_file_t *file, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename);
     ZPL_DEF b32         zpl_file_read_at_check (zpl_file_t *file, void *buffer, isize size, i64 offset, isize *bytes_read);
     ZPL_DEF b32         zpl_file_write_at_check(zpl_file_t *file, void const *buffer, isize size, i64 offset, isize *bytes_written);
     ZPL_DEF b32         zpl_file_read_at       (zpl_file_t *file, void *buffer, isize size, i64 offset);
@@ -1967,12 +1971,12 @@
     ZPL_DEF i64         zpl_file_seek_to_end   (zpl_file_t *file);
     ZPL_DEF i64         zpl_file_skip          (zpl_file_t *file, i64 bytes); // NOTE: Skips a certain amount of bytes
     ZPL_DEF i64         zpl_file_tell          (zpl_file_t *file);
-    ZPL_DEF zpl_file_error_e zpl_file_close         (zpl_file_t *file);
+    ZPL_DEF zplFileError zpl_file_close         (zpl_file_t *file);
     ZPL_DEF b32         zpl_file_read          (zpl_file_t *file, void *buffer, isize size);
     ZPL_DEF b32         zpl_file_write         (zpl_file_t *file, void const *buffer, isize size);
     ZPL_DEF i64         zpl_file_size          (zpl_file_t *file);
     ZPL_DEF char const *zpl_file_name          (zpl_file_t *file);
-    ZPL_DEF zpl_file_error_e zpl_file_truncate      (zpl_file_t *file, i64 size);
+    ZPL_DEF zplFileError zpl_file_truncate      (zpl_file_t *file, i64 size);
     ZPL_DEF b32         zpl_file_has_changed   (zpl_file_t *file); // NOTE: Changed since lasted checked
 
 #ifdef ZPL_THREADING
@@ -1980,7 +1984,7 @@
     ZPL_DEF void zpl_async_file_write(zpl_file_t *file, void const* buffer, isize size, zpl_async_file_cb *proc);
 #endif
 
-    zpl_file_error_e zpl_file_temp(zpl_file_t *file);
+    zplFileError zpl_file_temp(zpl_file_t *file);
 
     typedef struct zpl_file_contents_t {
         zpl_allocator_t allocator;
@@ -2110,10 +2114,11 @@
     ZPL_DEF isize zpl_random_range_isize   (zpl_random_t *r, isize lower_inc, isize higher_inc);
     ZPL_DEF f64   zpl_random_range_f64     (zpl_random_t *r, f64 lower_inc, f64 higher_inc);
 
-    ZPL_DEF void zpl_exit     (u32 code);
-    ZPL_DEF void zpl_yield    (void);
-    ZPL_DEF void zpl_set_env  (char const *name, char const *value);
-    ZPL_DEF void zpl_unset_env(char const *name);
+    ZPL_DEF void        zpl_exit     (u32 code);
+    ZPL_DEF void        zpl_yield    (void);
+    ZPL_DEF char const *zpl_get_env  (char const *name);
+    ZPL_DEF void        zpl_set_env  (char const *name, char const *value);
+    ZPL_DEF void        zpl_unset_env(char const *name);
 
     ZPL_DEF u16 zpl_endian_swap16(u16 i);
     ZPL_DEF u32 zpl_endian_swap32(u32 i);
@@ -2182,1021 +2187,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-
-#if defined(ZPL_COMPILER_MSVC) && !defined(_WINDOWS_)
-    ////////////////////////////////////////////////////////////////
-    //
-    // Bill's Mini Windows.h
-    //
-    //
-
-#define WINAPI   __stdcall
-#define WINAPIV  __cdecl
-#define CALLBACK __stdcall
-#define MAX_PATH 260
-#define CCHDEVICENAME 32
-#define CCHFORMNAME   32
-
-    typedef unsigned long DWORD;
-    typedef int WINBOOL;
-#ifndef XFree86Server
-#ifndef __OBJC__
-    typedef WINBOOL BOOL;
-#else
-#define BOOL WINBOOL
-#endif
-    typedef unsigned char BYTE;
-#endif
-    typedef unsigned short WORD;
-    typedef float FLOAT;
-    typedef int INT;
-    typedef unsigned int UINT;
-    typedef short SHORT;
-    typedef long LONG;
-    typedef long long LONGLONG;
-    typedef unsigned short USHORT;
-    typedef unsigned long ULONG;
-    typedef unsigned long long ULONGLONG;
-
-    typedef UINT WPARAM;
-    typedef LONG LPARAM;
-    typedef LONG LRESULT;
-#ifndef _HRESULT_DEFINED
-    typedef LONG HRESULT;
-#define _HRESULT_DEFINED
-#endif
-#ifndef XFree86Server
-    typedef WORD ATOM;
-#endif /* XFree86Server */
-    typedef void *HANDLE;
-    typedef HANDLE HGLOBAL;
-    typedef HANDLE HLOCAL;
-    typedef HANDLE GLOBALHANDLE;
-    typedef HANDLE LOCALHANDLE;
-    typedef void *HGDIOBJ;
-
-#define DECLARE_HANDLE(name) typedef HANDLE name
-    DECLARE_HANDLE(HACCEL);
-    DECLARE_HANDLE(HBITMAP);
-    DECLARE_HANDLE(HBRUSH);
-    DECLARE_HANDLE(HCOLORSPACE);
-    DECLARE_HANDLE(HDC);
-    DECLARE_HANDLE(HGLRC);
-    DECLARE_HANDLE(HDESK);
-    DECLARE_HANDLE(HENHMETAFILE);
-    DECLARE_HANDLE(HFONT);
-    DECLARE_HANDLE(HICON);
-    DECLARE_HANDLE(HKEY);
-    typedef HKEY *PHKEY;
-    DECLARE_HANDLE(HMENU);
-    DECLARE_HANDLE(HMETAFILE);
-    DECLARE_HANDLE(HINSTANCE);
-    typedef HINSTANCE HMODULE;
-    DECLARE_HANDLE(HPALETTE);
-    DECLARE_HANDLE(HPEN);
-    DECLARE_HANDLE(HRGN);
-    DECLARE_HANDLE(HRSRC);
-    DECLARE_HANDLE(HSTR);
-    DECLARE_HANDLE(HTASK);
-    DECLARE_HANDLE(HWND);
-    DECLARE_HANDLE(HWINSTA);
-    DECLARE_HANDLE(HKL);
-    DECLARE_HANDLE(HRAWINPUT);
-    DECLARE_HANDLE(HMONITOR);
-#undef DECLARE_HANDLE
-
-    typedef int HFILE;
-    typedef HICON HCURSOR;
-    typedef DWORD COLORREF;
-    typedef int (WINAPI *FARPROC)();
-    typedef int (WINAPI *NEARPROC)();
-    typedef int (WINAPI *PROC)();
-    typedef LRESULT (CALLBACK *WNDPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-#if defined(_WIN64)
-    typedef unsigned __int64 ULONG_PTR;
-    typedef signed __int64 LONG_PTR;
-#else
-    typedef unsigned long ULONG_PTR;
-    typedef signed long LONG_PTR;
-#endif
-    typedef ULONG_PTR DWORD_PTR;
-
-    typedef struct tagRECT {
-        LONG left;
-        LONG top;
-        LONG right;
-        LONG bottom;
-    } RECT;
-    typedef struct tagRECTL {
-        LONG left;
-        LONG top;
-        LONG right;
-        LONG bottom;
-    } RECTL;
-    typedef struct tagPOINT {
-        LONG x;
-        LONG y;
-    } POINT;
-    typedef struct tagSIZE {
-        LONG cx;
-        LONG cy;
-    } SIZE;
-    typedef struct tagPOINTS {
-        SHORT x;
-        SHORT y;
-    } POINTS;
-    typedef struct _SECURITY_ATTRIBUTES {
-        DWORD  nLength;
-        HANDLE lpSecurityDescriptor;
-        BOOL   bInheritHandle;
-    } SECURITY_ATTRIBUTES;
-    typedef enum _LOGICAL_PROCESSOR_RELATIONSHIP {
-        RelationProcessorCore,
-        RelationNumaNode,
-        RelationCache,
-        RelationProcessorPackage,
-        RelationGroup,
-        RelationAll               = 0xffff
-    } LOGICAL_PROCESSOR_RELATIONSHIP;
-    typedef enum _PROCESSOR_CACHE_TYPE {
-        CacheUnified,
-        CacheInstruction,
-        CacheData,
-        CacheTrace
-    } PROCESSOR_CACHE_TYPE;
-    typedef struct _CACHE_DESCRIPTOR {
-        BYTE                 Level;
-        BYTE                 Associativity;
-        WORD                 LineSize;
-        DWORD                Size;
-        PROCESSOR_CACHE_TYPE Type;
-    } CACHE_DESCRIPTOR;
-    typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
-        ULONG_PTR                       ProcessorMask;
-        LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
-        union {
-            struct {
-                BYTE Flags;
-            } ProcessorCore;
-            struct {
-                DWORD NodeNumber;
-            } NumaNode;
-            CACHE_DESCRIPTOR Cache;
-            ULONGLONG        Reserved[2];
-        };
-    } SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
-    typedef struct _MEMORY_BASIC_INFORMATION {
-        void *BaseAddress;
-        void *AllocationBase;
-        DWORD AllocationProtect;
-        usize RegionSize;
-        DWORD State;
-        DWORD Protect;
-        DWORD Type;
-    } MEMORY_BASIC_INFORMATION;
-    typedef struct _SYSTEM_INFO {
-        union {
-            DWORD   dwOemId;
-            struct {
-                WORD wProcessorArchitecture;
-                WORD wReserved;
-            };
-        };
-        DWORD     dwPageSize;
-        void *    lpMinimumApplicationAddress;
-        void *    lpMaximumApplicationAddress;
-        DWORD_PTR dwActiveProcessorMask;
-        DWORD     dwNumberOfProcessors;
-        DWORD     dwProcessorType;
-        DWORD     dwAllocationGranularity;
-        WORD      wProcessorLevel;
-        WORD      wProcessorRevision;
-    } SYSTEM_INFO;
-    typedef union _LARGE_INTEGER {
-        struct {
-            DWORD LowPart;
-            LONG  HighPart;
-        };
-        struct {
-            DWORD LowPart;
-            LONG  HighPart;
-        } u;
-        LONGLONG QuadPart;
-    } LARGE_INTEGER;
-    typedef union _ULARGE_INTEGER {
-        struct {
-            DWORD LowPart;
-            DWORD HighPart;
-        };
-        struct {
-            DWORD LowPart;
-            DWORD HighPart;
-        } u;
-        ULONGLONG QuadPart;
-    } ULARGE_INTEGER;
-
-    typedef struct _OVERLAPPED {
-        ULONG_PTR Internal;
-        ULONG_PTR InternalHigh;
-        union {
-            struct {
-                DWORD Offset;
-                DWORD OffsetHigh;
-            };
-            void *Pointer;
-        };
-        HANDLE hEvent;
-    } OVERLAPPED;
-    typedef struct _FILETIME {
-        DWORD dwLowDateTime;
-        DWORD dwHighDateTime;
-    } FILETIME;
-    typedef struct _WIN32_FIND_DATAW {
-        DWORD    dwFileAttributes;
-        FILETIME ftCreationTime;
-        FILETIME ftLastAccessTime;
-        FILETIME ftLastWriteTime;
-        DWORD    nFileSizeHigh;
-        DWORD    nFileSizeLow;
-        DWORD    dwReserved0;
-        DWORD    dwReserved1;
-        wchar_t  cFileName[MAX_PATH];
-        wchar_t  cAlternateFileName[14];
-    } WIN32_FIND_DATAW;
-    typedef struct _WIN32_FILE_ATTRIBUTE_DATA {
-        DWORD    dwFileAttributes;
-        FILETIME ftCreationTime;
-        FILETIME ftLastAccessTime;
-        FILETIME ftLastWriteTime;
-        DWORD    nFileSizeHigh;
-        DWORD    nFileSizeLow;
-    } WIN32_FILE_ATTRIBUTE_DATA;
-    typedef enum _GET_FILEEX_INFO_LEVELS {
-        GetFileExInfoStandard,
-        GetFileExMaxInfoLevel
-    } GET_FILEEX_INFO_LEVELS;
-    typedef struct tagRAWINPUTHEADER {
-        DWORD  dwType;
-        DWORD  dwSize;
-        HANDLE hDevice;
-        WPARAM wParam;
-    } RAWINPUTHEADER;
-    typedef struct tagRAWINPUTDEVICE {
-        USHORT usUsagePage;
-        USHORT usUsage;
-        DWORD  dwFlags;
-        HWND   hwndTarget;
-    } RAWINPUTDEVICE;
-    typedef struct tagRAWMOUSE {
-        WORD usFlags;
-        union {
-            ULONG ulButtons;
-            struct {
-                WORD usButtonFlags;
-                WORD usButtonData;
-            };
-        };
-        ULONG ulRawButtons;
-        LONG  lLastX;
-        LONG  lLastY;
-        ULONG ulExtraInformation;
-    } RAWMOUSE;
-    typedef struct tagRAWKEYBOARD {
-        WORD  MakeCode;
-        WORD  Flags;
-        WORD  Reserved;
-        WORD  VKey;
-        UINT  Message;
-        ULONG ExtraInformation;
-    } RAWKEYBOARD;
-    typedef struct tagRAWHID {
-        DWORD dwSizeHid;
-        DWORD dwCount;
-        BYTE  bRawData[1];
-    } RAWHID;
-    typedef struct tagRAWINPUT {
-        RAWINPUTHEADER header;
-        union {
-            RAWMOUSE    mouse;
-            RAWKEYBOARD keyboard;
-            RAWHID      hid;
-        } data;
-    } RAWINPUT;
-    typedef struct tagWNDCLASSEXW {
-        UINT           cbSize;
-        UINT           style;
-        WNDPROC        lpfnWndProc;
-        INT            cbClsExtra;
-        INT            cbWndExtra;
-        HINSTANCE      hInstance;
-        HICON          hIcon;
-        HCURSOR        hCursor;
-        HANDLE         hbrBackground;
-        wchar_t const *lpszMenuName;
-        wchar_t const *lpszClassName;
-        HICON          hIconSm;
-    } WNDCLASSEXW;
-    typedef struct _POINTL {
-        LONG x;
-        LONG y;
-    } POINTL;
-    typedef struct _devicemodew {
-        wchar_t dmDeviceName[CCHDEVICENAME];
-        WORD    dmSpecVersion;
-        WORD    dmDriverVersion;
-        WORD    dmSize;
-        WORD    dmDriverExtra;
-        DWORD   dmFields;
-        union {
-            struct {
-                short dmOrientation;
-                short dmPaperSize;
-                short dmPaperLength;
-                short dmPaperWidth;
-                short dmScale;
-                short dmCopies;
-                short dmDefaultSource;
-                short dmPrintQuality;
-            };
-            struct {
-                POINTL dmPosition;
-                DWORD  dmDisplayOrientation;
-                DWORD  dmDisplayFixedOutput;
-            };
-        };
-        short   dmColor;
-        short   dmDuplex;
-        short   dmYResolution;
-        short   dmTTOption;
-        short   dmCollate;
-        wchar_t dmFormName[CCHFORMNAME];
-        WORD    dmLogPixels;
-        DWORD   dmBitsPerPel;
-        DWORD   dmPelsWidth;
-        DWORD   dmPelsHeight;
-        union {
-            DWORD dmDisplayFlags;
-            DWORD dmNup;
-        };
-        DWORD dmDisplayFrequency;
-#if (WINVER >= 0x0400)
-        DWORD dmICMMethod;
-        DWORD dmICMIntent;
-        DWORD dmMediaType;
-        DWORD dmDitherType;
-        DWORD dmReserved1;
-        DWORD dmReserved2;
-#if (WINVER >= 0x0500) || (_WIN32_WINNT >= 0x0400)
-        DWORD dmPanningWidth;
-        DWORD dmPanningHeight;
-#endif
-#endif
-    } DEVMODEW;
-    typedef struct tagPIXELFORMATDESCRIPTOR {
-        WORD  nSize;
-        WORD  nVersion;
-        DWORD dwFlags;
-        BYTE  iPixelType;
-        BYTE  cColorBits;
-        BYTE  cRedBits;
-        BYTE  cRedShift;
-        BYTE  cGreenBits;
-        BYTE  cGreenShift;
-        BYTE  cBlueBits;
-        BYTE  cBlueShift;
-        BYTE  cAlphaBits;
-        BYTE  cAlphaShift;
-        BYTE  cAccumBits;
-        BYTE  cAccumRedBits;
-        BYTE  cAccumGreenBits;
-        BYTE  cAccumBlueBits;
-        BYTE  cAccumAlphaBits;
-        BYTE  cDepthBits;
-        BYTE  cStencilBits;
-        BYTE  cAuxBuffers;
-        BYTE  iLayerType;
-        BYTE  bReserved;
-        DWORD dwLayerMask;
-        DWORD dwVisibleMask;
-        DWORD dwDamageMask;
-    } PIXELFORMATDESCRIPTOR;
-    typedef struct tagMSG {     // msg
-        HWND   hwnd;
-        UINT   message;
-        WPARAM wParam;
-        LPARAM lParam;
-        DWORD time;
-        POINT pt;
-    } MSG;
-    typedef struct tagWINDOWPLACEMENT {
-        UINT length;
-        UINT flags;
-        UINT showCmd;
-        POINT ptMinPosition;
-        POINT ptMaxPosition;
-        RECT rcNormalPosition;
-    } WINDOWPLACEMENT;
-    typedef struct tagMONITORINFO {
-        DWORD cbSize;
-        RECT  rcMonitor;
-        RECT  rcWork;
-        DWORD dwFlags;
-    } MONITORINFO;
-
-#define INFINITE 0xffffffffl
-#define INVALID_HANDLE_VALUE ((void *)(intptr)(-1))
-
-
-    typedef DWORD WINAPI THREAD_START_ROUTINE(void *parameter);
-
-    ZPL_DLL_IMPORT DWORD   WINAPI GetLastError       (void);
-    ZPL_DLL_IMPORT BOOL    WINAPI CloseHandle        (HANDLE object);
-    ZPL_DLL_IMPORT HANDLE  WINAPI CreateSemaphoreA   (SECURITY_ATTRIBUTES *semaphore_attributes, LONG initial_count,
-                                                      LONG maximum_count, char const *name);
-    ZPL_DLL_IMPORT BOOL    WINAPI ReleaseSemaphore   (HANDLE semaphore, LONG release_count, LONG *previous_count);
-    ZPL_DLL_IMPORT DWORD   WINAPI WaitForSingleObject(HANDLE handle, DWORD milliseconds);
-    ZPL_DLL_IMPORT HANDLE  WINAPI CreateThread       (SECURITY_ATTRIBUTES *semaphore_attributes, usize stack_size,
-                                                      THREAD_START_ROUTINE *start_address, void *parameter,
-                                                      DWORD creation_flags, DWORD *thread_id);
-    ZPL_DLL_IMPORT DWORD   WINAPI GetThreadId        (HANDLE handle);
-    ZPL_DLL_IMPORT void    WINAPI RaiseException     (DWORD, DWORD, DWORD, ULONG_PTR const *);
-
-
-    ZPL_DLL_IMPORT BOOL      WINAPI GetLogicalProcessorInformation(SYSTEM_LOGICAL_PROCESSOR_INFORMATION *buffer, DWORD *return_length);
-    ZPL_DLL_IMPORT DWORD_PTR WINAPI SetThreadAffinityMask(HANDLE thread, DWORD_PTR check_mask);
-    ZPL_DLL_IMPORT HANDLE    WINAPI GetCurrentThread(void);
-
-#define PAGE_NOACCESS          0x01
-#define PAGE_READONLY          0x02
-#define PAGE_READWRITE         0x04
-#define PAGE_WRITECOPY         0x08
-#define PAGE_EXECUTE           0x10
-#define PAGE_EXECUTE_READ      0x20
-#define PAGE_EXECUTE_READWRITE 0x40
-#define PAGE_EXECUTE_WRITECOPY 0x80
-#define PAGE_GUARD            0x100
-#define PAGE_NOCACHE          0x200
-#define PAGE_WRITECOMBINE     0x400
-
-#define MEM_COMMIT           0x1000
-#define MEM_RESERVE          0x2000
-#define MEM_DECOMMIT         0x4000
-#define MEM_RELEASE          0x8000
-#define MEM_FREE            0x10000
-#define MEM_PRIVATE         0x20000
-#define MEM_MAPPED          0x40000
-#define MEM_RESET           0x80000
-#define MEM_TOP_DOWN       0x100000
-#define MEM_LARGE_PAGES  0x20000000
-#define MEM_4MB_PAGES    0x80000000
-
-
-
-
-    ZPL_DLL_IMPORT void * WINAPI VirtualAlloc (void *addr, usize size, DWORD allocation_type, DWORD protect);
-    ZPL_DLL_IMPORT usize  WINAPI VirtualQuery (void const *address, MEMORY_BASIC_INFORMATION *buffer, usize length);
-    ZPL_DLL_IMPORT BOOL   WINAPI VirtualFree  (void *address, usize size, DWORD free_type);
-    ZPL_DLL_IMPORT void   WINAPI GetSystemInfo(SYSTEM_INFO *system_info);
-
-
-#ifndef VK_UNKNOWN
-#define VK_UNKNOWN 0
-#define VK_LBUTTON  0x01
-#define VK_RBUTTON  0x02
-#define VK_CANCEL   0x03
-#define VK_MBUTTON  0x04
-#define VK_XBUTTON1 0x05
-#define VK_XBUTTON2 0x06
-#define VK_BACK 0x08
-#define VK_TAB 0x09
-#define VK_CLEAR 0x0C
-#define VK_RETURN 0x0D
-#define VK_SHIFT 0x10
-#define VK_CONTROL 0x11 // CTRL key
-#define VK_MENU 0x12 // ALT key
-#define VK_PAUSE 0x13 // PAUSE key
-#define VK_CAPITAL 0x14 // CAPS LOCK key
-#define VK_KANA 0x15 // Input Method Editor (IME) Kana mode
-#define VK_HANGUL 0x15 // IME Hangul mode
-#define VK_JUNJA 0x17 // IME Junja mode
-#define VK_FINAL 0x18 // IME final mode
-#define VK_HANJA 0x19 // IME Hanja mode
-#define VK_KANJI 0x19 // IME Kanji mode
-#define VK_ESCAPE 0x1B // ESC key
-#define VK_CONVERT 0x1C // IME convert
-#define VK_NONCONVERT 0x1D // IME nonconvert
-#define VK_ACCEPT 0x1E // IME accept
-#define VK_MODECHANGE 0x1F // IME mode change request
-#define VK_SPACE 0x20 // SPACE key
-#define VK_PRIOR 0x21 // PAGE UP key
-#define VK_NEXT 0x22 // PAGE DOWN key
-#define VK_END 0x23 // END key
-#define VK_HOME 0x24 // HOME key
-#define VK_LEFT 0x25 // LEFT ARROW key
-#define VK_UP 0x26 // UP ARROW key
-#define VK_RIGHT 0x27 // RIGHT ARROW key
-#define VK_DOWN 0x28 // DOWN ARROW key
-#define VK_SELECT 0x29 // SELECT key
-#define VK_PRINT 0x2A // PRINT key
-#define VK_EXECUTE 0x2B // EXECUTE key
-#define VK_SNAPSHOT 0x2C // PRINT SCREEN key
-#define VK_INSERT 0x2D // INS key
-#define VK_DELETE 0x2E // DEL key
-#define VK_HELP 0x2F // HELP key
-#define VK_0 0x30
-#define VK_1 0x31
-#define VK_2 0x32
-#define VK_3 0x33
-#define VK_4 0x34
-#define VK_5 0x35
-#define VK_6 0x36
-#define VK_7 0x37
-#define VK_8 0x38
-#define VK_9 0x39
-#define VK_A 0x41
-#define VK_B 0x42
-#define VK_C 0x43
-#define VK_D 0x44
-#define VK_E 0x45
-#define VK_F 0x46
-#define VK_G 0x47
-#define VK_H 0x48
-#define VK_I 0x49
-#define VK_J 0x4A
-#define VK_K 0x4B
-#define VK_L 0x4C
-#define VK_M 0x4D
-#define VK_N 0x4E
-#define VK_O 0x4F
-#define VK_P 0x50
-#define VK_Q 0x51
-#define VK_R 0x52
-#define VK_S 0x53
-#define VK_T 0x54
-#define VK_U 0x55
-#define VK_V 0x56
-#define VK_W 0x57
-#define VK_X 0x58
-#define VK_Y 0x59
-#define VK_Z 0x5A
-#define VK_LWIN 0x5B // Left Windows key (Microsoft Natural keyboard)
-#define VK_RWIN 0x5C // Right Windows key (Natural keyboard)
-#define VK_APPS 0x5D // Applications key (Natural keyboard)
-#define VK_SLEEP 0x5F // Computer Sleep key
-    // Num pad keys
-#define VK_NUMPAD0 0x60
-#define VK_NUMPAD1 0x61
-#define VK_NUMPAD2 0x62
-#define VK_NUMPAD3 0x63
-#define VK_NUMPAD4 0x64
-#define VK_NUMPAD5 0x65
-#define VK_NUMPAD6 0x66
-#define VK_NUMPAD7 0x67
-#define VK_NUMPAD8 0x68
-#define VK_NUMPAD9 0x69
-#define VK_MULTIPLY 0x6A
-#define VK_ADD 0x6B
-#define VK_SEPARATOR 0x6C
-#define VK_SUBTRACT 0x6D
-#define VK_DECIMAL 0x6E
-#define VK_DIVIDE 0x6F
-#define VK_F1 0x70
-#define VK_F2 0x71
-#define VK_F3 0x72
-#define VK_F4 0x73
-#define VK_F5 0x74
-#define VK_F6 0x75
-#define VK_F7 0x76
-#define VK_F8 0x77
-#define VK_F9 0x78
-#define VK_F10 0x79
-#define VK_F11 0x7A
-#define VK_F12 0x7B
-#define VK_F13 0x7C
-#define VK_F14 0x7D
-#define VK_F15 0x7E
-#define VK_F16 0x7F
-#define VK_F17 0x80
-#define VK_F18 0x81
-#define VK_F19 0x82
-#define VK_F20 0x83
-#define VK_F21 0x84
-#define VK_F22 0x85
-#define VK_F23 0x86
-#define VK_F24 0x87
-#define VK_NUMLOCK 0x90
-#define VK_SCROLL 0x91
-#define VK_LSHIFT 0xA0
-#define VK_RSHIFT 0xA1
-#define VK_LCONTROL 0xA2
-#define VK_RCONTROL 0xA3
-#define VK_LMENU 0xA4
-#define VK_RMENU 0xA5
-#define VK_BROWSER_BACK 0xA6 // Windows 2000/XP: Browser Back key
-#define VK_BROWSER_FORWARD 0xA7 // Windows 2000/XP: Browser Forward key
-#define VK_BROWSER_REFRESH 0xA8 // Windows 2000/XP: Browser Refresh key
-#define VK_BROWSER_STOP 0xA9 // Windows 2000/XP: Browser Stop key
-#define VK_BROWSER_SEARCH 0xAA // Windows 2000/XP: Browser Search key
-#define VK_BROWSER_FAVORITES 0xAB // Windows 2000/XP: Browser Favorites key
-#define VK_BROWSER_HOME 0xAC // Windows 2000/XP: Browser Start and Home key
-#define VK_VOLUME_MUTE 0xAD // Windows 2000/XP: Volume Mute key
-#define VK_VOLUME_DOWN 0xAE // Windows 2000/XP: Volume Down key
-#define VK_VOLUME_UP 0xAF // Windows 2000/XP: Volume Up key
-#define VK_MEDIA_NEXT_TRACK 0xB0 // Windows 2000/XP: Next Track key
-#define VK_MEDIA_PREV_TRACK 0xB1 // Windows 2000/XP: Previous Track key
-#define VK_MEDIA_STOP 0xB2 // Windows 2000/XP: Stop Media key
-#define VK_MEDIA_PLAY_PAUSE 0xB3 // Windows 2000/XP: Play/Pause Media key
-#define VK_MEDIA_LAUNCH_MAIL 0xB4 // Windows 2000/XP: Start Mail key
-#define VK_MEDIA_LAUNCH_MEDIA_SELECT 0xB5 // Windows 2000/XP: Select Media key
-#define VK_MEDIA_LAUNCH_APP1 0xB6 // VK_LAUNCH_APP1 (B6) Windows 2000/XP: Start Application 1 key
-#define VK_MEDIA_LAUNCH_APP2 0xB7 // VK_LAUNCH_APP2 (B7) Windows 2000/XP: Start Application 2 key
-#define VK_OEM_1 0xBA
-#define VK_OEM_PLUS 0xBB
-#define VK_OEM_COMMA 0xBC
-#define VK_OEM_MINUS 0xBD
-#define VK_OEM_PERIOD 0xBE
-#define VK_OEM_2 0xBF
-#define VK_OEM_3 0xC0
-#define VK_OEM_4 0xDB
-#define VK_OEM_5 0xDC
-#define VK_OEM_6 0xDD
-#define VK_OEM_7 0xDE
-#define VK_OEM_8 0xDF
-#define VK_OEM_102 0xE2
-#define VK_PROCESSKEY 0xE5
-#define VK_PACKET 0xE7
-#define VK_ATTN 0xF6 // Attn key
-#define VK_CRSEL 0xF7 // CrSel key
-#define VK_EXSEL 0xF8 // ExSel key
-#define VK_EREOF 0xF9 // Erase EOF key
-#define VK_PLAY 0xFA // Play key
-#define VK_ZOOM 0xFB // Zoom key
-#define VK_NONAME 0xFC // Reserved for future use
-#define VK_PA1 0xFD // VK_PA1 (FD) PA1 key
-#define VK_OEM_CLEAR 0xFE // Clear key
-#endif // VK_UNKNOWN
-
-
-
-#define GENERIC_READ             0x80000000
-#define GENERIC_WRITE            0x40000000
-#define GENERIC_EXECUTE          0x20000000
-#define GENERIC_ALL              0x10000000
-#define FILE_SHARE_READ          0x00000001
-#define FILE_SHARE_WRITE         0x00000002
-#define FILE_SHARE_DELETE        0x00000004
-#define CREATE_NEW               1
-#define CREATE_ALWAYS            2
-#define OPEN_EXISTING            3
-#define OPEN_ALWAYS              4
-#define TRUNCATE_EXISTING        5
-#define FILE_ATTRIBUTE_READONLY  0x00000001
-#define FILE_ATTRIBUTE_NORMAL    0x00000080
-#define FILE_ATTRIBUTE_TEMPORARY 0x00000100
-#define ERROR_FILE_NOT_FOUND     2l
-#define ERROR_ACCESS_DENIED      5L
-#define ERROR_NO_MORE_FILES      18l
-#define ERROR_FILE_EXISTS        80l
-#define ERROR_ALREADY_EXISTS     183l
-#define STD_INPUT_HANDLE         ((DWORD)-10)
-#define STD_OUTPUT_HANDLE        ((DWORD)-11)
-#define STD_ERROR_HANDLE         ((DWORD)-12)
-
-    ZPL_DLL_IMPORT int           MultiByteToWideChar(UINT code_page, DWORD flags, char const *   multi_byte_str, int multi_byte_len, wchar_t const *wide_char_str,  int wide_char_len);
-    ZPL_DLL_IMPORT int           WideCharToMultiByte(UINT code_page, DWORD flags, wchar_t const *wide_char_str,  int wide_char_len, char const *    multi_byte_str, int multi_byte_len);
-    ZPL_DLL_IMPORT BOOL   WINAPI SetFilePointerEx(HANDLE file, LARGE_INTEGER distance_to_move,
-                                                  LARGE_INTEGER *new_file_pointer, DWORD move_method);
-    ZPL_DLL_IMPORT BOOL   WINAPI ReadFile        (HANDLE file, void *buffer, DWORD bytes_to_read, DWORD *bytes_read, OVERLAPPED *overlapped);
-    ZPL_DLL_IMPORT BOOL   WINAPI WriteFile       (HANDLE file, void const *buffer, DWORD bytes_to_write, DWORD *bytes_written, OVERLAPPED *overlapped);
-    ZPL_DLL_IMPORT HANDLE WINAPI CreateFileW     (wchar_t const *path, DWORD desired_access, DWORD share_mode,
-                                                  SECURITY_ATTRIBUTES *, DWORD creation_disposition,
-                                                  DWORD flags_and_attributes, HANDLE template_file);
-    ZPL_DLL_IMPORT HANDLE WINAPI GetStdHandle    (DWORD std_handle);
-    ZPL_DLL_IMPORT BOOL   WINAPI GetFileSizeEx   (HANDLE file, LARGE_INTEGER *size);
-    ZPL_DLL_IMPORT BOOL   WINAPI SetEndOfFile    (HANDLE file);
-    ZPL_DLL_IMPORT HANDLE WINAPI FindFirstFileW  (wchar_t const *path, WIN32_FIND_DATAW *data);
-    ZPL_DLL_IMPORT BOOL   WINAPI FindClose       (HANDLE find_file);
-    ZPL_DLL_IMPORT BOOL   WINAPI GetFileAttributesExW(wchar_t const *path, GET_FILEEX_INFO_LEVELS info_level_id, WIN32_FILE_ATTRIBUTE_DATA *data);
-    ZPL_DLL_IMPORT BOOL   WINAPI CopyFileW(wchar_t const *old_f, wchar_t const *new_f, BOOL fail_if_exists);
-    ZPL_DLL_IMPORT BOOL   WINAPI MoveFileW(wchar_t const *old_f, wchar_t const *new_f);
-
-    ZPL_DLL_IMPORT HMODULE WINAPI LoadLibraryA  (char const *filename);
-    ZPL_DLL_IMPORT BOOL    WINAPI FreeLibrary   (HMODULE module);
-    ZPL_DLL_IMPORT FARPROC WINAPI GetProcAddress(HMODULE module, char const *name);
-
-    ZPL_DLL_IMPORT BOOL WINAPI QueryPerformanceFrequency(LARGE_INTEGER *frequency);
-    ZPL_DLL_IMPORT BOOL WINAPI QueryPerformanceCounter  (LARGE_INTEGER *counter);
-    ZPL_DLL_IMPORT void WINAPI GetSystemTimeAsFileTime  (FILETIME *system_time_as_file_time);
-    ZPL_DLL_IMPORT void WINAPI Sleep(DWORD milliseconds);
-    ZPL_DLL_IMPORT void WINAPI ExitProcess(UINT exit_code);
-
-    ZPL_DLL_IMPORT BOOL WINAPI SetEnvironmentVariableA(char const *name, char const *value);
-
-
-#define WM_NULL                   0x0000
-#define WM_CREATE                 0x0001
-#define WM_DESTROY                0x0002
-#define WM_MOVE                   0x0003
-#define WM_SIZE                   0x0005
-#define WM_ACTIVATE               0x0006
-#define WM_SETFOCUS               0x0007
-#define WM_KILLFOCUS              0x0008
-#define WM_ENABLE                 0x000A
-#define WM_SETREDRAW              0x000B
-#define WM_SETTEXT                0x000C
-#define WM_GETTEXT                0x000D
-#define WM_GETTEXTLENGTH          0x000E
-#define WM_PAINT                  0x000F
-#define WM_CLOSE                  0x0010
-#define WM_QUERYENDSESSION        0x0011
-#define WM_QUERYOPEN              0x0013
-#define WM_ENDSESSION             0x0016
-#define WM_QUIT                   0x0012
-#define WM_ERASEBKGND             0x0014
-#define WM_SYSCOLORCHANGE         0x0015
-#define WM_SHOWWINDOW             0x0018
-#define WM_WININICHANGE           0x001A
-#define WM_SETTINGCHANGE          WM_WININICHANGE
-#define WM_DEVMODECHANGE          0x001B
-#define WM_ACTIVATEAPP            0x001C
-#define WM_FONTCHANGE             0x001D
-#define WM_TIMECHANGE             0x001E
-#define WM_CANCELMODE             0x001F
-#define WM_SETCURSOR              0x0020
-#define WM_MOUSEACTIVATE          0x0021
-#define WM_CHILDACTIVATE          0x0022
-#define WM_QUEUESYNC              0x0023
-#define WM_GETMINMAXINFO          0x0024
-#define WM_PAINTICON              0x0026
-#define WM_ICONERASEBKGND         0x0027
-#define WM_NEXTDLGCTL             0x0028
-#define WM_SPOOLERSTATUS          0x002A
-#define WM_DRAWITEM               0x002B
-#define WM_MEASUREITEM            0x002C
-#define WM_DELETEITEM             0x002D
-#define WM_VKEYTOITEM             0x002E
-#define WM_CHARTOITEM             0x002F
-#define WM_SETFONT                0x0030
-#define WM_GETFONT                0x0031
-#define WM_SETHOTKEY              0x0032
-#define WM_GETHOTKEY              0x0033
-#define WM_QUERYDRAGICON          0x0037
-#define WM_COMPAREITEM            0x0039
-#define WM_GETOBJECT              0x003D
-#define WM_COMPACTING             0x0041
-#define WM_COMMNOTIFY             0x0044  /* no longer suported */
-#define WM_WINDOWPOSCHANGING      0x0046
-#define WM_WINDOWPOSCHANGED       0x0047
-#define WM_POWER                  0x0048
-#define WM_COPYDATA               0x004A
-#define WM_CANCELJOURNAL          0x004B
-#define WM_NOTIFY                 0x004E
-#define WM_INPUTLANGCHANGEREQUEST 0x0050
-#define WM_INPUTLANGCHANGE        0x0051
-#define WM_TCARD                  0x0052
-#define WM_HELP                   0x0053
-#define WM_USERCHANGED            0x0054
-#define WM_NOTIFYFORMAT           0x0055
-#define WM_CONTEXTMENU            0x007B
-#define WM_STYLECHANGING          0x007C
-#define WM_STYLECHANGED           0x007D
-#define WM_DISPLAYCHANGE          0x007E
-#define WM_GETICON                0x007F
-#define WM_SETICON                0x0080
-#define WM_INPUT                  0x00FF
-#define WM_KEYFIRST               0x0100
-#define WM_KEYDOWN                0x0100
-#define WM_KEYUP                  0x0101
-#define WM_CHAR                   0x0102
-#define WM_DEADCHAR               0x0103
-#define WM_SYSKEYDOWN             0x0104
-#define WM_SYSKEYUP               0x0105
-#define WM_SYSCHAR                0x0106
-#define WM_SYSDEADCHAR            0x0107
-#define WM_UNICHAR                0x0109
-#define WM_KEYLAST                0x0109
-#define WM_APP                    0x8000
-
-
-#define RID_INPUT 0x10000003
-
-#define RIM_TYPEMOUSE    0x00000000
-#define RIM_TYPEKEYBOARD 0x00000001
-#define RIM_TYPEHID      0x00000002
-
-#define RI_KEY_MAKE    0x0000
-#define RI_KEY_BREAK   0x0001
-#define RI_KEY_E0      0x0002
-#define RI_KEY_E1      0x0004
-#define RI_MOUSE_WHEEL 0x0400
-
-#define RIDEV_NOLEGACY 0x00000030
-
-#define MAPVK_VK_TO_VSC    0
-#define MAPVK_VSC_TO_VK    1
-#define MAPVK_VK_TO_CHAR   2
-#define MAPVK_VSC_TO_VK_EX 3
-
-    ZPL_DLL_IMPORT BOOL WINAPI RegisterRawInputDevices(RAWINPUTDEVICE const *raw_input_devices, UINT num_devices, UINT size);
-    ZPL_DLL_IMPORT UINT WINAPI GetRawInputData(HRAWINPUT raw_input, UINT ui_command, void *data, UINT *size, UINT size_header);
-    ZPL_DLL_IMPORT UINT WINAPI MapVirtualKeyW(UINT code, UINT map_type);
-
-
-#define CS_DBLCLKS    0x0008
-#define CS_VREDRAW    0x0001
-#define CS_HREDRAW    0x0002
-
-#define MB_OK              0x0000l
-#define MB_ICONSTOP        0x0010l
-#define MB_YESNO           0x0004l
-#define MB_HELP            0x4000l
-#define MB_ICONEXCLAMATION 0x0030l
-
-    ZPL_DLL_IMPORT LRESULT WINAPI DefWindowProcW(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    ZPL_DLL_IMPORT HGDIOBJ WINAPI GetStockObject(int object);
-    ZPL_DLL_IMPORT HMODULE WINAPI GetModuleHandleW(wchar_t const *);
-    ZPL_DLL_IMPORT ATOM    WINAPI RegisterClassExW(WNDCLASSEXW const *wcx); // u16 == ATOM
-    ZPL_DLL_IMPORT int     WINAPI MessageBoxW(void *wnd, wchar_t const *text, wchar_t const *caption, unsigned int type);
-
-
-#define DM_BITSPERPEL 0x00040000l
-#define DM_PELSWIDTH  0x00080000l
-#define DM_PELSHEIGHT 0x00100000l
-
-#define CDS_FULLSCREEN 0x4
-#define DISP_CHANGE_SUCCESSFUL 0
-#define IDYES 6
-
-#define WS_VISIBLE          0x10000000
-#define WS_THICKFRAME       0x00040000
-#define WS_MAXIMIZE         0x01000000
-#define WS_MAXIMIZEBOX      0x00010000
-#define WS_MINIMIZE         0x20000000
-#define WS_MINIMIZEBOX      0x00020000
-#define WS_POPUP            0x80000000
-#define WS_OVERLAPPED     0
-#define WS_OVERLAPPEDWINDOW 0xcf0000
-#define CW_USEDEFAULT       0x80000000
-#define WS_BORDER           0x800000
-#define WS_CAPTION          0xc00000
-#define WS_SYSMENU          0x80000
-
-#define HWND_NOTOPMOST (HWND)(-2)
-#define HWND_TOPMOST   (HWND)(-1)
-#define HWND_TOP       (HWND)(+0)
-#define HWND_BOTTOM    (HWND)(+1)
-#define SWP_NOSIZE          0x0001
-#define SWP_NOMOVE          0x0002
-#define SWP_NOZORDER        0x0004
-#define SWP_NOREDRAW        0x0008
-#define SWP_NOACTIVATE      0x0010
-#define SWP_FRAMECHANGED    0x0020
-#define SWP_SHOWWINDOW      0x0040
-#define SWP_HIDEWINDOW      0x0080
-#define SWP_NOCOPYBITS      0x0100
-#define SWP_NOOWNERZORDER   0x0200
-#define SWP_NOSENDCHANGING  0x0400
-
-#define SW_HIDE             0
-#define SW_SHOWNORMAL       1
-#define SW_NORMAL           1
-#define SW_SHOWMINIMIZED    2
-#define SW_SHOWMAXIMIZED    3
-#define SW_MAXIMIZE         3
-#define SW_SHOWNOACTIVATE   4
-#define SW_SHOW             5
-#define SW_MINIMIZE         6
-#define SW_SHOWMINNOACTIVE  7
-#define SW_SHOWNA           8
-#define SW_RESTORE          9
-#define SW_SHOWDEFAULT      10
-#define SW_FORCEMINIMIZE    11
-#define SW_MAX              11
-
-#define ENUM_CURRENT_SETTINGS  cast(DWORD)-1
-#define ENUM_REGISTRY_SETTINGS cast(DWORD)-2
-
-    ZPL_DLL_IMPORT LONG    WINAPI ChangeDisplaySettingsW(DEVMODEW *dev_mode, DWORD flags);
-    ZPL_DLL_IMPORT BOOL    WINAPI AdjustWindowRect(RECT *rect, DWORD style, BOOL enu);
-    ZPL_DLL_IMPORT HWND    WINAPI CreateWindowExW(DWORD ex_style, wchar_t const *class_name, wchar_t const *window_name,
-                                                  DWORD style, int x, int y, int width, int height, HWND wnd_parent,
-                                                  HMENU menu, HINSTANCE instance, void *param);
-    ZPL_DLL_IMPORT HMODULE  WINAPI GetModuleHandleW(wchar_t const *);
-    ZPL_DLL_IMPORT HDC             GetDC(HANDLE);
-    ZPL_DLL_IMPORT BOOL     WINAPI GetWindowPlacement(HWND hWnd, WINDOWPLACEMENT *lpwndpl);
-    ZPL_DLL_IMPORT BOOL            GetMonitorInfoW(HMONITOR hMonitor, MONITORINFO *lpmi);
-    ZPL_DLL_IMPORT HMONITOR        MonitorFromWindow(HWND hwnd, DWORD dwFlags);
-    ZPL_DLL_IMPORT LONG     WINAPI SetWindowLongW(HWND hWnd, int nIndex, LONG dwNewLong);
-    ZPL_DLL_IMPORT BOOL     WINAPI SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
-    ZPL_DLL_IMPORT BOOL     WINAPI SetWindowPlacement(HWND hWnd, WINDOWPLACEMENT const *lpwndpl);
-    ZPL_DLL_IMPORT BOOL     WINAPI ShowWindow(HWND hWnd, int nCmdShow);
-    ZPL_DLL_IMPORT LONG_PTR WINAPI GetWindowLongPtrW(HWND wnd, int index);
-
-    ZPL_DLL_IMPORT BOOL           EnumDisplaySettingsW(wchar_t const *lpszDeviceName, DWORD iModeNum, DEVMODEW *lpDevMode);
-    ZPL_DLL_IMPORT void *  WINAPI GlobalLock(HGLOBAL hMem);
-    ZPL_DLL_IMPORT BOOL    WINAPI GlobalUnlock(HGLOBAL hMem);
-    ZPL_DLL_IMPORT HGLOBAL WINAPI GlobalAlloc(UINT uFlags, usize dwBytes);
-    ZPL_DLL_IMPORT HANDLE  WINAPI GetClipboardData(UINT uFormat);
-    ZPL_DLL_IMPORT BOOL    WINAPI IsClipboardFormatAvailable(UINT format);
-    ZPL_DLL_IMPORT BOOL    WINAPI OpenClipboard(HWND hWndNewOwner);
-    ZPL_DLL_IMPORT BOOL    WINAPI EmptyClipboard(void);
-    ZPL_DLL_IMPORT BOOL    WINAPI CloseClipboard(void);
-    ZPL_DLL_IMPORT HANDLE  WINAPI SetClipboardData(UINT uFormat, HANDLE hMem);
-
-#define PFD_TYPE_RGBA             0
-#define PFD_TYPE_COLORINDEX       1
-#define PFD_MAIN_PLANE            0
-#define PFD_OVERLAY_PLANE         1
-#define PFD_UNDERLAY_PLANE        (-1)
-#define PFD_DOUBLEBUFFER          1
-#define PFD_STEREO                2
-#define PFD_DRAW_TO_WINDOW        4
-#define PFD_DRAW_TO_BITMAP        8
-#define PFD_SUPPORT_GDI           16
-#define PFD_SUPPORT_OPENGL        32
-#define PFD_GENERIC_FORMAT        64
-#define PFD_NEED_PALETTE          128
-#define PFD_NEED_SYSTEM_PALETTE   0x00000100
-#define PFD_SWAP_EXCHANGE         0x00000200
-#define PFD_SWAP_COPY             0x00000400
-#define PFD_SWAP_LAYER_BUFFERS    0x00000800
-#define PFD_GENERIC_ACCELERATED   0x00001000
-#define PFD_DEPTH_DONTCARE        0x20000000
-#define PFD_DOUBLEBUFFER_DONTCARE 0x40000000
-#define PFD_STEREO_DONTCARE       0x80000000
-
-#define GWLP_USERDATA -21
-
-#define GWL_ID    -12
-#define GWL_STYLE -16
-
-    ZPL_DLL_IMPORT BOOL  WINAPI SetPixelFormat   (HDC hdc, int pixel_format, PIXELFORMATDESCRIPTOR const *pfd);
-    ZPL_DLL_IMPORT int   WINAPI ChoosePixelFormat(HDC hdc, PIXELFORMATDESCRIPTOR const *pfd);
-    ZPL_DLL_IMPORT HGLRC WINAPI wglCreateContext (HDC hdc);
-    ZPL_DLL_IMPORT BOOL  WINAPI wglMakeCurrent   (HDC hdc, HGLRC hglrc);
-    ZPL_DLL_IMPORT PROC  WINAPI wglGetProcAddress(char const *str);
-    ZPL_DLL_IMPORT BOOL  WINAPI wglDeleteContext (HGLRC hglrc);
-
-    ZPL_DLL_IMPORT BOOL     WINAPI SetForegroundWindow(HWND hWnd);
-    ZPL_DLL_IMPORT HWND     WINAPI SetFocus(HWND hWnd);
-    ZPL_DLL_IMPORT LONG_PTR WINAPI SetWindowLongPtrW(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
-    ZPL_DLL_IMPORT BOOL     WINAPI GetClientRect(HWND hWnd, RECT *lpRect);
-    ZPL_DLL_IMPORT BOOL     WINAPI IsIconic(HWND hWnd);
-    ZPL_DLL_IMPORT HWND     WINAPI GetFocus(void);
-    ZPL_DLL_IMPORT int      WINAPI ShowCursor(BOOL bShow);
-    ZPL_DLL_IMPORT SHORT    WINAPI GetAsyncKeyState(int key);
-    ZPL_DLL_IMPORT BOOL     WINAPI GetCursorPos(POINT *lpPoint);
-    ZPL_DLL_IMPORT BOOL     WINAPI SetCursorPos(int x, int y);
-    ZPL_DLL_IMPORT BOOL            ScreenToClient(HWND hWnd, POINT *lpPoint);
-    ZPL_DLL_IMPORT BOOL            ClientToScreen(HWND hWnd, POINT *lpPoint);
-    ZPL_DLL_IMPORT BOOL     WINAPI MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint);
-    ZPL_DLL_IMPORT BOOL     WINAPI SetWindowTextW(HWND hWnd, wchar_t const *lpString);
-    ZPL_DLL_IMPORT DWORD    WINAPI GetWindowLongW(HWND hWnd, int nIndex);
-
-
-
-
-#define PM_NOREMOVE 0
-#define PM_REMOVE   1
-
-    ZPL_DLL_IMPORT BOOL    WINAPI PeekMessageW(MSG *lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
-    ZPL_DLL_IMPORT BOOL    WINAPI TranslateMessage(MSG const *lpMsg);
-    ZPL_DLL_IMPORT LRESULT WINAPI DispatchMessageW(MSG const *lpMsg);
-
-    typedef  enum
-        {
-            DIB_RGB_COLORS  = 0x00,
-            DIB_PAL_COLORS  = 0x01,
-            DIB_PAL_INDICES = 0x02
-        } DIBColors;
-
-#define SRCCOPY     (u32)0x00CC0020
-#define SRCPAINT    (u32)0x00EE0086
-#define SRCAND      (u32)0x008800C6
-#define SRCINVERT   (u32)0x00660046
-#define SRCERASE    (u32)0x00440328
-#define NOTSRCCOPY  (u32)0x00330008
-#define NOTSRCERASE (u32)0x001100A6
-#define MERGECOPY   (u32)0x00C000CA
-#define MERGEPAINT  (u32)0x00BB0226
-#define PATCOPY     (u32)0x00F00021
-#define PATPAINT    (u32)0x00FB0A09
-#define PATINVERT   (u32)0x005A0049
-#define DSTINVERT   (u32)0x00550009
-#define BLACKNESS   (u32)0x00000042
-#define WHITENESS   (u32)0x00FF0062
-
-    ZPL_DLL_IMPORT BOOL WINAPI SwapBuffers(HDC hdc);
-    ZPL_DLL_IMPORT BOOL WINAPI DestroyWindow(HWND hWnd);
-    ZPL_DLL_IMPORT int         StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight,
-                                             int XSrc, int YSrc, int nSrcWidth, int nSrcHeight,
-                                             void const *lpBits, /*BITMAPINFO*/void const *lpBitsInfo, UINT iUsage, DWORD dwRop);
-    // IMPORTANT TODO: FIX THIS!!!!
-#endif // Bill's Mini Windows.h
-
-
 
 #if defined(__GCC__) || defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -3604,12 +2594,12 @@ extern "C" {
 
 
 
-    zpl_inline void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment)                                { return a.proc(a.data, zpl_allocation_alloc_ev, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void *zpl_alloc_align (zpl_allocator_t a, isize size, isize alignment)                                { return a.proc(a.data, ZPL_ALLOCATION_ALLOC, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
     zpl_inline void *zpl_alloc       (zpl_allocator_t a, isize size)                                                 { return zpl_alloc_align(a, size, ZPL_DEFAULT_MEMORY_ALIGNMENT); }
-    zpl_inline void  zpl_free        (zpl_allocator_t a, void *ptr)                                                  { if (ptr != NULL) a.proc(a.data, zpl_allocation_free_ev, 0, 0, ptr, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
-    zpl_inline void  zpl_free_all    (zpl_allocator_t a)                                                             { a.proc(a.data, zpl_allocation_free_all_ev, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void  zpl_free        (zpl_allocator_t a, void *ptr)                                                  { if (ptr != NULL) a.proc(a.data, ZPL_ALLOCATION_FREE, 0, 0, ptr, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void  zpl_free_all    (zpl_allocator_t a)                                                             { a.proc(a.data, ZPL_ALLOCATION_FREE_ALL, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
     zpl_inline void *zpl_resize      (zpl_allocator_t a, void *ptr, isize old_size, isize new_size)                  { return zpl_resize_align(a, ptr, old_size, new_size, ZPL_DEFAULT_MEMORY_ALIGNMENT); }
-    zpl_inline void *zpl_resize_align(zpl_allocator_t a, void *ptr, isize old_size, isize new_size, isize alignment) { return a.proc(a.data, zpl_allocation_resize_ev, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
+    zpl_inline void *zpl_resize_align(zpl_allocator_t a, void *ptr, isize old_size, isize new_size, isize alignment) { return a.proc(a.data, ZPL_ALLOCATION_RESIZE, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS); }
 
     zpl_inline void *zpl_alloc_copy      (zpl_allocator_t a, void const *src, isize size)                  { return zpl_memcopy(zpl_alloc(a, size), src, size); }
     zpl_inline void *zpl_alloc_copy_align(zpl_allocator_t a, void const *src, isize size, isize alignment) { return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size); }
@@ -4819,55 +3809,55 @@ extern "C" {
         // TODO: Throughly test!
         switch (type) {
     #if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
-            case zpl_allocation_alloc_ev:
+            case ZPL_ALLOCATION_ALLOC:
                 ptr = _aligned_malloc(size, alignment);
-                if (flags & zpl_allocator_flag_clear_to_zero_ev)
+                if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                     zpl_zero_size(ptr, size);
                 break;
-            case zpl_allocation_free_ev:
+            case ZPL_ALLOCATION_FREE:
                 _aligned_free(old_memory);
                 break;
-            case zpl_allocation_resize_ev:
+            case ZPL_ALLOCATION_RESIZE:
                 ptr = _aligned_realloc(old_memory, size, alignment);
                 break;
 
     #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
-            case zpl_allocation_alloc_ev: {
+            case ZPL_ALLOCATION_ALLOC: {
                     ptr = aligned_alloc(alignment, size);
 
-                    if (flags & zpl_allocator_flag_clear_to_zero_ev) {
+                    if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) {
                         zpl_zero_size(ptr, size);
                     }
                 } break;
 
-                case zpl_allocation_free_ev: {
+                case ZPL_ALLOCATION_FREE: {
                     free(old_memory);
                 } break;
 
-                case zpl_allocation_resize_ev: {
+                case ZPL_ALLOCATION_RESIZE: {
                     zpl_allocator_t a = zpl_heap_allocator();
                     ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
                 } break;
     #else
-            case zpl_allocation_alloc_ev: {
+            case ZPL_ALLOCATION_ALLOC: {
                 posix_memalign(&ptr, alignment, size);
 
-                if (flags & zpl_allocator_flag_clear_to_zero_ev) {
+                if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) {
                     zpl_zero_size(ptr, size);
                 }
             } break;
 
-            case zpl_allocation_free_ev: {
+            case ZPL_ALLOCATION_FREE: {
                 free(old_memory);
             } break;
 
-            case zpl_allocation_resize_ev: {
+            case ZPL_ALLOCATION_RESIZE: {
                 zpl_allocator_t a = zpl_heap_allocator();
                 ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
             } break;
     #endif
 
-            case zpl_allocation_free_all_ev:
+            case ZPL_ALLOCATION_FREE_ALL:
                 break;
         }
 
@@ -4946,7 +3936,7 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
             isize total_size = size + alignment;
 
@@ -4958,20 +3948,20 @@ extern "C" {
 
             ptr = zpl_align_forward(end, alignment);
             arena->total_allocated += total_size;
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev:
+        case ZPL_ALLOCATION_FREE:
             // NOTE: Free all at once
             // Use Temp_Arena_Memory if you want to free a block
             break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             arena->total_allocated = 0;
             break;
 
-        case zpl_allocation_resize_ev: {
+        case ZPL_ALLOCATION_RESIZE: {
             // TODO: Check if ptr is on top of stack and just extend
             zpl_allocator_t a = zpl_arena_allocator(arena);
             ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
@@ -5059,7 +4049,7 @@ extern "C" {
         zpl_unused(old_size);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             uintptr next_free;
             ZPL_ASSERT(size      == pool->block_size);
             ZPL_ASSERT(alignment == pool->block_align);
@@ -5069,11 +4059,11 @@ extern "C" {
             ptr = pool->free_list;
             pool->free_list = cast(void *)next_free;
             pool->total_size += pool->block_size;
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             uintptr *next;
             if (old_memory == NULL) return NULL;
 
@@ -5083,11 +4073,11 @@ extern "C" {
             pool->total_size -= pool->block_size;
         } break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             // TODO:
             break;
 
-        case zpl_allocation_resize_ev:
+        case ZPL_ALLOCATION_RESIZE:
             // NOTE: Cannot resize
             ZPL_PANIC("You cannot resize something allocated by with a pool.");
             break;
@@ -5148,7 +4138,7 @@ extern "C" {
         ZPL_ASSERT_NOT_NULL(s);
 
         switch (type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             void *pt = s->alloc_point;
             zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *)pt;
             void *data = zpl_align_forward(header+1, alignment);
@@ -5173,11 +4163,11 @@ extern "C" {
                 ptr = data;
             }
 
-            if (flags & zpl_allocator_flag_clear_to_zero_ev)
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
                 zpl_zero_size(ptr, size);
         } break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 void *end = zpl_pointer_add(s->physical_start, s->total_size);
                 if (old_memory < s->physical_start || old_memory >= end) {
@@ -5201,12 +4191,12 @@ extern "C" {
             }
         } break;
 
-        case zpl_allocation_free_all_ev:
+        case ZPL_ALLOCATION_FREE_ALL:
             s->alloc_point = s->physical_start;
             s->free_point  = s->physical_start;
             break;
 
-        case zpl_allocation_resize_ev:
+        case ZPL_ALLOCATION_RESIZE:
             ptr = zpl_default_resize_align(zpl_scratch_allocator(s), old_memory, old_size, size, alignment);
             break;
         }
@@ -5272,7 +4262,7 @@ extern "C" {
         zpl_unused(flags);
 
         switch(type) {
-        case zpl_allocation_alloc_ev: {
+        case ZPL_ALLOCATION_ALLOC: {
             size += ZPL_STACK_ALLOC_OFFSET;
             u64 alloc_offset = s->allocated;
 
@@ -5300,7 +4290,7 @@ extern "C" {
             s->allocated += size;
         }break;
 
-        case zpl_allocation_free_ev: {
+        case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 zpl_stack_memory_header_t h;
 
@@ -5313,11 +4303,11 @@ extern "C" {
             }
         }break;
 
-        case zpl_allocation_free_all_ev: {
+        case ZPL_ALLOCATION_FREE_ALL: {
             s->allocated = 0;
         }break;
 
-        case zpl_allocation_resize_ev: {
+        case ZPL_ALLOCATION_RESIZE: {
             ZPL_PANIC("You cannot resize something allocated by a stack.");
         }break;
         }
@@ -6976,7 +5966,7 @@ extern "C" {
     zpl_internal ZPL_FILE_READ_AT_PROC(zpl__win32_file_read) {
         zpl_unused(stop_at_newline);
         b32 result = false;
-        zpl__win32_file_seek(fd, offset, zpl_seek_whence_begin_ev, NULL);
+        zpl__win32_file_seek(fd, offset, ZPL_SEEK_WHENCE_BEGIN, NULL);
         DWORD size_ = cast(DWORD)(size > I32_MAX ? I32_MAX : size);
         DWORD bytes_read_;
         if (ReadFile(fd.p, buffer, size_, &bytes_read_, NULL)) {
@@ -6990,7 +5980,7 @@ extern "C" {
     zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__win32_file_write) {
         DWORD size_ = cast(DWORD)(size > I32_MAX ? I32_MAX : size);
         DWORD bytes_written_;
-        zpl__win32_file_seek(fd, offset, zpl_seek_whence_begin_ev, NULL);
+        zpl__win32_file_seek(fd, offset, ZPL_SEEK_WHENCE_BEGIN, NULL);
         if (WriteFile(fd.p, buffer, size_, &bytes_written_, NULL)) {
             if (bytes_written) *bytes_written = bytes_written_;
             return true;
@@ -7016,33 +6006,33 @@ extern "C" {
         wchar_t *w_text;
 
         switch (mode & zpl_file_mode_modes_ev) {
-        case zpl_file_mode_read_ev:
+        case ZPL_FILE_MODE_READ:
             desired_access = GENERIC_READ;
             creation_disposition = OPEN_EXISTING;
             break;
-        case zpl_file_mode_write_ev:
+        case ZPL_FILE_MODE_WRITE:
             desired_access = GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-        case zpl_file_mode_append_ev:
+        case ZPL_FILE_MODE_APPEND:
             desired_access = GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
-        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_EXISTING;
             break;
-        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = CREATE_ALWAYS;
             break;
-        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
             desired_access = GENERIC_READ | GENERIC_WRITE;
             creation_disposition = OPEN_ALWAYS;
             break;
         default:
             ZPL_PANIC("Invalid file mode");
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         w_text = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator(), filename, NULL);
@@ -7056,25 +6046,25 @@ extern "C" {
         if (handle == INVALID_HANDLE_VALUE) {
             DWORD err = GetLastError();
             switch (err) {
-            case ERROR_FILE_NOT_FOUND: return zpl_file_error_not_exists_ev;
-            case ERROR_FILE_EXISTS:    return zpl_file_error_exists_ev;
-            case ERROR_ALREADY_EXISTS: return zpl_file_error_exists_ev;
-            case ERROR_ACCESS_DENIED:  return zpl_file_error_permission_ev;
+            case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
+            case ERROR_FILE_EXISTS:    return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ACCESS_DENIED:  return ZPL_FILE_ERROR_PERMISSION;
             }
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
-        if (mode & zpl_file_mode_append_ev) {
+        if (mode & ZPL_FILE_MODE_APPEND) {
             LARGE_INTEGER offset = {0};
-            if (!SetFilePointerEx(handle, offset, NULL, zpl_seek_whence_end_ev)) {
+            if (!SetFilePointerEx(handle, offset, NULL, ZPL_SEEK_WHENCE_END)) {
                 CloseHandle(handle);
-                return zpl_file_error_invalid_ev;
+                return ZPL_FILE_ERROR_INVALID;
             }
         }
 
         fd->p = handle;
         *ops = zpl_default_file_operations_t;
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #else // POSIX
@@ -7099,7 +6089,7 @@ extern "C" {
     zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__posix_file_write) {
         isize res;
         i64 curr_offset = 0;
-        zpl__posix_file_seek(fd, 0, zpl_seek_whence_current_ev, &curr_offset);
+        zpl__posix_file_seek(fd, 0, ZPL_SEEK_WHENCE_CURRENT, &curr_offset);
         if (curr_offset == offset) {
             // NOTE: Writing to stdout et al. doesn't like pwrite for numerous reasons
             res = write(cast(int)fd.i, buffer, size);
@@ -7126,45 +6116,45 @@ extern "C" {
     zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
         i32 os_mode;
         switch (mode & zpl_file_mode_modes_ev) {
-        case zpl_file_mode_read_ev:
+        case ZPL_FILE_MODE_READ:
             os_mode = O_RDONLY;
             break;
-        case zpl_file_mode_write_ev:
+        case ZPL_FILE_MODE_WRITE:
             os_mode = O_WRONLY | O_CREAT | O_TRUNC;
             break;
-        case zpl_file_mode_append_ev:
+        case ZPL_FILE_MODE_APPEND:
             os_mode = O_WRONLY | O_APPEND | O_CREAT;
             break;
-        case zpl_file_mode_read_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR;
             break;
-        case zpl_file_mode_write_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR | O_CREAT | O_TRUNC;
             break;
-        case zpl_file_mode_append_ev | zpl_file_mode_rw_ev:
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
             os_mode = O_RDWR | O_APPEND | O_CREAT;
             break;
         default:
             ZPL_PANIC("Invalid file mode");
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         fd->i = open(filename, os_mode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
         if (fd->i < 0) {
             // TODO: More file errors
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         *ops = zpl_default_file_operations_t;
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #endif
 
 
 
-    zpl_file_error_e zpl_file_new(zpl_file_t *f, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+    zplFileError zpl_file_new(zpl_file_t *f, zpl_file_descriptor_t fd, zpl_file_operations_t ops, char const *filename) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         isize len = zpl_strlen(filename);
 
         f->ops = ops;
@@ -7178,36 +6168,36 @@ extern "C" {
 
 
 
-    zpl_file_error_e zpl_file_open_mode(zpl_file_t *f, zpl_file_mode_t mode, char const *filename) {
-        zpl_file_error_e err;
+    zplFileError zpl_file_open_mode(zpl_file_t *f, zpl_file_mode_t mode, char const *filename) {
+        zplFileError err;
 #if defined(ZPL_SYSTEM_WINDOWS)
         err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
 #else
         err = zpl__posix_file_open(&f->fd, &f->ops, mode, filename);
 #endif
-        if (err == zpl_file_error_none_ev)
+        if (err == ZPL_FILE_ERROR_NONE)
             return zpl_file_new(f, f->fd, f->ops, filename);
         return err;
     }
 
-    zpl_file_error_e zpl_file_close(zpl_file_t *f) {
+    zplFileError zpl_file_close(zpl_file_t *f) {
         if (!f)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 
         if (f->filename) zpl_free(zpl_heap_allocator(), cast(char *)f->filename);
 
 #if defined(ZPL_SYSTEM_WINDOWS)
         if (f->fd.p == INVALID_HANDLE_VALUE)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 #else
         if (f->fd.i < 0)
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
 #endif
 
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
         f->ops.close(f->fd);
 
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
     zpl_inline b32 zpl_file_read_at_check(zpl_file_t *f, void *buffer, isize size, i64 offset, isize *bytes_read) {
@@ -7232,14 +6222,14 @@ extern "C" {
     zpl_inline i64 zpl_file_seek(zpl_file_t *f, i64 offset) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, offset, zpl_seek_whence_begin_ev, &new_offset);
+        f->ops.seek(f->fd, offset, ZPL_SEEK_WHENCE_BEGIN, &new_offset);
         return new_offset;
     }
 
     zpl_inline i64 zpl_file_seek_to_end(zpl_file_t *f) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, 0, zpl_seek_whence_end_ev, &new_offset);
+        f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_END, &new_offset);
         return new_offset;
     }
 
@@ -7247,27 +6237,27 @@ extern "C" {
     zpl_inline i64 zpl_file_skip(zpl_file_t *f, i64 bytes) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, bytes, zpl_seek_whence_current_ev, &new_offset);
+        f->ops.seek(f->fd, bytes, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
         return new_offset;
     }
 
     zpl_inline i64 zpl_file_tell(zpl_file_t *f) {
         i64 new_offset = 0;
         if (!f->ops.read_at) f->ops = zpl_default_file_operations_t;
-        f->ops.seek(f->fd, 0, zpl_seek_whence_current_ev, &new_offset);
+        f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
         return new_offset;
     }
     zpl_inline b32 zpl_file_read       (zpl_file_t *f, void *buffer, isize size)       { return zpl_file_read_at(f, buffer, size, zpl_file_tell(f)); }
     zpl_inline b32 zpl_file_write      (zpl_file_t *f, void const *buffer, isize size) { return zpl_file_write_at(f, buffer, size, zpl_file_tell(f)); }
 
 
-    zpl_file_error_e zpl_file_create(zpl_file_t *f, char const *filename) {
-        return zpl_file_open_mode(f, zpl_file_mode_write_ev|zpl_file_mode_rw_ev, filename);
+    zplFileError zpl_file_create(zpl_file_t *f, char const *filename) {
+        return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE|ZPL_FILE_MODE_RW, filename);
     }
 
 
-    zpl_file_error_e zpl_file_open(zpl_file_t *f, char const *filename) {
-        return zpl_file_open_mode(f, zpl_file_mode_read_ev, filename);
+    zplFileError zpl_file_open(zpl_file_t *f, char const *filename) {
+        return zpl_file_open_mode(f, ZPL_FILE_MODE_READ, filename);
     }
 
 
@@ -7382,17 +6372,17 @@ extern "C" {
 
     // TODO: Is this a bad idea?
     zpl_global b32    zpl__std_file_set = false;
-    zpl_global zpl_file_t zpl__std_files[zpl_file_standard_count_ev] = {{0}};
+    zpl_global zpl_file_t zpl__std_files[ZPL_FILE_STANDARD_COUNT] = {{0}};
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zplFileStandardType std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.p = v; zpl__std_files[type].ops = zpl_default_file_operations_t
-            ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  GetStdHandle(STD_INPUT_HANDLE));
-            ZPL__SET_STD_FILE(zpl_file_standard_output_ev, GetStdHandle(STD_OUTPUT_HANDLE));
-            ZPL__SET_STD_FILE(zpl_file_standard_error_ev,  GetStdHandle(STD_ERROR_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  GetStdHandle(STD_INPUT_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, GetStdHandle(STD_OUTPUT_HANDLE));
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR,  GetStdHandle(STD_ERROR_HANDLE));
 #undef ZPL__SET_STD_FILE
             zpl__std_file_set = true;
         }
@@ -7405,12 +6395,12 @@ extern "C" {
         return size.QuadPart;
     }
 
-    zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+    zplFileError zpl_file_truncate(zpl_file_t *f, i64 size) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         i64 prev_offset = zpl_file_tell(f);
         zpl_file_seek(f, size);
         if (!SetEndOfFile(f))
-            err = zpl_file_error_eruncation_failure_ev;
+            err = zplFileErrorRUNCATION_FAILURE;
         zpl_file_seek(f, prev_offset);
         return err;
     }
@@ -7436,12 +6426,12 @@ extern "C" {
 
 #else // POSIX
 
-    zpl_inline zpl_file_t *zpl_file_get_standard(zpl_file_standard_type_e std) {
+    zpl_inline zpl_file_t *zpl_file_get_standard(zplFileStandardType std) {
         if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v) zpl__std_files[type].fd.i = v; zpl__std_files[type].ops = zpl_default_file_operations_t
-            ZPL__SET_STD_FILE(zpl_file_standard_input_ev,  0);
-            ZPL__SET_STD_FILE(zpl_file_standard_output_ev, 1);
-            ZPL__SET_STD_FILE(zpl_file_standard_error_ev,  2);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT,  0);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, 1);
+            ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR,  2);
 #undef ZPL__SET_STD_FILE
             zpl__std_file_set = true;
         }
@@ -7457,10 +6447,10 @@ extern "C" {
         return size;
     }
 
-    zpl_inline zpl_file_error_e zpl_file_truncate(zpl_file_t *f, i64 size) {
-        zpl_file_error_e err = zpl_file_error_none_ev;
+    zpl_inline zplFileError zpl_file_truncate(zpl_file_t *f, i64 size) {
+        zplFileError err = ZPL_FILE_ERROR_NONE;
         int i = ftruncate(f->fd.i, size);
-        if (i != 0) err = zpl_file_error_eruncation_failure_ev;
+        if (i != 0) err = zplFileErrorRUNCATION_FAILURE;
         return err;
     }
 
@@ -7470,7 +6460,7 @@ extern "C" {
 
 #endif
 
-    zpl_file_error_e zpl_file_temp(zpl_file_t *file) {
+    zplFileError zpl_file_temp(zpl_file_t *file) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_PANIC("zpl_file_temp is not supported for emscripten");
 #else
@@ -7478,13 +6468,13 @@ extern "C" {
         FILE *fd = tmpfile();
 
         if (fd == NULL) {
-            return zpl_file_error_invalid_ev;
+            return ZPL_FILE_ERROR_INVALID;
         }
 
         file->fd.p = fd;
         file->ops = zpl_default_file_operations_t;
 #endif
-        return zpl_file_error_none_ev;
+        return ZPL_FILE_ERROR_NONE;
     }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -7624,7 +6614,7 @@ extern "C" {
 
         result.allocator = a;
 
-        if (zpl_file_open(&file, filepath) == zpl_file_error_none_ev) {
+        if (zpl_file_open(&file, filepath) == ZPL_FILE_ERROR_NONE) {
             isize file_size = cast(isize)zpl_file_size(&file);
             if (file_size > 0) {
                 result.data = zpl_alloc(a, zero_terminate ? file_size+1 : file_size);
@@ -7814,11 +6804,11 @@ extern "C" {
 
 
     zpl_inline isize zpl_printf_va(char const *fmt, va_list va) {
-        return zpl_fprintf_va(zpl_file_get_standard(zpl_file_standard_output_ev), fmt, va);
+        return zpl_fprintf_va(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), fmt, va);
     }
 
     zpl_inline isize zpl_printf_err_va(char const *fmt, va_list va) {
-        return zpl_fprintf_va(zpl_file_get_standard(zpl_file_standard_error_ev), fmt, va);
+        return zpl_fprintf_va(zpl_file_get_standard(ZPL_FILE_STANDARD_ERROR), fmt, va);
     }
 
     zpl_inline isize zpl_fprintf_va(struct zpl_file_t *f, char const *fmt, va_list va) {
@@ -7837,28 +6827,28 @@ extern "C" {
 
 
     enum {
-        zpl_fmt_minus_ev     = ZPL_BIT(0),
-        zpl_fmt_plus_ev      = ZPL_BIT(1),
-        zpl_fmt_alt_ev       = ZPL_BIT(2),
-        zpl_fmt_space_ev     = ZPL_BIT(3),
-        zpl_fmt_zero_ev      = ZPL_BIT(4),
+        ZPL_FMT_MINUS     = ZPL_BIT(0),
+        ZPL_FMT_PLUS      = ZPL_BIT(1),
+        ZPL_FMT_ALT       = ZPL_BIT(2),
+        ZPL_FMT_SPACE     = ZPL_BIT(3),
+        ZPL_FMT_ZERO      = ZPL_BIT(4),
 
-        zpl_fmt_char_ev      = ZPL_BIT(5),
-        zpl_fmt_short_ev     = ZPL_BIT(6),
-        zpl_fmt_int_ev       = ZPL_BIT(7),
-        zpl_fmt_long_ev      = ZPL_BIT(8),
-        zpl_fmt_llong_ev     = ZPL_BIT(9),
-        zpl_fmt_size_ev      = ZPL_BIT(10),
-        zpl_fmt_intptr_ev    = ZPL_BIT(11),
+        ZPL_FMT_CHAR      = ZPL_BIT(5),
+        ZPL_FMT_SHORT     = ZPL_BIT(6),
+        ZPL_FMT_INT       = ZPL_BIT(7),
+        ZPL_FMT_LONG      = ZPL_BIT(8),
+        ZPL_FMT_LLONG     = ZPL_BIT(9),
+        ZPL_FMT_SIZE      = ZPL_BIT(10),
+        ZPL_FMT_INTPTR    = ZPL_BIT(11),
 
-        zpl_fmt_unsigned_ev  = ZPL_BIT(12),
-        zpl_fmt_lower_ev     = ZPL_BIT(13),
-        zpl_fmt_upper_ev     = ZPL_BIT(14),
+        ZPL_FMT_UNSIGNED  = ZPL_BIT(12),
+        ZPL_FMT_LOWER     = ZPL_BIT(13),
+        ZPL_FMT_UPPER     = ZPL_BIT(14),
 
 
-        zpl_fmt_done_ev      = ZPL_BIT(30),
+        ZPL_FMT_DONE      = ZPL_BIT(30),
 
-        zpl_fmt_ints_ev = zpl_fmt_char_ev|zpl_fmt_short_ev|zpl_fmt_int_ev|zpl_fmt_long_ev|zpl_fmt_llong_ev|zpl_fmt_size_ev|zpl_fmt_intptr_ev
+        ZPL_FMT_INTS = ZPL_FMT_CHAR|ZPL_FMT_SHORT|ZPL_FMT_INT|ZPL_FMT_LONG|ZPL_FMT_LLONG|ZPL_FMT_SIZE|ZPL_FMT_INTPTR
     };
 
     typedef struct {
@@ -7880,7 +6870,7 @@ extern "C" {
         else
             len = zpl_strlen(str);
 
-        if (info && (info->width == 0 || info->flags & zpl_fmt_minus_ev)) {
+        if (info && (info->width == 0 || info->flags & ZPL_FMT_MINUS)) {
             if (info->precision > 0)
                 len = info->precision < len ? info->precision : len;
 
@@ -7888,14 +6878,14 @@ extern "C" {
 
             if (info->width > res) {
                 isize padding = info->width - len;
-                char pad = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+                char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
                 while (padding --> 0 && remaining --> 0)
                     *text++ = pad, res++;
             }
         } else {
             if (info && (info->width > res)) {
                 isize padding = info->width - len;
-                char pad = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+                char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
                 while (padding --> 0 && remaining --> 0)
                     *text++ = pad, res++;
             }
@@ -7905,9 +6895,9 @@ extern "C" {
 
 
         if (info) {
-            if (info->flags & zpl_fmt_upper_ev)
+            if (info->flags & ZPL_FMT_UPPER)
                 zpl_str_to_upper(text);
-            else if (info->flags & zpl_fmt_lower_ev)
+            else if (info->flags & ZPL_FMT_LOWER)
                 zpl_str_to_lower(text);
         }
 
@@ -7946,7 +6936,7 @@ extern "C" {
                     *text = '-', remaining--;
                 text++;
                 arg = -arg;
-            } else if (info->flags & zpl_fmt_minus_ev) {
+            } else if (info->flags & ZPL_FMT_MINUS) {
                 if (remaining > 1)
                     *text = '+', remaining--;
                 text++;
@@ -7965,7 +6955,7 @@ extern "C" {
             if (info->precision < 0)
                 info->precision = 6;
 
-            if ((info->flags & zpl_fmt_alt_ev) || info->precision > 0) {
+            if ((info->flags & ZPL_FMT_ALT) || info->precision > 0) {
                 i64 mult = 10;
                 if (remaining > 1)
                     *text = '.', remaining--;
@@ -7986,7 +6976,7 @@ extern "C" {
             if (remaining > 1)
                 *text = '0', remaining--;
             text++;
-            if (info->flags & zpl_fmt_alt_ev) {
+            if (info->flags & ZPL_FMT_ALT) {
                 if (remaining > 1)
                     *text = '.', remaining--;
                 text++;
@@ -7995,7 +6985,7 @@ extern "C" {
 
         width = info->width - (text - text_begin);
         if (width > 0) {
-            char fill = (info->flags & zpl_fmt_zero_ev) ? '0' : ' ';
+            char fill = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
             char *end = text+remaining-1;
             len = (text - text_begin);
 
@@ -8037,21 +7027,21 @@ extern "C" {
             if (*fmt == '%') {
                 do {
                     switch (*++fmt) {
-                    case '-': info.flags |= zpl_fmt_minus_ev; break;
-                    case '+': info.flags |= zpl_fmt_plus_ev;  break;
-                    case '#': info.flags |= zpl_fmt_alt_ev;   break;
-                    case ' ': info.flags |= zpl_fmt_space_ev; break;
-                    case '0': info.flags |= zpl_fmt_zero_ev;  break;
-                    default:  info.flags |= zpl_fmt_done_ev;  break;
+                    case '-': info.flags |= ZPL_FMT_MINUS; break;
+                    case '+': info.flags |= ZPL_FMT_PLUS;  break;
+                    case '#': info.flags |= ZPL_FMT_ALT;   break;
+                    case ' ': info.flags |= ZPL_FMT_SPACE; break;
+                    case '0': info.flags |= ZPL_FMT_ZERO;  break;
+                    default:  info.flags |= ZPL_FMT_DONE;  break;
                     }
-                } while (!(info.flags & zpl_fmt_done_ev));
+                } while (!(info.flags & ZPL_FMT_DONE));
             }
 
             // NOTE: Optional Width
             if (*fmt == '*') {
                 int width = va_arg(va, int);
                 if (width < 0) {
-                    info.flags |= zpl_fmt_minus_ev;
+                    info.flags |= ZPL_FMT_MINUS;
                     info.width = -info.width;
                 } else {
                     info.width = -info.width;
@@ -8070,36 +7060,36 @@ extern "C" {
                 } else {
                     info.precision = cast(i32)zpl_str_to_i64(fmt, cast(char **)&fmt, 10);
                 }
-                info.flags &= ~zpl_fmt_zero_ev;
+                info.flags &= ~ZPL_FMT_ZERO;
             }
 
 
             switch (*fmt++) {
             case 'h':
                 if (*fmt == 'h') { // hh => char
-                    info.flags |= zpl_fmt_char_ev;
+                    info.flags |= ZPL_FMT_CHAR;
                     fmt++;
                 } else { // h => short
-                    info.flags |= zpl_fmt_short_ev;
+                    info.flags |= ZPL_FMT_SHORT;
                 }
                 break;
 
             case 'l':
                 if (*fmt == 'l') { // ll => long long
-                    info.flags |= zpl_fmt_llong_ev;
+                    info.flags |= ZPL_FMT_LLONG;
                     fmt++;
                 } else { // l => long
-                    info.flags |= zpl_fmt_long_ev;
+                    info.flags |= ZPL_FMT_LONG;
                 }
                 break;
 
                 break;
 
             case 'z': // NOTE: usize
-                info.flags |= zpl_fmt_unsigned_ev;
+                info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 't': // NOTE: isize
-                info.flags |= zpl_fmt_size_ev;
+                info.flags |= ZPL_FMT_SIZE;
                 break;
 
             default: fmt--; break;
@@ -8108,7 +7098,7 @@ extern "C" {
 
             switch (*fmt) {
             case 'u':
-                info.flags |= zpl_fmt_unsigned_ev;
+                info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 'd':
             case 'i':
@@ -8121,12 +7111,12 @@ extern "C" {
 
             case 'x':
                 info.base = 16;
-                info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_lower_ev);
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_LOWER);
                 break;
 
             case 'X':
                 info.base = 16;
-                info.flags |= (zpl_fmt_unsigned_ev | zpl_fmt_upper_ev);
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_UPPER);
                 break;
 
             case 'f':
@@ -8151,7 +7141,7 @@ extern "C" {
 
             case 'p':
                 info.base = 16;
-                info.flags |= (zpl_fmt_lower_ev|zpl_fmt_unsigned_ev|zpl_fmt_alt_ev|zpl_fmt_intptr_ev);
+                info.flags |= (ZPL_FMT_LOWER|ZPL_FMT_UNSIGNED|ZPL_FMT_ALT|ZPL_FMT_INTPTR);
                 break;
 
             case '%':
@@ -8164,15 +7154,15 @@ extern "C" {
             fmt++;
 
             if (info.base != 0) {
-                if (info.flags & zpl_fmt_unsigned_ev) {
+                if (info.flags & ZPL_FMT_UNSIGNED) {
                     u64 value = 0;
-                    switch (info.flags & zpl_fmt_ints_ev) {
-                    case zpl_fmt_char_ev:   value = cast(u64)cast(u8) va_arg(va, int);       break;
-                    case zpl_fmt_short_ev:  value = cast(u64)cast(u16)va_arg(va, int);       break;
-                    case zpl_fmt_long_ev:   value = cast(u64)va_arg(va, unsigned long);      break;
-                    case zpl_fmt_llong_ev:  value = cast(u64)va_arg(va, unsigned long long); break;
-                    case zpl_fmt_size_ev:   value = cast(u64)va_arg(va, usize);              break;
-                    case zpl_fmt_intptr_ev: value = cast(u64)va_arg(va, uintptr);            break;
+                    switch (info.flags & ZPL_FMT_INTS) {
+                    case ZPL_FMT_CHAR:   value = cast(u64)cast(u8) va_arg(va, int);       break;
+                    case ZPL_FMT_SHORT:  value = cast(u64)cast(u16)va_arg(va, int);       break;
+                    case ZPL_FMT_LONG:   value = cast(u64)va_arg(va, unsigned long);      break;
+                    case ZPL_FMT_LLONG:  value = cast(u64)va_arg(va, unsigned long long); break;
+                    case ZPL_FMT_SIZE:   value = cast(u64)va_arg(va, usize);              break;
+                    case ZPL_FMT_INTPTR: value = cast(u64)va_arg(va, uintptr);            break;
                     default:             value = cast(u64)va_arg(va, unsigned int);       break;
                     }
 
@@ -8180,13 +7170,13 @@ extern "C" {
 
                 } else {
                     i64 value = 0;
-                    switch (info.flags & zpl_fmt_ints_ev) {
-                    case zpl_fmt_char_ev:   value = cast(i64)cast(i8) va_arg(va, int); break;
-                    case zpl_fmt_short_ev:  value = cast(i64)cast(i16)va_arg(va, int); break;
-                    case zpl_fmt_long_ev:   value = cast(i64)va_arg(va, long);         break;
-                    case zpl_fmt_llong_ev:  value = cast(i64)va_arg(va, long long);    break;
-                    case zpl_fmt_size_ev:   value = cast(i64)va_arg(va, usize);        break;
-                    case zpl_fmt_intptr_ev: value = cast(i64)va_arg(va, uintptr);      break;
+                    switch (info.flags & ZPL_FMT_INTS) {
+                    case ZPL_FMT_CHAR:   value = cast(i64)cast(i8) va_arg(va, int); break;
+                    case ZPL_FMT_SHORT:  value = cast(i64)cast(i16)va_arg(va, int); break;
+                    case ZPL_FMT_LONG:   value = cast(i64)va_arg(va, long);         break;
+                    case ZPL_FMT_LLONG:  value = cast(i64)va_arg(va, long long);    break;
+                    case ZPL_FMT_SIZE:   value = cast(i64)va_arg(va, usize);        break;
+                    case ZPL_FMT_INTPTR: value = cast(i64)va_arg(va, uintptr);      break;
                     default:             value = cast(i64)va_arg(va, int);          break;
                     }
 
@@ -8643,6 +7633,12 @@ extern "C" {
 #else
         sched_yield();
 #endif
+    }
+
+    zpl_inline char const *zpl_get_env(char const *name) {
+        return getenv(name);
+
+        // TODO: Use GetEnvironmentVariable on Windows?
     }
 
     zpl_inline void zpl_set_env(char const *name, char const *value) {
