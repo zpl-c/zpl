@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.0.1 - include stdlib.h for getenv (temp)
   4.0.0 - ARM support, coding style changes and various improvements
 
   3.4.1 - zpl_memcopy now uses memcpy for ARM arch-family
@@ -7634,6 +7635,8 @@ extern "C" {
         sched_yield();
 #endif
     }
+
+    #include <stdlib.h>
 
     zpl_inline char const *zpl_get_env(char const *name) {
         return getenv(name);
