@@ -1885,7 +1885,7 @@
         ZPL_FILE_ERROR_NONE,
         ZPL_FILE_ERROR_INVALID,
         ZPL_FILE_ERROR_INVALID_FILENAME,
-        zplFileErrorXISTS,
+        ZPL_FILE_ERROR_EXISTS,
         ZPL_FILE_ERROR_NOT_EXISTS,
         ZPL_FILE_ERROR_PERMISSION,
         zplFileErrorRUNCATION_FAILURE,
@@ -7061,8 +7061,8 @@ extern "C" {
             DWORD err = GetLastError();
             switch (err) {
             case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
-            case ERROR_FILE_EXISTS:    return zplFileErrorXISTS;
-            case ERROR_ALREADY_EXISTS: return zplFileErrorXISTS;
+            case ERROR_FILE_EXISTS:    return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
             case ERROR_ACCESS_DENIED:  return ZPL_FILE_ERROR_PERMISSION;
             }
             return ZPL_FILE_ERROR_INVALID;
