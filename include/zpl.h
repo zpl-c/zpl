@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.0.2 - Warning fix for _LARGEFILE64_SOURCE
   4.0.1 - include stdlib.h for getenv (temp)
   4.0.0 - ARM support, coding style changes and various improvements
 
@@ -237,7 +238,9 @@
   #ifndef _GNU_SOURCE
   #define _GNU_SOURCE
   #endif
+  #ifndef _LARGEFILE64_SOURCE
   #define _LARGEFILE64_SOURCE
+  #endif
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
