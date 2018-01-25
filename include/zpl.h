@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.1.0 - Added zpl_string_make_reserve and small fixes
   4.0.2 - Warning fix for _LARGEFILE64_SOURCE
   4.0.1 - include stdlib.h for getenv (temp)
   4.0.0 - ARM support, coding style changes and various improvements
@@ -1427,6 +1428,7 @@
 
 #define ZPL_STRING_HEADER(str) (cast(zpl_string_header_t *)(str) - 1)
 
+    ZPL_DEF zpl_string_t zpl_string_make_reserve   (zpl_allocator_t a, isize capacity);
     ZPL_DEF zpl_string_t zpl_string_make           (zpl_allocator_t a, char const *str);
     ZPL_DEF zpl_string_t zpl_string_make_length    (zpl_allocator_t a, void const *str, isize num_bytes);
     ZPL_DEF void     zpl_string_free           (zpl_string_t str);
@@ -5029,6 +5031,26 @@ extern "C" {
     zpl_inline void zpl__set_string_length  (zpl_string_t str, isize len) { ZPL_STRING_HEADER(str)->length = len; }
     zpl_inline void zpl__set_string_capacity(zpl_string_t str, isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
 
+    zpl_inline zpl_string_t zpl_string_make_reserve(zpl_allocator_t a, isize capacity)
+    {
+        isize header_size = zpl_size_of(zpl_string_header_t);
+        void *ptr = zpl_alloc(a, header_size + capacity + 1);
+
+        zpl_string_t str;
+        zpl_string_header_t *header;
+
+        if (ptr == NULL) return NULL;
+        zpl_zero_size(ptr, header_size + capacity + 1);
+
+        str = cast(char *)ptr + header_size;
+        header = ZPL_STRING_HEADER(str);
+        header->allocator = a;
+        header->length     = 0;
+        header->capacity   = capacity;
+        str[capacity]      = '\0';
+
+        return str;
+    }
 
     zpl_inline zpl_string_t zpl_string_make(zpl_allocator_t a, char const *str) {
         isize len = str ? zpl_strlen(str) : 0;
@@ -5042,8 +5064,8 @@ extern "C" {
         zpl_string_t str;
         zpl_string_header_t *header;
 
-        if (!init_str) zpl_zero_size(ptr, header_size + num_bytes + 1);
         if (ptr == NULL) return NULL;
+        if (!init_str) zpl_zero_size(ptr, header_size + num_bytes + 1);
 
         str = cast(char *)ptr + header_size;
         header = ZPL_STRING_HEADER(str);
@@ -5211,7 +5233,7 @@ extern "C" {
         char buf[4096] = {0};
         va_list va;
         va_start(va, fmt);
-        res = zpl_snprintf_va(str, zpl_count_of(buf)-1, fmt, va);
+        res = zpl_snprintf_va(buf, zpl_count_of(buf)-1, fmt, va)-1;
         va_end(va);
         return zpl_string_append_length(str, buf, res);
     }
