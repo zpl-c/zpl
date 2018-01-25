@@ -40,8 +40,3 @@ These libraries are dual-licensed to either the public domain or under the follo
     publish, and distribute these libraries as you see fit. NO WARRANTY IS IMPLIED, USE AT YOUR OWN RISK!`
 
 While the license does not require that, attribution to the Original Authors is appreciated.
-
-### Why fork the **gb** library?
-
-I've decided to fork [gingerBill's gb](https://github.com/gingerBill/gb) due to its completeness, having a good starting point for future improvements and changes.
-
