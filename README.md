@@ -26,8 +26,8 @@
 library                                                  | latest version                                                                                   | category   | description
 ------------------------------------------------         | --------------------------------------------------------------------------------------           | ---------- | -------------
 [zpl.h](https://www.npmjs.com/package/zpl.c)             | [![npm version](https://badge.fury.io/js/zpl.c.svg)](https://badge.fury.io/js/zpl.c)             | misc       | Helper library.
-[zpl_math.h](https://www.npmjs.com/package/zpl_math.c)   | [![npm version](https://badge.fury.io/js/zpl_math.c.svg)](https://badge.fury.io/js/zpl_math.c)   | math       | Vector math library that is gamedev friendly..
-[zpl_image.h](https://www.npmjs.com/package/zpl_image.c) | [![npm version](https://badge.fury.io/js/zpl_image.c.svg)](https://badge.fury.io/js/zpl_image.c) | graphics   | Image manipulation library &amp; GIF animation. loader.
+[zpl_math.h](https://www.npmjs.com/package/zpl_math.c)   | [![npm version](https://badge.fury.io/js/zpl_math.c.svg)](https://badge.fury.io/js/zpl_math.c)   | math       | Vector math library that is gamedev friendly.
+[zpl_image.h](https://www.npmjs.com/package/zpl_image.c) | [![npm version](https://badge.fury.io/js/zpl_image.c.svg)](https://badge.fury.io/js/zpl_image.c) | graphics   | Image manipulation library &amp; GIF animation loader.
 [zpl_cull.h](https://www.npmjs.com/package/zpl_cull.c)   | [![npm version](https://badge.fury.io/js/zpl_cull.c.svg)](https://badge.fury.io/js/zpl_cull.c)   | misc       | Tree culling library.
 [zpl_event.h](https://www.npmjs.com/package/zpl_event.c) | [![npm version](https://badge.fury.io/js/zpl_event.c.svg)](https://badge.fury.io/js/zpl_event.c) | misc       | Event handler library.
 [zpl_json.h](https://www.npmjs.com/package/zpl_json.c)   | [![npm version](https://badge.fury.io/js/zpl_json.c.svg)](https://badge.fury.io/js/zpl_json.c)   | parser     | Small, fast and standard-friendly JSON parser.
