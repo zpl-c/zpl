@@ -8,3 +8,4 @@ include/quick.c
 # other
 .DS_Store
 .swp
+tags
