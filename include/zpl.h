@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.2.0 - Added zpl_system_command_str
   4.1.2 - GG, fixed small compilation error
   4.1.1 - Fixed possible security issue in zpl_system_command
   4.1.0 - Added zpl_string_make_reserve and small fixes
@@ -2135,6 +2136,7 @@
     ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
     ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
+    ZPL_DEF u32 zpl_system_command_str(char const *command, zpl_array_t(u8) *str);
 
 #if defined(__cplusplus)
 }
@@ -7737,6 +7739,34 @@ extern "C" {
         usize i=0;
         while ((c = getc(handle)) != EOF && i++ < buffer_len) {
             *buffer++ = c;
+        }
+#if defined(ZPL_SYSTEM_WINDOWS)
+        _pclose(handle);
+#else
+        pclose(handle);
+#endif
+
+#endif
+        return 1;
+    }
+
+    zpl_inline u32 zpl_system_command_str(char const *command, zpl_array_t(u8) *str) {
+#if defined(ZPL_SYSTEM_EMSCRIPTEN)
+        ZPL_PANIC("zpl_system_command not supported");
+#else
+
+#if defined(ZPL_SYSTEM_WINDOWS)
+        FILE *handle = _popen(command, "r");
+#else
+        FILE *handle =  popen(command, "r");
+#endif
+
+        if(!handle) return 0;
+
+        char c;
+        usize i=0;
+        while ((c = getc(handle)) != EOF) {
+            zpl_array_append(*str, c);
         }
 #if defined(ZPL_SYSTEM_WINDOWS)
         _pclose(handle);
