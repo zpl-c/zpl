@@ -24,6 +24,8 @@
 
 
   Version History:
+  4.1.2 - GG, fixed small compilation error
+  4.1.1 - Fixed possible security issue in zpl_system_command
   4.1.0 - Added zpl_string_make_reserve and small fixes
   4.0.2 - Warning fix for _LARGEFILE64_SOURCE
   4.0.1 - include stdlib.h for getenv (temp)
@@ -7733,7 +7735,7 @@ extern "C" {
 
         char c;
         usize i=0;
-        while ((c = getc(handle)) != EOF && i++ < cap) {
+        while ((c = getc(handle)) != EOF && i++ < buffer_len) {
             *buffer++ = c;
         }
 #if defined(ZPL_SYSTEM_WINDOWS)
