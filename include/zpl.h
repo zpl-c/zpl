@@ -2132,7 +2132,7 @@
 
     ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
-    ZPL_DEF u32 zpl_system_command(char const *command, char *buffer);
+    ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
 
 #if defined(__cplusplus)
 }
@@ -7718,7 +7718,7 @@ extern "C" {
     extern char **environ;
 #endif
 
-    zpl_inline u32 zpl_system_command(char const *command, char *buffer) {
+    zpl_inline u32 zpl_system_command(char const *command, usize buffer_len, char *buffer) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_PANIC("zpl_system_command not supported");
 #else
@@ -7732,7 +7732,8 @@ extern "C" {
         if(!handle) return 0;
 
         char c;
-        while ((c = getc(handle)) != EOF) {
+        usize i=0;
+        while ((c = getc(handle)) != EOF && i++ < cap) {
             *buffer++ = c;
         }
 #if defined(ZPL_SYSTEM_WINDOWS)
