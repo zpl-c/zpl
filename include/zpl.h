@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.3.0 - Added zpl_list_t
   4.2.0 - Added zpl_system_command_str
   4.1.2 - GG, fixed small compilation error
   4.1.1 - Fixed possible security issue in zpl_system_command
@@ -1509,7 +1510,52 @@
 #define zpl_buffer_pop(x)   do { ZPL_ASSERT(zpl_buffer_count(x) > 0); zpl_buffer_count(x)--; } while (0)
 #define zpl_buffer_clear(x) do { zpl_buffer_count(x) = 0; } while (0)
 
+    ////////////////////////////////////////////////////////////////
+    //
+    // Linked List
+    //
+    // zpl_list_t encapsulates pointer to data and points to the next and the previous element in the list.
+    //
+    // Available Procedures for zpl_list_t 
+    // zpl_list_init
+    // zpl_list_add
+    // zpl_list_remove
 
+#if 0
+int foo(void)
+{
+    zpl_list_t s, *head, *cursor;
+    zpl_list_init(&s, "it is optional to call init: ");
+    head = cursor = &s;
+
+    // since we can construct an element implicitly this way
+    // the second field gets overwritten once we add it to a list.
+    zpl_list_t a = {"hello"};
+    cursor = zpl_list_add(cursor, &a);
+
+    zpl_list_t b = {"world"};
+    cursor = zpl_list_add(cursor, &b);
+
+    zpl_list_t c = {"!!! OK"};
+    cursor = zpl_list_add(cursor, &c);
+
+    for (zpl_list_t *l=head; l; l=l->next) {
+        zpl_printf("%s ", cast(char *)l->ptr);
+    }
+    zpl_printf("\n");
+
+    return 0;
+}
+#endif
+
+    typedef struct zpl__list_t {
+        void *ptr;
+        struct zpl__list_t *next, *prev;
+    } zpl_list_t;
+
+    ZPL_DEF void        zpl_list_init  (zpl_list_t *list, void *ptr);
+    ZPL_DEF zpl_list_t *zpl_list_add   (zpl_list_t *list, zpl_list_t *item);
+    ZPL_DEF zpl_list_t *zpl_list_remove(zpl_list_t *list);
 
     ////////////////////////////////////////////////////////////////
     //
@@ -5511,6 +5557,33 @@ extern "C" {
         return 4;
     }
 
+
+    ////////////////////////////////////////////////////////////////
+    //
+    // zpl_list_t
+    //
+
+
+    zpl_inline void zpl_list_init(zpl_list_t *list, void *ptr) {
+        zpl_list_t list_ = {0};
+        *list = list_;
+        list->ptr = ptr;
+    }
+
+    zpl_inline zpl_list_t *zpl_list_add(zpl_list_t *list, zpl_list_t *item) {
+        list->next = item;
+        item->next = NULL;
+        item->prev = list;
+        return item;
+    }
+
+    zpl_inline zpl_list_t *zpl_list_remove(zpl_list_t *list) {
+        if (list->prev) {
+            list->prev->next = list->next;
+        }
+
+        return list->next;
+    }
 
 
 
