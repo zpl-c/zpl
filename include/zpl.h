@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.4.0 - Added zpl_array_back, zpl_array_front
   4.3.0 - Added zpl_list_t
   4.2.0 - Added zpl_system_command_str
   4.1.2 - GG, fixed small compilation error
@@ -1573,6 +1574,8 @@ int foo(void)
     // zpl_array_appendv
     // zpl_array_pop
     // zpl_array_clear
+    // zpl_array_back
+    // zpl_array_front
     // zpl_array_resize
     // zpl_array_reserve
     //
@@ -1706,6 +1709,8 @@ int foo(void)
 
 
 #define zpl_array_pop(x)   do { ZPL_ASSERT(ZPL_ARRAY_HEADER(x)->count > 0); ZPL_ARRAY_HEADER(x)->count--; } while (0)
+#define zpl_array_back(x)  x[ZPL_ARRAY_HEADER(x)->count - 1]
+#define zpl_array_front(x) x[0]
 #define zpl_array_clear(x) do { ZPL_ARRAY_HEADER(x)->count = 0; } while (0)
 
 #define zpl_array_resize(x, new_count) do {               \
