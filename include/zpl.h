@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.5.1 - Fixed some warnings
   4.5.0 - Added zpl_array_append_at
   4.4.0 - Added zpl_array_back, zpl_array_front
   4.3.0 - Added zpl_list_t
@@ -120,7 +121,6 @@
 
 #ifndef ZPL_ENDIAN_ORDER
 #define ZPL_ENDIAN_ORDER
-    // TODO: Is the a good way or is it better to test for certain compilers and macros?
 #define ZPL_IS_BIG_ENDIAN    (!*(u8*)&(u16){1})
 #define ZPL_IS_LITTLE_ENDIAN (!ZPL_IS_BIG_ENDIAN)
 #endif
@@ -1049,7 +1049,6 @@
         ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO = ZPL_BIT(0),
     } zplAllocatorFlag;
 
-    // TODO: Is this a decent default alignment?
 #ifndef ZPL_DEFAULT_MEMORY_ALIGNMENT
 #define ZPL_DEFAULT_MEMORY_ALIGNMENT (2 * zpl_size_of(void *))
 #endif
@@ -1639,7 +1638,6 @@ int foo(void)
 #define zpl_array_count(x)     (ZPL_ARRAY_HEADER(x)->count)
 #define zpl_array_capacity(x)  (ZPL_ARRAY_HEADER(x)->capacity)
 
-    // TODO: Have proper alignment!
 #define zpl_array_init_reserve(x, allocator_, cap) do {                 \
         void **zpl__array_ = cast(void **)&(x);                         \
         zpl_array_header_t *zpl__ah = cast(zpl_array_header_t *)zpl_alloc(allocator_, zpl_size_of(zpl_array_header_t)+zpl_size_of(*(x))*(cap)); \
@@ -1669,7 +1667,6 @@ int foo(void)
     ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element_size);
 
 
-    // TODO: Decide on a decent growing formula for zpl_array_t
 #define zpl_array_grow(x, min_capacity) do {                            \
         isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_array_capacity(x)); \
         if (new_capacity < (min_capacity))                              \
@@ -2607,7 +2604,6 @@ extern "C" {
         } else {
             char buffer[256];
 
-            // TODO: Is the recursion ever a problem?
             while (size > zpl_size_of(buffer)) {
                 zpl_memswap(i, j, zpl_size_of(buffer));
                 i = zpl_pointer_add(i, zpl_size_of(buffer));
@@ -7331,7 +7327,6 @@ extern "C" {
 #else // POSIX
 
     zpl_dll_handle_t zpl_dll_load(char const *filepath) {
-        // TODO: Should this be RTLD_LOCAL?
         return cast(zpl_dll_handle_t)dlopen(filepath, RTLD_LAZY|RTLD_GLOBAL);
     }
 
