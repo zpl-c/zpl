@@ -24,6 +24,7 @@
 
 
   Version History:
+  4.5.0 - Added zpl_array_append_at
   4.4.0 - Added zpl_array_back, zpl_array_front
   4.3.0 - Added zpl_list_t
   4.2.0 - Added zpl_system_command_str
@@ -1683,6 +1684,13 @@ int foo(void)
         (x)[zpl_array_count(x)++] = (item);               \
     } while (0)
 
+#define zpl_array_append_at(x, item, ind) do { \
+        zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x); \
+        zpl_array_grow(x, zpl__ah->count + 1); \
+        zpl_memcopy(x+ind+1, x+ind, zpl_size_of(x[0])*(zpl__ah->count - ind)); \
+        x[ind] = item; \
+    } while (0)
+
 #define zpl_array_appendv(x, items, item_count) do {                    \
         zpl_array_header_t *zpl__ah = ZPL_ARRAY_HEADER(x);              \
         ZPL_ASSERT(zpl_size_of((items)[0]) == zpl_size_of((x)[0]));     \
@@ -2057,7 +2065,7 @@ int foo(void)
     ZPL_DEF void           zpl_file_free_contents(zpl_file_contents_t *fc);
 
 
-    // TODO: Should these have different na,es as they do not take in a zpl_file_t * ???
+    // TODO: Should these have different names as they do not take in a zpl_file_t * ???
     ZPL_DEF b32        zpl_file_exists         (char const *filepath);
     ZPL_DEF zpl_file_time_t zpl_file_last_write_time(char const *filepath);
     ZPL_DEF b32        zpl_file_copy           (char const *existing_filename, char const *new_filename, b32 fail_if_exists);
