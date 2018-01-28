@@ -2,14 +2,6 @@
 
   ZPL - Global module
 
-  License:
-  This software is dual-licensed to the public domain and under the following
-  license: you are granted a perpetual, irrevocable license to copy, modify,
-  publish, and distribute this file as you see fit.
-
-  Warranty:
-  No warranty is implied, use at your own risk.
-
   Usage:
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
 
