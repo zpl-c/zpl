@@ -6372,9 +6372,20 @@ extern "C" {
         f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
         return new_offset;
     }
-    zpl_inline b32 zpl_file_read       (zpl_file_t *f, void *buffer, isize size)       { return zpl_file_read_at(f, buffer, size, zpl_file_tell(f)); }
-    zpl_inline b32 zpl_file_write      (zpl_file_t *f, void const *buffer, isize size) { return zpl_file_write_at(f, buffer, size, zpl_file_tell(f)); }
 
+	zpl_inline b32 zpl_file_read(zpl_file_t *f, void *buffer, isize size) {
+        i64 cur_offset = zpl_file_tell(f);
+        b32 result = zpl_file_read_at(f, buffer, size, zpl_file_tell(f));
+        zpl_file_seek(f, cur_offset + size);
+        return result;
+    }
+
+    zpl_inline b32 zpl_file_write(zpl_file_t *f, void const *buffer, isize size) {
+        i64 cur_offset = zpl_file_tell(f);
+        b32 result = zpl_file_write_at(f, buffer, size, zpl_file_tell(f));
+        zpl_file_seek(f, cur_offset + size);
+        return result;
+    }
 
     zplFileError zpl_file_create(zpl_file_t *f, char const *filename) {
         return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE|ZPL_FILE_MODE_RW, filename);
