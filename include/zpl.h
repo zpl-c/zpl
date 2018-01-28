@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5.3 - Fixed malformed enum values
   4.5.1 - Fixed some warnings
   4.5.0 - Added zpl_array_append_at
   4.4.0 - Added zpl_array_back, zpl_array_front
@@ -1958,7 +1959,7 @@ int foo(void)
         ZPL_FILE_ERROR_EXISTS,
         ZPL_FILE_ERROR_NOT_EXISTS,
         ZPL_FILE_ERROR_PERMISSION,
-        zplFileErrorRUNCATION_FAILURE,
+        ZPL_FILE_ERROR_TRUNCATION_FAILURE,
     } zplFileError;
 
     typedef union zpl_file_descriptor_t {
@@ -6527,7 +6528,7 @@ extern "C" {
         i64 prev_offset = zpl_file_tell(f);
         zpl_file_seek(f, size);
         if (!SetEndOfFile(f))
-            err = zplFileErrorRUNCATION_FAILURE;
+            err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
         zpl_file_seek(f, prev_offset);
         return err;
     }
@@ -6577,7 +6578,7 @@ extern "C" {
     zpl_inline zplFileError zpl_file_truncate(zpl_file_t *f, i64 size) {
         zplFileError err = ZPL_FILE_ERROR_NONE;
         int i = ftruncate(f->fd.i, size);
-        if (i != 0) err = zplFileErrorRUNCATION_FAILURE;
+        if (i != 0) err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
         return err;
     }
 
