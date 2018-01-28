@@ -31,12 +31,3 @@ library                                                  | latest version       
 [zpl_cull.h](https://www.npmjs.com/package/zpl_cull.c)   | [![npm version](https://badge.fury.io/js/zpl_cull.c.svg)](https://badge.fury.io/js/zpl_cull.c)   | misc       | Tree culling library.
 [zpl_event.h](https://www.npmjs.com/package/zpl_event.c) | [![npm version](https://badge.fury.io/js/zpl_event.c.svg)](https://badge.fury.io/js/zpl_event.c) | misc       | Event handler library.
 [zpl_json.h](https://www.npmjs.com/package/zpl_json.c)   | [![npm version](https://badge.fury.io/js/zpl_json.c.svg)](https://badge.fury.io/js/zpl_json.c)   | parser     | Small, fast and standard-friendly JSON parser.
-
-## FAQ
-
-### What is the license?
-
-These libraries are dual-licensed to either the public domain or under the following: `you are granted a perpetual, irrevocable license to copy, modify,
-    publish, and distribute these libraries as you see fit. NO WARRANTY IS IMPLIED, USE AT YOUR OWN RISK!`
-
-While the license does not require that, attribution to the Original Authors is appreciated.
