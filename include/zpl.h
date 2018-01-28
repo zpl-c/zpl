@@ -2089,7 +2089,6 @@ int foo(void)
     ZPL_DEF char const *zpl_path_extension    (char const *path);
     ZPL_DEF char *      zpl_path_get_full_name(zpl_allocator_t a, char const *path);
 
-
     ////////////////////////////////////////////////////////////////
     //
     // Printing
@@ -2118,7 +2117,7 @@ int foo(void)
     typedef void (*zpl_dll_proc_t)(void);
 
     ZPL_DEF zpl_dll_handle_t zpl_dll_load        (char const *filepath);
-    ZPL_DEF void        zpl_dll_unload      (zpl_dll_handle_t dll);
+    ZPL_DEF void             zpl_dll_unload      (zpl_dll_handle_t dll);
     ZPL_DEF zpl_dll_proc_t   zpl_dll_proc_address(zpl_dll_handle_t dll, char const *proc_name);
 
 
@@ -2135,7 +2134,7 @@ int foo(void)
 
 
 
-    /////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////// 
     //
     // Timer
     //
@@ -7889,3 +7888,43 @@ extern "C" {
 #endif
 
 #endif // ZPL_IMPLEMENTATION
+
+////////////////////////////////////////////////////////////////
+//
+// Code Snippets
+//
+
+/*
+
+
+#ifndef FOO_H
+#define FOO_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#if defined(FOO_IMPLEMENTATION) && !defined(FOO_IMPLEMENTATION_DONE)
+#define FOO_IMPLEMENTATION_DONE
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // FOO_IMPLEMENTATION
+#endif // FOO_H
+
+
+ */
