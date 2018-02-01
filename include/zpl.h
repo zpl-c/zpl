@@ -16,6 +16,8 @@
 
 
   Version History:
+  4.5.4 - Fixed issue when zpl_list_add would break the links
+        - when adding a new item between nodes
   4.5.3 - Fixed malformed enum values
   4.5.1 - Fixed some warnings
   4.5.0 - Added zpl_array_append_at
@@ -5585,8 +5587,13 @@ extern "C" {
     }
 
     zpl_inline zpl_list_t *zpl_list_add(zpl_list_t *list, zpl_list_t *item) {
-        list->next = item;
         item->next = NULL;
+
+        if (list->next) {
+            item->next = list->next;
+        }
+
+        list->next = item;
         item->prev = list;
         return item;
     }
