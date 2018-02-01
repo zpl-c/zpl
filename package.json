@@ -21,7 +21,7 @@
     "small"
   ],
   "author": "Dominik Madarasz <zaklaus@outlook.com> (http://madaraszd.net/)",
-  "license": "Unlicense",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/zpl-c/zpl/issues"
   },
