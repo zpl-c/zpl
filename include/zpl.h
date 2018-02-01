@@ -1564,7 +1564,10 @@ int foo(void)
 
     ZPL_DEF void        zpl_list_init  (zpl_list_t *list, void *ptr);
     ZPL_DEF zpl_list_t *zpl_list_add   (zpl_list_t *list, zpl_list_t *item);
+
+    // NOTE(zaklaus): Returns a pointer to the next node (or NULL if the removed node has no trailing node.)
     ZPL_DEF zpl_list_t *zpl_list_remove(zpl_list_t *list);
+
 
     ////////////////////////////////////////////////////////////////
     //
