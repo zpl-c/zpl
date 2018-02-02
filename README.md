@@ -10,7 +10,7 @@
 
 <br />
 <div align="center">
-  A collection of single-file public domain header-only libraries for C and C++.
+  A collection of single-file header-only libraries for C and C++.
 </div>
 
 <div align="center">
