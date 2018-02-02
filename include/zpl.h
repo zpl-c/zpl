@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5.5 - Small cosmetic changes
   4.5.4 - Fixed issue when zpl_list_add would break the links
         - when adding a new item between nodes
   4.5.3 - Fixed malformed enum values
@@ -1525,13 +1526,15 @@
     //
     // zpl_list_t encapsulates pointer to data and points to the next and the previous element in the list.
     //
-    // Available Procedures for zpl_list_t 
+    // Available Procedures for zpl_list_t
     // zpl_list_init
     // zpl_list_add
     // zpl_list_remove
 
 #if 0
-int foo(void)
+#define ZPL_IMPLEMENTATION
+#include "zpl.h"
+int main(void)
 {
     zpl_list_t s, *head, *cursor;
     zpl_list_init(&s, "it is optional to call init: ");

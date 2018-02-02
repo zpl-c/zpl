@@ -1,7 +1,3 @@
-#if 0
-    gcc -pthread -I../include -std=c99 -g "$0" -lm -ldl && ./a.out; exit
-#endif
-
 #define ZPL_IMPLEMENTATION
 #include "zpl.h"
 
