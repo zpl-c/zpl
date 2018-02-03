@@ -72,7 +72,7 @@
   1.1.0 - Added timer feature
   1.0.0 - Initial version
 
-  Copyright 2017 Dominik Madarász
+  Copyright 2017-2018 Dominik Madarász <zaklaus@outlook.com>
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
