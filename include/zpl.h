@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5.6 - Fixed zpl_time_now() for Windows and Linux
   4.5.5 - Small cosmetic changes
   4.5.4 - Fixed issue when zpl_list_add would break the links
         - when adding a new item between nodes
@@ -7440,14 +7441,16 @@ extern "C" {
         zpl_local_persist LARGE_INTEGER win32_perf_count_freq = {0};
         f64 result;
         LARGE_INTEGER counter;
+        zpl_local_persist LARGE_INTEGER win32_perf_counter = {0};
         if (!win32_perf_count_freq.QuadPart) {
             QueryPerformanceFrequency(&win32_perf_count_freq);
             ZPL_ASSERT(win32_perf_count_freq.QuadPart != 0);
+            QueryPerformanceCounter(&win32_perf_counter);
         }
 
         QueryPerformanceCounter(&counter);
 
-        result = counter.QuadPart / cast(f64)(win32_perf_count_freq.QuadPart);
+        result = (counter.QuadPart - win32_perf_count.QuadPart)  / cast(f64)(win32_perf_count_freq.QuadPart);
         return result;
     }
 
@@ -7469,6 +7472,17 @@ extern "C" {
     zpl_global f64 zpl__timebase  = 0.0;
     zpl_global u64 zpl__timestart = 0;
 
+#if defined(ZPL_SYSTEM_LINUX)
+    f64 zpl__unix_get_time(void) {
+        struct timespec t;
+        f64 result;
+
+        clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
+        result = t.tv_sec + 1.0e-9 * t.tv_nsec;
+        return result;
+    }
+#endif
+
     zpl_inline f64 zpl_time_now(void) {
 #if defined(ZPL_SYSTEM_OSX)
         f64 result;
@@ -7485,13 +7499,15 @@ extern "C" {
         result = 1.0e-9 * (mach_absolute_time() - zpl__timestart) * zpl__timebase;
         return result;
 #else
-        struct timespec t;
-        f64 result;
+        zpl_local_persist f64 unix_timestart = 0.0;
 
-        // IMPORTANT TODO: THIS IS A HACK
-        clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
-        result = t.tv_sec + 1.0e-9 * t.tv_nsec;
-        return result;
+        if (!unix_timestart) {
+            unix_timestart = zpl__unix_get_time();
+        }
+
+        f64 now = zpl__unix_get_time();
+
+        return (now - unix_timestart);
 #endif
     }
 
