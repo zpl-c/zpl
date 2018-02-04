@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5.7 - Fixed timer loops. zpl_time* related functions work with seconds now
   4.5.6 - Fixed zpl_time_now() for Windows and Linux
   4.5.5 - Small cosmetic changes
   4.5.4 - Fixed issue when zpl_list_add would break the links
@@ -78,9 +79,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -755,6 +756,12 @@
     ZPL_DEF void const *zpl_pointer_add_const(void const *ptr, isize bytes);
     ZPL_DEF void const *zpl_pointer_sub_const(void const *ptr, isize bytes);
     ZPL_DEF isize       zpl_pointer_diff     (void const *begin, void const *end);
+
+#define zpl_ptr_add       zpl_pointer_add
+#define zpl_ptr_sub       zpl_pointer_sub
+#define zpl_ptr_add_const zpl_pointer_add_const
+#define zpl_ptr_sub_const zpl_pointer_sub_const
+#define zpl_ptr_diff      zpl_pointer_diff
 
 
     ZPL_DEF void zpl_zero_size(void *ptr, isize size);
@@ -2139,7 +2146,7 @@ int main(void)
 
     ZPL_DEF u64  zpl_rdtsc       (void);
     ZPL_DEF f64  zpl_time_now    (void); // NOTE: This is only for relative time e.g. game loops
-    ZPL_DEF u64  zpl_utc_time_now(void); // NOTE: Number of microseconds since 1601-01-01 UTC
+    ZPL_DEF f64  zpl_utc_time_now(void); // NOTE: Number of microseconds since 1601-01-01 UTC
     ZPL_DEF void zpl_sleep_ms    (u32 ms);
 
 
@@ -2158,8 +2165,8 @@ int main(void)
         b32           enabled;
         i32           remaining_calls;
         i32           initial_calls;
-        u64           next_call_ts;
-        u64           duration;
+        f64           next_call_ts;
+        f64           duration;
         void         *user_data;
     } zpl_timer_t;
 
@@ -2168,8 +2175,8 @@ int main(void)
     ZPL_DEF zpl_timer_t *zpl_timer_add(zpl_timer_pool pool);
     ZPL_DEF void         zpl_timer_update(zpl_timer_pool pool);
 
-    ZPL_DEF void         zpl_timer_set(zpl_timer_t *timer, u64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count, zpl_timer_cb *callback);
-    ZPL_DEF void         zpl_timer_start(zpl_timer_t *timer, u64 delay_start);
+    ZPL_DEF void         zpl_timer_set(zpl_timer_t *timer, f64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count, zpl_timer_cb *callback);
+    ZPL_DEF void         zpl_timer_start(zpl_timer_t *timer, f64 delay_start);
     ZPL_DEF void         zpl_timer_stop(zpl_timer_t *timer);
 
     ////////////////////////////////////////////////////////////////
@@ -7454,7 +7461,7 @@ extern "C" {
         return result;
     }
 
-    zpl_inline u64 zpl_utc_time_now(void) {
+    zpl_inline f64 zpl_utc_time_now(void) {
         FILETIME ft;
         ULARGE_INTEGER li;
 
@@ -7462,7 +7469,7 @@ extern "C" {
         li.LowPart = ft.dwLowDateTime;
         li.HighPart = ft.dwHighDateTime;
 
-        return li.QuadPart/10;
+        return li.QuadPart/10 / 10e5;
     }
 
     zpl_inline void zpl_sleep_ms(u32 ms) { Sleep(ms); }
@@ -7511,7 +7518,7 @@ extern "C" {
 #endif
     }
 
-    zpl_inline u64 zpl_utc_time_now(void) {
+    zpl_inline f64 zpl_utc_time_now(void) {
         struct timespec t;
 #if defined(ZPL_SYSTEM_OSX)
         clock_serv_t cclock;
@@ -7522,10 +7529,9 @@ extern "C" {
         t.tv_sec = mts.tv_sec;
         t.tv_nsec = mts.tv_nsec;
 #else
-        // IMPORTANT TODO: THIS IS A HACK
         clock_gettime(0 /*CLOCK_REALTIME*/, &t);
 #endif
-        return cast(u64)t.tv_sec * 1000000ull + t.tv_nsec/1000 + 11644473600000000ull;
+        return (cast(u64)t.tv_sec * 1000000ull + t.tv_nsec/1000 + 11644473600000000ull) / 10e5;
     }
 
     zpl_inline void zpl_sleep_ms(u32 ms) {
@@ -7551,7 +7557,7 @@ extern "C" {
         return pool + (zpl_array_count(pool) - 1);
     }
 
-    zpl_inline void zpl_timer_set(zpl_timer_t *t, u64 duration, i32 count, zpl_timer_cb *cb) {
+    zpl_inline void zpl_timer_set(zpl_timer_t *t, f64 duration, i32 count, zpl_timer_cb *cb) {
         ZPL_ASSERT(t);
 
         t->duration        = duration;
@@ -7560,12 +7566,12 @@ extern "C" {
         t->enabled         = false;
     }
 
-    zpl_inline void zpl_timer_start(zpl_timer_t *t, u64 delay_start) {
+    zpl_inline void zpl_timer_start(zpl_timer_t *t, f64 delay_start) {
         ZPL_ASSERT(t && !t->enabled);
 
         t->enabled = true;
         t->remaining_calls = t->initial_calls;
-        t->next_call_ts = zpl_utc_time_now() + delay_start;
+        t->next_call_ts = zpl_time_now() + delay_start;
     }
 
     zpl_inline void zpl_timer_stop(zpl_timer_t *t) {
@@ -7577,7 +7583,7 @@ extern "C" {
     zpl_inline void zpl_timer_update(zpl_timer_pool pool) {
         ZPL_ASSERT(pool);
 
-        u64 now = zpl_utc_time_now();
+        f64 now = zpl_time_now();
 
         for (isize i = 0; i < zpl_array_count(pool); ++i) {
             zpl_timer_t *t = pool + i;
