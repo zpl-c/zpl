@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5,9 - Error fixes
   4.5.8 - Warning fixes
   4.5.7 - Fixed timer loops. zpl_time* related functions work with seconds now
   4.5.6 - Fixed zpl_time_now() for Windows and Linux
@@ -3733,7 +3734,10 @@ extern "C" {
         zpl_unused(a);
     }
 
-    b32 zpl_affinity_set(zpl_affinity_t * /*a*/, isize /*core*/, isize /*thread_index*/) {
+    b32 zpl_affinity_set(zpl_affinity_t * a, isize core, isize thread_index) {
+        zpl_unused(a);
+        zpl_unused(core);
+        zpl_unused(thread_index);
         return true;
     }
 
@@ -6719,7 +6723,8 @@ extern "C" {
     }
 
 
-    zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 /*fail_if_exists*/) {
+    zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
+        zpl_unused(fail_if_exists);
 #if defined(ZPL_SYSTEM_OSX)
         return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
 #else
