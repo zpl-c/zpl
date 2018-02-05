@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.5.8 - Warning fixes
   4.5.7 - Fixed timer loops. zpl_time* related functions work with seconds now
   4.5.6 - Fixed zpl_time_now() for Windows and Linux
   4.5.5 - Small cosmetic changes
@@ -2279,6 +2280,7 @@ extern "C" {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
 #if defined(_MSC_VER)
@@ -3731,7 +3733,7 @@ extern "C" {
         zpl_unused(a);
     }
 
-    b32 zpl_affinity_set(zpl_affinity_t *a, isize core, isize thread_index) {
+    b32 zpl_affinity_set(zpl_affinity_t * /*a*/, isize /*core*/, isize /*thread_index*/) {
         return true;
     }
 
@@ -6218,6 +6220,7 @@ extern "C" {
     }
 
     zpl_internal ZPL_FILE_READ_AT_PROC(zpl__posix_file_read) {
+        zpl_unused(stop_at_newline);
         isize res = pread(fd.i, buffer, size, offset);
         if (res < 0) return false;
         if (bytes_read) *bytes_read = res;
@@ -6716,7 +6719,7 @@ extern "C" {
     }
 
 
-    zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
+    zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 /*fail_if_exists*/) {
 #if defined(ZPL_SYSTEM_OSX)
         return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
 #else
@@ -7476,9 +7479,6 @@ extern "C" {
 
 #else
 
-    zpl_global f64 zpl__timebase  = 0.0;
-    zpl_global u64 zpl__timestart = 0;
-
 #if defined(ZPL_SYSTEM_LINUX)
     f64 zpl__unix_get_time(void) {
         struct timespec t;
@@ -7494,16 +7494,19 @@ extern "C" {
 #if defined(ZPL_SYSTEM_OSX)
         f64 result;
 
-        if (!zpl__timestart) {
+        zpl_local_persist f64 timebase  = 0.0;
+        zpl_local_persist u64 timestart = 0;
+
+        if (!timestart) {
             mach_timebase_info_data_t tb = {0};
             mach_timebase_info(&tb);
-            zpl__timebase = tb.numer;
-            zpl__timebase /= tb.denom;
-            zpl__timestart = mach_absolute_time();
+            timebase = tb.numer;
+            timebase /= tb.denom;
+            timestart = mach_absolute_time();
         }
 
         // NOTE: mach_absolute_time() returns things in nanoseconds
-        result = 1.0e-9 * (mach_absolute_time() - zpl__timestart) * zpl__timebase;
+        result = 1.0e-9 * (mach_absolute_time() - timestart) * timebase;
         return result;
 #else
         zpl_local_persist f64 unix_timestart = 0.0;
@@ -7896,7 +7899,6 @@ extern "C" {
         if(!handle) return 0;
 
         char c;
-        usize i=0;
         while ((c = getc(handle)) != EOF) {
             zpl_array_append(*str, c);
         }
