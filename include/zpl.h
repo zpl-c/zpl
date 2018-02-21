@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.6.1 - zpl_memcopy x86 patch from upstream
   4.6.0 - Added few string-related functions
   4.5.9 - Error fixes
   4.5.8 - Warning fixes
@@ -2477,12 +2478,15 @@ extern "C" {
                 *d++ = *s++; *d++ = *s++; *d++ = *s++; *d++ = *s++;
                 *d++ = *s++; *d++ = *s++; *d++ = *s++; *d++ = *s++;
             }
-            if (n & 4)
+            if (n & 4) {
                 *d++ = *s++; *d++ = *s++; *d++ = *s++; *d++ = *s++;
-            if (n & 2)
+            }
+            if (n & 2) {
                 *d++ = *s++; *d++ = *s++;
-            if (n & 1)
+            }
+            if (n & 1) {
                 *d = *s;
+            }
         }
 
 #endif
