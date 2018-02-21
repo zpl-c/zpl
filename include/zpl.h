@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.6.0 - Added few string-related functions
   4.5.9 - Error fixes
   4.5.8 - Warning fixes
   4.5.7 - Fixed timer loops. zpl_time* related functions work with seconds now
@@ -1307,7 +1308,10 @@
     ZPL_DEF isize zpl_strlcpy(char *dest, char const *source, isize len);
     ZPL_DEF char *zpl_strrev (char *str); // NOTE: ASCII only
 
-    ZPL_DEF char const *zpl_strtok(char *output, char const *src, char const *delimit);
+    ZPL_DEF char const *zpl_strtok         (char *output, char const *src, char const *delimit);
+
+    // NOTE: This edits *source* string.
+    ZPL_DEF char      **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace);
 
     ZPL_DEF b32 zpl_str_has_prefix(char const *str, char const *prefix);
     ZPL_DEF b32 zpl_str_has_suffix(char const *str, char const *suffix);
@@ -2083,6 +2087,9 @@ int main(void)
 
 
     ZPL_DEF zpl_file_contents_t zpl_file_read_contents(zpl_allocator_t a, b32 zero_terminate, char const *filepath);
+
+    // NOTE: Make sure you free both the returned buffer and the lines (zpl_array_t)
+    ZPL_DEF char *              zpl_file_read_lines   (zpl_allocator_t alloc, char ***lines, char const *filename, b32 strip_whitespace);
     ZPL_DEF void           zpl_file_free_contents(zpl_file_contents_t *fc);
 
 
@@ -4840,6 +4847,24 @@ extern "C" {
         return *src ? src+1 : src;
     }
 
+    zpl_inline char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace)
+    {
+        char **lines=NULL, *p=source, *pd=p, *end=(source+len);
+        zpl_array_init(lines, alloc);
+
+        for (; p < end && *p ;) {
+            if (*pd == '\n') {
+                *pd=0;
+                if (*(pd-1) == '\r') *(pd-1)=0;
+                if (strip_whitespace && (pd-p)==0) { p=pd+1; continue; }
+                zpl_array_append(lines, p);
+                p=pd+1;
+            }
+            ++pd;
+        }
+        return lines;
+    }
+
     zpl_inline b32 zpl_str_has_prefix(char const *str, char const *prefix) {
         while (*prefix) {
             if (*str++ != *prefix++)
@@ -6786,6 +6811,21 @@ extern "C" {
         }
 
         return result;
+    }
+
+    char *zpl_file_read_lines(zpl_allocator_t alloc, char ***lines, char const *filename, b32 strip_whitespace)
+    {
+        zpl_file_t f = {};
+        zpl_file_open(&f, filename);
+        i64 fsize = zpl_file_size(&f);
+
+        char *contents = (char *)zpl_alloc(alloc, fsize+1);
+        zpl_file_read(&f, contents, fsize);
+        contents[fsize]=0;
+        *lines=zpl_str_split_lines(alloc, contents, fsize, strip_whitespace);
+        zpl_file_close(&f);
+
+        return contents;
     }
 
     void zpl_file_free_contents(zpl_file_contents_t *fc) {
