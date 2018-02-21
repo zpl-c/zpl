@@ -16,7 +16,7 @@
 
 
   Version History:
-  4.5,9 - Error fixes
+  4.5.9 - Error fixes
   4.5.8 - Warning fixes
   4.5.7 - Fixed timer loops. zpl_time* related functions work with seconds now
   4.5.6 - Fixed zpl_time_now() for Windows and Linux
