@@ -61,7 +61,7 @@ extern "C" {
     // TODO(ZaKlaus): INFINITY, NAN
     #include <math.h>
 
-    typedef enum zplj_type_e {
+    typedef enum zpljType {
         ZPLJ_TYPE_OBJECT,
         ZPLJ_TYPE_STRING,
         ZPLJ_TYPE_MULTISTRING,
@@ -69,32 +69,32 @@ extern "C" {
         ZPLJ_TYPE_INTEGER,
         ZPLJ_TYPE_REAL,
         ZPLJ_TYPE_CONSTANT
-    } zplj_type_e;
+    } zpljType;
 
-    typedef enum zplj_props_e {
+    typedef enum zpljProps {
         ZPLJ_PROPS_NONE     = 0,
         ZPLJ_PROPS_NAN      = (1 << 0),
         ZPLJ_PROPS_INFINITY = (1 << 1),
-    } zplj_props_e;
+    } zpljProps;
 
-    typedef enum zplj_const_e {
+    typedef enum zpljConst {
         ZPLJ_CONST_NULL,
         ZPLJ_CONST_FALSE,
         ZPLJ_CONST_TRUE,
-    } zplj_const_e;
+    } zpljConst;
 
     // TODO(ZaKlaus): Error handling
-    typedef enum zplj_error_e {
+    typedef enum zpljError {
         ZPLJ_ERROR_NONE,
         ZPLJ_ERROR_INVALID_NAME,
         ZPLJ_ERROR_INVALID_VALUE,
-    } zplj_error_e;
+    } zpljError;
 
-    typedef enum zplj_name_style_e {
+    typedef enum zpljNameStyle {
         ZPLJ_NAME_STYLE_DOUBLE_QUOTE,
         ZPLJ_NAME_STYLE_SINGLE_QUOTE,
         ZPLJ_NAME_STYLE_NO_QUOTES,
-    } zplj_name_style_e;
+    } zpljNameStyle;
 
     typedef struct zplj_object_t {
         zpl_allocator_t backing;
