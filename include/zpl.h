@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.7.0 - Added zpl_path_dirlist
   4.6.1 - zpl_memcopy x86 patch from upstream
   4.6.0 - Added few string-related functions
   4.5.9 - Error fixes
@@ -312,6 +313,7 @@
   #include <sys/types.h>
   #include <time.h>
   #include <unistd.h>
+  #include <dirent.h>
 
   #if !defined(ZPL_SYSTEM_ANDROID)
     #include <spawn.h>
@@ -1309,10 +1311,11 @@
     ZPL_DEF isize zpl_strlcpy(char *dest, char const *source, isize len);
     ZPL_DEF char *zpl_strrev (char *str); // NOTE: ASCII only
 
-    ZPL_DEF char const *zpl_strtok         (char *output, char const *src, char const *delimit);
+    ZPL_DEF char const *zpl_strtok(char *output, char const *src, char const *delimit);
 
     // NOTE: This edits *source* string.
-    ZPL_DEF char      **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace);
+    // Returns: zpl_array_t
+    ZPL_DEF char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace);
 
     ZPL_DEF b32 zpl_str_has_prefix(char const *str, char const *prefix);
     ZPL_DEF b32 zpl_str_has_suffix(char const *str, char const *suffix);
@@ -2088,10 +2091,10 @@ int main(void)
 
 
     ZPL_DEF zpl_file_contents_t zpl_file_read_contents(zpl_allocator_t a, b32 zero_terminate, char const *filepath);
+    ZPL_DEF void                zpl_file_free_contents(zpl_file_contents_t *fc);
 
     // NOTE: Make sure you free both the returned buffer and the lines (zpl_array_t)
-    ZPL_DEF char *              zpl_file_read_lines   (zpl_allocator_t alloc, char ***lines, char const *filename, b32 strip_whitespace);
-    ZPL_DEF void           zpl_file_free_contents(zpl_file_contents_t *fc);
+    ZPL_DEF char *zpl_file_read_lines   (zpl_allocator_t alloc, zpl_array_t(char *) *lines, char const *filename, b32 strip_whitespace);
 
 
     // TODO: Should these have different names as they do not take in a zpl_file_t * ???
@@ -2115,6 +2118,9 @@ int main(void)
     ZPL_DEF char const *zpl_path_base_name    (char const *path);
     ZPL_DEF char const *zpl_path_extension    (char const *path);
     ZPL_DEF char *      zpl_path_get_full_name(zpl_allocator_t a, char const *path);
+
+    // NOTE: Returns file paths terminated by newline (\n)
+    zpl_string_t zpl_path_dirlist(zpl_allocator_t alloc, char const *dirname, b32 recurse);
 
     ////////////////////////////////////////////////////////////////
     //
@@ -6946,6 +6952,46 @@ extern "C" {
     }
 
 
+    void zpl__file_direntry(zpl_allocator_t alloc, char const *dirname, zpl_string_t *output, b32 recurse)
+    {
+#ifdef ZPL_SYSTEM_UNIX
+        DIR *d, *cd;
+        struct dirent *dir;
+        d = opendir(dirname);
+
+        if (d) {
+            while ((dir = readdir(d))) {
+                if (!zpl_strncmp(dir->d_name, "..", 2)) continue;
+                if (dir->d_name[0]=='.' && dir->d_name[1]==0) continue;
+
+                zpl_string_t dirpath=zpl_string_make(alloc, dirname);
+                dirpath=zpl_string_appendc(dirpath, "/");
+                dirpath=zpl_string_appendc(dirpath, dir->d_name);
+
+                if ((cd = opendir(dirpath)) == NULL) {
+                    *output=zpl_string_appendc(*output, dirpath);
+                    *output=zpl_string_appendc(*output, "\n");
+                }
+
+                if (recurse) {
+                    zpl__file_direntry(alloc, dirpath, output, recurse);
+                }
+                zpl_string_free(dirpath);
+            }
+        }
+#else
+        // TODO: Implement other OSes
+#endif
+    }
+
+    zpl_string_t zpl_path_dirlist(zpl_allocator_t alloc, char const *dirname, b32 recurse)
+    {
+        zpl_string_t buf=zpl_string_make_reserve(alloc, 4);
+
+        zpl__file_direntry(alloc, dirname, &buf, recurse);
+
+        return buf;
+    }
 
 
 
