@@ -24,7 +24,7 @@ main(void) {
     // NOTE(ZaKlaus): List them
     zpl_printf("Before removal:\n");
     for (i32 i = 0; i < 5; ++i) {
-        zpl_printf("Value: %lld\n", arr[i]);
+        zpl_printf("Value: %d\n", arr[i]);
     }
     
     // NOTE(ZaKlaus): Pop 2 values
@@ -34,7 +34,7 @@ main(void) {
     // NOTE(ZaKlaus): List them again
     zpl_printf("\nAfter removal:\n");
     for (i32 i = 0; i < 3; ++i) {
-        zpl_printf("Value: %lld\n", arr[i]);
+        zpl_printf("Value: %d\n", arr[i]);
     }
     
     // NOTE(ZaKlaus): Clear the array out
