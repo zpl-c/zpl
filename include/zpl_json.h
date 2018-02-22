@@ -12,6 +12,8 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
 
 Version History:
+    3.0.0 - API changes
+
     2.0.9 - zpl 4.0.0 support
     2.0.8 - Small cleanup in README and test file
     2.0.7 - Small fixes for tiny cpp warnings
@@ -60,32 +62,38 @@ extern "C" {
     #include <math.h>
 
     typedef enum zplj_type_e {
-        zplj_type_object_ev,
-        zplj_type_string_ev,
-        zplj_type_multistring_ev,
-        zplj_type_array_ev,
-        zplj_type_integer_ev,
-        zplj_type_real_ev,
-        zplj_type_constant_ev
+        ZPLJ_TYPE_OBJECT,
+        ZPLJ_TYPE_STRING,
+        ZPLJ_TYPE_MULTISTRING,
+        ZPLJ_TYPE_ARRAY,
+        ZPLJ_TYPE_INTEGER,
+        ZPLJ_TYPE_REAL,
+        ZPLJ_TYPE_CONSTANT
     } zplj_type_e;
 
-    typedef enum zplj_constant_e {
-        zplj_constant_null_ev,
-        zplj_constant_false_ev,
-        zplj_constant_true_ev,
-    } zplj_constant_e;
+    typedef enum zplj_props_e {
+        ZPLJ_PROPS_NONE     = 0,
+        ZPLJ_PROPS_NAN      = (1 << 0),
+        ZPLJ_PROPS_INFINITY = (1 << 1),
+    } zplj_props_e;
+
+    typedef enum zplj_const_e {
+        ZPLJ_CONST_NULL,
+        ZPLJ_CONST_FALSE,
+        ZPLJ_CONST_TRUE,
+    } zplj_const_e;
 
     // TODO(ZaKlaus): Error handling
     typedef enum zplj_error_e {
-        zplj_error_none_ev,
-        zplj_error_invalid_name_ev,
-        zplj_error_invalid_value_ev,
+        ZPLJ_ERROR_NONE,
+        ZPLJ_ERROR_INVALID_NAME,
+        ZPLJ_ERROR_INVALID_VALUE,
     } zplj_error_e;
 
     typedef enum zplj_name_style_e {
-        zplj_name_style_double_quote_ev,
-        zplj_name_style_single_quote_ev,
-        zplj_name_style_no_quotes_ev,
+        ZPLJ_NAME_STYLE_DOUBLE_QUOTE,
+        ZPLJ_NAME_STYLE_SINGLE_QUOTE,
+        ZPLJ_NAME_STYLE_NO_QUOTES,
     } zplj_name_style_e;
 
     typedef struct zplj_object_t {
@@ -93,6 +101,7 @@ extern "C" {
         u8    name_style;
         char *name;
         u8    type;
+        u8    props;
         zpl_array_t(struct zplj_object_t) nodes;
 
         union {
@@ -196,22 +205,22 @@ extern "C" {
             }
         }
 
-        if (err_code) *err_code = zplj_error_none_ev;
-        zplj_object_t root_ = {0};
+        if (err_code) *err_code = ZPLJ_ERROR_NONE;
+        zplj_object_t root_ = {};
         zplj__parse_object(&root_, dest, a, err_code);
 
         *root = root_;
     }
 
     void zplj_free(zplj_object_t *obj) {
-        /**/ if (obj->type == zplj_type_array_ev && obj->elements) {
+        /**/ if (obj->type == ZPLJ_TYPE_ARRAY && obj->elements) {
             for (isize i = 0; i < zpl_array_count(obj->elements); ++i) {
                 zplj_free(obj->elements+i);
             }
 
             zpl_array_free(obj->elements);
         }
-        else if (obj->type == zplj_type_object_ev && obj->nodes) {
+        else if (obj->type == ZPLJ_TYPE_OBJECT && obj->nodes) {
             for (isize i = 0; i < zpl_array_count(obj->nodes); ++i) {
                 zplj_free(obj->nodes+i);
             }
@@ -224,17 +233,17 @@ extern "C" {
         ZPL_ASSERT(obj && base);
         char *p = base;
 
-        obj->type = zplj_type_array_ev;
+        obj->type = ZPLJ_TYPE_ARRAY;
         zpl_array_init(obj->elements, a);
         obj->backing = a;
 
         while(*p) {
             p = zplj__trim(p);
 
-            zplj_object_t elem = {0};
+            zplj_object_t elem = {};
             p = zplj__parse_value(&elem, p, a, err_code);
 
-            if (err_code && *err_code != zplj_error_none_ev) {
+            if (err_code && *err_code != ZPLJ_ERROR_NONE) {
                 return NULL;
             }
 
@@ -261,7 +270,7 @@ extern "C" {
 
         /**/ if (*p == '"' || *p == '\'') {
             char c = *p;
-            obj->type = zplj_type_string_ev;
+            obj->type = ZPLJ_TYPE_STRING;
             b = p+1;
             e = b;
             obj->string = b;
@@ -286,7 +295,7 @@ extern "C" {
             p = e+1;
         }
         else if (*p == '`') {
-            obj->type = zplj_type_multistring_ev;
+            obj->type = ZPLJ_TYPE_MULTISTRING;
             b = p+1;
             e = b;
             obj->string = b;
@@ -307,55 +316,59 @@ extern "C" {
             p = e+1;
         }
         else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*p))) {
-            obj->type = zplj_type_constant_ev;
+            obj->type = ZPLJ_TYPE_CONSTANT;
 
             /**/ if (!zpl_strncmp(p, "true", 4)) {
-                obj->constant = zplj_constant_true_ev;
+                obj->constant = ZPLJ_CONST_TRUE;
                 p += 4;
             }
             else if (!zpl_strncmp(p, "false", 5)) {
-                obj->constant = zplj_constant_false_ev;
+                obj->constant = ZPLJ_CONST_FALSE;
                 p += 5;
             }
             else if (!zpl_strncmp(p, "null", 4)) {
-                obj->constant = zplj_constant_null_ev;
+                obj->constant = ZPLJ_CONST_NULL;
                 p += 4;
             }
             else if (!zpl_strncmp(p, "Infinity", 8)) {
-                obj->type = zplj_type_real_ev;
+                obj->type = ZPLJ_TYPE_REAL;
                 obj->real = INFINITY;
+                obj->props= ZPLJ_PROPS_INFINITY;
                 p += 8;
             }
             else if (!zpl_strncmp(p, "-Infinity", 9)) {
-                obj->type = zplj_type_real_ev;
+                obj->type = ZPLJ_TYPE_REAL;
                 obj->real = -INFINITY;
+                obj->props= ZPLJ_PROPS_INFINITY;
                 p += 9;
             }
             else if (!zpl_strncmp(p, "NaN", 3)) {
-                obj->type = zplj_type_real_ev;
+                obj->type = ZPLJ_TYPE_REAL;
                 obj->real = NAN;
+                obj->props= ZPLJ_PROPS_NAN;
                 p += 3;
             }
             else if (!zpl_strncmp(p, "-NaN", 4)) {
-                obj->type = zplj_type_real_ev;
+                obj->type = ZPLJ_TYPE_REAL;
                 obj->real = -NAN;
+                obj->props= ZPLJ_PROPS_NAN;
                 p += 4;
             }
             else {
-                ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_value_ev;
+                ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_VALUE;
                 return NULL;
             }
         }
         else if (zpl_char_is_digit(*p) ||
                  *p == '+' || *p == '-' ||
                  *p == '.') {
-            obj->type = zplj_type_integer_ev;
+            obj->type = ZPLJ_TYPE_INTEGER;
 
             b = p;
             e = b;
 
             isize ib = 0;
-            char buf[16] = {0};
+            char buf[16] = {};
 
             /**/ if (*e == '+') ++e;
             else if (*e == '-') {
@@ -363,7 +376,7 @@ extern "C" {
             }
 
             if (*e == '.') {
-                obj->type = zplj_type_real_ev;
+                obj->type = ZPLJ_TYPE_REAL;
                 buf[ib++] = '0';
 
                 do {
@@ -378,7 +391,7 @@ extern "C" {
                 }
 
                 if (*e == '.') {
-                    obj->type = zplj_type_real_ev;
+                    obj->type = ZPLJ_TYPE_REAL;
                     u32 step = 0;
 
                     do {
@@ -394,7 +407,7 @@ extern "C" {
             }
 
             i64 exp = 0; f32 eb = 10;
-            char expbuf[6] = {0};
+            char expbuf[6] = {};
             isize expi = 0;
 
             if (*e == 'e' || *e == 'E') {
@@ -418,11 +431,11 @@ extern "C" {
             }
 
             if (*e == '\0') {
-                ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_value_ev;
+                ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_VALUE;
             }
 
             // NOTE(ZaKlaus): @enhance
-            if (obj->type == zplj_type_integer_ev) {
+            if (obj->type == ZPLJ_TYPE_INTEGER) {
                 obj->integer = zpl_str_to_i64(buf, 0, 0);
 
                 while(--exp > 0) {
@@ -443,7 +456,7 @@ extern "C" {
             if (*p == ']') return p;
             p = zplj__parse_array(obj, p, a, err_code);
 
-            if (err_code && *err_code != zplj_error_none_ev) {
+            if (err_code && *err_code != ZPLJ_ERROR_NONE) {
                 return NULL;
             }
 
@@ -453,7 +466,7 @@ extern "C" {
             p = zplj__trim(p+1);
             p = zplj__parse_object(obj, p, a, err_code);
 
-            if (err_code && *err_code != zplj_error_none_ev) {
+            if (err_code && *err_code != ZPLJ_ERROR_NONE) {
                 return NULL;
             }
 
@@ -476,16 +489,16 @@ extern "C" {
         if (*p == '{') p++;
 
         while(*p) {
-            zplj_object_t node = {0};
+            zplj_object_t node = {};
             p = zplj__trim(p);
             if (*p == '}') return p;
 
             if (*p == '"' || *p == '\'') {
                 if (*p == '"') {
-                    node.name_style = zplj_name_style_double_quote_ev;
+                    node.name_style = ZPLJ_NAME_STYLE_DOUBLE_QUOTE;
                 }
                 else {
-                    node.name_style = zplj_name_style_single_quote_ev;
+                    node.name_style = ZPLJ_NAME_STYLE_SINGLE_QUOTE;
                 }
 
                 char c = *p;
@@ -498,7 +511,7 @@ extern "C" {
                 p = zplj__trim(p);
 
                 if (*p && *p != ':') {
-                    ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_name_ev;
+                    ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_NAME;
                     return NULL;
                 }
             }
@@ -532,27 +545,27 @@ extern "C" {
                         p = e;
 
                         if (*p && *p != ':') {
-                            ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_name_ev;
+                            ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_NAME;
                             return NULL;
                         }
                     }
 
                     *e = '\0';
                     node.name = b;
-                    node.name_style = zplj_name_style_no_quotes_ev;
+                    node.name_style = ZPLJ_NAME_STYLE_NO_QUOTES;
                 }
             }
 
             char errc;
             if (!zplj__validate_name(node.name, &errc)) {
-                ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_name_ev;
+                ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_NAME;
                 return NULL;
             }
 
             p = zplj__trim(p+1);
             p = zplj__parse_value(&node, p, a, err_code);
 
-            if (err_code && *err_code != zplj_error_none_ev) {
+            if (err_code && *err_code != ZPLJ_ERROR_NONE) {
                 return NULL;
             }
 
@@ -570,7 +583,7 @@ extern "C" {
                 return p;
             }
             else {
-                ZPLJ_ASSERT; if (err_code) *err_code = zplj_error_invalid_value_ev;
+                ZPLJ_ASSERT; if (err_code) *err_code = ZPLJ_ERROR_INVALID_VALUE;
                 return NULL;
             }
         }

@@ -14,16 +14,16 @@ int main(void) {
     zpl_file_t file;
     zpl_file_open(&file, "jeopardy.json");
     isize file_size = zpl_file_size(&file);
-    char *content = zpl_malloc(file_size+1);
+    char *content = (char *)zpl_malloc(file_size+1);
     zpl_file_read(&file, content, file_size);
     content[file_size] = 0;
     zpl_file_close(&file);
 
 
-    zplj_object_t root = {0};
+    zplj_object_t root = {};
 
     f64 time = zpl_time_now();
-    zplj_parse(&root, file_size, content, zpl_heap_allocator(), false, NULL);
+    zplj_parse(&root, file_size, content, zpl_heap(), false, NULL);
     f64 delta = zpl_time_now() - time;
 
     printf("Delta: %fms\n", delta*1000);
