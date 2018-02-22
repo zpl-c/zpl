@@ -7,10 +7,10 @@ int
 main(void) {
     
     // NOTE(ZaKlaus): Create stack memory
-    zpl_stack_memory_t stack = {0};
+    zpl_stack_memory stack = {0};
     zpl_stack_memory_init(&stack, zpl_heap_allocator(), 2);
     
-    zpl_allocator_t stack_alloc = zpl_stack_allocator(&stack);
+    zpl_allocator stack_alloc = zpl_stack_allocator(&stack);
     
     // NOTE(ZaKlaus): Create array container
     zpl_array(u32) arr;
