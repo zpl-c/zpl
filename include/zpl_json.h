@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+    3.0.1 - Updated constant value parsing
     3.0.0 - API changes
 
     2.0.9 - zpl 4.0.0 support
@@ -75,9 +76,11 @@ extern "C" {
     } zpljType;
 
     typedef enum zpljProps {
-        ZPLJ_PROPS_NONE     = 0,
-        ZPLJ_PROPS_NAN      = (1 << 0),
-        ZPLJ_PROPS_INFINITY = (1 << 1),
+        ZPLJ_PROPS_NONE         = 0,
+        ZPLJ_PROPS_NAN          = (1 << 0),
+        ZPLJ_PROPS_NAN_NEG      = (1 << 1),
+        ZPLJ_PROPS_INFINITY     = (1 << 2),
+        ZPLJ_PROPS_INFINITY_NEG = (1 << 3),
     } zpljProps;
 
     typedef enum zpljConst {
@@ -319,7 +322,7 @@ extern "C" {
             *e = '\0';
             p = e+1;
         }
-        else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*p))) {
+        else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*(p+1)))) {
             obj->type = ZPLJ_TYPE_CONSTANT;
 
             /**/ if (!zpl_strncmp(p, "true", 4)) {
@@ -343,7 +346,7 @@ extern "C" {
             else if (!zpl_strncmp(p, "-Infinity", 9)) {
                 obj->type = ZPLJ_TYPE_REAL;
                 obj->real = -INFINITY;
-                obj->props= ZPLJ_PROPS_INFINITY;
+                obj->props= ZPLJ_PROPS_INFINITY_NEG;
                 p += 9;
             }
             else if (!zpl_strncmp(p, "NaN", 3)) {
@@ -355,7 +358,7 @@ extern "C" {
             else if (!zpl_strncmp(p, "-NaN", 4)) {
                 obj->type = ZPLJ_TYPE_REAL;
                 obj->real = -NAN;
-                obj->props= ZPLJ_PROPS_NAN;
+                obj->props= ZPLJ_PROPS_NAN_NEG;
                 p += 4;
             }
             else {

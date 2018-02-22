@@ -58,10 +58,16 @@ void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
 
         case ZPLJ_TYPE_REAL: {
             /**/ if (node->props & ZPLJ_PROPS_NAN) {
-                zpl_printf("NAN");
+                zpl_printf("NaN");
+            }
+            else if (node->props & ZPLJ_PROPS_NAN_NEG) {
+                zpl_printf("-NaN");
             }
             else if (node->props & ZPLJ_PROPS_INFINITY) {
-                zpl_printf("INFINITY");
+                zpl_printf("Infinity");
+            }
+            else if (node->props & ZPLJ_PROPS_INFINITY_NEG) {
+                zpl_printf("-Infinity");
             }
             else {
                 zpl_printf("%.3lf", node->real);
