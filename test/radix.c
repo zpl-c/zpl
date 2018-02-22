@@ -6,14 +6,15 @@
 int
 main(void) {
    
+#define ARRAY_SIZE 4096*8
     // NOTE(ZaKlaus): Define a storage for our numbers and the temporary buffer.
-    u32 nums[4096*8] = {0};
-    u32 temp[4096*8] = {0};
+    u32 nums[ARRAY_SIZE] = {0};
+    u32 temp[ARRAY_SIZE] = {0};
     
     // NOTE(ZaKlaus): Initialize random seed.
     // and generate random values.
     zpl_random_t r; zpl_random_init(&r);
-    for (int i = 0; i < 4096*8; ++i) {
+    for (int i = 0; i < ARRAY_SIZE; ++i) {
         nums[i] = zpl_random_gen_u32_unique(&r);
     }
     
@@ -24,7 +25,7 @@ main(void) {
     }
     
     // NOTE(ZaKlaus): Use radix sort on our numbers and print them out again.
-    zpl_radix_sort_u32(nums, temp, 4096*8);
+    zpl_radix_sort_u32(nums, temp, ARRAY_SIZE);
     
     zpl_printf("\n\nAfter: ");
     for (int i = 0; i < 90; ++i) {
