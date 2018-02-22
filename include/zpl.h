@@ -16,6 +16,8 @@
 
 
   Version History:
+  5.0.0 - Project structure changes
+
   4.7.2 - Got rid of size arg for zpl_str_split_lines
   4.7.1 - Added an example
   4.7.0 - Added zpl_path_dirlist
