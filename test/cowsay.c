@@ -1,11 +1,15 @@
-#if 0
-    gcc -pthread -I../include -std=c99 -g "$0" -lm -ldl && ./a.out; exit
-#endif
-
 #define ZPL_IMPLEMENTATION
 #include "zpl.h"
 
 #define BUF_LEN 4096
+
+///////////////////////////////////////////////////////////////////////////////////
+//
+// This demo requires you to have the following packages: "fortune" and "cowsay".
+// You should find these in your distro repositories, or 
+// at source ports sites.
+//
+
 
 int main(void)
 {
