@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.0.3 - Finalizing syntax changes
   5.0.2 - Fix segfault when using zpl_stack_memory
   5.0.1 - Small code improvements
   5.0.0 - Project structure changes
