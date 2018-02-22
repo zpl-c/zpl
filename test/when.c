@@ -13,7 +13,7 @@ void easy_print(zpl_buffer_t(i64) nums, isize cnt) {
 
 int main(void) {
     
-    zpl_random_t rng = {};
+    zpl_random_t rng = {0};
     zpl_random_init(&rng);
     
     // NOTE(ZaKlaus): Initialize our buffer

@@ -9,12 +9,12 @@
 
 int
 main(void) {
-    zplc_bounds_t b = {};
+    zplc_bounds_t b = {0};
 
     b.centre = zplm_vec3(0, 0, 0);
     b.half_size = zplm_vec3(5000, 5000, 5000);
 
-    zplc_t root = {};
+    zplc_t root = {0};
     zplc_init(&root, zpl_heap_allocator(), zplc_dim_2d_ev, b, zplm_vec3(0,0,0), 32);
     zplc_bounds_t search_bounds = {
         .centre = {0,0,0},
@@ -25,7 +25,7 @@ main(void) {
     srand(0xDEADBEEF);
     for (isize i = 0; i < 4000000; ++i) {
 
-        zplc_node_t e = {};
+        zplc_node_t e = {0};
         e.position.x =  (float)(2000 - rand() % 4000);
         e.position.y =  (float)(2000 - rand() % 4000);
         zplc_insert(&root, e);

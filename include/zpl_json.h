@@ -209,7 +209,7 @@ extern "C" {
         }
 
         if (err_code) *err_code = ZPLJ_ERROR_NONE;
-        zplj_object_t root_ = {};
+        zplj_object_t root_ = {0};
         zplj__parse_object(&root_, dest, a, err_code);
 
         *root = root_;
@@ -243,7 +243,7 @@ extern "C" {
         while(*p) {
             p = zplj__trim(p);
 
-            zplj_object_t elem = {};
+            zplj_object_t elem = {0};
             p = zplj__parse_value(&elem, p, a, err_code);
 
             if (err_code && *err_code != ZPLJ_ERROR_NONE) {
@@ -371,7 +371,7 @@ extern "C" {
             e = b;
 
             isize ib = 0;
-            char buf[16] = {};
+            char buf[16] = {0};
 
             /**/ if (*e == '+') ++e;
             else if (*e == '-') {
@@ -410,7 +410,7 @@ extern "C" {
             }
 
             i64 exp = 0; f32 eb = 10;
-            char expbuf[6] = {};
+            char expbuf[6] = {0};
             isize expi = 0;
 
             if (*e == 'e' || *e == 'E') {
@@ -492,7 +492,7 @@ extern "C" {
         if (*p == '{') p++;
 
         while(*p) {
-            zplj_object_t node = {};
+            zplj_object_t node = {0};
             p = zplj__trim(p);
             if (*p == '}') return p;
 

@@ -129,7 +129,7 @@ extern "C" {
 #endif
 
     void zplc_init(zplc_t *c, zpl_allocator_t a, isize dims, zplc_bounds_t bounds, zplm_vec3_t min_bounds, u32 max_nodes) {
-        zplc_t c_ = {};
+        zplc_t c_ = {0};
         *c            = c_;
         c->allocator  = a;
         c->boundary   = bounds;
@@ -293,10 +293,10 @@ extern "C" {
             loops = 8;
         }
 
-        f32 p[3] = {};
+        f32 p[3] = {0};
         for (i32 i = 0; i < loops; ++i) {
-            zplc_t tree = {};
-            zplc_bounds_t bounds = {};
+            zplc_t tree = {0};
+            zplc_bounds_t bounds = {0};
             p[0] = c->boundary.centre.e[0] + hd.half_size.e[0]*zplc__tpl[i][0];
             p[1] = c->boundary.centre.e[1] + hd.half_size.e[1]*zplc__tpl[i][1];
             p[2] = c->boundary.centre.e[2] + hd.half_size.e[2]*zplc__tpl[i][2];

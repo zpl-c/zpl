@@ -931,7 +931,7 @@ Version History:
         zpl_async_cb *cb;
     } zpl_async_ctl_t;
 #define zpl_async(data, work, cb) do {                                  \
-        zpl_thread_t td = {};                                           \
+        zpl_thread_t td = {0};                                           \
         zpl_thread_init(&td);                                            \
         zpl_async_ctl_t  ctl_ = {data, work, cb};                        \
         zpl_async_ctl_t *ctl = zpl_malloc(zpl_size_of(zpl_async_ctl_t)); \
@@ -1585,11 +1585,11 @@ int main(void)
 #endif
 
     typedef struct zpl__list_t {
-        void *ptr;
+        void const *ptr;
         struct zpl__list_t *next, *prev;
     } zpl_list_t;
 
-    ZPL_DEF void        zpl_list_init  (zpl_list_t *list, void *ptr);
+    ZPL_DEF void        zpl_list_init  (zpl_list_t *list, void const *ptr);
     ZPL_DEF zpl_list_t *zpl_list_add   (zpl_list_t *list, zpl_list_t *item);
 
     // NOTE(zaklaus): Returns a pointer to the next node (or NULL if the removed node has no trailing node.)
@@ -1857,7 +1857,7 @@ int main(void)
                                                                         \
     zpl_internal isize ZPL_JOIN2(FUNC,_add_entry)(NAME *h, u64 key) {   \
         isize index;                                                    \
-        ZPL_JOIN2(NAME,Entry) e = {};                                  \
+        ZPL_JOIN2(NAME,Entry) e = {0};                                  \
         e.key = key;                                                    \
         e.next = -1;                                                    \
         index = zpl_array_count(h->entries);                            \
@@ -1891,7 +1891,7 @@ int main(void)
                                                                         \
     void ZPL_JOIN2(FUNC,rehash)(NAME *h, isize new_count) {             \
         isize i, j;                                                     \
-        NAME nh = {};                                                  \
+        NAME nh = {0};                                                  \
         ZPL_JOIN2(FUNC,init)(&nh, zpl_array_allocator(h->hashes));      \
         zpl_array_resize(nh.hashes, new_count);                         \
         zpl_array_reserve(nh.entries, zpl_array_count(h->entries));     \
@@ -3821,7 +3821,7 @@ extern "C" {
     }
 
     zpl_inline zpl_virtual_memory_t zpl_vm_trim(zpl_virtual_memory_t vm, isize lead_size, isize size) {
-        zpl_virtual_memory_t new_vm = {};
+        zpl_virtual_memory_t new_vm = {0};
         void *ptr;
         ZPL_ASSERT(vm.size >= lead_size + size);
 
@@ -4500,7 +4500,7 @@ extern "C" {
         isize threshold = ZPL__SORT_INSERT_SORT_THRESHOLD * size;
 
         // NOTE: Prepare the stack
-        u8 *stack[ZPL__SORT_STACK_SIZE] = {};
+        u8 *stack[ZPL__SORT_STACK_SIZE] = {0};
         u8 **stack_ptr = stack;
 
         for (;;) {
@@ -4556,7 +4556,7 @@ extern "C" {
         Type *dest   = temp;                                            \
         isize byte_index, i, byte_max = 8*zpl_size_of(Type);            \
         for (byte_index = 0; byte_index < byte_max; byte_index += 8) {  \
-            isize offsets[256] = {};                                   \
+            isize offsets[256] = {0};                                   \
             isize total = 0;                                            \
             /* NOTE: First pass - count how many of each key */         \
             for (i = 0; i < count; i++) {                               \
@@ -5348,7 +5348,7 @@ extern "C" {
 
     zpl_string_t zpl_string_append_rune(zpl_string_t str, Rune r) {
         if (r >= 0) {
-            u8 buf[8] = {};
+            u8 buf[8] = {0};
             isize len = zpl_utf8_encode_rune(buf, r);
             return zpl_string_append_length(str, buf, len);
         }
@@ -5358,7 +5358,7 @@ extern "C" {
 
     zpl_string_t zpl_string_append_fmt(zpl_string_t str, char const *fmt, ...) {
         isize res;
-        char buf[4096] = {};
+        char buf[4096] = {0};
         va_list va;
         va_start(va, fmt);
         res = zpl_snprintf_va(buf, zpl_count_of(buf)-1, fmt, va)-1;
@@ -5642,8 +5642,8 @@ extern "C" {
     //
 
 
-    zpl_inline void zpl_list_init(zpl_list_t *list, void *ptr) {
-        zpl_list_t list_ = {};
+    zpl_inline void zpl_list_init(zpl_list_t *list, void const *ptr) {
+        zpl_list_t list_ = {0};
         *list = list_;
         list->ptr = ptr;
     }
@@ -6241,7 +6241,7 @@ extern "C" {
         }
 
         if (mode & ZPL_FILE_MODE_APPEND) {
-            LARGE_INTEGER offset = {};
+            LARGE_INTEGER offset = {0};
             if (!SetFilePointerEx(handle, offset, NULL, ZPL_SEEK_WHENCE_END)) {
                 CloseHandle(handle);
                 return ZPL_FILE_ERROR_INVALID;
@@ -6524,16 +6524,16 @@ extern "C" {
         ZPL_ASSERT(file && proc);
 
         zpl_async_file_t *a = (zpl_async_file_t *)zpl_malloc(sizeof(zpl_async_file_t));
-        zpl_async_file_t a_ = {};
+        zpl_async_file_t a_ = {0};
         *a = a_;
 
         a->handle = *file;
 
-        zpl_thread_t td = {};
+        zpl_thread_t td = {0};
         zpl_thread_init(&td);
 
         zpl__async_file_ctl_t *afops = (zpl__async_file_ctl_t *)zpl_malloc(sizeof(zpl__async_file_ctl_t));
-        zpl__async_file_ctl_t afops_ = {};
+        zpl__async_file_ctl_t afops_ = {0};
         *afops = afops_;
 
         afops->f = a;
@@ -6546,16 +6546,16 @@ extern "C" {
         ZPL_ASSERT(file && proc && buffer);
 
         zpl_async_file_t *a = (zpl_async_file_t *)zpl_malloc(sizeof(zpl_async_file_t));
-        zpl_async_file_t a_ = {};
+        zpl_async_file_t a_ = {0};
         *a = a_;
 
         a->handle = *file;
 
-        zpl_thread_t td = {};
+        zpl_thread_t td = {0};
         zpl_thread_init(&td);
 
         zpl__async_file_ctl_t *afops = (zpl__async_file_ctl_t *)zpl_malloc(sizeof(zpl__async_file_ctl_t));
-        zpl__async_file_ctl_t afops_ = {};
+        zpl__async_file_ctl_t afops_ = {0};
         *afops = afops_;
 
         afops->f = a;
@@ -6570,7 +6570,7 @@ extern "C" {
 
     // TODO: Is this a bad idea?
     zpl_global b32    zpl__std_file_set = false;
-    zpl_global zpl_file_t zpl__std_files[ZPL_FILE_STANDARD_COUNT] = {{}};
+    zpl_global zpl_file_t zpl__std_files[ZPL_FILE_STANDARD_COUNT] = {{0}};
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -6677,9 +6677,9 @@ extern "C" {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
     zpl_file_time_t zpl_file_last_write_time(char const *filepath) {
-        ULARGE_INTEGER li = {};
-        FILETIME last_write_time = {};
-        WIN32_FILE_ATTRIBUTE_DATA data = {};
+        ULARGE_INTEGER li = {0};
+        FILETIME last_write_time = {0};
+        WIN32_FILE_ATTRIBUTE_DATA data = {0};
         zpl_allocator_t a = zpl_heap_allocator();
 
         wchar_t *w_text = zpl__alloc_utf8_to_ucs2(a, filepath, NULL);
@@ -6808,8 +6808,8 @@ extern "C" {
 
 
     zpl_file_contents_t zpl_file_read_contents(zpl_allocator_t a, b32 zero_terminate, char const *filepath) {
-        zpl_file_contents_t result = {};
-        zpl_file_t file = {};
+        zpl_file_contents_t result = {0};
+        zpl_file_t file = {0};
 
         result.allocator = a;
 
@@ -6832,7 +6832,7 @@ extern "C" {
 
     char *zpl_file_read_lines(zpl_allocator_t alloc, char ***lines, char const *filename, b32 strip_whitespace)
     {
-        zpl_file_t f = {};
+        zpl_file_t f = {0};
         zpl_file_open(&f, filename);
         i64 fsize = zpl_file_size(&f);
 
@@ -7271,7 +7271,7 @@ extern "C" {
         isize remaining = max_len, res;
 
         while (*fmt) {
-            zplprivFmtInfo info = {};
+            zplprivFmtInfo info = {0};
             isize len = 0;
             info.precision = -1;
 
@@ -7550,10 +7550,10 @@ extern "C" {
 #if defined(ZPL_SYSTEM_WINDOWS)
 
     zpl_inline f64 zpl_time_now(void) {
-        zpl_local_persist LARGE_INTEGER win32_perf_count_freq = {};
+        zpl_local_persist LARGE_INTEGER win32_perf_count_freq = {0};
         f64 result;
         LARGE_INTEGER counter;
-        zpl_local_persist LARGE_INTEGER win32_perf_counter = {};
+        zpl_local_persist LARGE_INTEGER win32_perf_counter = {0};
         if (!win32_perf_count_freq.QuadPart) {
             QueryPerformanceFrequency(&win32_perf_count_freq);
             ZPL_ASSERT(win32_perf_count_freq.QuadPart != 0);
@@ -7600,7 +7600,7 @@ extern "C" {
         zpl_local_persist u64 timestart = 0;
 
         if (!timestart) {
-            mach_timebase_info_data_t tb = {};
+            mach_timebase_info_data_t tb = {0};
             mach_timebase_info(&tb);
             timebase = tb.numer;
             timebase /= tb.denom;
@@ -7657,7 +7657,7 @@ extern "C" {
     zpl_inline zpl_timer_t *zpl_timer_add(zpl_timer_pool pool) {
         ZPL_ASSERT(pool);
 
-        zpl_timer_t t = {};
+        zpl_timer_t t = {0};
         zpl_array_append(pool, t);
         return pool + (zpl_array_count(pool) - 1);
     }
@@ -7721,7 +7721,7 @@ extern "C" {
     //
 
 #if ZPL_THREADING
-    zpl_global zpl_atomic32_t zpl__random_shared_counter = {};
+    zpl_global zpl_atomic32_t zpl__random_shared_counter = {0};
 #else
     zpl_global i32 zpl__random_shared_counter = 0;
 #endif

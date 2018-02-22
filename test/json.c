@@ -133,7 +133,7 @@ int main(void) {
     zpl_file_close(&file);
 
 
-    zplj_object_t root = {};
+    zplj_object_t root = {0};
 
     u8 err;
     zplj_parse(&root, file_size, content, zpl_heap_allocator(), true, &err);
