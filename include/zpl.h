@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.0.4 - Fix alias for zpl_list
   5.0.3 - Finalizing syntax changes
   5.0.2 - Fix segfault when using zpl_stack_memory
   5.0.1 - Small code improvements
@@ -1612,7 +1613,7 @@ int main(void)
 }
 #endif
 
-#define zpl__list_t zpl__list
+#define zpl_list_t zpl_list
     typedef struct zpl__list {
         void const *ptr;
         struct zpl__list *next, *prev;
