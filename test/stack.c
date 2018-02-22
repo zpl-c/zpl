@@ -13,7 +13,7 @@ main(void) {
     zpl_allocator_t stack_alloc = zpl_stack_allocator(&stack);
     
     // NOTE(ZaKlaus): Create array container
-    zpl_array_t(u32) arr;
+    zpl_array(u32) arr;
     zpl_array_init(arr, stack_alloc);
     
     // NOTE(ZaKlaus): Push 5 elements

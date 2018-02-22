@@ -20,7 +20,7 @@ main(void) {
     // NOTE(ZaKlaus): Print these values out
     zpl_printf("First 30 numbers...\nBefore: ");
     for (int i = 0; i < 90; ++i) {
-        zpl_printf("%lld, ", nums[i]);
+        zpl_printf("%d, ", nums[i]);
     }
     
     // NOTE(ZaKlaus): Use radix sort on our numbers and print them out again.
@@ -28,7 +28,7 @@ main(void) {
     
     zpl_printf("\n\nAfter: ");
     for (int i = 0; i < 90; ++i) {
-        zpl_printf("%lld, ", nums[i]);
+        zpl_printf("%d, ", nums[i]);
     }    
     
     return 0;

@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.0.2 - Fix segfault when using zpl_stack_memory
   5.0.1 - Small code improvements
   5.0.0 - Project structure changes
 
@@ -4357,12 +4358,6 @@ extern "C" {
         }
     }
 
-    typedef union zpl_stack_memory_header_t {
-        void *a_ptr;
-        u8   *a_u8;
-        u64  *a_u64;
-    } zpl_stack_memory_header_t;
-
     zpl_inline zpl_allocator_t zpl_stack_allocator(zpl_stack_memory_t *s) {
         zpl_allocator_t a;
         a.proc = zpl_stack_allocator_proc;
@@ -4382,39 +4377,34 @@ extern "C" {
             size += ZPL_STACK_ALLOC_OFFSET;
             u64 alloc_offset = s->allocated;
 
-            void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)s->physical_start + s->allocated + ZPL_STACK_ALLOC_OFFSET, alignment) - ZPL_STACK_ALLOC_OFFSET;
+            void *curr = cast(u64 *)zpl_align_forward(cast(u64 *)zpl_pointer_add(s->physical_start, s->allocated), alignment);
 
-            if (cast(u64 *)curr + size > cast(u64 *)zpl_pointer_add(s->physical_start, s->total_size)) {
+            if (cast(u64 *)zpl_pointer_add(curr, size) > cast(u64 *)zpl_pointer_add(s->physical_start, s->total_size)) {
                 if (s->backing.proc) {
+                    void *old_start=s->physical_start;
                     s->physical_start = zpl_resize_align(s->backing, s->physical_start, s->total_size, s->total_size + size, alignment);
-                    s->total_size += size;
+                    curr = cast(u64 *)zpl_align_forward(cast(u64 *)zpl_pointer_add(s->physical_start, s->allocated), alignment);
+                    s->total_size = zpl_pointer_diff(old_start, s->physical_start);
                 }
                 else {
                     ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
                 }
             }
 
-            s->allocated = zpl_pointer_diff(curr, s->physical_start);
+            s->allocated = zpl_pointer_diff(s->physical_start, curr) + size;
 
-            zpl_stack_memory_header_t h;
+            *(u64 *)curr = alloc_offset;
+            curr = zpl_pointer_add(curr, ZPL_STACK_ALLOC_OFFSET);
 
-            h.a_u8 = cast(u8 *)curr;
-            *h.a_u64 = alloc_offset;
-            h.a_u8 += ZPL_STACK_ALLOC_OFFSET;
-
-            ptr = h.a_ptr;
-            s->allocated += size;
+            ptr = curr;
         }break;
 
         case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
-                zpl_stack_memory_header_t h;
+                void *curr = old_memory;
+                curr = zpl_pointer_sub(curr, ZPL_STACK_ALLOC_OFFSET);
 
-                h.a_ptr = old_memory;
-                h.a_u8 -= ZPL_STACK_ALLOC_OFFSET;
-
-                u64 alloc_offset = *h.a_u64;
-
+                u64 alloc_offset = *(u64 *)curr;
                 s->allocated = (usize)alloc_offset;
             }
         }break;
