@@ -30,6 +30,5 @@ zpl_math.h  | math       | Math library that is gamedev friendly.
 zpl_image.h | graphics   | Image manipulation library &amp; GIF animation loader.
 zpl_sg.h    | misc       | Scene Graph library. (WIP)
 zpl_cull.h  | misc       | k-d tree culling library.
-zpl_event.h | misc       | Event handler library.
 zpl_json.h  | parser     | Small, fast and standard-friendly JSON5 parser.
 
