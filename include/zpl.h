@@ -16,6 +16,7 @@
 
 
   Version History:
+  5.0.1 - Small code improvements
   5.0.0 - Project structure changes
 
   4.7.2 - Got rid of size arg for zpl_str_split_lines
@@ -1492,10 +1493,10 @@
     // Fixed Capacity Buffer (POD Types)
     //
     //
-    // zpl_buffer_t(Type) works like zpl_string_t or zpl_array_t where the actual type is just a pointer to the first
+    // zpl_buffer(Type) works like zpl_string_t or zpl_array_t where the actual type is just a pointer to the first
     // element.
     //
-    // Available Procedures for zpl_buffer_t(Type)
+    // Available Procedures for zpl_buffer(Type)
     // zpl_buffer_init
     // zpl_buffer_free
     // zpl_buffer_append
@@ -1509,6 +1510,7 @@
     } zpl_buffer_header_t;
 
 #define zpl_buffer_t(Type) Type *
+#define zpl_buffer zpl_buffer_t
 
 #define ZPL_BUFFER_HEADER(x)   (cast(zpl_buffer_header_t *)(x) - 1)
 #define zpl_buffer_count(x)    (ZPL_BUFFER_HEADER(x)->count)
@@ -1599,10 +1601,10 @@ int main(void)
     //
     // Dynamic Array (POD Types)
     //
-    // zpl_array_t(Type) works like zpl_string_t or zpl_buffer_t where the actual type is just a pointer to the first
+    // zpl_array(Type) works like zpl_string_t or zpl_buffer_t where the actual type is just a pointer to the first
     // element.
     //
-    // Available Procedures for zpl_array_t(Type)
+    // Available Procedures for zpl_array(Type)
     // zpl_array_init
     // zpl_array_free
     // zpl_array_set_capacity
@@ -1663,6 +1665,7 @@ int main(void)
     } zpl_array_header_t;
 
 #define zpl_array_t(Type) Type *
+#define zpl_array zpl_array_t
 
 #ifndef ZPL_ARRAY_GROW_FORMULA
 #define ZPL_ARRAY_GROW_FORMULA(x) (2*(x) + 8)
