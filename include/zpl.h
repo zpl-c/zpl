@@ -1479,6 +1479,7 @@ Version History:
     }
 #endif
 
+#define zpl_string_t zpl_string
     typedef char *zpl_string;
 
     // NOTE: If you only need a small string, just use a standard c string or change the size from isize to u16, etc.
