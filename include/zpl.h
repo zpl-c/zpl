@@ -6134,7 +6134,7 @@ extern "C" {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-    zpl_internal wchar_t *zpl__alloc_utf8o_ucs2(zpl_allocator a, char const *text, isize *w_len_) {
+    zpl_internal wchar_t *zpl__alloc_utf8_to_ucs2(zpl_allocator a, char const *text, isize *w_len_) {
         wchar_t *w_text = NULL;
         isize len = 0, w_len = 0, w_len1 = 0;
         if (text == NULL) {
@@ -6247,7 +6247,7 @@ extern "C" {
             return ZPL_FILE_ERROR_INVALID;
         }
 
-        w_text = zpl__alloc_utf8o_ucs2(zpl_heap_allocator(), filename, NULL);
+        w_text = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator(), filename, NULL);
         handle = CreateFileW(w_text,
                              desired_access,
                              FILE_SHARE_READ|FILE_SHARE_DELETE, NULL,
@@ -6637,7 +6637,7 @@ extern "C" {
         b32 found = false;
         zpl_allocator a = zpl_heap_allocator();
 
-        w_text = zpl__alloc_utf8o_ucs2(a, name, NULL);
+        w_text = zpl__alloc_utf8_to_ucs2(a, name, NULL);
         if (w_text == NULL) {
             return false;
         }
@@ -6708,7 +6708,7 @@ extern "C" {
         WIN32_FILE_ATTRIBUTE_DATA data = {0};
         zpl_allocator a = zpl_heap_allocator();
 
-        wchar_t *w_text = zpl__alloc_utf8o_ucs2(a, filepath, NULL);
+        wchar_t *w_text = zpl__alloc_utf8_to_ucs2(a, filepath, NULL);
         if (w_text == NULL) {
             return 0;
         }
@@ -6727,12 +6727,12 @@ extern "C" {
         b32 result = false;
         zpl_allocator a = zpl_heap_allocator();
 
-        wchar_t *w_old = zpl__alloc_utf8o_ucs2(a, existing_filename, NULL);
+        wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
         if (w_old == NULL) {
             return false;
         }
 
-        wchar_t *w_new = zpl__alloc_utf8o_ucs2(a, new_filename, NULL);
+        wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
         if (w_new != NULL) {
             result = CopyFileW(w_old, w_new, fail_if_exists);
         }
@@ -6746,12 +6746,12 @@ extern "C" {
         b32 result = false;
         zpl_allocator a = zpl_heap_allocator();
 
-        wchar_t *w_old = zpl__alloc_utf8o_ucs2(a, existing_filename, NULL);
+        wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
         if (w_old == NULL) {
             return false;
         }
 
-        wchar_t *w_new = zpl__alloc_utf8o_ucs2(a, new_filename, NULL);
+        wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
         if (w_new != NULL) {
             result = MoveFileW(w_old, w_new);
         }
@@ -6765,7 +6765,7 @@ extern "C" {
         b32 result = false;
         zpl_allocator a = zpl_heap_allocator();
 
-        wchar_t *w_filename = zpl__alloc_utf8o_ucs2(a, filename, NULL);
+        wchar_t *w_filename = zpl__alloc_utf8_to_ucs2(a, filename, NULL);
         if (w_filename == NULL) {
             return false;
         }
@@ -6936,7 +6936,7 @@ extern "C" {
         isize new_len = 0;
         isize new_len1 = 0;
         char *new_path = 0;
-        w_path = zpl__alloc_utf8o_ucs2(zpl_heap_allocator(), path, NULL);
+        w_path = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator(), path, NULL);
         if (w_path == NULL) {
             return NULL;
         }
