@@ -4,24 +4,24 @@
 
 typedef struct {
     i32 a,b,c;
-} numbers_t;
+} numbers;
 
 ZPL_ASYNC_CB(do_calc) {
-    numbers_t *n = cast(numbers_t *)data;
+    numbers *n = cast(numbers *)data;
     n->a += n->c;
     n->b += n->a;
     n->c += n->b;
 }
 
 ZPL_ASYNC_CB(print_results) {
-    numbers_t *n = cast(numbers_t *)data;
+    numbers *n = cast(numbers *)data;
 
     zpl_printf("a: %d, b: %d, c: %d\n", n->a, n->b, n->c);
 }
 
 int main(void) {
-    numbers_t t_ = {1, 2, 3};
-    numbers_t *t = zpl_malloc(sizeof(numbers_t));
+    numbers t_ = {1, 2, 3};
+    numbers *t = (numbers *)zpl_malloc(sizeof(numbers));
     *t = t_;
     zpl_async(t, do_calc, print_results);
     zpl_mfree(t);

@@ -20,15 +20,15 @@ int main(void) {
     zpl_timer_pool timers;
     zpl_array_init(timers, zpl_heap_allocator());
 
-    zpl_timer_t *t1 = zpl_timer_add(timers);
+    zpl_timer *t1 = zpl_timer_add(timers);
     zpl_timer_set(t1, 4, -1, test1_cb);
     zpl_timer_start(t1, 0);
 
-    zpl_timer_t *t2 = zpl_timer_add(timers);
+    zpl_timer *t2 = zpl_timer_add(timers);
     zpl_timer_set(t2, 1, 10, test2_cb);
     zpl_timer_start(t2, 2);
 
-    zpl_timer_t *t3 = zpl_timer_add(timers);
+    zpl_timer *t3 = zpl_timer_add(timers);
     zpl_timer_set(t3, 1, 10, test2_cb);
     zpl_timer_start(t3, 2);
     zpl_timer_stop(t3); // NOTE(ZaKlaus): This won't be fired!
