@@ -25,6 +25,8 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  2.0.0 -- New syntax
+
   1.0.2 -- Switch fixes
   1.0.1 -- Got rid of unused switches and fixes
   1.0.0 -- Initial version
@@ -51,17 +53,18 @@ Version History:
 extern "C" {
 #endif
 
-  typedef union zpli_rgb_colour_t {
+  typedef union zpli_rgb_colour {
       u32 colour;
       struct { u8 r, g, b;};
-  } zpli_rgb_colour_t;
+  } zpli_rgb_colour;
 
-  typedef struct zpli_hsv_colour_t {
+#define zpli_hsv_colour_t   zpli_hsv_colour
+  typedef struct zpli_hsv_colour {
       u32 colour;
       struct { u8 h, s, v; };
-  } zpli_hsv_colour_t;
+  } zpli_hsv_colour;
 
-  ZPL_DEF zpli_rgb_colour_t zpli_rgb_lerp(zpli_rgb_colour_t a, zpli_rgb_colour_t b, f32 t);
+  ZPL_DEF zpli_rgb_colour zpli_rgb_lerp(zpli_rgb_colour a, zpli_rgb_colour b, f32 t);
 
   ////////////////////////////////////////////////////////////////
   //
@@ -71,14 +74,15 @@ extern "C" {
   //
 
 #ifndef ZPLE_NO_GIF
-  typedef struct zpli_gif_result_t {
+#define zpli_gif_result_t   zpli_gif_result
+  typedef struct zpli_gif_result {
       i32 delay;
       u8 *data;
-      struct zpli_gif_result_t *next;
-  } zpli_gif_result_t;
+      struct zpli_gif_result *next;
+  } zpli_gif_result;
 
-  ZPL_DEF zpli_gif_result_t *zpli_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames);
-  ZPL_DEF void          zpli_gif_free(zpli_gif_result_t *gif, b32 aligned);
+  ZPL_DEF zpli_gif_result *zpli_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames);
+  ZPL_DEF void          zpli_gif_free(zpli_gif_result *gif, b32 aligned);
 #endif
 
   ////////////////////////////////////////////////////////////////
@@ -100,11 +104,11 @@ extern "C" {
   // TODO(ZaKlaus): Implement this
   /*
   ZPL_DEF void         zpli_init_srgb_table(u8 **table);
-  ZPL_DEF zpli_rgb_colour_t zpli_lin_to_srgb    (u8 *table, f64 vals[3]);
+  ZPL_DEF zpli_rgb_colour zpli_lin_to_srgb    (u8 *table, f64 vals[3]);
   */
 
-  ZPL_DEF zpli_hsv_colour_t zpli_rgb_to_hsv     (zpli_rgb_colour_t colour);
-  ZPL_DEF zpli_rgb_colour_t zpli_hsv_to_rgb     (zpli_hsv_colour_t colour);
+  ZPL_DEF zpli_hsv_colour zpli_rgb_to_hsv     (zpli_rgb_colour colour);
+  ZPL_DEF zpli_rgb_colour zpli_hsv_to_rgb     (zpli_hsv_colour colour);
 #endif
 
 #if defined(__cplusplus)
@@ -118,9 +122,9 @@ extern "C" {
 extern "C" {
 #endif
 
-  zpli_rgb_colour_t zpli_rgb_lerp(zpli_rgb_colour_t a, zpli_rgb_colour_t b, f32 t) {
+  zpli_rgb_colour zpli_rgb_lerp(zpli_rgb_colour a, zpli_rgb_colour b, f32 t) {
 #define LERP(c1, c2, c3) c1*(1.0-c3) + c2*c3
-      zpli_rgb_colour_t result = {0};
+      zpli_rgb_colour result = {0};
 
       result.r = LERP(a.r, b.r, t);
       result.g = LERP(a.g, b.g, t);
@@ -133,10 +137,10 @@ extern "C" {
   // NOTE(ZaKlaus): Gif
 
 #ifndef ZPL_NO_GIF
-  zpli_gif_result_t *zpli_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
+  zpli_gif_result *zpli_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames) {
       FILE *file;
       stbi__context s;
-      zpli_gif_result_t *result;
+      zpli_gif_result *result;
 
       if (!(file = stbi__fopen(filename, "rb"))) {
           stbi__errpuc("can't open file", "Unable to open file"); return 0;
@@ -147,8 +151,8 @@ extern "C" {
       if (stbi__gif_test(&s)) {
           i32 c;
           stbi__gif g;
-          zpli_gif_result_t *head = stbi__malloc(zpl_size_of(zpli_gif_result_t));
-          zpli_gif_result_t *prev = 0, *gr = head;
+          zpli_gif_result *head = stbi__malloc(zpl_size_of(zpli_gif_result_t));
+          zpli_gif_result *prev = 0, *gr = head;
 
           zpl_zero_item(&g);
           zpl_zero_item(head);
@@ -164,7 +168,7 @@ extern "C" {
               if (prev) prev->next = gr;
               gr->delay = g.delay;
               prev = gr;
-              gr = cast(zpli_gif_result_t *)stbi__malloc(zpl_size_of(zpli_gif_result_t));
+              gr = cast(zpli_gif_result *)stbi__malloc(zpl_size_of(zpli_gif_result_t));
               zpl_zero_item(gr);
               ++(*frames);
           }
@@ -192,8 +196,8 @@ extern "C" {
       return result;
   }
 
-  void zpli_gif_free(zpli_gif_result_t *gif, b32 aligned) {
-      zpli_gif_result_t *elem, *prev = 0;
+  void zpli_gif_free(zpli_gif_result *gif, b32 aligned) {
+      zpli_gif_result *elem, *prev = 0;
       for (elem = gif; elem; elem = elem->next) {
           if (aligned) {
               zpl_mfree(elem->data);
@@ -209,8 +213,8 @@ extern "C" {
   }
 #endif
 
-  zpli_hsv_colour_t zpli_rgb_to_hsv(zpli_rgb_colour_t colour) {
-      zpli_hsv_colour_t result = {0};
+  zpli_hsv_colour zpli_rgb_to_hsv(zpli_rgb_colour colour) {
+      zpli_hsv_colour result = {0};
       u8 rgb_min, rgb_max;
 
       rgb_min = colour.r < colour.g ? (colour.r < colour.b ? colour.r : colour.b) : (colour.g < colour.b ? colour.g : colour.b);
@@ -241,8 +245,8 @@ extern "C" {
       return result;
   }
 
-  zpli_rgb_colour_t zpli_hsv_to_rgb(zpli_hsv_colour_t colour) {
-      zpli_rgb_colour_t result = {0};
+  zpli_rgb_colour zpli_hsv_to_rgb(zpli_hsv_colour colour) {
+      zpli_rgb_colour result = {0};
       u8 region, rem, p, q, t;
 
       if (colour.s == 0) {
@@ -275,8 +279,8 @@ extern "C" {
                                        u32 *dest, i32 dest_w, i32 dest_h,
                                        i32 blur_iter, u32 *blur_mem) {
 
-      zpli_rgb_colour_t *src = cast(zpli_rgb_colour_t *)&(source);
-      zpli_rgb_colour_t *dst = cast(zpli_rgb_colour_t *)&(dest);
+      zpli_rgb_colour *src = cast(zpli_rgb_colour *)&(source);
+      zpli_rgb_colour *dst = cast(zpli_rgb_colour *)&(dest);
 
       b32 x_down = dest_w < source_w;
       b32 y_down = dest_h < source_h;
@@ -302,7 +306,7 @@ extern "C" {
 
       for (i32 y = 0; y < dest_h; ++y) {
           for(i32 x = 0; x < dest_w; ++x) {
-              zpli_rgb_colour_t colour = {0};
+              zpli_rgb_colour colour = {0};
 
               i32 o_x = x/step_x;
               if (x_down) o_x = x*step_x;
@@ -344,8 +348,8 @@ extern "C" {
                                        f64 *filter, i32 filter_w, i32 filter_h,
                                        f64 factor, f64 bias) {
 
-      zpli_rgb_colour_t *src = cast(zpli_rgb_colour_t *)(source);
-      zpli_rgb_colour_t *dst = cast(zpli_rgb_colour_t *)(dest);
+      zpli_rgb_colour *src = cast(zpli_rgb_colour *)(source);
+      zpli_rgb_colour *dst = cast(zpli_rgb_colour *)(dest);
 
       for (i32 y = 0; y < source_h; ++y) {
           for(i32 x = 0; x < source_w; ++x) {
