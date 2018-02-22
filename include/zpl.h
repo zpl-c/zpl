@@ -15,6 +15,8 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.2.0 - Added zpl_string_sprintf
+  5.1.1 - Added zpl_system_command_nores for output-less execution
   5.1.0 - Added event handler
   5.0.4 - Fix alias for zpl_list
   5.0.3 - Finalizing syntax changes
@@ -1497,6 +1499,8 @@ Version History:
     ZPL_DEF zpl_string zpl_string_make_reserve   (zpl_allocator a, isize capacity);
     ZPL_DEF zpl_string zpl_string_make           (zpl_allocator a, char const *str);
     ZPL_DEF zpl_string zpl_string_make_length    (zpl_allocator a, void const *str, isize num_bytes);
+    ZPL_DEF zpl_string zpl_string_sprintf     (zpl_allocator a, char *buf, isize num_bytes, char const *fmt, ...);
+    ZPL_DEF zpl_string zpl_string_sprintf_buf     (zpl_allocator a, char const *fmt, ...); // NOTE: Uses locally persistent buffer
     ZPL_DEF void     zpl_string_free           (zpl_string str);
     ZPL_DEF zpl_string zpl_string_duplicate      (zpl_allocator a, zpl_string const str);
     ZPL_DEF isize    zpl_string_length         (zpl_string const str);
@@ -2314,6 +2318,7 @@ int main(void)
 
     ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
     ZPL_DEF u32 zpl_system_command_str(char const *command, zpl_array(u8) *str);
+#define zpl_system_command_nores(cmd) zpl_system_command_str(cmd, NULL)
 
 #if defined(__cplusplus)
 }
@@ -5273,6 +5278,27 @@ extern "C" {
         return str;
     }
 
+    zpl_string zpl_string_sprintf_buf(zpl_allocator a, char const *fmt, ...)
+    {
+        zpl_local_persist char buf[4096] = {0};
+        va_list va;
+        va_start(va, fmt);
+        zpl_snprintf_va(buf, 4096, fmt, va);
+        va_end(va);
+
+        return zpl_string_make(a, buf);
+    }
+    
+    zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, isize num_bytes, char const *fmt, ...)
+    {
+        va_list va;
+        va_start(va, fmt);
+        zpl_snprintf_va(buf, num_bytes, fmt, va);
+        va_end(va);
+
+        return zpl_string_make(a, buf);
+    }
+
     zpl_inline void zpl_string_free(zpl_string str) {
         if (str) {
             zpl_string_header *header = ZPL_STRING_HEADER(str);
@@ -8128,7 +8154,9 @@ extern "C" {
 
         char c;
         while ((c = getc(handle)) != EOF) {
-            zpl_array_append(*str, c);
+            if (str) {
+                zpl_array_append(*str, c);
+            }
         }
 #if defined(ZPL_SYSTEM_WINDOWS)
         _pclose(handle);
