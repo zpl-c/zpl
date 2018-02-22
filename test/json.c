@@ -1,29 +1,26 @@
 #define ZPL_IMPLEMENTATION
-#define ZPLJ_IMPLEMENTATION
 #include <zpl.h>
-#include <zpl_json.h>
-
 
 #define ind(x) for (int i = 0; i < x; ++i) zpl_printf(" ");
 
-void dump_json_contents(zplj_object_t *o, isize indent);
+void dump_json_contents(zpl_json_object_t *o, isize indent);
 
-void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
-    zplj_object_t *node = o;
+void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) {
+    zpl_json_object_t *node = o;
     indent+=4;
 
     if (!is_inline) {
         ind(indent);
         switch(node->name_style) {
-            case ZPLJ_NAME_STYLE_DOUBLE_QUOTE: {
+            case ZPL_JSON_NAME_STYLE_DOUBLE_QUOTE: {
                 zpl_printf("\"%s\": ", node->name);
             }break;
 
-            case ZPLJ_NAME_STYLE_SINGLE_QUOTE: {
+            case ZPL_JSON_NAME_STYLE_SINGLE_QUOTE: {
                 zpl_printf("\'%s\': ", node->name);
             }break;
 
-            case ZPLJ_NAME_STYLE_NO_QUOTES: {
+            case ZPL_JSON_NAME_STYLE_NO_QUOTES: {
                 zpl_printf("%s: ", node->name);
             }break;
         }
@@ -31,15 +28,15 @@ void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
     }
 
     switch (node->type) {
-        case ZPLJ_TYPE_STRING: {
+        case ZPL_JSON_TYPE_STRING: {
             zpl_printf("\"%s\"", node->string);
         }break;
 
-        case ZPLJ_TYPE_MULTISTRING: {
+        case ZPL_JSON_TYPE_MULTISTRING: {
             zpl_printf("`%s`", node->string);
         }break;
 
-        case ZPLJ_TYPE_ARRAY: {
+        case ZPL_JSON_TYPE_ARRAY: {
             zpl_printf("[");
             isize elemn = zpl_array_count(node->elements);
             for (int j = 0; j < elemn; ++j) {
@@ -52,24 +49,24 @@ void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
             zpl_printf("]");
         }break;
 
-        case ZPLJ_TYPE_INTEGER: {
+        case ZPL_JSON_TYPE_INTEGER: {
             zpl_printf("%ld", node->integer);
         }break;
 
-        case ZPLJ_TYPE_REAL: {
-            /**/ if (node->props == ZPLJ_PROPS_NAN) {
+        case ZPL_JSON_TYPE_REAL: {
+            /**/ if (node->props == ZPL_JSON_PROPS_NAN) {
                 zpl_printf("NaN");
             }
-            else if (node->props == ZPLJ_PROPS_NAN_NEG) {
+            else if (node->props == ZPL_JSON_PROPS_NAN_NEG) {
                 zpl_printf("-NaN");
             }
-            else if (node->props == ZPLJ_PROPS_INFINITY) {
+            else if (node->props == ZPL_JSON_PROPS_INFINITY) {
                 zpl_printf("Infinity");
             }
-            else if (node->props == ZPLJ_PROPS_INFINITY_NEG) {
+            else if (node->props == ZPL_JSON_PROPS_INFINITY_NEG) {
                 zpl_printf("-Infinity");
             }
-            else if (node->props == ZPLJ_PROPS_IS_EXP) {
+            else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
                 zpl_printf("%.3lfe%c%ld", node->base, node->exp_neg ? '-' : '+', node->exp);
             }
             else {
@@ -77,18 +74,18 @@ void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
             }
         }break;
 
-        case ZPLJ_TYPE_OBJECT: {
+        case ZPL_JSON_TYPE_OBJECT: {
             dump_json_contents(node, indent);
         }break;
 
-        case ZPLJ_TYPE_CONSTANT: {
-            /**/ if (node->constant == ZPLJ_CONST_TRUE) {
+        case ZPL_JSON_TYPE_CONSTANT: {
+            /**/ if (node->constant == ZPL_JSON_CONST_TRUE) {
                 zpl_printf("true");
             }
-            else if (node->constant == ZPLJ_CONST_FALSE) {
+            else if (node->constant == ZPL_JSON_CONST_FALSE) {
                 zpl_printf("false");
             }
-            else if (node->constant == ZPLJ_CONST_NULL) {
+            else if (node->constant == ZPL_JSON_CONST_NULL) {
                 zpl_printf("null");
             }
         }break;
@@ -105,7 +102,7 @@ void dump_value(zplj_object_t *o, isize indent, b32 is_inline, b32 is_last) {
     }
 }
 
-void dump_json_contents(zplj_object_t *o, isize indent) {
+void dump_json_contents(zpl_json_object_t *o, isize indent) {
     ind(indent-4);
     zpl_printf("{\n");
     isize cnt = zpl_array_count(o->nodes);
@@ -142,16 +139,16 @@ int main(void) {
     zpl_file_close(&file);
 
 
-    zplj_object root = {0};
+    zpl_json_object root = {0};
 
     u8 err;
-    zplj_parse(&root, file_size, content, zpl_heap_allocator(), true, &err);
+    zpl_json_parse(&root, file_size, content, zpl_heap_allocator(), true, &err);
 
     zpl_printf("Error code: %d\n", err);
 
     dump_json_contents(&root, 0);
 
-    zplj_free(&root);
+    zpl_json_free(&root);
 
     zpl_mfree(content);
     return 0;

@@ -5,9 +5,7 @@
 // UPDATE: Parsing takes around 86 milliseconds on i7-4790k.
 //
 #define ZPL_IMPLEMENTATION
-#define ZPLJ_IMPLEMENTATION
 #include <zpl.h>
-#include <zpl_json.h>
 
 int main(void) {
 
@@ -20,10 +18,10 @@ int main(void) {
     zpl_file_close(&file);
 
 
-    zplj_object root = {0};
+    zpl_json_object root = {0};
 
     f64 time = zpl_time_now();
-    zplj_parse(&root, file_size, content, zpl_heap(), false, NULL);
+    zpl_json_parse(&root, file_size, content, zpl_heap(), false, NULL);
     f64 delta = zpl_time_now() - time;
 
     printf("Delta: %fms\n", delta*1000);
@@ -34,7 +32,7 @@ int main(void) {
            root.nodes[0].elements[29].nodes[1].string,
            root.nodes[0].elements[29].nodes[2].string);
 
-    zplj_free(&root);
+    zpl_json_free(&root);
 
     zpl_mfree(content);
     return 0;
