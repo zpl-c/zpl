@@ -19,9 +19,10 @@ Optional switches:
   ZPLE_NO_IMAGE_OPS
 
 Credits:
-  Dominik Madarasz (GitHub: zaklaus)
-  Sean Barrett (GitHub: nothings)
-  GitHub: urraka
+  Read AUTHORS.md
+
+GitHub:
+  https://github.com/zpl-c/zpl
 
 Version History:
   1.0.2 -- Switch fixes

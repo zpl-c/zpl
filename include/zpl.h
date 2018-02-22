@@ -2,20 +2,19 @@
 
   ZPL - Global module
 
-  Usage:
+Usage:
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
 
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
 
-  Credits:
-  Vladyslav Hrytsenko (GitHub: inlife)
-  Dominik Madarasz (GitHub: zaklaus)
-  Ginger Bill (GitHub: gingerBill)
-  Sean Barrett (GitHub: nothings)
+Credits:
+  Read AUTHORS.md
 
+GitHub:
+  https://github.com/zpl-c/zpl
 
-  Version History:
+Version History:
   5.0.1 - Small code improvements
   5.0.0 - Project structure changes
 

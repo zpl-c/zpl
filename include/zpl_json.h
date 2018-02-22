@@ -9,7 +9,10 @@ Usage:
     #include"zpl_json.h"
 
 Credits:
-    Dominik Madarasz (GitHub: zaklaus)
+  Read AUTHORS.md
+
+GitHub:
+  https://github.com/zpl-c/zpl
 
 Version History:
     3.0.0 - API changes

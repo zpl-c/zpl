@@ -13,7 +13,10 @@ Dependencies:
     zpl.h
 
 Credits:
-    Dominik Madarasz (GitHub: zaklaus)
+  Read AUTHORS.md
+
+GitHub:
+  https://github.com/zpl-c/zpl
 
 Version History:
     1.0.7 - Small fixes for tiny cpp warnings

@@ -9,9 +9,10 @@ Usage:
     #include"zpl_math.h"
 
 Credits:
-    Vladyslav Hytsenko (GitHub: inlife)
-    Dominik Madarasz (GitHub: zaklaus)
-    Ginger Bill (GitHub: gingerBill)
+  Read AUTHORS.md
+
+GitHub:
+  https://github.com/zpl-c/zpl
 
 Version History:
     1.1.2 - Fixed a typo caused by improvements
