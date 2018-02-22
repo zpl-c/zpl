@@ -9,12 +9,12 @@
 
 int
 main(void) {
-    zplc_bounds_t b = {0};
+    zplc_bounds_t b = {};
 
     b.centre = zplm_vec3(0, 0, 0);
     b.half_size = zplm_vec3(5000, 5000, 5000);
 
-    zplc_t root = {0};
+    zplc_t root = {};
     zplc_init(&root, zpl_heap_allocator(), zplc_dim_2d_ev, b, zplm_vec3(0,0,0), 32);
     zplc_bounds_t search_bounds = {
         .centre = {0,0,0},
@@ -25,7 +25,7 @@ main(void) {
     srand(0xDEADBEEF);
     for (isize i = 0; i < 4000000; ++i) {
 
-        zplc_node_t e = {0};
+        zplc_node_t e = {};
         e.position.x =  (float)(2000 - rand() % 4000);
         e.position.y =  (float)(2000 - rand() % 4000);
         zplc_insert(&root, e);
@@ -40,7 +40,7 @@ main(void) {
     zplc_query(&root, search_bounds, &search_result2);
     isize query = zpl_utc_time_now() - start;
     isize c = zpl_array_count(search_result2);
-    printf("Insertion: %f ms.\n Query: %f ms. %d", insertion/1000.0f, query/1000.0f, c);
+    printf("Insertion: %f ms.\n Query: %f ms. %ld", insertion/1000.0f, query/1000.0f, c);
 
 
     return 0;

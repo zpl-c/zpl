@@ -573,7 +573,7 @@ inline zplm_vec4_t &operator/=(zplm_vec4_t &a, float scalar) { return (a = a / s
 
 inline zplm_mat2_t operator+(zplm_mat2_t const &a, zplm_mat2_t const &b) {
     int i, j;
-    zplm_mat2_t r = {0};
+    zplm_mat2_t r = {};
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 2; i++)
             r.e[2*j+i] = a.e[2*j+i] + b.e[2*j+i];
@@ -583,7 +583,7 @@ inline zplm_mat2_t operator+(zplm_mat2_t const &a, zplm_mat2_t const &b) {
 
 inline zplm_mat2_t operator-(zplm_mat2_t const &a, zplm_mat2_t const &b) {
     int i, j;
-    zplm_mat2_t r = {0};
+    zplm_mat2_t r = {};
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 2; i++)
             r.e[2*j+i] = a.e[2*j+i] - b.e[2*j+i];
@@ -594,7 +594,7 @@ inline zplm_mat2_t operator-(zplm_mat2_t const &a, zplm_mat2_t const &b) {
 inline zplm_mat2_t operator*(zplm_mat2_t const &a, zplm_mat2_t const &b) { zplm_mat2_t r; zplm_mat2_mul(&r, (zplm_mat2_t *)&a, (zplm_mat2_t *)&b); return r; }
 inline zplm_vec2_t operator*(zplm_mat2_t const &a, zplm_vec2_t v) { zplm_vec2_t r; zplm_mat2_mul_vec2(&r, (zplm_mat2_t *)&a, v); return r; }
 inline zplm_mat2_t operator*(zplm_mat2_t const &a, float scalar) {
-    zplm_mat2_t r = {0};
+    zplm_mat2_t r = {};
     int i;
     for (i = 0; i < 2*2; i++) r.e[i] = a.e[i] * scalar;
     return r;
@@ -610,7 +610,7 @@ inline zplm_mat2_t& operator*=(zplm_mat2_t& a, zplm_mat2_t const &b) { return (a
 
 inline zplm_mat3_t operator+(zplm_mat3_t const &a, zplm_mat3_t const &b) {
     int i, j;
-    zplm_mat3_t r = {0};
+    zplm_mat3_t r = {};
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 3; i++)
             r.e[3*j+i] = a.e[3*j+i] + b.e[3*j+i];
@@ -620,7 +620,7 @@ inline zplm_mat3_t operator+(zplm_mat3_t const &a, zplm_mat3_t const &b) {
 
 inline zplm_mat3_t operator-(zplm_mat3_t const &a, zplm_mat3_t const &b) {
     int i, j;
-    zplm_mat3_t r = {0};
+    zplm_mat3_t r = {};
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 3; i++)
             r.e[3*j+i] = a.e[3*j+i] - b.e[3*j+i];
@@ -630,7 +630,7 @@ inline zplm_mat3_t operator-(zplm_mat3_t const &a, zplm_mat3_t const &b) {
 
 inline zplm_mat3_t operator*(zplm_mat3_t const &a, zplm_mat3_t const &b) { zplm_mat3_t r; zplm_mat3_mul(&r, (zplm_mat3_t *)&a, (zplm_mat3_t *)&b); return r; }
 inline zplm_vec3_t operator*(zplm_mat3_t const &a, zplm_vec3_t v) { zplm_vec3_t r; zplm_mat3_mul_vec3(&r, (zplm_mat3_t *)&a, v); return r; } inline zplm_mat3_t operator*(zplm_mat3_t const &a, float scalar) {
-    zplm_mat3_t r = {0};
+    zplm_mat3_t r = {};
     int i;
     for (i = 0; i < 3*3; i++) r.e[i] = a.e[i] * scalar;
     return r;
@@ -646,7 +646,7 @@ inline zplm_mat3_t& operator*=(zplm_mat3_t& a, zplm_mat3_t const &b) { return (a
 
 inline zplm_mat4_t operator+(zplm_mat4_t const &a, zplm_mat4_t const &b) {
     int i, j;
-    zplm_mat4_t r = {0};
+    zplm_mat4_t r = {};
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++)
             r.e[4*j+i] = a.e[4*j+i] + b.e[4*j+i];
@@ -656,7 +656,7 @@ inline zplm_mat4_t operator+(zplm_mat4_t const &a, zplm_mat4_t const &b) {
 
 inline zplm_mat4_t operator-(zplm_mat4_t const &a, zplm_mat4_t const &b) {
     int i, j;
-    zplm_mat4_t r = {0};
+    zplm_mat4_t r = {};
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++)
             r.e[4*j+i] = a.e[4*j+i] - b.e[4*j+i];
@@ -667,7 +667,7 @@ inline zplm_mat4_t operator-(zplm_mat4_t const &a, zplm_mat4_t const &b) {
 inline zplm_mat4_t operator*(zplm_mat4_t const &a, zplm_mat4_t const &b) { zplm_mat4_t r; zplm_mat4_mul(&r, (zplm_mat4_t *)&a, (zplm_mat4_t *)&b); return r; }
 inline zplm_vec4_t operator*(zplm_mat4_t const &a, zplm_vec4_t v) { zplm_vec4_t r; zplm_mat4_mul_vec4(&r, (zplm_mat4_t *)&a, v); return r; }
 inline zplm_mat4_t operator*(zplm_mat4_t const &a, float scalar) {
-    zplm_mat4_t r = {0};
+    zplm_mat4_t r = {};
     int i;
     for (i = 0; i < 4*4; i++) r.e[i] = a.e[i] * scalar;
     return r;
@@ -1659,7 +1659,7 @@ void zplm_mat4_ortho3d(zplm_mat4_t *out, float left, float right, float bottom, 
 
 void zplm_mat4_perspective(zplm_mat4_t *out, float fovy, float aspect, float z_near, float z_far) {
     float tan_half_fovy = zplm_tan(0.5f * fovy);
-    zplm_mat4_t zero_mat = {0};
+    zplm_mat4_t zero_mat = {};
     zplm_float4_t *m = zplm_float44_m(out);
     *out = zero_mat;
 
@@ -1676,7 +1676,7 @@ void zplm_mat4_infinite_perspective(zplm_mat4_t *out, float fovy, float aspect, 
     float right  =  range * aspect;
     float bottom = -range;
     float top    =  range;
-    zplm_mat4_t zero_mat = {0};
+    zplm_mat4_t zero_mat = {};
     zplm_float4_t *m = zplm_float44_m(out);
     *out = zero_mat;
 
@@ -2084,7 +2084,7 @@ int zplm_rect2_contains(zplm_rect2_t a, float x, float y) {
 int zplm_rect2_contains_vec2(zplm_rect2_t a, zplm_vec2_t p) { return zplm_rect2_contains(a, p.x, p.y); }
 
 int zplm_rect2_intersects(zplm_rect2_t a, zplm_rect2_t b) {
-    zplm_rect2_t r = {0};
+    zplm_rect2_t r = {};
     return zplm_rect2_intersection_result(a, b, &r);
 }
 
@@ -2109,7 +2109,7 @@ int zplm_rect2_intersection_result(zplm_rect2_t a, zplm_rect2_t b, zplm_rect2_t 
         *intersection = r;
         return 1;
     } else {
-        zplm_rect2_t r = {0};
+        zplm_rect2_t r = {};
         *intersection = r;
         return 0;
     }

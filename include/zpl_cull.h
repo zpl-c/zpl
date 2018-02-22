@@ -15,6 +15,7 @@ Credits:
     Dominik Madarasz (GitHub: zaklaus)
 
 Version History:
+    3.1.4 - Small fixes
     3.1.3 - Fixed tests and warnings
     3.1.2 - Fixed zplc_insert bug with invalid branched nodes
     3.1.1 - Fixed zplc_insert signature
@@ -125,7 +126,7 @@ extern "C" {
 #endif
 
     void zplc_init(zplc_t *c, zpl_allocator_t a, isize dims, zplc_bounds_t bounds, zplm_vec3_t min_bounds, u32 max_nodes) {
-        zplc_t c_ = {0};
+        zplc_t c_ = {};
         *c            = c_;
         c->allocator  = a;
         c->boundary   = bounds;
@@ -289,10 +290,10 @@ extern "C" {
             loops = 8;
         }
 
-        f32 p[3] = {0};
+        f32 p[3] = {};
         for (i32 i = 0; i < loops; ++i) {
-            zplc_t tree = {0};
-            zplc_bounds_t bounds = {0};
+            zplc_t tree = {};
+            zplc_bounds_t bounds = {};
             p[0] = c->boundary.centre.e[0] + hd.half_size.e[0]*zplc__tpl[i][0];
             p[1] = c->boundary.centre.e[1] + hd.half_size.e[1]*zplc__tpl[i][1];
             p[2] = c->boundary.centre.e[2] + hd.half_size.e[2]*zplc__tpl[i][2];
