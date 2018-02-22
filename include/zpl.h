@@ -931,7 +931,7 @@ Version History:
         zpl_async_cb *work;
         zpl_async_cb *cb;
     } zpl_async_ctl_t;
-#define zpl_async(data, work, cb) do {                                  \
+#define zpl_async(data, work, cb) do {                                   \
         zpl_thread_t td = {0};                                           \
         zpl_thread_init(&td);                                            \
         zpl_async_ctl_t  ctl_ = {data, work, cb};                        \
