@@ -9,7 +9,7 @@
 
 int main(void) {
 
-    zpl_file_t file;
+    zpl_file file;
     zpl_file_open(&file, "jeopardy.json");
     isize file_size = zpl_file_size(&file);
     char *content = (char *)zpl_malloc(file_size+1);
