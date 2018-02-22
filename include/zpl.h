@@ -16,6 +16,7 @@
 
 
   Version History:
+  4.7.2 - Got rid of size arg for zpl_str_split_lines
   4.7.1 - Added an example
   4.7.0 - Added zpl_path_dirlist
   4.6.1 - zpl_memcopy x86 patch from upstream
@@ -1107,6 +1108,7 @@
 #ifndef zpl_malloc
 #define zpl_malloc(sz) zpl_alloc(zpl_heap_allocator(), sz)
 #define zpl_mfree(ptr) zpl_free(zpl_heap_allocator(), ptr)
+#define zpl_heap zpl_heap_allocator
 #endif
 
 
@@ -1316,7 +1318,7 @@
 
     // NOTE: This edits *source* string.
     // Returns: zpl_array_t
-    ZPL_DEF char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace);
+    ZPL_DEF char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, b32 strip_whitespace);
 
     ZPL_DEF b32 zpl_str_has_prefix(char const *str, char const *prefix);
     ZPL_DEF b32 zpl_str_has_suffix(char const *str, char const *suffix);
@@ -4858,12 +4860,12 @@ extern "C" {
         return *src ? src+1 : src;
     }
 
-    zpl_inline char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, isize len, b32 strip_whitespace)
+    zpl_inline char **zpl_str_split_lines(zpl_allocator_t alloc, char *source, b32 strip_whitespace)
     {
-        char **lines=NULL, *p=source, *pd=p, *end=(source+len);
+        char **lines=NULL, *p=source, *pd=p;
         zpl_array_init(lines, alloc);
 
-        for (; p < end && *p ;) {
+        while (*p) {
             if (*pd == '\n') {
                 *pd=0;
                 if (*(pd-1) == '\r') *(pd-1)=0;
@@ -6833,7 +6835,7 @@ extern "C" {
         char *contents = (char *)zpl_alloc(alloc, fsize+1);
         zpl_file_read(&f, contents, fsize);
         contents[fsize]=0;
-        *lines=zpl_str_split_lines(alloc, contents, fsize, strip_whitespace);
+        *lines=zpl_str_split_lines(alloc, contents, strip_whitespace);
         zpl_file_close(&f);
 
         return contents;
