@@ -77,10 +77,11 @@ extern "C" {
 
     typedef enum zpljProps {
         ZPLJ_PROPS_NONE         = 0,
-        ZPLJ_PROPS_NAN          = (1 << 0),
-        ZPLJ_PROPS_NAN_NEG      = (1 << 1),
-        ZPLJ_PROPS_INFINITY     = (1 << 2),
-        ZPLJ_PROPS_INFINITY_NEG = (1 << 3),
+        ZPLJ_PROPS_NAN          = 1,
+        ZPLJ_PROPS_NAN_NEG      = 2,
+        ZPLJ_PROPS_INFINITY     = 3,
+        ZPLJ_PROPS_INFINITY_NEG = 4,
+        ZPLJ_PROPS_IS_EXP       = 5,
     } zpljProps;
 
     typedef enum zpljConst {
@@ -104,18 +105,23 @@ extern "C" {
 
 #define zplj_object_t zplj_object
     typedef struct zplj_object {
-        zpl_allocator_t backing;
+        zpl_allocator backing;
         u8    name_style;
         char *name;
         u8    type;
         u8    props;
-        zpl_array_t(struct zplj_object) nodes;
+        zpl_array(struct zplj_object) nodes;
 
         union {
             char *string;
-            zpl_array_t(struct zplj_object) elements;
+            zpl_array(struct zplj_object) elements;
             i64   integer;
-            f64   real;
+            struct {
+                f64 real;
+                f32 base;
+                i64 exp;
+                b32 exp_neg;
+            };
             u8    constant;
         };
     } zplj_object;
@@ -451,6 +457,13 @@ extern "C" {
             }
             else {
                 obj->real = zpl_str_to_f64(buf, 0);
+
+                if (exp) {
+                    obj->base    = obj->real;
+                    obj->exp     = exp;
+                    obj->exp_neg = !(eb == 10.f);
+                    obj->props   = ZPLJ_PROPS_IS_EXP;
+                }
 
                 while(--exp > 0) {
                     obj->real *= eb;
