@@ -537,7 +537,7 @@ extern "C" {
             }
             else {
                 /**/ if (*p == '[') {
-                    *node.name = '\0';
+                    if (node.name) *node.name = '\0';
                     p = zplj__parse_value(&node, p, a, err_code);
                     goto l_parsed;
                 }
