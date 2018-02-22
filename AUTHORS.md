@@ -2,18 +2,18 @@
 
 This page lists all contributors improving this project over time, since the creation of this project.
 
-# Project maintainer
+## Project maintainer
 
 * Dominik Madarasz (zaklaus)
 
-# Key contributors
+## Key contributors
 
 * Vladyslav Hrytsenko (inlife)
 
-# Original Author (gb libraries)
+## Original Author (gb libraries)
 
 * Ginger Bill (gingerBill)
 
-# Other contributors
+## Other contributors
 
 * YOU
