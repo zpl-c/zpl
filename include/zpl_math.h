@@ -1967,7 +1967,7 @@ void zplm_vec3_cslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t
     d->z = h00*a.z + h10*v0.z + h01*b.z + h11*v1.z;
 }
 
-void zplm_vec2_dcslerp(zplm_vec2_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t b, zplm_vec3_t v1, float t) {
+void zplm_vec2_dcslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t b, zplm_vec2_t v1, float t) {
     float t2 = t * t;
 
     float dh00 =  6 * t2 - 6 * t;

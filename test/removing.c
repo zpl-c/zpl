@@ -67,7 +67,7 @@ int main(void) {
     isize c = zpl_array_count(search_result2);
 
     for (int i = 0; i < c; ++i) {
-        zpl_printf("we met %d\n", search_result2[i].tag);
+        zpl_printf("we met %ld\n", search_result2[i].tag);
     }
 
     return 0;
