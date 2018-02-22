@@ -59,69 +59,76 @@ Version History:
 #pragma warning(disable:4201)
 #endif
 
-typedef union zplm_vec2_t {
+#define zplm_vec2_t zplm_vec2
+typedef union zplm_vec2 {
     struct { float x, y; };
     float e[2];
-} zplm_vec2_t;
+} zplm_vec2;
 
-typedef union zplm_vec3_t {
+#define zplm_vec3_t zplm_vec3
+typedef union zplm_vec3 {
     struct { float x, y, z; };
     struct { float r, g, b; };
 
-    zplm_vec2_t xy;
+    zplm_vec2 xy;
     float e[3];
-} zplm_vec3_t;
+} zplm_vec3;
 
-typedef union zplm_vec4_t {
+#define zplm_vec4_t zplm_vec4
+typedef union zplm_vec4 {
     struct { float x, y, z, w; };
     struct { float r, g, b, a; };
-    struct { zplm_vec2_t xy, zw; };
-    zplm_vec3_t xyz;
-    zplm_vec3_t rzpl;
+    struct { zplm_vec2 xy, zw; };
+    zplm_vec3 xyz;
+    zplm_vec3 rzpl;
     float e[4];
-} zplm_vec4_t;
+} zplm_vec4;
 
-typedef union zplm_mat2_t {
-    struct { zplm_vec2_t x, y; };
-    zplm_vec2_t col[2];
+#define zplm_mat2_t zplm_mat2
+typedef union zplm_mat2 {
+    struct { zplm_vec2 x, y; };
+    zplm_vec2 col[2];
     float e[4];
-} zplm_mat2_t;
+} zplm_mat2;
 
-typedef union zplm_mat3_t {
-    struct { zplm_vec3_t x, y, z; };
-    zplm_vec3_t col[3];
+#define zplm_mat3_t zplm_mat3
+typedef union zplm_mat3 {
+    struct { zplm_vec3 x, y, z; };
+    zplm_vec3 col[3];
     float e[9];
-} zplm_mat3_t;
+} zplm_mat3;
 
-typedef union zplm_mat4_t {
-    struct { zplm_vec4_t x, y, z, w; };
-    zplm_vec4_t col[4];
+#define zplm_mat4_t zplm_mat4
+typedef union zplm_mat4 {
+    struct { zplm_vec4 x, y, z, w; };
+    zplm_vec4 col[4];
     float e[16];
-} zplm_mat4_t;
+} zplm_mat4;
 
 
-typedef union zplm_quat_t {
+#define zplm_quat_t zplm_quat
+typedef union zplm_quat {
     struct { float x, y, z, w; };
-    zplm_vec4_t xyzw;
-    zplm_vec3_t xyz;
+    zplm_vec4 xyzw;
+    zplm_vec3 xyz;
     float e[4];
-} zplm_quat_t;
+} zplm_quat;
 
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
-typedef float zplm_float2_t[2];
-typedef float zplm_float3_t[3];
-typedef float zplm_float4_t[4];
+typedef float zplm_float2[2];
+typedef float zplm_float3[3];
+typedef float zplm_float4[4];
 
 
-typedef struct zplm_rect2_t { zplm_vec2_t pos, dim; } zplm_rect2_t;
-typedef struct zplm_rect3_t { zplm_vec3_t pos, dim; } zplm_rect3_t;
+typedef struct zplm_rect2 { zplm_vec2 pos, dim; } zplm_rect2;
+typedef struct zplm_rect3 { zplm_vec3 pos, dim; } zplm_rect3;
 
-typedef struct zplm_aabb2_t { zplm_vec2_t centre, half_size; } zplm_aabb2_t;
-typedef struct zplm_aabb3_t { zplm_vec3_t centre, half_size; } zplm_aabb3_t;
+typedef struct zplm_aabb2 { zplm_vec2 centre, half_size; } zplm_aabb2;
+typedef struct zplm_aabb3 { zplm_vec3 centre, half_size; } zplm_aabb3;
 
 #if defined(_MSC_VER)
 typedef unsigned __int32 zplm_u32;
@@ -137,7 +144,7 @@ typedef unsigned long long zplm_u64;
 #endif
 #endif
 
-typedef short zplm_half_t;
+typedef short zplm_half;
 
 
 #ifndef ZPLM_CONSTANTS
@@ -145,11 +152,11 @@ typedef short zplm_half_t;
 #define ZPLM_EPSILON      1.19209290e-7f
 #define ZPLM_ZERO         0.0f
 #define ZPLM_ONE          1.0f
-#define ZPLM_TWO_THIRDS   0.666666666666666666666666666666666666667f
+#define zplm_TWOHIRDS   0.666666666666666666666666666666666666667f
 
 #define ZPLM_TAU          6.28318530717958647692528676655900576f
 #define ZPLM_PI           3.14159265358979323846264338327950288f
-#define ZPLM_ONE_OVER_TAU 0.636619772367581343075535053490057448f
+#define zplm_ONE_OVERAU 0.636619772367581343075535053490057448f
 #define ZPLM_ONE_OVER_PI  0.159154943091895335768883763372514362f
 
 #define ZPLM_TAU_OVER_2   3.14159265358979323846264338327950288f
@@ -157,12 +164,12 @@ typedef short zplm_half_t;
 #define ZPLM_TAU_OVER_8   0.785398163397448309615660845819875721f
 
 #define ZPLM_E            2.71828182845904523536f
-#define ZPLM_SQRT_TWO     1.41421356237309504880168872420969808f
-#define ZPLM_SQRT_THREE   1.73205080756887729352744634150587236f
+#define zplm_SQRTWO     1.41421356237309504880168872420969808f
+#define zplm_SQRTHREE   1.73205080756887729352744634150587236f
 #define ZPLM_SQRT_FIVE    2.23606797749978969640917366873127623f
 
-#define ZPLM_LOG_TWO      0.693147180559945309417232121458176568f
-#define ZPLM_LOG_TEN      2.30258509299404568401799145468436421f
+#define zplm_LOGWO      0.693147180559945309417232121458176568f
+#define zplm_LOGEN      2.30258509299404568401799145468436421f
 #endif
 
 
@@ -244,203 +251,203 @@ extern "C" {
     ZPLM_DEF float zplm_floor(float x);
     ZPLM_DEF float zplm_ceil (float x);
 
-    ZPLM_DEF float  zplm_half_to_float(zplm_half_t value);
-    ZPLM_DEF zplm_half_t zplm_float_to_half(float value);
+    ZPLM_DEF float  zplm_halfo_float(zplm_half value);
+    ZPLM_DEF zplm_half zplm_floato_half(float value);
 
 
-    ZPLM_DEF zplm_vec2_t zplm_vec2_zero(void);
-    ZPLM_DEF zplm_vec2_t zplm_vec2     (float x, float y);
-    ZPLM_DEF zplm_vec2_t zplm_vec2v    (float x[2]);
+    ZPLM_DEF zplm_vec2 zplm_vec2f_zero(void);
+    ZPLM_DEF zplm_vec2 zplm_vec2f     (float x, float y);
+    ZPLM_DEF zplm_vec2 zplm_vec2fv    (float x[2]);
 
-    ZPLM_DEF zplm_vec3_t zplm_vec3_zero(void);
-    ZPLM_DEF zplm_vec3_t zplm_vec3     (float x, float y, float z);
-    ZPLM_DEF zplm_vec3_t zplm_vec3v    (float x[3]);
+    ZPLM_DEF zplm_vec3 zplm_vec3f_zero(void);
+    ZPLM_DEF zplm_vec3 zplm_vec3f     (float x, float y, float z);
+    ZPLM_DEF zplm_vec3 zplm_vec3fv    (float x[3]);
 
-    ZPLM_DEF zplm_vec4_t zplm_vec4_zero(void);
-    ZPLM_DEF zplm_vec4_t zplm_vec4     (float x, float y, float z, float w);
-    ZPLM_DEF zplm_vec4_t zplm_vec4v    (float x[4]);
-
-
-    ZPLM_DEF void zplm_vec2_add(zplm_vec2_t *d, zplm_vec2_t v0, zplm_vec2_t v1);
-    ZPLM_DEF void zplm_vec2_sub(zplm_vec2_t *d, zplm_vec2_t v0, zplm_vec2_t v1);
-    ZPLM_DEF void zplm_vec2_mul(zplm_vec2_t *d, zplm_vec2_t v,  float s);
-    ZPLM_DEF void zplm_vec2_div(zplm_vec2_t *d, zplm_vec2_t v,  float s);
-
-    ZPLM_DEF void zplm_vec3_add(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1);
-    ZPLM_DEF void zplm_vec3_sub(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1);
-    ZPLM_DEF void zplm_vec3_mul(zplm_vec3_t *d, zplm_vec3_t v,  float s);
-    ZPLM_DEF void zplm_vec3_div(zplm_vec3_t *d, zplm_vec3_t v,  float s);
-
-    ZPLM_DEF void zplm_vec4_add(zplm_vec4_t *d, zplm_vec4_t v0, zplm_vec4_t v1);
-    ZPLM_DEF void zplm_vec4_sub(zplm_vec4_t *d, zplm_vec4_t v0, zplm_vec4_t v1);
-    ZPLM_DEF void zplm_vec4_mul(zplm_vec4_t *d, zplm_vec4_t v,  float s);
-    ZPLM_DEF void zplm_vec4_div(zplm_vec4_t *d, zplm_vec4_t v,  float s);
-
-    ZPLM_DEF void zplm_vec2_addeq(zplm_vec2_t *d, zplm_vec2_t v);
-    ZPLM_DEF void zplm_vec2_subeq(zplm_vec2_t *d, zplm_vec2_t v);
-    ZPLM_DEF void zplm_vec2_muleq(zplm_vec2_t *d, float s);
-    ZPLM_DEF void zplm_vec2_diveq(zplm_vec2_t *d, float s);
-
-    ZPLM_DEF void zplm_vec3_addeq(zplm_vec3_t *d, zplm_vec3_t v);
-    ZPLM_DEF void zplm_vec3_subeq(zplm_vec3_t *d, zplm_vec3_t v);
-    ZPLM_DEF void zplm_vec3_muleq(zplm_vec3_t *d, float s);
-    ZPLM_DEF void zplm_vec3_diveq(zplm_vec3_t *d, float s);
-
-    ZPLM_DEF void zplm_vec4_addeq(zplm_vec4_t *d, zplm_vec4_t v);
-    ZPLM_DEF void zplm_vec4_subeq(zplm_vec4_t *d, zplm_vec4_t v);
-    ZPLM_DEF void zplm_vec4_muleq(zplm_vec4_t *d, float s);
-    ZPLM_DEF void zplm_vec4_diveq(zplm_vec4_t *d, float s);
-
-    ZPLM_DEF float zplm_vec2_dot(zplm_vec2_t v0, zplm_vec2_t v1);
-    ZPLM_DEF float zplm_vec3_dot(zplm_vec3_t v0, zplm_vec3_t v1);
-    ZPLM_DEF float zplm_vec4_dot(zplm_vec4_t v0, zplm_vec4_t v1);
-
-    ZPLM_DEF void zplm_vec2_cross(float *d, zplm_vec2_t v0, zplm_vec2_t v1);
-    ZPLM_DEF void zplm_vec3_cross(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1);
-
-    ZPLM_DEF float zplm_vec2_mag2(zplm_vec2_t v);
-    ZPLM_DEF float zplm_vec3_mag2(zplm_vec3_t v);
-    ZPLM_DEF float zplm_vec4_mag2(zplm_vec4_t v);
-
-    ZPLM_DEF float zplm_vec2_mag(zplm_vec2_t v);
-    ZPLM_DEF float zplm_vec3_mag(zplm_vec3_t v);
-    ZPLM_DEF float zplm_vec4_mag(zplm_vec4_t v);
-
-    ZPLM_DEF void zplm_vec2_norm(zplm_vec2_t *d, zplm_vec2_t v);
-    ZPLM_DEF void zplm_vec3_norm(zplm_vec3_t *d, zplm_vec3_t v);
-    ZPLM_DEF void zplm_vec4_norm(zplm_vec4_t *d, zplm_vec4_t v);
-
-    ZPLM_DEF void zplm_vec2_norm0(zplm_vec2_t *d, zplm_vec2_t v);
-    ZPLM_DEF void zplm_vec3_norm0(zplm_vec3_t *d, zplm_vec3_t v);
-    ZPLM_DEF void zplm_vec4_norm0(zplm_vec4_t *d, zplm_vec4_t v);
-
-    ZPLM_DEF void zplm_vec2_reflect(zplm_vec2_t *d, zplm_vec2_t i, zplm_vec2_t n);
-    ZPLM_DEF void zplm_vec3_reflect(zplm_vec3_t *d, zplm_vec3_t i, zplm_vec3_t n);
-    ZPLM_DEF void zplm_vec2_refract(zplm_vec2_t *d, zplm_vec2_t i, zplm_vec2_t n, float eta);
-    ZPLM_DEF void zplm_vec3_refract(zplm_vec3_t *d, zplm_vec3_t i, zplm_vec3_t n, float eta);
-
-    ZPLM_DEF float zplm_vec2_aspect_ratio(zplm_vec2_t v);
+    ZPLM_DEF zplm_vec4 zplm_vec4f_zero(void);
+    ZPLM_DEF zplm_vec4 zplm_vec4f     (float x, float y, float z, float w);
+    ZPLM_DEF zplm_vec4 zplm_vec4fv    (float x[4]);
 
 
-    ZPLM_DEF void zplm_mat2_identity   (zplm_mat2_t *m);
+    ZPLM_DEF void zplm_vec2_add(zplm_vec2 *d, zplm_vec2 v0, zplm_vec2 v1);
+    ZPLM_DEF void zplm_vec2_sub(zplm_vec2 *d, zplm_vec2 v0, zplm_vec2 v1);
+    ZPLM_DEF void zplm_vec2_mul(zplm_vec2 *d, zplm_vec2 v,  float s);
+    ZPLM_DEF void zplm_vec2_div(zplm_vec2 *d, zplm_vec2 v,  float s);
+
+    ZPLM_DEF void zplm_vec3_add(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1);
+    ZPLM_DEF void zplm_vec3_sub(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1);
+    ZPLM_DEF void zplm_vec3_mul(zplm_vec3 *d, zplm_vec3 v,  float s);
+    ZPLM_DEF void zplm_vec3_div(zplm_vec3 *d, zplm_vec3 v,  float s);
+
+    ZPLM_DEF void zplm_vec4_add(zplm_vec4 *d, zplm_vec4 v0, zplm_vec4 v1);
+    ZPLM_DEF void zplm_vec4_sub(zplm_vec4 *d, zplm_vec4 v0, zplm_vec4 v1);
+    ZPLM_DEF void zplm_vec4_mul(zplm_vec4 *d, zplm_vec4 v,  float s);
+    ZPLM_DEF void zplm_vec4_div(zplm_vec4 *d, zplm_vec4 v,  float s);
+
+    ZPLM_DEF void zplm_vec2_addeq(zplm_vec2 *d, zplm_vec2 v);
+    ZPLM_DEF void zplm_vec2_subeq(zplm_vec2 *d, zplm_vec2 v);
+    ZPLM_DEF void zplm_vec2_muleq(zplm_vec2 *d, float s);
+    ZPLM_DEF void zplm_vec2_diveq(zplm_vec2 *d, float s);
+
+    ZPLM_DEF void zplm_vec3_addeq(zplm_vec3 *d, zplm_vec3 v);
+    ZPLM_DEF void zplm_vec3_subeq(zplm_vec3 *d, zplm_vec3 v);
+    ZPLM_DEF void zplm_vec3_muleq(zplm_vec3 *d, float s);
+    ZPLM_DEF void zplm_vec3_diveq(zplm_vec3 *d, float s);
+
+    ZPLM_DEF void zplm_vec4_addeq(zplm_vec4 *d, zplm_vec4 v);
+    ZPLM_DEF void zplm_vec4_subeq(zplm_vec4 *d, zplm_vec4 v);
+    ZPLM_DEF void zplm_vec4_muleq(zplm_vec4 *d, float s);
+    ZPLM_DEF void zplm_vec4_diveq(zplm_vec4 *d, float s);
+
+    ZPLM_DEF float zplm_vec2_dot(zplm_vec2 v0, zplm_vec2 v1);
+    ZPLM_DEF float zplm_vec3_dot(zplm_vec3 v0, zplm_vec3 v1);
+    ZPLM_DEF float zplm_vec4_dot(zplm_vec4 v0, zplm_vec4 v1);
+
+    ZPLM_DEF void zplm_vec2_cross(float *d, zplm_vec2 v0, zplm_vec2 v1);
+    ZPLM_DEF void zplm_vec3_cross(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1);
+
+    ZPLM_DEF float zplm_vec2_mag2(zplm_vec2 v);
+    ZPLM_DEF float zplm_vec3_mag2(zplm_vec3 v);
+    ZPLM_DEF float zplm_vec4_mag2(zplm_vec4 v);
+
+    ZPLM_DEF float zplm_vec2_mag(zplm_vec2 v);
+    ZPLM_DEF float zplm_vec3_mag(zplm_vec3 v);
+    ZPLM_DEF float zplm_vec4_mag(zplm_vec4 v);
+
+    ZPLM_DEF void zplm_vec2_norm(zplm_vec2 *d, zplm_vec2 v);
+    ZPLM_DEF void zplm_vec3_norm(zplm_vec3 *d, zplm_vec3 v);
+    ZPLM_DEF void zplm_vec4_norm(zplm_vec4 *d, zplm_vec4 v);
+
+    ZPLM_DEF void zplm_vec2_norm0(zplm_vec2 *d, zplm_vec2 v);
+    ZPLM_DEF void zplm_vec3_norm0(zplm_vec3 *d, zplm_vec3 v);
+    ZPLM_DEF void zplm_vec4_norm0(zplm_vec4 *d, zplm_vec4 v);
+
+    ZPLM_DEF void zplm_vec2_reflect(zplm_vec2 *d, zplm_vec2 i, zplm_vec2 n);
+    ZPLM_DEF void zplm_vec3_reflect(zplm_vec3 *d, zplm_vec3 i, zplm_vec3 n);
+    ZPLM_DEF void zplm_vec2_refract(zplm_vec2 *d, zplm_vec2 i, zplm_vec2 n, float eta);
+    ZPLM_DEF void zplm_vec3_refract(zplm_vec3 *d, zplm_vec3 i, zplm_vec3 n, float eta);
+
+    ZPLM_DEF float zplm_vec2_aspect_ratio(zplm_vec2 v);
+
+
+    ZPLM_DEF void zplm_mat2_identity   (zplm_mat2 *m);
     ZPLM_DEF void zplm_float22_identity(float m[2][2]);
 
-    ZPLM_DEF void  zplm_mat2_transpose  (zplm_mat2_t *m);
-    ZPLM_DEF void  zplm_mat2_mul        (zplm_mat2_t *out, zplm_mat2_t *m1, zplm_mat2_t *m2);
-    ZPLM_DEF void  zplm_mat2_mul_vec2   (zplm_vec2_t *out, zplm_mat2_t *m, zplm_vec2_t in);
-    ZPLM_DEF void  zplm_mat2_inverse    (zplm_mat2_t *out, zplm_mat2_t *in);
-    ZPLM_DEF float zplm_mat2_determinate(zplm_mat2_t *m);
+    ZPLM_DEF void  zplm_mat2ranspose  (zplm_mat2 *m);
+    ZPLM_DEF void  zplm_mat2_mul        (zplm_mat2 *out, zplm_mat2 *m1, zplm_mat2 *m2);
+    ZPLM_DEF void  zplm_mat2_mul_vec2   (zplm_vec2 *out, zplm_mat2 *m, zplm_vec2 in);
+    ZPLM_DEF void  zplm_mat2_inverse    (zplm_mat2 *out, zplm_mat2 *in);
+    ZPLM_DEF float zplm_mat2_determinate(zplm_mat2 *m);
 
-    ZPLM_DEF zplm_mat2_t *zplm_mat2_v(zplm_vec2_t m[2]);
-    ZPLM_DEF zplm_mat2_t *zplm_mat2_f(float m[2][2]);
-    ZPLM_DEF zplm_float2_t *zplm_float22_m(zplm_mat2_t *m);
-    ZPLM_DEF zplm_float2_t *zplm_float22_v(zplm_vec2_t m[2]);
-    ZPLM_DEF zplm_float2_t *zplm_float22_4(float m[4]);
+    ZPLM_DEF zplm_mat2 *zplm_mat2_v(zplm_vec2 m[2]);
+    ZPLM_DEF zplm_mat2 *zplm_mat2_f(float m[2][2]);
+    ZPLM_DEF zplm_float2 *zplm_float22_m(zplm_mat2 *m);
+    ZPLM_DEF zplm_float2 *zplm_float22_v(zplm_vec2 m[2]);
+    ZPLM_DEF zplm_float2 *zplm_float22_4(float m[4]);
 
-    ZPLM_DEF void zplm_float22_transpose(float (*vec)[2]);
+    ZPLM_DEF void zplm_float22ranspose(float (*vec)[2]);
     ZPLM_DEF void zplm_float22_mul      (float (*out)[2], float (*mat1)[2], float (*mat2)[2]);
-    ZPLM_DEF void zplm_float22_mul_vec2 (zplm_vec2_t *out, float m[2][2], zplm_vec2_t in);
+    ZPLM_DEF void zplm_float22_mul_vec2 (zplm_vec2 *out, float m[2][2], zplm_vec2 in);
 
 
-    ZPLM_DEF void zplm_mat3_identity   (zplm_mat3_t *m);
+    ZPLM_DEF void zplm_mat3_identity   (zplm_mat3 *m);
     ZPLM_DEF void zplm_float33_identity(float m[3][3]);
 
-    ZPLM_DEF void  zplm_mat3_transpose  (zplm_mat3_t *m);
-    ZPLM_DEF void  zplm_mat3_mul        (zplm_mat3_t *out, zplm_mat3_t *m1, zplm_mat3_t *m2);
-    ZPLM_DEF void  zplm_mat3_mul_vec3   (zplm_vec3_t *out, zplm_mat3_t *m, zplm_vec3_t in);
-    ZPLM_DEF void  zplm_mat3_inverse    (zplm_mat3_t *out, zplm_mat3_t *in);
-    ZPLM_DEF float zplm_mat3_determinate(zplm_mat3_t *m);
+    ZPLM_DEF void  zplm_mat3ranspose  (zplm_mat3 *m);
+    ZPLM_DEF void  zplm_mat3_mul        (zplm_mat3 *out, zplm_mat3 *m1, zplm_mat3 *m2);
+    ZPLM_DEF void  zplm_mat3_mul_vec3   (zplm_vec3 *out, zplm_mat3 *m, zplm_vec3 in);
+    ZPLM_DEF void  zplm_mat3_inverse    (zplm_mat3 *out, zplm_mat3 *in);
+    ZPLM_DEF float zplm_mat3_determinate(zplm_mat3 *m);
 
 
-    ZPLM_DEF zplm_mat3_t *zplm_mat3_v(zplm_vec3_t m[3]);
-    ZPLM_DEF zplm_mat3_t *zplm_mat3_f(float m[3][3]);
+    ZPLM_DEF zplm_mat3 *zplm_mat3_v(zplm_vec3 m[3]);
+    ZPLM_DEF zplm_mat3 *zplm_mat3_f(float m[3][3]);
 
-    ZPLM_DEF zplm_float3_t *zplm_float33_m(zplm_mat3_t *m);
-    ZPLM_DEF zplm_float3_t *zplm_float33_v(zplm_vec3_t m[3]);
-    ZPLM_DEF zplm_float3_t *zplm_float33_9(float m[9]);
+    ZPLM_DEF zplm_float3 *zplm_float33_m(zplm_mat3 *m);
+    ZPLM_DEF zplm_float3 *zplm_float33_v(zplm_vec3 m[3]);
+    ZPLM_DEF zplm_float3 *zplm_float33_9(float m[9]);
 
-    ZPLM_DEF void zplm_float33_transpose(float (*vec)[3]);
+    ZPLM_DEF void zplm_float33ranspose(float (*vec)[3]);
     ZPLM_DEF void zplm_float33_mul      (float (*out)[3], float (*mat1)[3], float (*mat2)[3]);
-    ZPLM_DEF void zplm_float33_mul_vec3 (zplm_vec3_t *out, float m[3][3], zplm_vec3_t in);
+    ZPLM_DEF void zplm_float33_mul_vec3 (zplm_vec3 *out, float m[3][3], zplm_vec3 in);
 
-    ZPLM_DEF void zplm_mat4_identity   (zplm_mat4_t *m);
+    ZPLM_DEF void zplm_mat4_identity   (zplm_mat4 *m);
     ZPLM_DEF void zplm_float44_identity(float m[4][4]);
 
-    ZPLM_DEF void  zplm_mat4_transpose  (zplm_mat4_t *m);
-    ZPLM_DEF void  zplm_mat4_mul        (zplm_mat4_t *out, zplm_mat4_t *m1, zplm_mat4_t *m2);
-    ZPLM_DEF void  zplm_mat4_mul_vec4   (zplm_vec4_t *out, zplm_mat4_t *m, zplm_vec4_t in);
-    ZPLM_DEF void  zplm_mat4_inverse    (zplm_mat4_t *out, zplm_mat4_t *in);
+    ZPLM_DEF void  zplm_mat4ranspose  (zplm_mat4 *m);
+    ZPLM_DEF void  zplm_mat4_mul        (zplm_mat4 *out, zplm_mat4 *m1, zplm_mat4 *m2);
+    ZPLM_DEF void  zplm_mat4_mul_vec4   (zplm_vec4 *out, zplm_mat4 *m, zplm_vec4 in);
+    ZPLM_DEF void  zplm_mat4_inverse    (zplm_mat4 *out, zplm_mat4 *in);
 
-    ZPLM_DEF zplm_mat4_t *zplm_mat4_v(zplm_vec4_t m[4]);
-    ZPLM_DEF zplm_mat4_t *zplm_mat4_f(float m[4][4]);
+    ZPLM_DEF zplm_mat4 *zplm_mat4_v(zplm_vec4 m[4]);
+    ZPLM_DEF zplm_mat4 *zplm_mat4_f(float m[4][4]);
 
-    ZPLM_DEF zplm_float4_t *zplm_float44_m (zplm_mat4_t *m);
-    ZPLM_DEF zplm_float4_t *zplm_float44_v (zplm_vec4_t m[4]);
-    ZPLM_DEF zplm_float4_t *zplm_float44_16(float m[16]);
+    ZPLM_DEF zplm_float4 *zplm_float44_m (zplm_mat4 *m);
+    ZPLM_DEF zplm_float4 *zplm_float44_v (zplm_vec4 m[4]);
+    ZPLM_DEF zplm_float4 *zplm_float44_16(float m[16]);
 
-    ZPLM_DEF void zplm_float44_transpose(float (*vec)[4]);
+    ZPLM_DEF void zplm_float44ranspose(float (*vec)[4]);
     ZPLM_DEF void zplm_float44_mul      (float (*out)[4], float (*mat1)[4], float (*mat2)[4]);
-    ZPLM_DEF void zplm_float44_mul_vec4 (zplm_vec4_t *out, float m[4][4], zplm_vec4_t in);
+    ZPLM_DEF void zplm_float44_mul_vec4 (zplm_vec4 *out, float m[4][4], zplm_vec4 in);
 
 
-    ZPLM_DEF void zplm_mat4_translate           (zplm_mat4_t *out, zplm_vec3_t v);
-    ZPLM_DEF void zplm_mat4_rotate              (zplm_mat4_t *out, zplm_vec3_t v, float angle_radians);
-    ZPLM_DEF void zplm_mat4_scale               (zplm_mat4_t *out, zplm_vec3_t v);
-    ZPLM_DEF void zplm_mat4_scalef              (zplm_mat4_t *out, float s);
-    ZPLM_DEF void zplm_mat4_ortho2d             (zplm_mat4_t *out, float left, float right, float bottom, float top);
-    ZPLM_DEF void zplm_mat4_ortho3d             (zplm_mat4_t *out, float left, float right, float bottom, float top, float z_near, float z_far);
-    ZPLM_DEF void zplm_mat4_perspective         (zplm_mat4_t *out, float fovy, float aspect, float z_near, float z_far);
-    ZPLM_DEF void zplm_mat4_infinite_perspective(zplm_mat4_t *out, float fovy, float aspect, float z_near);
+    ZPLM_DEF void zplm_mat4ranslate           (zplm_mat4 *out, zplm_vec3 v);
+    ZPLM_DEF void zplm_mat4_rotate              (zplm_mat4 *out, zplm_vec3 v, float angle_radians);
+    ZPLM_DEF void zplm_mat4_scale               (zplm_mat4 *out, zplm_vec3 v);
+    ZPLM_DEF void zplm_mat4_scalef              (zplm_mat4 *out, float s);
+    ZPLM_DEF void zplm_mat4_ortho2d             (zplm_mat4 *out, float left, float right, float bottom, float top);
+    ZPLM_DEF void zplm_mat4_ortho3d             (zplm_mat4 *out, float left, float right, float bottom, float top, float z_near, float z_far);
+    ZPLM_DEF void zplm_mat4_perspective         (zplm_mat4 *out, float fovy, float aspect, float z_near, float z_far);
+    ZPLM_DEF void zplm_mat4_infinite_perspective(zplm_mat4 *out, float fovy, float aspect, float z_near);
 
-    ZPLM_DEF void zplm_mat4_look_at(zplm_mat4_t *out, zplm_vec3_t eye, zplm_vec3_t centre, zplm_vec3_t up);
-
-
-
-    ZPLM_DEF zplm_quat_t zplm_quat             (float x, float y, float z, float w);
-    ZPLM_DEF zplm_quat_t zplm_quatv            (float e[4]);
-    ZPLM_DEF zplm_quat_t zplm_quat_axis_angle  (zplm_vec3_t axis, float angle_radians);
-    ZPLM_DEF zplm_quat_t zplm_quat_euler_angles(float pitch, float yaw, float roll);
-    ZPLM_DEF zplm_quat_t zplm_quat_identity    (void);
-
-    ZPLM_DEF void zplm_quat_add(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1);
-    ZPLM_DEF void zplm_quat_sub(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1);
-    ZPLM_DEF void zplm_quat_mul(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1);
-    ZPLM_DEF void zplm_quat_div(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1);
-
-    ZPLM_DEF void zplm_quat_mulf(zplm_quat_t *d, zplm_quat_t q, float s);
-    ZPLM_DEF void zplm_quat_divf(zplm_quat_t *d, zplm_quat_t q, float s);
-
-
-    ZPLM_DEF void zplm_quat_addeq(zplm_quat_t *d, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_subeq(zplm_quat_t *d, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_muleq(zplm_quat_t *d, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_diveq(zplm_quat_t *d, zplm_quat_t q);
-
-
-    ZPLM_DEF void zplm_quat_muleqf(zplm_quat_t *d, float s);
-    ZPLM_DEF void zplm_quat_diveqf(zplm_quat_t *d, float s);
+    ZPLM_DEF void zplm_mat4_look_at(zplm_mat4 *out, zplm_vec3 eye, zplm_vec3 centre, zplm_vec3 up);
 
 
 
+    ZPLM_DEF zplm_quat zplm_quatf             (float x, float y, float z, float w);
+    ZPLM_DEF zplm_quat zplm_quatfv            (float e[4]);
+    ZPLM_DEF zplm_quat zplm_quat_axis_angle  (zplm_vec3 axis, float angle_radians);
+    ZPLM_DEF zplm_quat zplm_quat_euler_angles(float pitch, float yaw, float roll);
+    ZPLM_DEF zplm_quat zplm_quat_identity    (void);
 
-    ZPLM_DEF float zplm_quat_dot(zplm_quat_t q0, zplm_quat_t q1);
-    ZPLM_DEF float zplm_quat_mag(zplm_quat_t q);
+    ZPLM_DEF void zplm_quat_add(zplm_quat *d, zplm_quat q0, zplm_quat q1);
+    ZPLM_DEF void zplm_quat_sub(zplm_quat *d, zplm_quat q0, zplm_quat q1);
+    ZPLM_DEF void zplm_quat_mul(zplm_quat *d, zplm_quat q0, zplm_quat q1);
+    ZPLM_DEF void zplm_quat_div(zplm_quat *d, zplm_quat q0, zplm_quat q1);
 
-    ZPLM_DEF void zplm_quat_norm   (zplm_quat_t *d, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_conj   (zplm_quat_t *d, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_inverse(zplm_quat_t *d, zplm_quat_t q);
+    ZPLM_DEF void zplm_quat_mulf(zplm_quat *d, zplm_quat q, float s);
+    ZPLM_DEF void zplm_quat_divf(zplm_quat *d, zplm_quat q, float s);
 
-    ZPLM_DEF void  zplm_quat_axis (zplm_vec3_t *axis, zplm_quat_t q);
-    ZPLM_DEF float zplm_quat_angle(zplm_quat_t q);
 
-    ZPLM_DEF float zplm_quat_pitch(zplm_quat_t q);
-    ZPLM_DEF float zplm_quat_yaw  (zplm_quat_t q);
-    ZPLM_DEF float zplm_quat_roll (zplm_quat_t q);
+    ZPLM_DEF void zplm_quat_addeq(zplm_quat *d, zplm_quat q);
+    ZPLM_DEF void zplm_quat_subeq(zplm_quat *d, zplm_quat q);
+    ZPLM_DEF void zplm_quat_muleq(zplm_quat *d, zplm_quat q);
+    ZPLM_DEF void zplm_quat_diveq(zplm_quat *d, zplm_quat q);
+
+
+    ZPLM_DEF void zplm_quat_muleqf(zplm_quat *d, float s);
+    ZPLM_DEF void zplm_quat_diveqf(zplm_quat *d, float s);
+
+
+
+
+    ZPLM_DEF float zplm_quat_dot(zplm_quat q0, zplm_quat q1);
+    ZPLM_DEF float zplm_quat_mag(zplm_quat q);
+
+    ZPLM_DEF void zplm_quat_norm   (zplm_quat *d, zplm_quat q);
+    ZPLM_DEF void zplm_quat_conj   (zplm_quat *d, zplm_quat q);
+    ZPLM_DEF void zplm_quat_inverse(zplm_quat *d, zplm_quat q);
+
+    ZPLM_DEF void  zplm_quat_axis (zplm_vec3 *axis, zplm_quat q);
+    ZPLM_DEF float zplm_quat_angle(zplm_quat q);
+
+    ZPLM_DEF float zplm_quat_pitch(zplm_quat q);
+    ZPLM_DEF float zplm_quat_yaw  (zplm_quat q);
+    ZPLM_DEF float zplm_quat_roll (zplm_quat q);
 
     /* NOTE: Rotate v by q */
-    ZPLM_DEF void zplm_quat_rotate_vec3(zplm_vec3_t *d, zplm_quat_t q, zplm_vec3_t v);
-    ZPLM_DEF void zplm_mat4_from_quat  (zplm_mat4_t *out, zplm_quat_t q);
-    ZPLM_DEF void zplm_quat_from_mat4  (zplm_quat_t *out, zplm_mat4_t *m);
+    ZPLM_DEF void zplm_quat_rotate_vec3(zplm_vec3 *d, zplm_quat q, zplm_vec3 v);
+    ZPLM_DEF void zplm_mat4_from_quat  (zplm_mat4 *out, zplm_quat q);
+    ZPLM_DEF void zplm_quat_from_mat4  (zplm_quat *out, zplm_mat4 *m);
 
 
 
@@ -450,32 +457,32 @@ extern "C" {
     ZPLM_DEF float zplm_smooth_step  (float a, float b, float t);
     ZPLM_DEF float zplm_smoother_step(float a, float b, float t);
 
-    ZPLM_DEF void zplm_vec2_lerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t b, float t);
-    ZPLM_DEF void zplm_vec3_lerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t b, float t);
-    ZPLM_DEF void zplm_vec4_lerp(zplm_vec4_t *d, zplm_vec4_t a, zplm_vec4_t b, float t);
+    ZPLM_DEF void zplm_vec2_lerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 b, float t);
+    ZPLM_DEF void zplm_vec3_lerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 b, float t);
+    ZPLM_DEF void zplm_vec4_lerp(zplm_vec4 *d, zplm_vec4 a, zplm_vec4 b, float t);
 
-    ZPLM_DEF void zplm_vec2_cslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t b, zplm_vec2_t v1, float t);
-    ZPLM_DEF void zplm_vec3_cslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t b, zplm_vec3_t v1, float t);
-    ZPLM_DEF void zplm_vec2_dcslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t b, zplm_vec2_t v1, float t);
-    ZPLM_DEF void zplm_vec3_dcslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t b, zplm_vec3_t v1, float t);
+    ZPLM_DEF void zplm_vec2_cslerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 v0, zplm_vec2 b, zplm_vec2 v1, float t);
+    ZPLM_DEF void zplm_vec3_cslerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 v0, zplm_vec3 b, zplm_vec3 v1, float t);
+    ZPLM_DEF void zplm_vec2_dcslerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 v0, zplm_vec2 b, zplm_vec2 v1, float t);
+    ZPLM_DEF void zplm_vec3_dcslerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 v0, zplm_vec3 b, zplm_vec3 v1, float t);
 
-    ZPLM_DEF void zplm_quat_lerp (zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t);
-    ZPLM_DEF void zplm_quat_nlerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t);
-    ZPLM_DEF void zplm_quat_slerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t);
-    ZPLM_DEF void zplm_quat_nquad(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t);
-    ZPLM_DEF void zplm_quat_squad(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t);
-    ZPLM_DEF void zplm_quat_slerp_approx(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t);
-    ZPLM_DEF void zplm_quat_squad_approx(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t);
+    ZPLM_DEF void zplm_quat_lerp (zplm_quat *d, zplm_quat a, zplm_quat b, float t);
+    ZPLM_DEF void zplm_quat_nlerp(zplm_quat *d, zplm_quat a, zplm_quat b, float t);
+    ZPLM_DEF void zplm_quat_slerp(zplm_quat *d, zplm_quat a, zplm_quat b, float t);
+    ZPLM_DEF void zplm_quat_nquad(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t);
+    ZPLM_DEF void zplm_quat_squad(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t);
+    ZPLM_DEF void zplm_quat_slerp_approx(zplm_quat *d, zplm_quat a, zplm_quat b, float t);
+    ZPLM_DEF void zplm_quat_squad_approx(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t);
 
 
     /* Rects */
-    ZPLM_DEF zplm_rect2_t zplm_rect2(zplm_vec2_t pos, zplm_vec2_t dim);
-    ZPLM_DEF zplm_rect3_t zplm_rect3(zplm_vec3_t pos, zplm_vec3_t dim);
+    ZPLM_DEF zplm_rect2 zplm_rect2f(zplm_vec2 pos, zplm_vec2 dim);
+    ZPLM_DEF zplm_rect3 zplm_rect3f(zplm_vec3 pos, zplm_vec3 dim);
 
-    ZPLM_DEF int zplm_rect2_contains           (zplm_rect2_t a, float x, float y);
-    ZPLM_DEF int zplm_rect2_contains_vec2      (zplm_rect2_t a, zplm_vec2_t p);
-    ZPLM_DEF int zplm_rect2_intersects         (zplm_rect2_t a, zplm_rect2_t b);
-    ZPLM_DEF int zplm_rect2_intersection_result(zplm_rect2_t a, zplm_rect2_t b, zplm_rect2_t *intersection);
+    ZPLM_DEF int zplm_rect2_contains           (zplm_rect2 a, float x, float y);
+    ZPLM_DEF int zplm_rect2_contains_vec2      (zplm_rect2 a, zplm_vec2 p);
+    ZPLM_DEF int zplm_rect2_intersects         (zplm_rect2 a, zplm_rect2 b);
+    ZPLM_DEF int zplm_rect2_intersection_result(zplm_rect2 a, zplm_rect2 b, zplm_rect2 *intersection);
 
 
 #ifndef	ZPLM_MURMUR64_DEFAULT_SEED
@@ -500,81 +507,81 @@ extern "C" {
 
 /* TODO: How should I apply ZPLM_DEF to these operator overloads? */
 
-inline bool operator==(zplm_vec2_t a, zplm_vec2_t b) { return (a.x == b.x) && (a.y == b.y); }
-inline bool operator!=(zplm_vec2_t a, zplm_vec2_t b) { return !operator==(a, b); }
+inline bool operator==(zplm_vec2 a, zplm_vec2 b) { return (a.x == b.x) && (a.y == b.y); }
+inline bool operator!=(zplm_vec2 a, zplm_vec2 b) { return !operator==(a, b); }
 
-inline zplm_vec2_t operator+(zplm_vec2_t a) { return a; }
-inline zplm_vec2_t operator-(zplm_vec2_t a) { zplm_vec2_t r = {-a.x, -a.y}; return r; }
+inline zplm_vec2 operator+(zplm_vec2 a) { return a; }
+inline zplm_vec2 operator-(zplm_vec2 a) { zplm_vec2 r = {-a.x, -a.y}; return r; }
 
-inline zplm_vec2_t operator+(zplm_vec2_t a, zplm_vec2_t b) { zplm_vec2_t r; zplm_vec2_add(&r, a, b); return r; }
-inline zplm_vec2_t operator-(zplm_vec2_t a, zplm_vec2_t b) { zplm_vec2_t r; zplm_vec2_sub(&r, a, b); return r; }
+inline zplm_vec2 operator+(zplm_vec2 a, zplm_vec2 b) { zplm_vec2 r; zplm_vec2_add(&r, a, b); return r; }
+inline zplm_vec2 operator-(zplm_vec2 a, zplm_vec2 b) { zplm_vec2 r; zplm_vec2_sub(&r, a, b); return r; }
 
-inline zplm_vec2_t operator*(zplm_vec2_t a, float scalar) { zplm_vec2_t r; zplm_vec2_mul(&r, a, scalar); return r; }
-inline zplm_vec2_t operator*(float scalar, zplm_vec2_t a) { return operator*(a, scalar); }
+inline zplm_vec2 operator*(zplm_vec2 a, float scalar) { zplm_vec2 r; zplm_vec2_mul(&r, a, scalar); return r; }
+inline zplm_vec2 operator*(float scalar, zplm_vec2 a) { return operator*(a, scalar); }
 
-inline zplm_vec2_t operator/(zplm_vec2_t a, float scalar) { return operator*(a, 1.0f/scalar); }
-
-/* Hadamard Product */
-inline zplm_vec2_t operator*(zplm_vec2_t a, zplm_vec2_t b) { zplm_vec2_t r = {a.x*b.x, a.y*b.y}; return r; }
-inline zplm_vec2_t operator/(zplm_vec2_t a, zplm_vec2_t b) { zplm_vec2_t r = {a.x/b.x, a.y/b.y}; return r; }
-
-inline zplm_vec2_t &operator+=(zplm_vec2_t &a, zplm_vec2_t b)       { return (a = a + b); }
-inline zplm_vec2_t &operator-=(zplm_vec2_t &a, zplm_vec2_t b)       { return (a = a - b); }
-inline zplm_vec2_t &operator*=(zplm_vec2_t &a, float scalar) { return (a = a * scalar); }
-inline zplm_vec2_t &operator/=(zplm_vec2_t &a, float scalar) { return (a = a / scalar); }
-
-
-inline bool operator==(zplm_vec3_t a, zplm_vec3_t b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z); }
-inline bool operator!=(zplm_vec3_t a, zplm_vec3_t b) { return !operator==(a, b); }
-
-inline zplm_vec3_t operator+(zplm_vec3_t a) { return a; }
-inline zplm_vec3_t operator-(zplm_vec3_t a) { zplm_vec3_t r = {-a.x, -a.y, -a.z}; return r; }
-
-inline zplm_vec3_t operator+(zplm_vec3_t a, zplm_vec3_t b) { zplm_vec3_t r; zplm_vec3_add(&r, a, b); return r; }
-inline zplm_vec3_t operator-(zplm_vec3_t a, zplm_vec3_t b) { zplm_vec3_t r; zplm_vec3_sub(&r, a, b); return r; }
-
-inline zplm_vec3_t operator*(zplm_vec3_t a, float scalar) { zplm_vec3_t r; zplm_vec3_mul(&r, a, scalar); return r; }
-inline zplm_vec3_t operator*(float scalar, zplm_vec3_t a) { return operator*(a, scalar); }
-
-inline zplm_vec3_t operator/(zplm_vec3_t a, float scalar) { return operator*(a, 1.0f/scalar); }
+inline zplm_vec2 operator/(zplm_vec2 a, float scalar) { return operator*(a, 1.0f/scalar); }
 
 /* Hadamard Product */
-inline zplm_vec3_t operator*(zplm_vec3_t a, zplm_vec3_t b) { zplm_vec3_t r = {a.x*b.x, a.y*b.y, a.z*b.z}; return r; }
-inline zplm_vec3_t operator/(zplm_vec3_t a, zplm_vec3_t b) { zplm_vec3_t r = {a.x/b.x, a.y/b.y, a.z/b.z}; return r; }
+inline zplm_vec2 operator*(zplm_vec2 a, zplm_vec2 b) { zplm_vec2 r = {a.x*b.x, a.y*b.y}; return r; }
+inline zplm_vec2 operator/(zplm_vec2 a, zplm_vec2 b) { zplm_vec2 r = {a.x/b.x, a.y/b.y}; return r; }
 
-inline zplm_vec3_t &operator+=(zplm_vec3_t &a, zplm_vec3_t b)       { return (a = a + b); }
-inline zplm_vec3_t &operator-=(zplm_vec3_t &a, zplm_vec3_t b)       { return (a = a - b); }
-inline zplm_vec3_t &operator*=(zplm_vec3_t &a, float scalar) { return (a = a * scalar); }
-inline zplm_vec3_t &operator/=(zplm_vec3_t &a, float scalar) { return (a = a / scalar); }
+inline zplm_vec2 &operator+=(zplm_vec2 &a, zplm_vec2 b)       { return (a = a + b); }
+inline zplm_vec2 &operator-=(zplm_vec2 &a, zplm_vec2 b)       { return (a = a - b); }
+inline zplm_vec2 &operator*=(zplm_vec2 &a, float scalar) { return (a = a * scalar); }
+inline zplm_vec2 &operator/=(zplm_vec2 &a, float scalar) { return (a = a / scalar); }
 
 
-inline bool operator==(zplm_vec4_t a, zplm_vec4_t b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w); }
-inline bool operator!=(zplm_vec4_t a, zplm_vec4_t b) { return !operator==(a, b); }
+inline bool operator==(zplm_vec3 a, zplm_vec3 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z); }
+inline bool operator!=(zplm_vec3 a, zplm_vec3 b) { return !operator==(a, b); }
 
-inline zplm_vec4_t operator+(zplm_vec4_t a) { return a; }
-inline zplm_vec4_t operator-(zplm_vec4_t a) { zplm_vec4_t r = {-a.x, -a.y, -a.z, -a.w}; return r; }
+inline zplm_vec3 operator+(zplm_vec3 a) { return a; }
+inline zplm_vec3 operator-(zplm_vec3 a) { zplm_vec3 r = {-a.x, -a.y, -a.z}; return r; }
 
-inline zplm_vec4_t operator+(zplm_vec4_t a, zplm_vec4_t b) { zplm_vec4_t r; zplm_vec4_add(&r, a, b); return r; }
-inline zplm_vec4_t operator-(zplm_vec4_t a, zplm_vec4_t b) { zplm_vec4_t r; zplm_vec4_sub(&r, a, b); return r; }
+inline zplm_vec3 operator+(zplm_vec3 a, zplm_vec3 b) { zplm_vec3 r; zplm_vec3_add(&r, a, b); return r; }
+inline zplm_vec3 operator-(zplm_vec3 a, zplm_vec3 b) { zplm_vec3 r; zplm_vec3_sub(&r, a, b); return r; }
 
-inline zplm_vec4_t operator*(zplm_vec4_t a, float scalar) { zplm_vec4_t r; zplm_vec4_mul(&r, a, scalar); return r; }
-inline zplm_vec4_t operator*(float scalar, zplm_vec4_t a) { return operator*(a, scalar); }
+inline zplm_vec3 operator*(zplm_vec3 a, float scalar) { zplm_vec3 r; zplm_vec3_mul(&r, a, scalar); return r; }
+inline zplm_vec3 operator*(float scalar, zplm_vec3 a) { return operator*(a, scalar); }
 
-inline zplm_vec4_t operator/(zplm_vec4_t a, float scalar) { return operator*(a, 1.0f/scalar); }
+inline zplm_vec3 operator/(zplm_vec3 a, float scalar) { return operator*(a, 1.0f/scalar); }
 
 /* Hadamard Product */
-inline zplm_vec4_t operator*(zplm_vec4_t a, zplm_vec4_t b) { zplm_vec4_t r = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w}; return r; }
-inline zplm_vec4_t operator/(zplm_vec4_t a, zplm_vec4_t b) { zplm_vec4_t r = {a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w}; return r; }
+inline zplm_vec3 operator*(zplm_vec3 a, zplm_vec3 b) { zplm_vec3 r = {a.x*b.x, a.y*b.y, a.z*b.z}; return r; }
+inline zplm_vec3 operator/(zplm_vec3 a, zplm_vec3 b) { zplm_vec3 r = {a.x/b.x, a.y/b.y, a.z/b.z}; return r; }
 
-inline zplm_vec4_t &operator+=(zplm_vec4_t &a, zplm_vec4_t b)       { return (a = a + b); }
-inline zplm_vec4_t &operator-=(zplm_vec4_t &a, zplm_vec4_t b)       { return (a = a - b); }
-inline zplm_vec4_t &operator*=(zplm_vec4_t &a, float scalar) { return (a = a * scalar); }
-inline zplm_vec4_t &operator/=(zplm_vec4_t &a, float scalar) { return (a = a / scalar); }
+inline zplm_vec3 &operator+=(zplm_vec3 &a, zplm_vec3 b)       { return (a = a + b); }
+inline zplm_vec3 &operator-=(zplm_vec3 &a, zplm_vec3 b)       { return (a = a - b); }
+inline zplm_vec3 &operator*=(zplm_vec3 &a, float scalar) { return (a = a * scalar); }
+inline zplm_vec3 &operator/=(zplm_vec3 &a, float scalar) { return (a = a / scalar); }
 
 
-inline zplm_mat2_t operator+(zplm_mat2_t const &a, zplm_mat2_t const &b) {
+inline bool operator==(zplm_vec4 a, zplm_vec4 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w); }
+inline bool operator!=(zplm_vec4 a, zplm_vec4 b) { return !operator==(a, b); }
+
+inline zplm_vec4 operator+(zplm_vec4 a) { return a; }
+inline zplm_vec4 operator-(zplm_vec4 a) { zplm_vec4 r = {-a.x, -a.y, -a.z, -a.w}; return r; }
+
+inline zplm_vec4 operator+(zplm_vec4 a, zplm_vec4 b) { zplm_vec4 r; zplm_vec4_add(&r, a, b); return r; }
+inline zplm_vec4 operator-(zplm_vec4 a, zplm_vec4 b) { zplm_vec4 r; zplm_vec4_sub(&r, a, b); return r; }
+
+inline zplm_vec4 operator*(zplm_vec4 a, float scalar) { zplm_vec4 r; zplm_vec4_mul(&r, a, scalar); return r; }
+inline zplm_vec4 operator*(float scalar, zplm_vec4 a) { return operator*(a, scalar); }
+
+inline zplm_vec4 operator/(zplm_vec4 a, float scalar) { return operator*(a, 1.0f/scalar); }
+
+/* Hadamard Product */
+inline zplm_vec4 operator*(zplm_vec4 a, zplm_vec4 b) { zplm_vec4 r = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w}; return r; }
+inline zplm_vec4 operator/(zplm_vec4 a, zplm_vec4 b) { zplm_vec4 r = {a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w}; return r; }
+
+inline zplm_vec4 &operator+=(zplm_vec4 &a, zplm_vec4 b)       { return (a = a + b); }
+inline zplm_vec4 &operator-=(zplm_vec4 &a, zplm_vec4 b)       { return (a = a - b); }
+inline zplm_vec4 &operator*=(zplm_vec4 &a, float scalar) { return (a = a * scalar); }
+inline zplm_vec4 &operator/=(zplm_vec4 &a, float scalar) { return (a = a / scalar); }
+
+
+inline zplm_mat2 operator+(zplm_mat2 const &a, zplm_mat2 const &b) {
     int i, j;
-    zplm_mat2_t r = {0};
+    zplm_mat2 r = {0};
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 2; i++)
             r.e[2*j+i] = a.e[2*j+i] + b.e[2*j+i];
@@ -582,9 +589,9 @@ inline zplm_mat2_t operator+(zplm_mat2_t const &a, zplm_mat2_t const &b) {
     return r;
 }
 
-inline zplm_mat2_t operator-(zplm_mat2_t const &a, zplm_mat2_t const &b) {
+inline zplm_mat2 operator-(zplm_mat2 const &a, zplm_mat2 const &b) {
     int i, j;
-    zplm_mat2_t r = {0};
+    zplm_mat2 r = {0};
     for (j = 0; j < 2; j++) {
         for (i = 0; i < 2; i++)
             r.e[2*j+i] = a.e[2*j+i] - b.e[2*j+i];
@@ -592,26 +599,26 @@ inline zplm_mat2_t operator-(zplm_mat2_t const &a, zplm_mat2_t const &b) {
     return r;
 }
 
-inline zplm_mat2_t operator*(zplm_mat2_t const &a, zplm_mat2_t const &b) { zplm_mat2_t r; zplm_mat2_mul(&r, (zplm_mat2_t *)&a, (zplm_mat2_t *)&b); return r; }
-inline zplm_vec2_t operator*(zplm_mat2_t const &a, zplm_vec2_t v) { zplm_vec2_t r; zplm_mat2_mul_vec2(&r, (zplm_mat2_t *)&a, v); return r; }
-inline zplm_mat2_t operator*(zplm_mat2_t const &a, float scalar) {
-    zplm_mat2_t r = {0};
+inline zplm_mat2 operator*(zplm_mat2 const &a, zplm_mat2 const &b) { zplm_mat2 r; zplm_mat2_mul(&r, (zplm_mat2 *)&a, (zplm_mat2 *)&b); return r; }
+inline zplm_vec2 operator*(zplm_mat2 const &a, zplm_vec2 v) { zplm_vec2 r; zplm_mat2_mul_vec2(&r, (zplm_mat2 *)&a, v); return r; }
+inline zplm_mat2 operator*(zplm_mat2 const &a, float scalar) {
+    zplm_mat2 r = {0};
     int i;
     for (i = 0; i < 2*2; i++) r.e[i] = a.e[i] * scalar;
     return r;
 }
-inline zplm_mat2_t operator*(float scalar, zplm_mat2_t const &a) { return operator*(a, scalar); }
-inline zplm_mat2_t operator/(zplm_mat2_t const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+inline zplm_mat2 operator*(float scalar, zplm_mat2 const &a) { return operator*(a, scalar); }
+inline zplm_mat2 operator/(zplm_mat2 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-inline zplm_mat2_t& operator+=(zplm_mat2_t& a, zplm_mat2_t const &b) { return (a = a + b); }
-inline zplm_mat2_t& operator-=(zplm_mat2_t& a, zplm_mat2_t const &b) { return (a = a - b); }
-inline zplm_mat2_t& operator*=(zplm_mat2_t& a, zplm_mat2_t const &b) { return (a = a * b); }
+inline zplm_mat2& operator+=(zplm_mat2& a, zplm_mat2 const &b) { return (a = a + b); }
+inline zplm_mat2& operator-=(zplm_mat2& a, zplm_mat2 const &b) { return (a = a - b); }
+inline zplm_mat2& operator*=(zplm_mat2& a, zplm_mat2 const &b) { return (a = a * b); }
 
 
 
-inline zplm_mat3_t operator+(zplm_mat3_t const &a, zplm_mat3_t const &b) {
+inline zplm_mat3 operator+(zplm_mat3 const &a, zplm_mat3 const &b) {
     int i, j;
-    zplm_mat3_t r = {0};
+    zplm_mat3 r = {0};
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 3; i++)
             r.e[3*j+i] = a.e[3*j+i] + b.e[3*j+i];
@@ -619,9 +626,9 @@ inline zplm_mat3_t operator+(zplm_mat3_t const &a, zplm_mat3_t const &b) {
     return r;
 }
 
-inline zplm_mat3_t operator-(zplm_mat3_t const &a, zplm_mat3_t const &b) {
+inline zplm_mat3 operator-(zplm_mat3 const &a, zplm_mat3 const &b) {
     int i, j;
-    zplm_mat3_t r = {0};
+    zplm_mat3 r = {0};
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 3; i++)
             r.e[3*j+i] = a.e[3*j+i] - b.e[3*j+i];
@@ -629,25 +636,25 @@ inline zplm_mat3_t operator-(zplm_mat3_t const &a, zplm_mat3_t const &b) {
     return r;
 }
 
-inline zplm_mat3_t operator*(zplm_mat3_t const &a, zplm_mat3_t const &b) { zplm_mat3_t r; zplm_mat3_mul(&r, (zplm_mat3_t *)&a, (zplm_mat3_t *)&b); return r; }
-inline zplm_vec3_t operator*(zplm_mat3_t const &a, zplm_vec3_t v) { zplm_vec3_t r; zplm_mat3_mul_vec3(&r, (zplm_mat3_t *)&a, v); return r; } inline zplm_mat3_t operator*(zplm_mat3_t const &a, float scalar) {
-    zplm_mat3_t r = {0};
+inline zplm_mat3 operator*(zplm_mat3 const &a, zplm_mat3 const &b) { zplm_mat3 r; zplm_mat3_mul(&r, (zplm_mat3 *)&a, (zplm_mat3 *)&b); return r; }
+inline zplm_vec3 operator*(zplm_mat3 const &a, zplm_vec3 v) { zplm_vec3 r; zplm_mat3_mul_vec3(&r, (zplm_mat3 *)&a, v); return r; } inline zplm_mat3 operator*(zplm_mat3 const &a, float scalar) {
+    zplm_mat3 r = {0};
     int i;
     for (i = 0; i < 3*3; i++) r.e[i] = a.e[i] * scalar;
     return r;
 }
-inline zplm_mat3_t operator*(float scalar, zplm_mat3_t const &a) { return operator*(a, scalar); }
-inline zplm_mat3_t operator/(zplm_mat3_t const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+inline zplm_mat3 operator*(float scalar, zplm_mat3 const &a) { return operator*(a, scalar); }
+inline zplm_mat3 operator/(zplm_mat3 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-inline zplm_mat3_t& operator+=(zplm_mat3_t& a, zplm_mat3_t const &b) { return (a = a + b); }
-inline zplm_mat3_t& operator-=(zplm_mat3_t& a, zplm_mat3_t const &b) { return (a = a - b); }
-inline zplm_mat3_t& operator*=(zplm_mat3_t& a, zplm_mat3_t const &b) { return (a = a * b); }
+inline zplm_mat3& operator+=(zplm_mat3& a, zplm_mat3 const &b) { return (a = a + b); }
+inline zplm_mat3& operator-=(zplm_mat3& a, zplm_mat3 const &b) { return (a = a - b); }
+inline zplm_mat3& operator*=(zplm_mat3& a, zplm_mat3 const &b) { return (a = a * b); }
 
 
 
-inline zplm_mat4_t operator+(zplm_mat4_t const &a, zplm_mat4_t const &b) {
+inline zplm_mat4 operator+(zplm_mat4 const &a, zplm_mat4 const &b) {
     int i, j;
-    zplm_mat4_t r = {0};
+    zplm_mat4 r = {0};
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++)
             r.e[4*j+i] = a.e[4*j+i] + b.e[4*j+i];
@@ -655,9 +662,9 @@ inline zplm_mat4_t operator+(zplm_mat4_t const &a, zplm_mat4_t const &b) {
     return r;
 }
 
-inline zplm_mat4_t operator-(zplm_mat4_t const &a, zplm_mat4_t const &b) {
+inline zplm_mat4 operator-(zplm_mat4 const &a, zplm_mat4 const &b) {
     int i, j;
-    zplm_mat4_t r = {0};
+    zplm_mat4 r = {0};
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++)
             r.e[4*j+i] = a.e[4*j+i] - b.e[4*j+i];
@@ -665,47 +672,47 @@ inline zplm_mat4_t operator-(zplm_mat4_t const &a, zplm_mat4_t const &b) {
     return r;
 }
 
-inline zplm_mat4_t operator*(zplm_mat4_t const &a, zplm_mat4_t const &b) { zplm_mat4_t r; zplm_mat4_mul(&r, (zplm_mat4_t *)&a, (zplm_mat4_t *)&b); return r; }
-inline zplm_vec4_t operator*(zplm_mat4_t const &a, zplm_vec4_t v) { zplm_vec4_t r; zplm_mat4_mul_vec4(&r, (zplm_mat4_t *)&a, v); return r; }
-inline zplm_mat4_t operator*(zplm_mat4_t const &a, float scalar) {
-    zplm_mat4_t r = {0};
+inline zplm_mat4 operator*(zplm_mat4 const &a, zplm_mat4 const &b) { zplm_mat4 r; zplm_mat4_mul(&r, (zplm_mat4 *)&a, (zplm_mat4 *)&b); return r; }
+inline zplm_vec4 operator*(zplm_mat4 const &a, zplm_vec4 v) { zplm_vec4 r; zplm_mat4_mul_vec4(&r, (zplm_mat4 *)&a, v); return r; }
+inline zplm_mat4 operator*(zplm_mat4 const &a, float scalar) {
+    zplm_mat4 r = {0};
     int i;
     for (i = 0; i < 4*4; i++) r.e[i] = a.e[i] * scalar;
     return r;
 }
-inline zplm_mat4_t operator*(float scalar, zplm_mat4_t const &a) { return operator*(a, scalar); }
-inline zplm_mat4_t operator/(zplm_mat4_t const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+inline zplm_mat4 operator*(float scalar, zplm_mat4 const &a) { return operator*(a, scalar); }
+inline zplm_mat4 operator/(zplm_mat4 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-inline zplm_mat4_t& operator+=(zplm_mat4_t &a, zplm_mat4_t const &b) { return (a = a + b); }
-inline zplm_mat4_t& operator-=(zplm_mat4_t &a, zplm_mat4_t const &b) { return (a = a - b); }
-inline zplm_mat4_t& operator*=(zplm_mat4_t &a, zplm_mat4_t const &b) { return (a = a * b); }
+inline zplm_mat4& operator+=(zplm_mat4 &a, zplm_mat4 const &b) { return (a = a + b); }
+inline zplm_mat4& operator-=(zplm_mat4 &a, zplm_mat4 const &b) { return (a = a - b); }
+inline zplm_mat4& operator*=(zplm_mat4 &a, zplm_mat4 const &b) { return (a = a * b); }
 
 
 
-inline bool operator==(zplm_quat_t a, zplm_quat_t b) { return a.xyzw == b.xyzw; }
-inline bool operator!=(zplm_quat_t a, zplm_quat_t b) { return !operator==(a, b); }
+inline bool operator==(zplm_quat a, zplm_quat b) { return a.xyzw == b.xyzw; }
+inline bool operator!=(zplm_quat a, zplm_quat b) { return !operator==(a, b); }
 
-inline zplm_quat_t operator+(zplm_quat_t q) { return q; }
-inline zplm_quat_t operator-(zplm_quat_t q) { return zplm_quat(-q.x, -q.y, -q.z, -q.w); }
+inline zplm_quat operator+(zplm_quat q) { return q; }
+inline zplm_quat operator-(zplm_quat q) { return zplm_quatf(-q.x, -q.y, -q.z, -q.w); }
 
-inline zplm_quat_t operator+(zplm_quat_t a, zplm_quat_t b) { zplm_quat_t r; zplm_quat_add(&r, a, b); return r; }
-inline zplm_quat_t operator-(zplm_quat_t a, zplm_quat_t b) { zplm_quat_t r; zplm_quat_sub(&r, a, b); return r; }
+inline zplm_quat operator+(zplm_quat a, zplm_quat b) { zplm_quat r; zplm_quat_add(&r, a, b); return r; }
+inline zplm_quat operator-(zplm_quat a, zplm_quat b) { zplm_quat r; zplm_quat_sub(&r, a, b); return r; }
 
-inline zplm_quat_t operator*(zplm_quat_t a, zplm_quat_t b)  { zplm_quat_t r; zplm_quat_mul(&r, a, b); return r; }
-inline zplm_quat_t operator*(zplm_quat_t q, float s) { zplm_quat_t r; zplm_quat_mulf(&r, q, s); return r; }
-inline zplm_quat_t operator*(float s, zplm_quat_t q) { return operator*(q, s); }
-inline zplm_quat_t operator/(zplm_quat_t q, float s) { zplm_quat_t r; zplm_quat_divf(&r, q, s); return r; }
+inline zplm_quat operator*(zplm_quat a, zplm_quat b)  { zplm_quat r; zplm_quat_mul(&r, a, b); return r; }
+inline zplm_quat operator*(zplm_quat q, float s) { zplm_quat r; zplm_quat_mulf(&r, q, s); return r; }
+inline zplm_quat operator*(float s, zplm_quat q) { return operator*(q, s); }
+inline zplm_quat operator/(zplm_quat q, float s) { zplm_quat r; zplm_quat_divf(&r, q, s); return r; }
 
-inline zplm_quat_t &operator+=(zplm_quat_t &a, zplm_quat_t b) { zplm_quat_addeq(&a, b); return a; }
-inline zplm_quat_t &operator-=(zplm_quat_t &a, zplm_quat_t b) { zplm_quat_subeq(&a, b); return a; }
-inline zplm_quat_t &operator*=(zplm_quat_t &a, zplm_quat_t b) { zplm_quat_muleq(&a, b); return a; }
-inline zplm_quat_t &operator/=(zplm_quat_t &a, zplm_quat_t b) { zplm_quat_diveq(&a, b); return a; }
+inline zplm_quat &operator+=(zplm_quat &a, zplm_quat b) { zplm_quat_addeq(&a, b); return a; }
+inline zplm_quat &operator-=(zplm_quat &a, zplm_quat b) { zplm_quat_subeq(&a, b); return a; }
+inline zplm_quat &operator*=(zplm_quat &a, zplm_quat b) { zplm_quat_muleq(&a, b); return a; }
+inline zplm_quat &operator/=(zplm_quat &a, zplm_quat b) { zplm_quat_diveq(&a, b); return a; }
 
-inline zplm_quat_t &operator*=(zplm_quat_t &a, float b) { zplm_quat_muleqf(&a, b); return a; }
-inline zplm_quat_t &operator/=(zplm_quat_t &a, float b) { zplm_quat_diveqf(&a, b); return a; }
+inline zplm_quat &operator*=(zplm_quat &a, float b) { zplm_quat_muleqf(&a, b); return a; }
+inline zplm_quat &operator/=(zplm_quat &a, float b) { zplm_quat_diveqf(&a, b); return a; }
 
 /* Rotate v by a */
-inline zplm_vec3_t operator*(zplm_quat_t q, zplm_vec3_t v) { zplm_vec3_t r; zplm_quat_rotate_vec3(&r, q, v); return r; }
+inline zplm_vec3 operator*(zplm_quat q, zplm_vec3 v) { zplm_vec3 r; zplm_quat_rotate_vec3(&r, q, v); return r; }
 
 #endif
 
@@ -989,8 +996,8 @@ float zplm_log(float x)          { return logf(x); }
 float zplm_pow(float x, float y) { return powf(x, y); }
 #endif
 
-float zplm_exp2(float x) { return zplm_exp(ZPLM_LOG_TWO * x); }
-float zplm_log2(float x) { return zplm_log(x) / ZPLM_LOG_TWO; }
+float zplm_exp2(float x) { return zplm_exp(zplm_LOGWO * x); }
+float zplm_log2(float x) { return zplm_log(x) / zplm_LOGWO; }
 
 
 float zplm_fast_exp(float x) {
@@ -999,7 +1006,7 @@ float zplm_fast_exp(float x) {
     return e;
 }
 
-float zplm_fast_exp2(float x) { return zplm_fast_exp(ZPLM_LOG_TWO * x); }
+float zplm_fast_exp2(float x) { return zplm_fast_exp(zplm_LOGWO * x); }
 
 
 
@@ -1011,7 +1018,7 @@ float zplm_ceil(float x)  { return (float)((x < 0) ? (int)x : ((int)x)+1); }
 
 
 
-float zplm_half_to_float(zplm_half_t value) {
+float zplm_halfo_float(zplm_half value) {
     union { unsigned int i; float f; } result;
     int s = (value >> 15) & 0x001;
     int e = (value >> 10) & 0x01f;
@@ -1051,7 +1058,7 @@ float zplm_half_to_float(zplm_half_t value) {
     return result.f;
 }
 
-zplm_half_t zplm_float_to_half(float value) {
+zplm_half zplm_floato_half(float value) {
     union { unsigned int i; float f; } v;
     int i, s, e, m;
 
@@ -1064,20 +1071,20 @@ zplm_half_t zplm_float_to_half(float value) {
 
 
     if (e <= 0) {
-        if (e < -10) return (zplm_half_t)s;
+        if (e < -10) return (zplm_half)s;
         m = (m | 0x00800000) >> (1 - e);
 
         if (m & 0x00001000)
             m += 0x00002000;
 
-        return (zplm_half_t)(s | (m >> 13));
+        return (zplm_half)(s | (m >> 13));
     } else if (e == 0xff - (127 - 15)) {
         if (m == 0) {
-            return (zplm_half_t)(s | 0x7c00); /* NOTE: infinity */
+            return (zplm_half)(s | 0x7c00); /* NOTE: infinity */
         } else {
             /* NOTE: NAN */
             m >>= 13;
-            return (zplm_half_t)(s | 0x7c00 | m | (m == 0));
+            return (zplm_half)(s | 0x7c00 | m | (m == 0));
         }
     } else {
         if (m & 0x00001000) {
@@ -1094,10 +1101,10 @@ zplm_half_t zplm_float_to_half(float value) {
             for (j = 0; j < 10; j++)
                 f *= f; /* NOTE: Cause overflow */
 
-            return (zplm_half_t)(s | 0x7c00);
+            return (zplm_half)(s | 0x7c00);
         }
 
-        return (zplm_half_t)(s | (e << 10) | (m >> 13));
+        return (zplm_half)(s | (e << 10) | (m >> 13));
     }
 }
 
@@ -1138,49 +1145,49 @@ a->z = b.z op c.z post;        \
 a->w = b.w op c.w post;
 
 
-zplm_vec2_t zplm_vec2_zero(void)        { zplm_vec2_t v = {0, 0};                return v; }
-zplm_vec2_t zplm_vec2(float x, float y) { zplm_vec2_t v; v.x = x;    v.y = y;    return v; }
-zplm_vec2_t zplm_vec2v(float x[2])      { zplm_vec2_t v; v.x = x[0]; v.y = x[1]; return v; }
+zplm_vec2 zplm_vec2f_zero(void)        { zplm_vec2 v = {0, 0};                return v; }
+zplm_vec2 zplm_vec2f(float x, float y) { zplm_vec2 v; v.x = x;    v.y = y;    return v; }
+zplm_vec2 zplm_vec2fv(float x[2])      { zplm_vec2 v; v.x = x[0]; v.y = x[1]; return v; }
 
-zplm_vec3_t zplm_vec3_zero(void)                 { zplm_vec3_t v = {0, 0, 0};                         return v; }
-zplm_vec3_t zplm_vec3(float x, float y, float z) { zplm_vec3_t v; v.x = x; v.y = y; v.z = z;          return v; }
-zplm_vec3_t zplm_vec3v(float x[3])               { zplm_vec3_t v; v.x = x[0]; v.y = x[1]; v.z = x[2]; return v; }
+zplm_vec3 zplm_vec3f_zero(void)                 { zplm_vec3 v = {0, 0, 0};                         return v; }
+zplm_vec3 zplm_vec3f(float x, float y, float z) { zplm_vec3 v; v.x = x; v.y = y; v.z = z;          return v; }
+zplm_vec3 zplm_vec3fv(float x[3])               { zplm_vec3 v; v.x = x[0]; v.y = x[1]; v.z = x[2]; return v; }
 
-zplm_vec4_t zplm_vec4_zero(void)                          { zplm_vec4_t v = {0, 0, 0, 0};                                  return v; }
-zplm_vec4_t zplm_vec4(float x, float y, float z, float w) { zplm_vec4_t v; v.x = x; v.y = y; v.z = z; v.w = w;             return v; }
-zplm_vec4_t zplm_vec4v(float x[4])                        { zplm_vec4_t v; v.x = x[0]; v.y = x[1]; v.z = x[2]; v.w = x[3]; return v; }
-
-
-void zplm_vec2_add(zplm_vec2_t *d, zplm_vec2_t v0, zplm_vec2_t v1) { ZPLM_VEC2_3OP(d,v0,+,v1,+0); }
-void zplm_vec2_sub(zplm_vec2_t *d, zplm_vec2_t v0, zplm_vec2_t v1) { ZPLM_VEC2_3OP(d,v0,-,v1,+0); }
-void zplm_vec2_mul(zplm_vec2_t *d, zplm_vec2_t v,  float s)   { ZPLM_VEC2_2OP(d,v,* s);      }
-void zplm_vec2_div(zplm_vec2_t *d, zplm_vec2_t v,  float s)   { ZPLM_VEC2_2OP(d,v,/ s);      }
-
-void zplm_vec3_add(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1) { ZPLM_VEC3_3OP(d,v0,+,v1,+0); }
-void zplm_vec3_sub(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1) { ZPLM_VEC3_3OP(d,v0,-,v1,+0); }
-void zplm_vec3_mul(zplm_vec3_t *d, zplm_vec3_t v,  float s)   { ZPLM_VEC3_2OP(d,v,* s);      }
-void zplm_vec3_div(zplm_vec3_t *d, zplm_vec3_t v,  float s)   { ZPLM_VEC3_2OP(d,v,/ s);      }
-
-void zplm_vec4_add(zplm_vec4_t *d, zplm_vec4_t v0, zplm_vec4_t v1) { ZPLM_VEC4_3OP(d,v0,+,v1,+0); }
-void zplm_vec4_sub(zplm_vec4_t *d, zplm_vec4_t v0, zplm_vec4_t v1) { ZPLM_VEC4_3OP(d,v0,-,v1,+0); }
-void zplm_vec4_mul(zplm_vec4_t *d, zplm_vec4_t v,  float s)   { ZPLM_VEC4_2OP(d,v,* s);      }
-void zplm_vec4_div(zplm_vec4_t *d, zplm_vec4_t v,  float s)   { ZPLM_VEC4_2OP(d,v,/ s);      }
+zplm_vec4 zplm_vec4f_zero(void)                          { zplm_vec4 v = {0, 0, 0, 0};                                  return v; }
+zplm_vec4 zplm_vec4f(float x, float y, float z, float w) { zplm_vec4 v; v.x = x; v.y = y; v.z = z; v.w = w;             return v; }
+zplm_vec4 zplm_vec4fv(float x[4])                        { zplm_vec4 v; v.x = x[0]; v.y = x[1]; v.z = x[2]; v.w = x[3]; return v; }
 
 
-void zplm_vec2_addeq(zplm_vec2_t *d, zplm_vec2_t v) { ZPLM_VEC2_3OP(d,(*d),+,v,+0); }
-void zplm_vec2_subeq(zplm_vec2_t *d, zplm_vec2_t v) { ZPLM_VEC2_3OP(d,(*d),-,v,+0); }
-void zplm_vec2_muleq(zplm_vec2_t *d, float s)  { ZPLM_VEC2_2OP(d,(*d),* s);    }
-void zplm_vec2_diveq(zplm_vec2_t *d, float s)  { ZPLM_VEC2_2OP(d,(*d),/ s);    }
+void zplm_vec2_add(zplm_vec2 *d, zplm_vec2 v0, zplm_vec2 v1) { ZPLM_VEC2_3OP(d,v0,+,v1,+0); }
+void zplm_vec2_sub(zplm_vec2 *d, zplm_vec2 v0, zplm_vec2 v1) { ZPLM_VEC2_3OP(d,v0,-,v1,+0); }
+void zplm_vec2_mul(zplm_vec2 *d, zplm_vec2 v,  float s)   { ZPLM_VEC2_2OP(d,v,* s);      }
+void zplm_vec2_div(zplm_vec2 *d, zplm_vec2 v,  float s)   { ZPLM_VEC2_2OP(d,v,/ s);      }
 
-void zplm_vec3_addeq(zplm_vec3_t *d, zplm_vec3_t v) { ZPLM_VEC3_3OP(d,(*d),+,v,+0); }
-void zplm_vec3_subeq(zplm_vec3_t *d, zplm_vec3_t v) { ZPLM_VEC3_3OP(d,(*d),-,v,+0); }
-void zplm_vec3_muleq(zplm_vec3_t *d, float s)  { ZPLM_VEC3_2OP(d,(*d),* s);    }
-void zplm_vec3_diveq(zplm_vec3_t *d, float s)  { ZPLM_VEC3_2OP(d,(*d),/ s);    }
+void zplm_vec3_add(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1) { ZPLM_VEC3_3OP(d,v0,+,v1,+0); }
+void zplm_vec3_sub(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1) { ZPLM_VEC3_3OP(d,v0,-,v1,+0); }
+void zplm_vec3_mul(zplm_vec3 *d, zplm_vec3 v,  float s)   { ZPLM_VEC3_2OP(d,v,* s);      }
+void zplm_vec3_div(zplm_vec3 *d, zplm_vec3 v,  float s)   { ZPLM_VEC3_2OP(d,v,/ s);      }
 
-void zplm_vec4_addeq(zplm_vec4_t *d, zplm_vec4_t v) { ZPLM_VEC4_3OP(d,(*d),+,v,+0); }
-void zplm_vec4_subeq(zplm_vec4_t *d, zplm_vec4_t v) { ZPLM_VEC4_3OP(d,(*d),-,v,+0); }
-void zplm_vec4_muleq(zplm_vec4_t *d, float s)  { ZPLM_VEC4_2OP(d,(*d),* s);    }
-void zplm_vec4_diveq(zplm_vec4_t *d, float s)  { ZPLM_VEC4_2OP(d,(*d),/ s);    }
+void zplm_vec4_add(zplm_vec4 *d, zplm_vec4 v0, zplm_vec4 v1) { ZPLM_VEC4_3OP(d,v0,+,v1,+0); }
+void zplm_vec4_sub(zplm_vec4 *d, zplm_vec4 v0, zplm_vec4 v1) { ZPLM_VEC4_3OP(d,v0,-,v1,+0); }
+void zplm_vec4_mul(zplm_vec4 *d, zplm_vec4 v,  float s)   { ZPLM_VEC4_2OP(d,v,* s);      }
+void zplm_vec4_div(zplm_vec4 *d, zplm_vec4 v,  float s)   { ZPLM_VEC4_2OP(d,v,/ s);      }
+
+
+void zplm_vec2_addeq(zplm_vec2 *d, zplm_vec2 v) { ZPLM_VEC2_3OP(d,(*d),+,v,+0); }
+void zplm_vec2_subeq(zplm_vec2 *d, zplm_vec2 v) { ZPLM_VEC2_3OP(d,(*d),-,v,+0); }
+void zplm_vec2_muleq(zplm_vec2 *d, float s)  { ZPLM_VEC2_2OP(d,(*d),* s);    }
+void zplm_vec2_diveq(zplm_vec2 *d, float s)  { ZPLM_VEC2_2OP(d,(*d),/ s);    }
+
+void zplm_vec3_addeq(zplm_vec3 *d, zplm_vec3 v) { ZPLM_VEC3_3OP(d,(*d),+,v,+0); }
+void zplm_vec3_subeq(zplm_vec3 *d, zplm_vec3 v) { ZPLM_VEC3_3OP(d,(*d),-,v,+0); }
+void zplm_vec3_muleq(zplm_vec3 *d, float s)  { ZPLM_VEC3_2OP(d,(*d),* s);    }
+void zplm_vec3_diveq(zplm_vec3 *d, float s)  { ZPLM_VEC3_2OP(d,(*d),/ s);    }
+
+void zplm_vec4_addeq(zplm_vec4 *d, zplm_vec4 v) { ZPLM_VEC4_3OP(d,(*d),+,v,+0); }
+void zplm_vec4_subeq(zplm_vec4 *d, zplm_vec4 v) { ZPLM_VEC4_3OP(d,(*d),-,v,+0); }
+void zplm_vec4_muleq(zplm_vec4 *d, float s)  { ZPLM_VEC4_2OP(d,(*d),* s);    }
+void zplm_vec4_diveq(zplm_vec4 *d, float s)  { ZPLM_VEC4_2OP(d,(*d),/ s);    }
 
 
 #undef ZPLM_VEC2_2OP
@@ -1193,74 +1200,74 @@ void zplm_vec4_diveq(zplm_vec4_t *d, float s)  { ZPLM_VEC4_2OP(d,(*d),/ s);    }
 
 
 
-float zplm_vec2_dot(zplm_vec2_t v0, zplm_vec2_t v1) { return v0.x*v1.x + v0.y*v1.y; }
-float zplm_vec3_dot(zplm_vec3_t v0, zplm_vec3_t v1) { return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z; }
-float zplm_vec4_dot(zplm_vec4_t v0, zplm_vec4_t v1) { return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w; }
+float zplm_vec2_dot(zplm_vec2 v0, zplm_vec2 v1) { return v0.x*v1.x + v0.y*v1.y; }
+float zplm_vec3_dot(zplm_vec3 v0, zplm_vec3 v1) { return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z; }
+float zplm_vec4_dot(zplm_vec4 v0, zplm_vec4 v1) { return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w; }
 
-void zplm_vec2_cross(float *d, zplm_vec2_t v0, zplm_vec2_t v1) { *d = v0.x*v1.y - v1.x*v0.y; }
-void zplm_vec3_cross(zplm_vec3_t *d, zplm_vec3_t v0, zplm_vec3_t v1)  { d->x = v0.y*v1.z - v0.z*v1.y;
+void zplm_vec2_cross(float *d, zplm_vec2 v0, zplm_vec2 v1) { *d = v0.x*v1.y - v1.x*v0.y; }
+void zplm_vec3_cross(zplm_vec3 *d, zplm_vec3 v0, zplm_vec3 v1)  { d->x = v0.y*v1.z - v0.z*v1.y;
     d->y = v0.z*v1.x - v0.x*v1.z;
     d->z = v0.x*v1.y - v0.y*v1.x; }
 
-float zplm_vec2_mag2(zplm_vec2_t v) { return zplm_vec2_dot(v, v); }
-float zplm_vec3_mag2(zplm_vec3_t v) { return zplm_vec3_dot(v, v); }
-float zplm_vec4_mag2(zplm_vec4_t v) { return zplm_vec4_dot(v, v); }
+float zplm_vec2_mag2(zplm_vec2 v) { return zplm_vec2_dot(v, v); }
+float zplm_vec3_mag2(zplm_vec3 v) { return zplm_vec3_dot(v, v); }
+float zplm_vec4_mag2(zplm_vec4 v) { return zplm_vec4_dot(v, v); }
 
 /* TODO: Create custom sqrt function */
-float zplm_vec2_mag(zplm_vec2_t v) { return zplm_sqrt(zplm_vec2_dot(v, v)); }
-float zplm_vec3_mag(zplm_vec3_t v) { return zplm_sqrt(zplm_vec3_dot(v, v)); }
-float zplm_vec4_mag(zplm_vec4_t v) { return zplm_sqrt(zplm_vec4_dot(v, v)); }
+float zplm_vec2_mag(zplm_vec2 v) { return zplm_sqrt(zplm_vec2_dot(v, v)); }
+float zplm_vec3_mag(zplm_vec3 v) { return zplm_sqrt(zplm_vec3_dot(v, v)); }
+float zplm_vec4_mag(zplm_vec4 v) { return zplm_sqrt(zplm_vec4_dot(v, v)); }
 
-void zplm_vec2_norm(zplm_vec2_t *d, zplm_vec2_t v) {
+void zplm_vec2_norm(zplm_vec2 *d, zplm_vec2 v) {
     float inv_mag = zplm_rsqrt(zplm_vec2_dot(v, v));
     zplm_vec2_mul(d, v, inv_mag);
 }
-void zplm_vec3_norm(zplm_vec3_t *d, zplm_vec3_t v) {
+void zplm_vec3_norm(zplm_vec3 *d, zplm_vec3 v) {
     float mag = zplm_vec3_mag(v);
     zplm_vec3_div(d, v, mag);
 }
-void zplm_vec4_norm(zplm_vec4_t *d, zplm_vec4_t v) {
+void zplm_vec4_norm(zplm_vec4 *d, zplm_vec4 v) {
     float mag = zplm_vec4_mag(v);
     zplm_vec4_div(d, v, mag);
 }
 
-void zplm_vec2_norm0(zplm_vec2_t *d, zplm_vec2_t v) {
+void zplm_vec2_norm0(zplm_vec2 *d, zplm_vec2 v) {
     float mag = zplm_vec2_mag(v);
     if (mag > 0)
         zplm_vec2_div(d, v, mag);
     else
-        *d = zplm_vec2_zero();
+        *d = zplm_vec2f_zero();
 }
-void zplm_vec3_norm0(zplm_vec3_t *d, zplm_vec3_t v) {
+void zplm_vec3_norm0(zplm_vec3 *d, zplm_vec3 v) {
     float mag = zplm_vec3_mag(v);
     if (mag > 0)
         zplm_vec3_div(d, v, mag);
     else
-        *d = zplm_vec3_zero();
+        *d = zplm_vec3f_zero();
 }
-void zplm_vec4_norm0(zplm_vec4_t *d, zplm_vec4_t v) {
+void zplm_vec4_norm0(zplm_vec4 *d, zplm_vec4 v) {
     float mag = zplm_vec4_mag(v);
     if (mag > 0)
         zplm_vec4_div(d, v, mag);
     else
-        *d = zplm_vec4_zero();
+        *d = zplm_vec4f_zero();
 }
 
 
-void zplm_vec2_reflect(zplm_vec2_t *d, zplm_vec2_t i, zplm_vec2_t n) {
-    zplm_vec2_t b = n;
+void zplm_vec2_reflect(zplm_vec2 *d, zplm_vec2 i, zplm_vec2 n) {
+    zplm_vec2 b = n;
     zplm_vec2_muleq(&b, 2.0f*zplm_vec2_dot(n, i));
     zplm_vec2_sub(d, i, b);
 }
 
-void zplm_vec3_reflect(zplm_vec3_t *d, zplm_vec3_t i, zplm_vec3_t n) {
-    zplm_vec3_t b = n;
+void zplm_vec3_reflect(zplm_vec3 *d, zplm_vec3 i, zplm_vec3 n) {
+    zplm_vec3 b = n;
     zplm_vec3_muleq(&b, 2.0f*zplm_vec3_dot(n, i));
     zplm_vec3_sub(d, i, b);
 }
 
-void zplm_vec2_refract(zplm_vec2_t *d, zplm_vec2_t i, zplm_vec2_t n, float eta) {
-    zplm_vec2_t a, b;
+void zplm_vec2_refract(zplm_vec2 *d, zplm_vec2 i, zplm_vec2 n, float eta) {
+    zplm_vec2 a, b;
     float dv, k;
 
     dv = zplm_vec2_dot(n, i);
@@ -1271,8 +1278,8 @@ void zplm_vec2_refract(zplm_vec2_t *d, zplm_vec2_t i, zplm_vec2_t n, float eta) 
     zplm_vec2_muleq(d, (float)(k >= 0.0f));
 }
 
-void zplm_vec3_refract(zplm_vec3_t *d, zplm_vec3_t i, zplm_vec3_t n, float eta) {
-    zplm_vec3_t a, b;
+void zplm_vec3_refract(zplm_vec3 *d, zplm_vec3 i, zplm_vec3 n, float eta) {
+    zplm_vec3 a, b;
     float dv, k;
 
     dv = zplm_vec3_dot(n, i);
@@ -1287,31 +1294,31 @@ void zplm_vec3_refract(zplm_vec3_t *d, zplm_vec3_t i, zplm_vec3_t n, float eta) 
 
 
 
-float zplm_vec2_aspect_ratio(zplm_vec2_t v) { return (v.y < 0.0001f) ? 0.0f : v.x/v.y; }
+float zplm_vec2_aspect_ratio(zplm_vec2 v) { return (v.y < 0.0001f) ? 0.0f : v.x/v.y; }
 
 
 
 
 
-void zplm_mat2_transpose(zplm_mat2_t *m) { zplm_float22_transpose(zplm_float22_m(m)); }
-void zplm_mat2_identity(zplm_mat2_t *m)  { zplm_float22_identity(zplm_float22_m(m));  }
-void zplm_mat2_mul(zplm_mat2_t *out, zplm_mat2_t *m1, zplm_mat2_t *m2) { zplm_float22_mul(zplm_float22_m(out), zplm_float22_m(m1), zplm_float22_m(m2)); }
+void zplm_mat2ranspose(zplm_mat2 *m) { zplm_float22ranspose(zplm_float22_m(m)); }
+void zplm_mat2_identity(zplm_mat2 *m)  { zplm_float22_identity(zplm_float22_m(m));  }
+void zplm_mat2_mul(zplm_mat2 *out, zplm_mat2 *m1, zplm_mat2 *m2) { zplm_float22_mul(zplm_float22_m(out), zplm_float22_m(m1), zplm_float22_m(m2)); }
 
 void zplm_float22_identity(float m[2][2]) {
     m[0][0] = 1; m[0][1] = 0;
     m[1][0] = 0; m[1][1] = 1;
 }
 
-void zplm_mat2_mul_vec2(zplm_vec2_t *out, zplm_mat2_t *m, zplm_vec2_t in) { zplm_float22_mul_vec2(out, zplm_float22_m(m), in); }
+void zplm_mat2_mul_vec2(zplm_vec2 *out, zplm_mat2 *m, zplm_vec2 in) { zplm_float22_mul_vec2(out, zplm_float22_m(m), in); }
 
-zplm_mat2_t *zplm_mat2_v(zplm_vec2_t m[2])   { return (zplm_mat2_t *)m; }
-zplm_mat2_t *zplm_mat2_f(float m[2][2]) { return (zplm_mat2_t *)m; }
+zplm_mat2 *zplm_mat2_v(zplm_vec2 m[2])   { return (zplm_mat2 *)m; }
+zplm_mat2 *zplm_mat2_f(float m[2][2]) { return (zplm_mat2 *)m; }
 
-zplm_float2_t *zplm_float22_m(zplm_mat2_t *m)   { return (zplm_float2_t *)m; }
-zplm_float2_t *zplm_float22_v(zplm_vec2_t m[2]) { return (zplm_float2_t *)m; }
-zplm_float2_t *zplm_float22_4(float m[4])  { return (zplm_float2_t *)m; }
+zplm_float2 *zplm_float22_m(zplm_mat2 *m)   { return (zplm_float2 *)m; }
+zplm_float2 *zplm_float22_v(zplm_vec2 m[2]) { return (zplm_float2 *)m; }
+zplm_float2 *zplm_float22_4(float m[4])  { return (zplm_float2 *)m; }
 
-void zplm_float22_transpose(float (*vec)[2]) {
+void zplm_float22ranspose(float (*vec)[2]) {
     int i, j;
     for (j = 0; j < 2; j++) {
         for (i = j + 1; i < 2; i++) {
@@ -1337,19 +1344,19 @@ void zplm_float22_mul(float (*out)[2], float (*mat1)[2], float (*mat2)[2]) {
     }
 }
 
-void zplm_float22_mul_vec2(zplm_vec2_t *out, float m[2][2], zplm_vec2_t v) {
+void zplm_float22_mul_vec2(zplm_vec2 *out, float m[2][2], zplm_vec2 v) {
     out->x = m[0][0]*v.x + m[0][1]*v.y;
     out->y = m[1][0]*v.x + m[1][1]*v.y;
 }
 
-float zplm_mat2_determinate(zplm_mat2_t *m) {
-    zplm_float2_t *e = zplm_float22_m(m);
+float zplm_mat2_determinate(zplm_mat2 *m) {
+    zplm_float2 *e = zplm_float22_m(m);
     return e[0][0]*e[1][1] - e[1][0]*e[0][1];
 }
 
-void zplm_mat2_inverse(zplm_mat2_t *out, zplm_mat2_t *in) {
-    zplm_float2_t *o = zplm_float22_m(out);
-    zplm_float2_t *i = zplm_float22_m(in);
+void zplm_mat2_inverse(zplm_mat2 *out, zplm_mat2 *in) {
+    zplm_float2 *o = zplm_float22_m(out);
+    zplm_float2 *i = zplm_float22_m(in);
 
     float ood = 1.0f / zplm_mat2_determinate(in);
 
@@ -1364,9 +1371,9 @@ void zplm_mat2_inverse(zplm_mat2_t *out, zplm_mat2_t *in) {
 
 
 
-void zplm_mat3_transpose(zplm_mat3_t *m) { zplm_float33_transpose(zplm_float33_m(m)); }
-void zplm_mat3_identity(zplm_mat3_t *m)  { zplm_float33_identity(zplm_float33_m(m));  }
-void zplm_mat3_mul(zplm_mat3_t *out, zplm_mat3_t *m1, zplm_mat3_t *m2) { zplm_float33_mul(zplm_float33_m(out), zplm_float33_m(m1), zplm_float33_m(m2)); }
+void zplm_mat3ranspose(zplm_mat3 *m) { zplm_float33ranspose(zplm_float33_m(m)); }
+void zplm_mat3_identity(zplm_mat3 *m)  { zplm_float33_identity(zplm_float33_m(m));  }
+void zplm_mat3_mul(zplm_mat3 *out, zplm_mat3 *m1, zplm_mat3 *m2) { zplm_float33_mul(zplm_float33_m(out), zplm_float33_m(m1), zplm_float33_m(m2)); }
 
 void zplm_float33_identity(float m[3][3]) {
     m[0][0] = 1; m[0][1] = 0; m[0][2] = 0;
@@ -1374,16 +1381,16 @@ void zplm_float33_identity(float m[3][3]) {
     m[2][0] = 0; m[2][1] = 0; m[2][2] = 1;
 }
 
-void zplm_mat3_mul_vec3(zplm_vec3_t *out, zplm_mat3_t *m, zplm_vec3_t in) { zplm_float33_mul_vec3(out, zplm_float33_m(m), in); }
+void zplm_mat3_mul_vec3(zplm_vec3 *out, zplm_mat3 *m, zplm_vec3 in) { zplm_float33_mul_vec3(out, zplm_float33_m(m), in); }
 
-zplm_mat3_t *zplm_mat3_v(zplm_vec3_t m[3])   { return (zplm_mat3_t *)m; }
-zplm_mat3_t *zplm_mat3_f(float m[3][3]) { return (zplm_mat3_t *)m; }
+zplm_mat3 *zplm_mat3_v(zplm_vec3 m[3])   { return (zplm_mat3 *)m; }
+zplm_mat3 *zplm_mat3_f(float m[3][3]) { return (zplm_mat3 *)m; }
 
-zplm_float3_t *zplm_float33_m(zplm_mat3_t *m)   { return (zplm_float3_t *)m; }
-zplm_float3_t *zplm_float33_v(zplm_vec3_t m[3]) { return (zplm_float3_t *)m; }
-zplm_float3_t *zplm_float33_16(float m[9]) { return (zplm_float3_t *)m; }
+zplm_float3 *zplm_float33_m(zplm_mat3 *m)   { return (zplm_float3 *)m; }
+zplm_float3 *zplm_float33_v(zplm_vec3 m[3]) { return (zplm_float3 *)m; }
+zplm_float3 *zplm_float33_16(float m[9]) { return (zplm_float3 *)m; }
 
-void zplm_float33_transpose(float (*vec)[3]) {
+void zplm_float33ranspose(float (*vec)[3]) {
     int i, j;
     for (j = 0; j < 3; j++) {
         for (i = j + 1; i < 3; i++) {
@@ -1408,7 +1415,7 @@ void zplm_float33_mul(float (*out)[3], float (*mat1)[3], float (*mat2)[3]) {
     }
 }
 
-void zplm_float33_mul_vec3(zplm_vec3_t *out, float m[3][3], zplm_vec3_t v) {
+void zplm_float33_mul_vec3(zplm_vec3 *out, float m[3][3], zplm_vec3 v) {
     out->x = m[0][0]*v.x + m[0][1]*v.y + m[0][2]*v.z;
     out->y = m[1][0]*v.x + m[1][1]*v.y + m[1][2]*v.z;
     out->z = m[2][0]*v.x + m[2][1]*v.y + m[2][2]*v.z;
@@ -1416,17 +1423,17 @@ void zplm_float33_mul_vec3(zplm_vec3_t *out, float m[3][3], zplm_vec3_t v) {
 
 
 
-float zplm_mat3_determinate(zplm_mat3_t *m) {
-    zplm_float3_t *e = zplm_float33_m(m);
+float zplm_mat3_determinate(zplm_mat3 *m) {
+    zplm_float3 *e = zplm_float33_m(m);
     float d = +e[0][0] * (e[1][1] * e[2][2] - e[1][2] * e[2][1])
         -e[0][1] * (e[1][0] * e[2][2] - e[1][2] * e[2][0])
         +e[0][2] * (e[1][0] * e[2][1] - e[1][1] * e[2][0]);
     return d;
 }
 
-void zplm_mat3_inverse(zplm_mat3_t *out, zplm_mat3_t *in) {
-    zplm_float3_t *o = zplm_float33_m(out);
-    zplm_float3_t *i = zplm_float33_m(in);
+void zplm_mat3_inverse(zplm_mat3 *out, zplm_mat3 *in) {
+    zplm_float3 *o = zplm_float33_m(out);
+    zplm_float3 *i = zplm_float33_m(in);
 
     float ood = 1.0f / zplm_mat3_determinate(in);
 
@@ -1451,9 +1458,9 @@ void zplm_mat3_inverse(zplm_mat3_t *out, zplm_mat3_t *in) {
 
 
 
-void zplm_mat4_transpose(zplm_mat4_t *m) { zplm_float44_transpose(zplm_float44_m(m)); }
-void zplm_mat4_identity(zplm_mat4_t *m)  { zplm_float44_identity(zplm_float44_m(m));  }
-void zplm_mat4_mul(zplm_mat4_t *out, zplm_mat4_t *m1, zplm_mat4_t *m2) { zplm_float44_mul(zplm_float44_m(out), zplm_float44_m(m1), zplm_float44_m(m2)); }
+void zplm_mat4ranspose(zplm_mat4 *m) { zplm_float44ranspose(zplm_float44_m(m)); }
+void zplm_mat4_identity(zplm_mat4 *m)  { zplm_float44_identity(zplm_float44_m(m));  }
+void zplm_mat4_mul(zplm_mat4 *out, zplm_mat4 *m1, zplm_mat4 *m2) { zplm_float44_mul(zplm_float44_m(out), zplm_float44_m(m1), zplm_float44_m(m2)); }
 
 void zplm_float44_identity(float m[4][4]) {
     m[0][0] = 1; m[0][1] = 0; m[0][2] = 0; m[0][3] = 0;
@@ -1462,18 +1469,18 @@ void zplm_float44_identity(float m[4][4]) {
     m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
 }
 
-void zplm_mat4_mul_vec4(zplm_vec4_t *out, zplm_mat4_t *m, zplm_vec4_t in) {
+void zplm_mat4_mul_vec4(zplm_vec4 *out, zplm_mat4 *m, zplm_vec4 in) {
     zplm_float44_mul_vec4(out, zplm_float44_m(m), in);
 }
 
-zplm_mat4_t *zplm_mat4_v(zplm_vec4_t m[4])   { return (zplm_mat4_t *)m; }
-zplm_mat4_t *zplm_mat4_f(float m[4][4]) { return (zplm_mat4_t *)m; }
+zplm_mat4 *zplm_mat4_v(zplm_vec4 m[4])   { return (zplm_mat4 *)m; }
+zplm_mat4 *zplm_mat4_f(float m[4][4]) { return (zplm_mat4 *)m; }
 
-zplm_float4_t *zplm_float44_m(zplm_mat4_t *m)    { return (zplm_float4_t *)m; }
-zplm_float4_t *zplm_float44_v(zplm_vec4_t m[4])  { return (zplm_float4_t *)m; }
-zplm_float4_t *zplm_float44_16(float m[16]) { return (zplm_float4_t *)m; }
+zplm_float4 *zplm_float44_m(zplm_mat4 *m)    { return (zplm_float4 *)m; }
+zplm_float4 *zplm_float44_v(zplm_vec4 m[4])  { return (zplm_float4 *)m; }
+zplm_float4 *zplm_float44_16(float m[16]) { return (zplm_float4 *)m; }
 
-void zplm_float44_transpose(float (*vec)[4]) {
+void zplm_float44ranspose(float (*vec)[4]) {
     float tmp;
     tmp = vec[1][0]; vec[1][0] = vec[0][1]; vec[0][1] = tmp;
     tmp = vec[2][0]; vec[2][0] = vec[0][2]; vec[0][2] = tmp;
@@ -1498,16 +1505,16 @@ void zplm_float44_mul(float (*out)[4], float (*mat1)[4], float (*mat2)[4]) {
     }
 }
 
-void zplm_float44_mul_vec4(zplm_vec4_t *out, float m[4][4], zplm_vec4_t v) {
+void zplm_float44_mul_vec4(zplm_vec4 *out, float m[4][4], zplm_vec4 v) {
     out->x = m[0][0]*v.x + m[1][0]*v.y + m[2][0]*v.z + m[3][0]*v.w;
     out->y = m[0][1]*v.x + m[1][1]*v.y + m[2][1]*v.z + m[3][1]*v.w;
     out->z = m[0][2]*v.x + m[1][2]*v.y + m[2][2]*v.z + m[3][2]*v.w;
     out->w = m[0][3]*v.x + m[1][3]*v.y + m[2][3]*v.z + m[3][3]*v.w;
 }
 
-void zplm_mat4_inverse(zplm_mat4_t *out, zplm_mat4_t *in) {
-    zplm_float4_t *o = zplm_float44_m(out);
-    zplm_float4_t *m = zplm_float44_m(in);
+void zplm_mat4_inverse(zplm_mat4 *out, zplm_mat4 *in) {
+    zplm_float4 *o = zplm_float44_m(out);
+    zplm_float4 *m = zplm_float44_m(in);
 
     float ood;
     //float tmp;
@@ -1581,16 +1588,16 @@ void zplm_mat4_inverse(zplm_mat4_t *out, zplm_mat4_t *in) {
 
 
 
-void zplm_mat4_translate(zplm_mat4_t *out, zplm_vec3_t v) {
+void zplm_mat4ranslate(zplm_mat4 *out, zplm_vec3 v) {
     zplm_mat4_identity(out);
     out->col[3].xyz = v;
     out->col[3].w  = 1;
 }
 
-void zplm_mat4_rotate(zplm_mat4_t *out, zplm_vec3_t v, float angle_radians) {
+void zplm_mat4_rotate(zplm_mat4 *out, zplm_vec3 v, float angle_radians) {
     float c, s;
-    zplm_vec3_t axis, t;
-    zplm_float4_t *rot;
+    zplm_vec3 axis, t;
+    zplm_float4 *rot;
 
     c = zplm_cos(angle_radians);
     s = zplm_sin(angle_radians);
@@ -1617,14 +1624,14 @@ void zplm_mat4_rotate(zplm_mat4_t *out, zplm_vec3_t v, float angle_radians) {
     rot[2][3] = 0;
 }
 
-void zplm_mat4_scale(zplm_mat4_t *out, zplm_vec3_t v) {
+void zplm_mat4_scale(zplm_mat4 *out, zplm_vec3 v) {
     zplm_mat4_identity(out);
     out->e[0]  = v.x;
     out->e[5]  = v.y;
     out->e[10] = v.z;
 }
 
-void zplm_mat4_scalef(zplm_mat4_t *out, float s) {
+void zplm_mat4_scalef(zplm_mat4 *out, float s) {
     zplm_mat4_identity(out);
     out->e[0]  = s;
     out->e[5]  = s;
@@ -1632,8 +1639,8 @@ void zplm_mat4_scalef(zplm_mat4_t *out, float s) {
 }
 
 
-void zplm_mat4_ortho2d(zplm_mat4_t *out, float left, float right, float bottom, float top) {
-    zplm_float4_t *m;
+void zplm_mat4_ortho2d(zplm_mat4 *out, float left, float right, float bottom, float top) {
+    zplm_float4 *m;
     zplm_mat4_identity(out);
     m = zplm_float44_m(out);
 
@@ -1644,8 +1651,8 @@ void zplm_mat4_ortho2d(zplm_mat4_t *out, float left, float right, float bottom, 
     m[3][1] = -(top + bottom) / (top - bottom);
 }
 
-void zplm_mat4_ortho3d(zplm_mat4_t *out, float left, float right, float bottom, float top, float z_near, float z_far) {
-    zplm_float4_t *m;
+void zplm_mat4_ortho3d(zplm_mat4 *out, float left, float right, float bottom, float top, float z_near, float z_far) {
+    zplm_float4 *m;
     zplm_mat4_identity(out);
     m = zplm_float44_m(out);
 
@@ -1658,10 +1665,10 @@ void zplm_mat4_ortho3d(zplm_mat4_t *out, float left, float right, float bottom, 
 }
 
 
-void zplm_mat4_perspective(zplm_mat4_t *out, float fovy, float aspect, float z_near, float z_far) {
+void zplm_mat4_perspective(zplm_mat4 *out, float fovy, float aspect, float z_near, float z_far) {
     float tan_half_fovy = zplm_tan(0.5f * fovy);
-    zplm_mat4_t zero_mat = {0};
-    zplm_float4_t *m = zplm_float44_m(out);
+    zplm_mat4 zero_mat = {0};
+    zplm_float4 *m = zplm_float44_m(out);
     *out = zero_mat;
 
     m[0][0] = 1.0f / (aspect*tan_half_fovy);
@@ -1671,14 +1678,14 @@ void zplm_mat4_perspective(zplm_mat4_t *out, float fovy, float aspect, float z_n
     m[3][2] = -2.0f*z_far*z_near / (z_far - z_near);
 }
 
-void zplm_mat4_infinite_perspective(zplm_mat4_t *out, float fovy, float aspect, float z_near) {
+void zplm_mat4_infinite_perspective(zplm_mat4 *out, float fovy, float aspect, float z_near) {
     float range  = zplm_tan(0.5f * fovy) * z_near;
     float left   = -range * aspect;
     float right  =  range * aspect;
     float bottom = -range;
     float top    =  range;
-    zplm_mat4_t zero_mat = {0};
-    zplm_float4_t *m = zplm_float44_m(out);
+    zplm_mat4 zero_mat = {0};
+    zplm_float4 *m = zplm_float44_m(out);
     *out = zero_mat;
 
     m[0][0] = (2.0f*z_near) / (right - left);
@@ -1688,9 +1695,9 @@ void zplm_mat4_infinite_perspective(zplm_mat4_t *out, float fovy, float aspect, 
     m[3][2] = -2.0f*z_near;
 }
 
-void zplm_mat4_look_at(zplm_mat4_t *out, zplm_vec3_t eye, zplm_vec3_t centre, zplm_vec3_t up) {
-    zplm_vec3_t f, s, u;
-    zplm_float4_t *m;
+void zplm_mat4_look_at(zplm_mat4 *out, zplm_vec3 eye, zplm_vec3 centre, zplm_vec3 up) {
+    zplm_vec3 f, s, u;
+    zplm_float4 *m;
 
     zplm_vec3_sub(&f, centre, eye);
     zplm_vec3_norm(&f, f);
@@ -1731,23 +1738,23 @@ void zplm_mat4_look_at(zplm_mat4_t *out, zplm_vec3_t eye, zplm_vec3_t centre, zp
 
 
 
-zplm_quat_t zplm_quat(float x, float y, float z, float w) { zplm_quat_t q; q.x = x; q.y = y; q.z = z; q.w = w; return q; }
-zplm_quat_t zplm_quatv(float e[4]) { zplm_quat_t q; q.x = e[0]; q.y = e[1]; q.z = e[2]; q.w = e[3]; return q; }
+zplm_quat zplm_quatf(float x, float y, float z, float w) { zplm_quat q; q.x = x; q.y = y; q.z = z; q.w = w; return q; }
+zplm_quat zplm_quatfv(float e[4]) { zplm_quat q; q.x = e[0]; q.y = e[1]; q.z = e[2]; q.w = e[3]; return q; }
 
-zplm_quat_t zplm_quat_axis_angle(zplm_vec3_t axis, float angle_radians) {
-    zplm_quat_t q;
+zplm_quat zplm_quat_axis_angle(zplm_vec3 axis, float angle_radians) {
+    zplm_quat q;
     zplm_vec3_norm(&q.xyz, axis);
     zplm_vec3_muleq(&q.xyz, zplm_sin(0.5f*angle_radians));
     q.w = zplm_cos(0.5f*angle_radians);
     return q;
 }
 
-zplm_quat_t zplm_quat_euler_angles(float pitch, float yaw, float roll) {
+zplm_quat zplm_quat_euler_angles(float pitch, float yaw, float roll) {
     /* TODO: Do without multiplication, i.e. make it faster */
-    zplm_quat_t q, p, y, r;
-    p = zplm_quat_axis_angle(zplm_vec3(1, 0, 0), pitch);
-    y = zplm_quat_axis_angle(zplm_vec3(0, 1, 0), yaw);
-    r = zplm_quat_axis_angle(zplm_vec3(0, 0, 1), roll);
+    zplm_quat q, p, y, r;
+    p = zplm_quat_axis_angle(zplm_vec3f(1, 0, 0), pitch);
+    y = zplm_quat_axis_angle(zplm_vec3f(0, 1, 0), yaw);
+    r = zplm_quat_axis_angle(zplm_vec3f(0, 0, 1), roll);
 
     zplm_quat_mul(&q, y, p);
     zplm_quat_muleq(&q, r);
@@ -1755,48 +1762,48 @@ zplm_quat_t zplm_quat_euler_angles(float pitch, float yaw, float roll) {
     return q;
 }
 
-zplm_quat_t zplm_quat_identity(void) { zplm_quat_t q = {0, 0, 0, 1}; return q; }
+zplm_quat zplm_quat_identity(void) { zplm_quat q = {0, 0, 0, 1}; return q; }
 
 
-void zplm_quat_add(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1) { zplm_vec4_add(&d->xyzw, q0.xyzw, q1.xyzw); }
-void zplm_quat_sub(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1) { zplm_vec4_sub(&d->xyzw, q0.xyzw, q1.xyzw); }
+void zplm_quat_add(zplm_quat *d, zplm_quat q0, zplm_quat q1) { zplm_vec4_add(&d->xyzw, q0.xyzw, q1.xyzw); }
+void zplm_quat_sub(zplm_quat *d, zplm_quat q0, zplm_quat q1) { zplm_vec4_sub(&d->xyzw, q0.xyzw, q1.xyzw); }
 
-void zplm_quat_mul(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1) {
+void zplm_quat_mul(zplm_quat *d, zplm_quat q0, zplm_quat q1) {
     d->x = q0.w * q1.x + q0.x * q1.w + q0.y * q1.z - q0.z * q1.y;
     d->y = q0.w * q1.y - q0.x * q1.z + q0.y * q1.w + q0.z * q1.x;
     d->z = q0.w * q1.z + q0.x * q1.y - q0.y * q1.x + q0.z * q1.w;
     d->w = q0.w * q1.w - q0.x * q1.x - q0.y * q1.y - q0.z * q1.z;
 }
 
-void zplm_quat_div(zplm_quat_t *d, zplm_quat_t q0, zplm_quat_t q1){ zplm_quat_t iq1; zplm_quat_inverse(&iq1, q1); zplm_quat_mul(d, q0, iq1); }
+void zplm_quat_div(zplm_quat *d, zplm_quat q0, zplm_quat q1){ zplm_quat iq1; zplm_quat_inverse(&iq1, q1); zplm_quat_mul(d, q0, iq1); }
 
-void zplm_quat_mulf(zplm_quat_t *d, zplm_quat_t q0, float s) { zplm_vec4_mul(&d->xyzw, q0.xyzw, s); }
-void zplm_quat_divf(zplm_quat_t *d, zplm_quat_t q0, float s) { zplm_vec4_div(&d->xyzw, q0.xyzw, s); }
-
-
-void zplm_quat_addeq(zplm_quat_t *d, zplm_quat_t q) { zplm_vec4_addeq(&d->xyzw, q.xyzw); }
-void zplm_quat_subeq(zplm_quat_t *d, zplm_quat_t q) { zplm_vec4_subeq(&d->xyzw, q.xyzw); }
-void zplm_quat_muleq(zplm_quat_t *d, zplm_quat_t q) { zplm_quat_mul(d, *d, q); }
-void zplm_quat_diveq(zplm_quat_t *d, zplm_quat_t q) { zplm_quat_div(d, *d, q); }
+void zplm_quat_mulf(zplm_quat *d, zplm_quat q0, float s) { zplm_vec4_mul(&d->xyzw, q0.xyzw, s); }
+void zplm_quat_divf(zplm_quat *d, zplm_quat q0, float s) { zplm_vec4_div(&d->xyzw, q0.xyzw, s); }
 
 
-void zplm_quat_muleqf(zplm_quat_t *d, float s) { zplm_vec4_muleq(&d->xyzw, s); }
-void zplm_quat_diveqf(zplm_quat_t *d, float s) { zplm_vec4_diveq(&d->xyzw, s); }
-
-float zplm_quat_dot(zplm_quat_t q0, zplm_quat_t q1) { float r = zplm_vec3_dot(q0.xyz, q1.xyz) + q0.w*q1.w; return r; }
-float zplm_quat_mag(zplm_quat_t q)           { float r = zplm_sqrt(zplm_quat_dot(q, q)); return r; }
-
-void zplm_quat_norm(zplm_quat_t *d, zplm_quat_t q)    { zplm_quat_divf(d, q, zplm_quat_mag(q)); }
-void zplm_quat_conj(zplm_quat_t *d, zplm_quat_t q)    { d->xyz = zplm_vec3(-q.x, -q.y, -q.z); d->w = q.w; }
-void zplm_quat_inverse(zplm_quat_t *d, zplm_quat_t q) { zplm_quat_conj(d, q); zplm_quat_diveqf(d, zplm_quat_dot(q, q)); }
+void zplm_quat_addeq(zplm_quat *d, zplm_quat q) { zplm_vec4_addeq(&d->xyzw, q.xyzw); }
+void zplm_quat_subeq(zplm_quat *d, zplm_quat q) { zplm_vec4_subeq(&d->xyzw, q.xyzw); }
+void zplm_quat_muleq(zplm_quat *d, zplm_quat q) { zplm_quat_mul(d, *d, q); }
+void zplm_quat_diveq(zplm_quat *d, zplm_quat q) { zplm_quat_div(d, *d, q); }
 
 
-void zplm_quat_axis(zplm_vec3_t *axis, zplm_quat_t q) {
-    zplm_quat_t n; zplm_quat_norm(&n, q);
+void zplm_quat_muleqf(zplm_quat *d, float s) { zplm_vec4_muleq(&d->xyzw, s); }
+void zplm_quat_diveqf(zplm_quat *d, float s) { zplm_vec4_diveq(&d->xyzw, s); }
+
+float zplm_quat_dot(zplm_quat q0, zplm_quat q1) { float r = zplm_vec3_dot(q0.xyz, q1.xyz) + q0.w*q1.w; return r; }
+float zplm_quat_mag(zplm_quat q)           { float r = zplm_sqrt(zplm_quat_dot(q, q)); return r; }
+
+void zplm_quat_norm(zplm_quat *d, zplm_quat q)    { zplm_quat_divf(d, q, zplm_quat_mag(q)); }
+void zplm_quat_conj(zplm_quat *d, zplm_quat q)    { d->xyz = zplm_vec3f(-q.x, -q.y, -q.z); d->w = q.w; }
+void zplm_quat_inverse(zplm_quat *d, zplm_quat q) { zplm_quat_conj(d, q); zplm_quat_diveqf(d, zplm_quat_dot(q, q)); }
+
+
+void zplm_quat_axis(zplm_vec3 *axis, zplm_quat q) {
+    zplm_quat n; zplm_quat_norm(&n, q);
     zplm_vec3_div(axis, n.xyz, zplm_sin(zplm_arccos(q.w)));
 }
 
-float zplm_quat_angle(zplm_quat_t q) {
+float zplm_quat_angle(zplm_quat q) {
     float mag = zplm_quat_mag(q);
     float c = q.w * (1.0f/mag);
     float angle = 2.0f*zplm_arccos(c);
@@ -1804,15 +1811,15 @@ float zplm_quat_angle(zplm_quat_t q) {
 }
 
 
-float zplm_quat_roll(zplm_quat_t q)  { return zplm_arctan2(2.0f*q.x*q.y + q.z*q.w, q.x*q.x + q.w*q.w - q.y*q.y - q.z*q.z); }
-float zplm_quat_pitch(zplm_quat_t q) { return zplm_arctan2(2.0f*q.y*q.z + q.w*q.x, q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z); }
-float zplm_quat_yaw(zplm_quat_t q)   { return zplm_arcsin(-2.0f*(q.x*q.z - q.w*q.y)); }
+float zplm_quat_roll(zplm_quat q)  { return zplm_arctan2(2.0f*q.x*q.y + q.z*q.w, q.x*q.x + q.w*q.w - q.y*q.y - q.z*q.z); }
+float zplm_quat_pitch(zplm_quat q) { return zplm_arctan2(2.0f*q.y*q.z + q.w*q.x, q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z); }
+float zplm_quat_yaw(zplm_quat q)   { return zplm_arcsin(-2.0f*(q.x*q.z - q.w*q.y)); }
 
-void zplm_quat_rotate_vec3(zplm_vec3_t *d, zplm_quat_t q, zplm_vec3_t v) {
-    /* zplm_vec3_t t = 2.0f * cross(q.xyz, v);
+void zplm_quat_rotate_vec3(zplm_vec3 *d, zplm_quat q, zplm_vec3 v) {
+    /* zplm_vec3 t = 2.0f * cross(q.xyz, v);
      * *d = q.w*t + v + cross(q.xyz, t);
      */
-    zplm_vec3_t t, p;
+    zplm_vec3 t, p;
     zplm_vec3_cross(&t, q.xyz, v);
     zplm_vec3_muleq(&t, 2.0f);
 
@@ -1824,9 +1831,9 @@ void zplm_quat_rotate_vec3(zplm_vec3_t *d, zplm_quat_t q, zplm_vec3_t v) {
 }
 
 
-void zplm_mat4_from_quat(zplm_mat4_t *out, zplm_quat_t q) {
-    zplm_float4_t *m;
-    zplm_quat_t a;
+void zplm_mat4_from_quat(zplm_mat4 *out, zplm_quat q) {
+    zplm_float4 *m;
+    zplm_quat a;
     float xx, yy, zz,
     xy, xz, yz,
     wx, wy, wz;
@@ -1852,8 +1859,8 @@ void zplm_mat4_from_quat(zplm_mat4_t *out, zplm_quat_t q) {
     m[2][2] = 1.0f - 2.0f*(xx + yy);
 }
 
-void zplm_quat_from_mat4(zplm_quat_t *out, zplm_mat4_t *mat) {
-    zplm_float4_t *m;
+void zplm_quat_from_mat4(zplm_quat *out, zplm_mat4 *mat) {
+    zplm_float4 *m;
     float four_x_squared_minus_1, four_y_squared_minus_1,
     four_z_squared_minus_1, four_w_squared_minus_1,
     four_biggest_squared_minus_1;
@@ -1932,13 +1939,13 @@ zplm_vec##N##_t db; \
 zplm_vec##N##_sub(&db, b, a); \
 zplm_vec##N##_muleq(&db, t); \
 zplm_vec##N##_add(d, a, db)
-void zplm_vec2_lerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t b, float t) { ZPLM_VEC_LERPN(2, d, a, b, t); }
-void zplm_vec3_lerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t b, float t) { ZPLM_VEC_LERPN(3, d, a, b, t); }
-void zplm_vec4_lerp(zplm_vec4_t *d, zplm_vec4_t a, zplm_vec4_t b, float t) { ZPLM_VEC_LERPN(4, d, a, b, t); }
+void zplm_vec2_lerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 b, float t) { ZPLM_VEC_LERPN(2, d, a, b, t); }
+void zplm_vec3_lerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 b, float t) { ZPLM_VEC_LERPN(3, d, a, b, t); }
+void zplm_vec4_lerp(zplm_vec4 *d, zplm_vec4 a, zplm_vec4 b, float t) { ZPLM_VEC_LERPN(4, d, a, b, t); }
 
 #undef ZPLM_VEC_LERPN
 
-void zplm_vec2_cslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t b, zplm_vec2_t v1, float t) {
+void zplm_vec2_cslerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 v0, zplm_vec2 b, zplm_vec2 v1, float t) {
     float t2  = t*t;
     float ti  = (t-1);
     float ti2 = ti*ti;
@@ -1952,7 +1959,7 @@ void zplm_vec2_cslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t
     d->y = h00*a.y + h10*v0.y + h01*b.y + h11*v1.y;
 }
 
-void zplm_vec3_cslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t b, zplm_vec3_t v1, float t) {
+void zplm_vec3_cslerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 v0, zplm_vec3 b, zplm_vec3 v1, float t) {
     float t2  = t*t;
     float ti  = (t-1);
     float ti2 = ti*ti;
@@ -1967,7 +1974,7 @@ void zplm_vec3_cslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t
     d->z = h00*a.z + h10*v0.z + h01*b.z + h11*v1.z;
 }
 
-void zplm_vec2_dcslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_t b, zplm_vec2_t v1, float t) {
+void zplm_vec2_dcslerp(zplm_vec2 *d, zplm_vec2 a, zplm_vec2 v0, zplm_vec2 b, zplm_vec2 v1, float t) {
     float t2 = t * t;
 
     float dh00 =  6 * t2 - 6 * t;
@@ -1979,7 +1986,7 @@ void zplm_vec2_dcslerp(zplm_vec2_t *d, zplm_vec2_t a, zplm_vec2_t v0, zplm_vec2_
     d->y = dh00 * a.y + dh10 * v0.y + dh01 * b.y + dh11 * v1.y;
 }
 
-void zplm_vec3_dcslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_t b, zplm_vec3_t v1, float t) {
+void zplm_vec3_dcslerp(zplm_vec3 *d, zplm_vec3 a, zplm_vec3 v0, zplm_vec3 b, zplm_vec3 v1, float t) {
     float t2 = t * t;
 
     float dh00 =  6 * t2 - 6 * t;
@@ -1992,11 +1999,11 @@ void zplm_vec3_dcslerp(zplm_vec3_t *d, zplm_vec3_t a, zplm_vec3_t v0, zplm_vec3_
     d->z = dh00 * a.z + dh10 * v0.z + dh01 * b.z + dh11 * v1.z;
 }
 
-void zplm_quat_lerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t)  { zplm_vec4_lerp(&d->xyzw, a.xyzw, b.xyzw, t); }
-void zplm_quat_nlerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t) { zplm_quat_lerp(d, a, b, t); zplm_quat_norm(d, *d); }
+void zplm_quat_lerp(zplm_quat *d, zplm_quat a, zplm_quat b, float t)  { zplm_vec4_lerp(&d->xyzw, a.xyzw, b.xyzw, t); }
+void zplm_quat_nlerp(zplm_quat *d, zplm_quat a, zplm_quat b, float t) { zplm_quat_lerp(d, a, b, t); zplm_quat_norm(d, *d); }
 
-void zplm_quat_slerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t) {
-    zplm_quat_t x, y, z;
+void zplm_quat_slerp(zplm_quat *d, zplm_quat a, zplm_quat b, float t) {
+    zplm_quat x, y, z;
     float cos_theta, angle;
     float s1, s0, is;
 
@@ -2004,7 +2011,7 @@ void zplm_quat_slerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t) {
     cos_theta = zplm_quat_dot(a, b);
 
     if (cos_theta < 0.0f) {
-        z = zplm_quat(-b.x, -b.y, -b.z, -b.w);
+        z = zplm_quatf(-b.x, -b.y, -b.z, -b.w);
         cos_theta = -cos_theta;
     }
 
@@ -2024,7 +2031,7 @@ void zplm_quat_slerp(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t) {
     zplm_quat_muleqf(d, is);
 }
 
-void zplm_quat_slerp_approx(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float t) {
+void zplm_quat_slerp_approx(zplm_quat *d, zplm_quat a, zplm_quat b, float t) {
     /* NOTE: Derived by taylor expanding the geometric interpolation equation
      *             Even works okay for nearly anti-parallel versors!!!
      */
@@ -2033,22 +2040,22 @@ void zplm_quat_slerp_approx(zplm_quat_t *d, zplm_quat_t a, zplm_quat_t b, float 
     zplm_quat_nlerp(d, a, b, tp);
 }
 
-void zplm_quat_nquad(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t) {
-    zplm_quat_t x, y;
+void zplm_quat_nquad(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t) {
+    zplm_quat x, y;
     zplm_quat_nlerp(&x, p, q, t);
     zplm_quat_nlerp(&y, a, b, t);
     zplm_quat_nlerp(d, x, y, 2.0f*t*(1.0f-t));
 }
 
-void zplm_quat_squad(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t) {
-    zplm_quat_t x, y;
+void zplm_quat_squad(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t) {
+    zplm_quat x, y;
     zplm_quat_slerp(&x, p, q, t);
     zplm_quat_slerp(&y, a, b, t);
     zplm_quat_slerp(d, x, y, 2.0f*t*(1.0f-t));
 }
 
-void zplm_quat_squad_approx(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_quat_t b, zplm_quat_t q, float t) {
-    zplm_quat_t x, y;
+void zplm_quat_squad_approx(zplm_quat *d, zplm_quat p, zplm_quat a, zplm_quat b, zplm_quat q, float t) {
+    zplm_quat x, y;
     zplm_quat_slerp_approx(&x, p, q, t);
     zplm_quat_slerp_approx(&y, a, b, t);
     zplm_quat_slerp_approx(d, x, y, 2.0f*t*(1.0f-t));
@@ -2059,21 +2066,21 @@ void zplm_quat_squad_approx(zplm_quat_t *d, zplm_quat_t p, zplm_quat_t a, zplm_q
 
 
 
-zplm_rect2_t zplm_rect2(zplm_vec2_t pos, zplm_vec2_t dim) {
-    zplm_rect2_t r;
+zplm_rect2 zplm_rect2f(zplm_vec2 pos, zplm_vec2 dim) {
+    zplm_rect2 r;
     r.pos = pos;
     r.dim = dim;
     return r;
 }
 
-zplm_rect3_t zplm_rect3(zplm_vec3_t pos, zplm_vec3_t dim) {
-    zplm_rect3_t r;
+zplm_rect3 zplm_rect3f(zplm_vec3 pos, zplm_vec3 dim) {
+    zplm_rect3 r;
     r.pos = pos;
     r.dim = dim;
     return r;
 }
 
-int zplm_rect2_contains(zplm_rect2_t a, float x, float y) {
+int zplm_rect2_contains(zplm_rect2 a, float x, float y) {
     float min_x = zplm_min(a.pos.x, a.pos.x+a.dim.x);
     float max_x = zplm_max(a.pos.x, a.pos.x+a.dim.x);
     float min_y = zplm_min(a.pos.y, a.pos.y+a.dim.y);
@@ -2082,14 +2089,14 @@ int zplm_rect2_contains(zplm_rect2_t a, float x, float y) {
     return result;
 }
 
-int zplm_rect2_contains_vec2(zplm_rect2_t a, zplm_vec2_t p) { return zplm_rect2_contains(a, p.x, p.y); }
+int zplm_rect2_contains_vec2(zplm_rect2 a, zplm_vec2 p) { return zplm_rect2_contains(a, p.x, p.y); }
 
-int zplm_rect2_intersects(zplm_rect2_t a, zplm_rect2_t b) {
-    zplm_rect2_t r = {0};
+int zplm_rect2_intersects(zplm_rect2 a, zplm_rect2 b) {
+    zplm_rect2 r = {0};
     return zplm_rect2_intersection_result(a, b, &r);
 }
 
-int zplm_rect2_intersection_result(zplm_rect2_t a, zplm_rect2_t b, zplm_rect2_t *intersection) {
+int zplm_rect2_intersection_result(zplm_rect2 a, zplm_rect2 b, zplm_rect2 *intersection) {
     float a_min_x = zplm_min(a.pos.x, a.pos.x+a.dim.x);
     float a_max_x = zplm_max(a.pos.x, a.pos.x+a.dim.x);
     float a_min_y = zplm_min(a.pos.y, a.pos.y+a.dim.y);
@@ -2106,11 +2113,11 @@ int zplm_rect2_intersection_result(zplm_rect2_t a, zplm_rect2_t b, zplm_rect2_t 
     float y1 = zplm_min(a_max_y, b_max_y);
 
     if ((x0 < x1) && (y0 < y1)) {
-        zplm_rect2_t r = zplm_rect2(zplm_vec2(x0, y0), zplm_vec2(x1-x0, y1-y0));
+        zplm_rect2 r = zplm_rect2f(zplm_vec2f(x0, y0), zplm_vec2f(x1-x0, y1-y0));
         *intersection = r;
         return 1;
     } else {
-        zplm_rect2_t r = {0};
+        zplm_rect2 r = {0};
         *intersection = r;
         return 0;
     }

@@ -66,9 +66,9 @@ extern "C" {
     //   by refering to it through event type and its callback ID.
     //
 
-    typedef void *zplev_data_t;
+    typedef void *zplev_data;
 
-#define ZPLEV(name) void name(zplev_data_t evt)
+#define ZPLEV(name) void name(zplev_data evt)
     typedef ZPLEV(zplev_cb);
 
 #define ZPLEV_CAST(Type, name) Type * name = cast(Type *)evt
@@ -77,11 +77,11 @@ extern "C" {
 
     ZPL_TABLE_DECLARE(static, zplev_pool, zplev_pool_, zplev_block);
 
-    ZPL_DEF void zplev_init   (zplev_pool *pool, zpl_allocator_t alloc);
+    ZPL_DEF void zplev_init   (zplev_pool *pool, zpl_allocator alloc);
     ZPL_DEF void zplev_destroy(zplev_pool *pool);
     ZPL_DEF u64  zplev_add    (zplev_pool *pool, u64 slot, zplev_cb cb);
     ZPL_DEF void zplev_remove (zplev_pool *pool, u64 slot, u64 index);
-    ZPL_DEF void zplev_trigger(zplev_pool *pool, u64 slot, zplev_data_t evt);
+    ZPL_DEF void zplev_trigger(zplev_pool *pool, u64 slot, zplev_data evt);
 
 #ifdef __cplusplus
 }
@@ -96,7 +96,7 @@ extern "C" {
 
     ZPL_TABLE_DEFINE(zplev_pool, zplev_pool_, zplev_block);
 
-    zpl_inline void zplev_init   (zplev_pool *pool, zpl_allocator_t alloc) {
+    zpl_inline void zplev_init   (zplev_pool *pool, zpl_allocator alloc) {
         zplev_pool_init(pool, alloc);
     }
 
@@ -135,7 +135,7 @@ extern "C" {
         }
     }
 
-    void zplev_trigger(zplev_pool *pool, u64 slot, zplev_data_t evt) {
+    void zplev_trigger(zplev_pool *pool, u64 slot, zplev_data evt) {
         zplev_block *block = zplev_pool_get(pool, slot);
 
         if (block) {

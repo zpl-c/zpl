@@ -9,14 +9,14 @@
 
 int
 main(void) {
-    zplc_bounds_t b = {0};
+    zplc_bounds b = {0};
 
-    b.centre = zplm_vec3(0, 0, 0);
-    b.half_size = zplm_vec3(5000, 5000, 5000);
+    b.centre = zplm_vec3f(0, 0, 0);
+    b.half_size = zplm_vec3f(5000, 5000, 5000);
 
-    zplc_t root = {0};
-    zplc_init(&root, zpl_heap_allocator(), zplc_dim_2d_ev, b, zplm_vec3(0,0,0), 32);
-    zplc_bounds_t search_bounds = {
+    zplc root = {0};
+    zplc_init(&root, zpl_heap_allocator(), ZPLC_DIM_3D, b, zplm_vec3f(0,0,0), 32);
+    zplc_bounds search_bounds = {
         .centre = {0,0,0},
         .half_size = {250,250,250},
     };
@@ -25,7 +25,7 @@ main(void) {
     srand(0xDEADBEEF);
     for (isize i = 0; i < 4000000; ++i) {
 
-        zplc_node_t e = {0};
+        zplc_node e = {0};
         e.position.x =  (float)(2000 - rand() % 4000);
         e.position.y =  (float)(2000 - rand() % 4000);
         zplc_insert(&root, e);
@@ -33,7 +33,7 @@ main(void) {
     isize insertion = zpl_utc_time_now() - start;
 
 
-    zpl_array_t(zplc_node_t) search_result2;
+    zpl_array(zplc_node) search_result2;
     zpl_array_init(search_result2, zpl_heap_allocator());
 
     start = zpl_utc_time_now();

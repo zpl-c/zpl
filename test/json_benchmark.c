@@ -20,7 +20,7 @@ int main(void) {
     zpl_file_close(&file);
 
 
-    zplj_object_t root = {0};
+    zplj_object root = {0};
 
     f64 time = zpl_time_now();
     zplj_parse(&root, file_size, content, zpl_heap(), false, NULL);

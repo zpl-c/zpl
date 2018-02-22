@@ -823,8 +823,11 @@ Version History:
     // e.g. relaxed, acquire, release, acquire_release
 
 #if defined(ZPL_COMPILER_MSVC)
+#define zpl_atomic32_t zpl_atomic32
     typedef struct zpl_atomic32  { i32   volatile value; } zpl_atomic32;
+#define zpl_atomic64_t zpl_atomic64
     typedef struct zpl_atomic64  { i64   volatile value; } zpl_atomic64;
+#define zpl_atomic_ptr_t zpl_atomic_ptr
     typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #else
 #if defined(ZPL_ARCH_32_BIT)
@@ -835,8 +838,11 @@ Version History:
 #error Unknown architecture
 #endif
 
+#define zpl_atomic32_t zpl_atomic32
     typedef struct zpl_atomic32  { i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
+#define zpl_atomic64_t zpl_atomic64
     typedef struct zpl_atomic64  { i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
+#define zpl_atomic_ptr_t zpl_atomic_ptr
     typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 
@@ -884,10 +890,13 @@ Version History:
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
+#define zpl_semaphore_t zpl_semaphore
     typedef struct zpl_semaphore { void *win32_handle; }     zpl_semaphore;
 #elif defined(ZPL_SYSTEM_OSX)
+#define zpl_semaphore_t zpl_semaphore
     typedef struct zpl_semaphore { semaphore_t osx_handle; } zpl_semaphore;
 #elif defined(ZPL_SYSTEM_UNIX)
+#define zpl_semaphore_t zpl_semaphore
     typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
 #else
 #error
@@ -901,6 +910,7 @@ Version History:
 
 
     // Mutex
+#define zpl_mutex_t zpl_mutex
     typedef struct zpl_mutex {
 #if defined(ZPL_SYSTEM_WINDOWS)
         CRITICAL_SECTION win32_critical_section;
@@ -940,6 +950,7 @@ Version History:
         zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
 #endif
 
+#define zpl_thread_t zpl_thread
     typedef struct zpl_thread {
 #if defined(ZPL_SYSTEM_WINDOWS)
         void *        win32_handle;
@@ -969,6 +980,7 @@ Version History:
 
     // NOTE: Thread Merge Operation
     // Based on Sean Barrett's stb_sync
+#define zpl_sync_t zpl_sync
     typedef struct zpl_sync {
         i32 target;  // Target Number of threads
         i32 current; // Threads to hit
@@ -990,6 +1002,7 @@ Version History:
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
+#define zpl_affinity_t zpl_affinity
     typedef struct zpl_affinity {
         b32   is_accurate;
         isize core_count;
@@ -1000,6 +1013,7 @@ Version History:
     } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_OSX)
+#define zpl_affinity_t zpl_affinity
     typedef struct zpl_affinity {
         b32   is_accurate;
         isize core_count;
@@ -1008,6 +1022,7 @@ Version History:
     } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#define zpl_affinity_t zpl_affinity
     typedef struct zpl_affinity {
         b32   is_accurate;
         isize core_count;
@@ -1032,6 +1047,7 @@ Version History:
     //
     //
 
+#define zpl_virtual_memory_t zpl_virtual_memory
     typedef struct zpl_virtual_memory {
         void *data;
         isize size;
@@ -1068,6 +1084,7 @@ Version History:
                u64 flags)
     typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
+#define zpl_allocator_t zpl_allocator
     typedef struct zpl_allocator {
         zpl_allocator_proc *proc;
         void *           data;
@@ -1119,6 +1136,7 @@ Version History:
     //
     // Arena Allocator
     //
+#define zpl_arena_t zpl_arena
     typedef struct zpl_arena {
         zpl_allocator backing;
         void *      physical_start;
@@ -1143,6 +1161,7 @@ Version History:
 
 
 
+#define zpl_temp_arena_memory_t zpl_temp_arena_memory
     typedef struct zpl_temp_arena_memory {
         zpl_arena *arena;
         isize    original_count;
@@ -1162,6 +1181,7 @@ Version History:
     //
 
 
+#define zpl_pool_t zpl_pool
     typedef struct zpl_pool {
         zpl_allocator backing;
         void *      physical_start;
@@ -1179,6 +1199,7 @@ Version History:
     ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
     ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
+#define zpl_allocation_header_ev_t zpl_allocation_header_ev
     typedef struct zpl_allocation_header_ev {
         isize size;
     } zpl_allocation_header_ev;
@@ -1198,6 +1219,7 @@ Version History:
     // Scratch Memory Allocator - Ring Buffer Based Arena
     //
 
+#define zpl_scratch_memory_t zpl_scratch_memory
     typedef struct zpl_scratch_memory {
         void *physical_start;
         isize total_size;
@@ -1217,6 +1239,7 @@ Version History:
     // Stack Memory Allocator
     //
 
+#define zpl_stack_memory_t zpl_stack_memory
     typedef struct zpl_stack_memory {
         zpl_allocator backing;
 
@@ -1305,8 +1328,8 @@ Version History:
     ZPL_DEF i32  zpl_hex_digito_int    (char c);
 
     // NOTE: ASCII only
-    ZPL_DEF void zpl_stro_lower(char *str);
-    ZPL_DEF void zpl_stro_upper(char *str);
+    ZPL_DEF void zpl_str_to_lower(char *str);
+    ZPL_DEF void zpl_str_to_upper(char *str);
 
     ZPL_DEF isize zpl_strlen (char const *str);
     ZPL_DEF isize zpl_strnlen(char const *str, isize max_len);
@@ -1333,10 +1356,10 @@ Version History:
                                 char const *src_a, isize src_a_len,
                                 char const *src_b, isize src_b_len);
 
-    ZPL_DEF u64   zpl_stro_u64(char const *str, char **end_ptr, i32 base); // TODO: Support more than just decimal and hexadecimal
-    ZPL_DEF i64   zpl_stro_i64(char const *str, char **end_ptr, i32 base); // TODO: Support more than just decimal and hexadecimal
-    ZPL_DEF f32   zpl_stro_f32(char const *str, char **end_ptr);
-    ZPL_DEF f64   zpl_stro_f64(char const *str, char **end_ptr);
+    ZPL_DEF u64   zpl_str_to_u64(char const *str, char **end_ptr, i32 base); // TODO: Support more than just decimal and hexadecimal
+    ZPL_DEF i64   zpl_str_to_i64(char const *str, char **end_ptr, i32 base); // TODO: Support more than just decimal and hexadecimal
+    ZPL_DEF f32   zpl_str_to_f32(char const *str, char **end_ptr);
+    ZPL_DEF f64   zpl_str_to_f64(char const *str, char **end_ptr);
     ZPL_DEF void  zpl_i64o_str(i64 value, char *string, i32 base);
     ZPL_DEF void  zpl_u64o_str(u64 value, char *string, i32 base);
 
@@ -1352,10 +1375,10 @@ Version History:
     ZPL_DEF isize zpl_utf8_strnlen(u8 const *str, isize max_len);
 
     // NOTE: Windows doesn't handle 8 bit filenames well ('cause Micro$hit)
-    ZPL_DEF u16 *zpl_utf8o_ucs2    (u16 *buffer, isize len, u8 const *str);
-    ZPL_DEF u8 * zpl_ucs2o_utf8    (u8 *buffer, isize len, u16 const *str);
-    ZPL_DEF u16 *zpl_utf8o_ucs2_buf(u8 const *str);   // NOTE: Uses locally persisting buffer
-    ZPL_DEF u8 * zpl_ucs2o_utf8_buf(u16 const *str); // NOTE: Uses locally persisting buffer
+    ZPL_DEF u16 *zpl_utf8_to_ucs2    (u16 *buffer, isize len, u8 const *str);
+    ZPL_DEF u8 * zpl_ucs2_to_utf8    (u8 *buffer, isize len, u16 const *str);
+    ZPL_DEF u16 *zpl_utf8_to_ucs2_buf(u8 const *str);   // NOTE: Uses locally persisting buffer
+    ZPL_DEF u8 * zpl_ucs2_to_utf8_buf(u16 const *str); // NOTE: Uses locally persisting buffer
 
     // NOTE: Returns size of codepoint in bytes
     ZPL_DEF isize zpl_utf8_decode        (u8 const *str, isize str_len, Rune *codepoint);
@@ -1445,7 +1468,7 @@ Version History:
             zpl_printf("Called\n");
 
         str = zpl_string_set(str, "Ab.;!...AHello World       ??");
-        str = zpl_stringrim(str, "Ab.;!. ?");
+        str = zpl_string_trim(str, "Ab.;!. ?");
         zpl_printf("%s\n", str); // "Hello World"
 
         zpl_string_free(str);
@@ -1458,6 +1481,7 @@ Version History:
     typedef char *zpl_string;
 
     // NOTE: If you only need a small string, just use a standard c string or change the size from isize to u16, etc.
+#define zpl_string_header_t zpl_string_header
     typedef struct zpl_string_header {
         zpl_allocator allocator;
         isize       length;
@@ -1482,8 +1506,8 @@ Version History:
     ZPL_DEF zpl_string zpl_string_make_space_for (zpl_string str, isize add_len);
     ZPL_DEF isize    zpl_string_allocation_size(zpl_string const str);
     ZPL_DEF b32      zpl_string_are_equal      (zpl_string const lhs, zpl_string const rhs);
-    ZPL_DEF zpl_string zpl_stringrim           (zpl_string str, char const *cut_set);
-    ZPL_DEF zpl_string zpl_stringrim_space     (zpl_string str); // Whitespace ` \t\r\n\v\f`
+    ZPL_DEF zpl_string zpl_string_trim           (zpl_string str, char const *cut_set);
+    ZPL_DEF zpl_string zpl_string_trim_space     (zpl_string str); // Whitespace ` \t\r\n\v\f`
     ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
     ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, char const *fmt, ...);
 
@@ -1504,6 +1528,7 @@ Version History:
     // zpl_buffer_pop
     // zpl_buffer_clear
 
+#define zpl_buffer_header_t zpl_buffer_header
     typedef struct zpl_buffer_header {
         isize count;
         isize capacity;
@@ -1585,6 +1610,7 @@ int main(void)
 }
 #endif
 
+#define zpl__list_t zpl__list
     typedef struct zpl__list {
         void const *ptr;
         struct zpl__list *next, *prev;
@@ -1657,6 +1683,7 @@ int main(void)
     }
 #endif
 
+#define zpl_array_header_t zpl_array_header
     typedef struct zpl_array_header {
         char           *data;
         isize           count;
@@ -1812,6 +1839,7 @@ int main(void)
     //     VALUE   - the type of the value to be stored
     //
 
+#define zpl_hash_table_find_result_t zpl_hash_table_find_result
     typedef struct zpl_hash_table_find_result {
         isize hash_index;
         isize entry_prev;
@@ -1996,12 +2024,14 @@ int main(void)
         zpl_FILE_ERRORRUNCATION_FAILURE,
     } zplFileError;
 
+#define zpl_file_descriptor_t zpl_file_descriptor
     typedef union zpl_file_descriptor {
         void *  p;
         intptr  i;
         uintptr u;
     } zpl_file_descriptor;
 
+#define zpl_file_operations_t zpl_file_operations
     typedef struct zpl_file_operations zpl_file_operations;
 
 #define ZPL_FILE_OPEN_PROC(name)     zplFileError name(zpl_file_descriptor *fd, zpl_file_operations *ops, zpl_file_mode mode, char const *filename)
@@ -2033,6 +2063,7 @@ int main(void)
 
     typedef u64 zpl_file_time;
 
+#define zpl_file_t zpl_file
     typedef struct zpl_file {
         zpl_file_operations ops;
         zpl_file_descriptor fd;
@@ -2043,6 +2074,7 @@ int main(void)
 
 #ifdef ZPL_THREADING
 
+#define zpl_async_file_t zpl_async_file
     typedef struct zpl_async_file {
         zpl_file handle;
         isize size;
@@ -2091,6 +2123,7 @@ int main(void)
 
     zplFileError zpl_fileemp(zpl_file *file);
 
+#define zpl_file_contents_t zpl_file_contents
     typedef struct zpl_file_contents {
         zpl_allocator allocator;
         void *      data;
@@ -2170,7 +2203,7 @@ int main(void)
 
     ZPL_DEF u64  zpl_rdtsc       (void);
     ZPL_DEF f64  zpl_time_now    (void); // NOTE: This is only for relative time e.g. game loops
-    ZPL_DEF f64  zpl_utcime_now(void); // NOTE: Number of microseconds since 1601-01-01 UTC
+    ZPL_DEF f64  zpl_utc_time_now(void); // NOTE: Number of microseconds since 1601-01-01 UTC
     ZPL_DEF void zpl_sleep_ms    (u32 ms);
 
 
@@ -2184,6 +2217,7 @@ int main(void)
 #define ZPL_TIMER_CB(name) void name(void *user_data)
     typedef ZPL_TIMER_CB(zpl_timer_cb);
 
+#define zpl_timer_t zpl_timer
     typedef struct zpl_timer {
         zpl_timer_cb *callback;
         b32           enabled;
@@ -2209,6 +2243,7 @@ int main(void)
     //
     //
 
+#define zpl_random_t zpl_random
     typedef struct zpl_random {
         u32 offsets[8];
         u32 value;
@@ -4687,7 +4722,7 @@ extern "C" {
 
 
 
-    zpl_inline void zpl_stro_lower(char *str) {
+    zpl_inline void zpl_str_to_lower(char *str) {
         if (!str) return;
         while (*str) {
             *str = zpl_charo_lower(*str);
@@ -4695,7 +4730,7 @@ extern "C" {
         }
     }
 
-    zpl_inline void zpl_stro_upper(char *str) {
+    zpl_inline void zpl_str_to_upper(char *str) {
         if (!str) return;
         while (*str) {
             *str = zpl_charo_upper(*str);
@@ -4990,7 +5025,7 @@ extern "C" {
 
 
     // TODO: Make better
-    u64 zpl_stro_u64(char const *str, char **end_ptr, i32 base) {
+    u64 zpl_str_to_u64(char const *str, char **end_ptr, i32 base) {
         isize len;
         u64 value = 0;
 
@@ -5007,7 +5042,7 @@ extern "C" {
         return value;
     }
 
-    i64 zpl_stro_i64(char const *str, char **end_ptr, i32 base) {
+    i64 zpl_str_to_i64(char const *str, char **end_ptr, i32 base) {
         isize len;
         i64 value;
 
@@ -5074,13 +5109,13 @@ extern "C" {
         zpl_strrev(string);
     }
 
-    zpl_inline f32 zpl_stro_f32(char const *str, char **end_ptr) {
-        f64 f = zpl_stro_f64(str, end_ptr);
+    zpl_inline f32 zpl_str_to_f32(char const *str, char **end_ptr) {
+        f64 f = zpl_str_to_f64(str, end_ptr);
         f32 r = cast(f32)f;
         return r;
     }
 
-    zpl_inline f64 zpl_stro_f64(char const *str, char **end_ptr) {
+    zpl_inline f64 zpl_str_to_f64(char const *str, char **end_ptr) {
         f64 result, value, sign, scale;
         i32 frac;
 
@@ -5311,7 +5346,7 @@ extern "C" {
     }
 
 
-    zpl_string zpl_stringrim(zpl_string str, char const *cut_set) {
+    zpl_string zpl_string_trim(zpl_string str, char const *cut_set) {
         char *start, *end, *start_pos, *end_pos;
         isize len;
 
@@ -5334,7 +5369,7 @@ extern "C" {
         return str;
     }
 
-    zpl_inline zpl_string zpl_stringrim_space(zpl_string str) { return zpl_stringrim(str, " \t\r\n\v\f"); }
+    zpl_inline zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
 
     zpl_string zpl_string_append_rune(zpl_string str, Rune r) {
         if (r >= 0) {
@@ -5364,7 +5399,7 @@ extern "C" {
     //
 
 
-    u16 *zpl_utf8o_ucs2(u16 *buffer, isize len, u8 const *str) {
+    u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str) {
         Rune c;
         isize i = 0;
         len--;
@@ -5428,7 +5463,7 @@ extern "C" {
         return buffer;
     }
 
-    u8 *zpl_ucs2o_utf8(u8 *buffer, isize len, u16 const *str) {
+    u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str) {
         isize i = 0;
         len--;
         while (*str) {
@@ -5467,14 +5502,14 @@ extern "C" {
         return buffer;
     }
 
-    u16 *zpl_utf8o_ucs2_buf(u8 const *str) { // NOTE: Uses locally persisting buffer
+    u16 *zpl_utf8_to_ucs2_buf(u8 const *str) { // NOTE: Uses locally persisting buffer
         zpl_local_persist u16 buf[4096];
-        return zpl_utf8o_ucs2(buf, zpl_count_of(buf), str);
+        return zpl_utf8_to_ucs2(buf, zpl_count_of(buf), str);
     }
 
-    u8 *zpl_ucs2o_utf8_buf(u16 const *str) { // NOTE: Uses locally persisting buffer
+    u8 *zpl_ucs2_to_utf8_buf(u16 const *str) { // NOTE: Uses locally persisting buffer
         zpl_local_persist u8 buf[4096];
-        return zpl_ucs2o_utf8(buf, zpl_count_of(buf), str);
+        return zpl_ucs2_to_utf8(buf, zpl_count_of(buf), str);
     }
 
 
@@ -5499,6 +5534,7 @@ extern "C" {
     };
 
 
+#define zpl_utf8_accept_range_t zpl_utf8_accept_range
     typedef struct zpl_utf8_accept_range {
         u8 lo, hi;
     } zpl_utf8_accept_range;
@@ -7140,9 +7176,9 @@ extern "C" {
 
         if (info) {
             if (info->flags & ZPL_FMT_UPPER)
-                zpl_stro_upper(text);
+                zpl_str_to_upper(text);
             else if (info->flags & ZPL_FMT_LOWER)
-                zpl_stro_lower(text);
+                zpl_str_to_lower(text);
         }
 
         return res;
@@ -7292,7 +7328,7 @@ extern "C" {
                 }
                 fmt++;
             } else {
-                info.width = cast(i32)zpl_stro_i64(fmt, cast(char **)&fmt, 10);
+                info.width = cast(i32)zpl_str_to_i64(fmt, cast(char **)&fmt, 10);
             }
 
             // NOTE: Optional Precision
@@ -7302,7 +7338,7 @@ extern "C" {
                     info.precision = va_arg(va, int);
                     fmt++;
                 } else {
-                    info.precision = cast(i32)zpl_stro_i64(fmt, cast(char **)&fmt, 10);
+                    info.precision = cast(i32)zpl_str_to_i64(fmt, cast(char **)&fmt, 10);
                 }
                 info.flags &= ~ZPL_FMT_ZERO;
             }
@@ -7556,7 +7592,7 @@ extern "C" {
         return result;
     }
 
-    zpl_inline f64 zpl_utcime_now(void) {
+    zpl_inline f64 zpl_utc_time_now(void) {
         FILETIME ft;
         ULARGE_INTEGER li;
 
@@ -7613,7 +7649,7 @@ extern "C" {
 #endif
     }
 
-    zpl_inline f64 zpl_utcime_now(void) {
+    zpl_inline f64 zpl_utc_time_now(void) {
         struct timespec t;
 #if defined(ZPL_SYSTEM_OSX)
         clock_serv_t cclock;
@@ -7769,7 +7805,7 @@ extern "C" {
         r->offsets[2] = 0;
         r->offsets[3] = 1;
 #endif
-        time = zpl_utcime_now();
+        time = zpl_utc_time_now();
         r->offsets[4] = cast(u32)(time >> 32);
         r->offsets[5] = cast(u32)time;
         r->offsets[6] = zpl__get_noise_fromime();

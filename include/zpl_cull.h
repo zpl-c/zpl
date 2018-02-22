@@ -18,6 +18,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+    4.0.0 - New syntax
     3.1.4 - Small fixes
     3.1.3 - Fixed tests and warnings
     3.1.2 - Fixed zplc_insert bug with invalid branched nodes
@@ -73,46 +74,50 @@ extern "C" {
     // Spatial bounding box
     //
 
-    typedef zplm_aabb3_t zplc_bounds_t;
+#define zplc_bounds zplc_bounds
+    typedef zplm_aabb3 zplc_bounds;
+
 
     //
     // Tree culler structure
     //
 
-    typedef enum zplc_dim_e {
-        zplc_dim_2d_ev = 2,
-        zplc_dim_3d_ev = 3,
-    } zplc_dim_e;
+    typedef enum zplcDimensions {
+        ZPLC_DIM_2D = 2,
+        ZPLC_DIM_3D = 3,
+    } zplcDimensions;
 
-    typedef struct zplc_node_t {
-        zplm_vec3_t position;
+#define zplc_node zplc_node
+    typedef struct zplc_node {
+        zplm_vec3 position;
 
         // NOTE(ZaKlaus): Custom data to be set by user.
         void *ptr;
         u64   tag;
         b32   unused;
-    } zplc_node_t;
+    } zplc_node;
 
-    typedef struct zplc_t {
-        zpl_allocator_t            allocator;
+#define zplc zplc
+    typedef struct zplc {
+        zpl_allocator            allocator;
 
         u32                        max_nodes;
         isize                      dimensions;
-        zplc_bounds_t              boundary;
-        zplm_vec3_t                min_bounds;
+        zplc_bounds              boundary;
+        zplm_vec3                min_bounds;
         b32                        use_min_bounds;
-        zpl_array_t(zplc_node_t)   nodes;
+        zpl_array_t(zplc_node)   nodes;
         zpl_array_t(usize)         free_nodes;
-        zpl_array_t(struct zplc_t) trees;
-    } zplc_t;
+        zpl_array_t(struct zplc) trees;
+    } zplc;
 
-    ZPL_DEF void         zplc_init       (zplc_t *c, zpl_allocator_t a, isize dims, zplc_bounds_t bounds, zplm_vec3_t min_bounds, u32 max_nodes);
-    ZPL_DEF void         zplc_query      (zplc_t *c, zplc_bounds_t bounds, zpl_array_t(zplc_node_t) *out_nodes);
-    ZPL_DEF zplc_t      *zplc_insert     (zplc_t *c, zplc_node_t node);
-    ZPL_DEF b32          zplc_remove     (zplc_t *c, u64 tag);
-    ZPL_DEF zplc_t      *zplc_find_branch(zplc_t *c, u64 tag);
-    ZPL_DEF void         zplc_split      (zplc_t *c);
-    ZPL_DEF void         zplc_clear      (zplc_t *c);
+    ZPL_DEF void         zplc_init       (zplc *c, zpl_allocator a, isize dims, zplc_bounds bounds, zplm_vec3 min_bounds, u32 max_nodes);
+    ZPL_DEF void         zplc_query      (zplc *c, zplc_bounds bounds, zpl_array_t(zplc_node) *out_nodes);
+    ZPL_DEF zplc      *zplc_insert     (zplc *c, zplc_node node);
+    ZPL_DEF b32          zplc_remove     (zplc *c, u64 tag);
+    ZPL_DEF zplc      *zplc_find_branch(zplc *c, u64 tag);
+    ZPL_DEF void         zplc_split      (zplc *c);
+    ZPL_DEF void         zplc_clear      (zplc *c);
 
     #define zplc_free zplc_clear
 
@@ -128,8 +133,8 @@ extern "C" {
 extern "C" {
 #endif
 
-    void zplc_init(zplc_t *c, zpl_allocator_t a, isize dims, zplc_bounds_t bounds, zplm_vec3_t min_bounds, u32 max_nodes) {
-        zplc_t c_ = {0};
+    void zplc_init(zplc *c, zpl_allocator a, isize dims, zplc_bounds bounds, zplm_vec3 min_bounds, u32 max_nodes) {
+        zplc c_ = {0};
         *c            = c_;
         c->allocator  = a;
         c->boundary   = bounds;
@@ -140,7 +145,7 @@ extern "C" {
 
     }
 
-    b32 zplc__contains(isize dims, zplc_bounds_t a, f32 *point) {
+    b32 zplc__contains(isize dims, zplc_bounds a, f32 *point) {
         for (i32 i = 0; i < dims; ++i) {
             if (!( a.centre.e[i] - a.half_size.e[i] <= point[i]
                    && a.centre.e[i] + a.half_size.e[i] >= point[i])) {
@@ -151,7 +156,7 @@ extern "C" {
         return true;
     }
 
-    b32 zplc__intersects(isize dims, zplc_bounds_t a, zplc_bounds_t b) {
+    b32 zplc__intersects(isize dims, zplc_bounds a, zplc_bounds b) {
         for (i32 i = 0; i < dims; ++i) {
             if (zpl_abs(a.centre.e[i] - b.centre.e[i]) > (a.half_size.e[i] + b.half_size.e[i])) return false;
         }
@@ -159,7 +164,7 @@ extern "C" {
         return true;
     }
 
-    void zplc_query(zplc_t *c, zplc_bounds_t bounds, zplc_node_t **out_nodes) {
+    void zplc_query(zplc *c, zplc_bounds bounds, zplc_node **out_nodes) {
         if (c->nodes == NULL) return;
         if (!zplc__intersects(c->dimensions, c->boundary, bounds)) return;
 
@@ -184,10 +189,10 @@ extern "C" {
         }
     }
 
-    b32 zplc_remove(zplc_t *c, u64 tag) {
+    b32 zplc_remove(zplc *c, u64 tag) {
         if (c->nodes == NULL) return false;
         for (i32 i = 0; i < zpl_array_count(c->nodes); ++i) {
-            zplc_node_t *node = &c->nodes[i];
+            zplc_node *node = &c->nodes[i];
             if (node->tag == tag) {
                 if (node->unused) return false;
                 if (c->free_nodes == NULL) {
@@ -202,7 +207,7 @@ extern "C" {
         return false;
     }
 
-    zplc_t *zplc_find_branch(zplc_t *c, u64 tag) {
+    zplc *zplc_find_branch(zplc *c, u64 tag) {
         for (i32 i = 0; i < zpl_array_count(c->nodes); ++i) {
             if (c->nodes[i].tag == tag) {
                 return c;
@@ -214,19 +219,19 @@ extern "C" {
         if (trees_count == 0) return NULL;
 
         for (i32 i = 0; i < trees_count; ++i) {
-            zplc_t *branch = zplc_find_branch(&c->trees[i], tag);
+            zplc *branch = zplc_find_branch(&c->trees[i], tag);
             if (branch) return branch;
         }
 
         return NULL;
     }
 
-    b32 zplc__bounds_small_enough(zplc_bounds_t a, zplm_vec3_t b) {
+    b32 zplc__bounds_small_enough(zplc_bounds a, zplm_vec3 b) {
         //TODO(zaklaus): Is this the best way we can determine bounds for k-d ?
         return a.half_size.x <= b.x && a.half_size.y <= b.y && a.half_size.z <= b.z;
     }
 
-    zplc_t *zplc_insert(zplc_t *c, zplc_node_t node) {
+    zplc *zplc_insert(zplc *c, zplc_node node) {
         if (!zplc__contains(c->dimensions, c->boundary, node.position.e)) return NULL;
 
         if (c->nodes == NULL) {
@@ -261,7 +266,7 @@ extern "C" {
 
         trees_count = zpl_array_count(c->trees);
         for (i32 i = 0; i < trees_count; ++i) {
-            zplc_t *tree = zplc_insert((c->trees+i), node);
+            zplc *tree = zplc_insert((c->trees+i), node);
             if (tree) return tree;
         }
 
@@ -279,24 +284,24 @@ extern "C" {
         {+1.0f, +1.0f, +1.0f},
     };
 
-    void zplc_split(zplc_t *c) {
-        zplc_bounds_t hd = c->boundary;
+    void zplc_split(zplc *c) {
+        zplc_bounds hd = c->boundary;
         for (i32 i = 0; i < c->dimensions; ++i) {
             hd.half_size.e[i] /= 2.0f;
         }
 
         i32 loops = 0;
-        /**/ if (c->dimensions == zplc_dim_2d_ev) {
+        /**/ if (c->dimensions == ZPLC_DIM_2D) {
             loops = 4;
         }
-        else if (c->dimensions == zplc_dim_3d_ev) {
+        else if (c->dimensions == ZPLC_DIM_3D) {
             loops = 8;
         }
 
         f32 p[3] = {0};
         for (i32 i = 0; i < loops; ++i) {
-            zplc_t tree = {0};
-            zplc_bounds_t bounds = {0};
+            zplc tree = {0};
+            zplc_bounds bounds = {0};
             p[0] = c->boundary.centre.e[0] + hd.half_size.e[0]*zplc__tpl[i][0];
             p[1] = c->boundary.centre.e[1] + hd.half_size.e[1]*zplc__tpl[i][1];
             p[2] = c->boundary.centre.e[2] + hd.half_size.e[2]*zplc__tpl[i][2];
@@ -314,7 +319,7 @@ extern "C" {
         }
     }
 
-    void zplc_clear(zplc_t *c) {
+    void zplc_clear(zplc *c) {
         // TODO(ZaKlaus): Support more allocators?
         if (c->allocator.proc == zpl_arena_allocator_proc) {
             zpl_free_all(c->allocator);

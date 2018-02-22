@@ -99,29 +99,30 @@ extern "C" {
         ZPLJ_NAME_STYLE_NO_QUOTES,
     } zpljNameStyle;
 
-    typedef struct zplj_object_t {
+#define zplj_object_t zplj_object
+    typedef struct zplj_object {
         zpl_allocator_t backing;
         u8    name_style;
         char *name;
         u8    type;
         u8    props;
-        zpl_array_t(struct zplj_object_t) nodes;
+        zpl_array_t(struct zplj_object) nodes;
 
         union {
             char *string;
-            zpl_array_t(struct zplj_object_t) elements;
+            zpl_array_t(struct zplj_object) elements;
             i64   integer;
             f64   real;
             u8    constant;
         };
-    } zplj_object_t;
+    } zplj_object;
 
-    ZPL_DEF void zplj_parse(zplj_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments, u8 *err_code);
-    ZPL_DEF void zplj_free (zplj_object_t *obj);
+    ZPL_DEF void zplj_parse(zplj_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments, u8 *err_code);
+    ZPL_DEF void zplj_free (zplj_object *obj);
 
-    ZPL_DEF char *zplj__parse_object(zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code);
-    ZPL_DEF char *zplj__parse_value (zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code);
-    ZPL_DEF char *zplj__parse_array (zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code);
+    ZPL_DEF char *zplj__parse_object(zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code);
+    ZPL_DEF char *zplj__parse_value (zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code);
+    ZPL_DEF char *zplj__parse_array (zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code);
 
     ZPL_DEF char *zplj__trim        (char *str);
     ZPL_DEF char *zplj__skip        (char *str, char c);
@@ -140,7 +141,7 @@ extern "C" {
 
     b32 zplj__is_control_char(char c);
 
-    void zplj_parse(zplj_object_t *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments, u8 *err_code) {
+    void zplj_parse(zplj_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments, u8 *err_code) {
         ZPL_ASSERT(root && source);
         zpl_unused(len);
 
@@ -209,13 +210,13 @@ extern "C" {
         }
 
         if (err_code) *err_code = ZPLJ_ERROR_NONE;
-        zplj_object_t root_ = {0};
+        zplj_object root_ = {0};
         zplj__parse_object(&root_, dest, a, err_code);
 
         *root = root_;
     }
 
-    void zplj_free(zplj_object_t *obj) {
+    void zplj_free(zplj_object *obj) {
         /**/ if (obj->type == ZPLJ_TYPE_ARRAY && obj->elements) {
             for (isize i = 0; i < zpl_array_count(obj->elements); ++i) {
                 zplj_free(obj->elements+i);
@@ -232,7 +233,7 @@ extern "C" {
         }
     }
 
-    char *zplj__parse_array(zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+    char *zplj__parse_array(zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
         ZPL_ASSERT(obj && base);
         char *p = base;
 
@@ -243,7 +244,7 @@ extern "C" {
         while(*p) {
             p = zplj__trim(p);
 
-            zplj_object_t elem = {0};
+            zplj_object elem = {0};
             p = zplj__parse_value(&elem, p, a, err_code);
 
             if (err_code && *err_code != ZPLJ_ERROR_NONE) {
@@ -265,7 +266,7 @@ extern "C" {
         return p;
     }
 
-    char *zplj__parse_value(zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+    char *zplj__parse_value(zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
         ZPL_ASSERT(obj && base);
         char *p = base;
         char *b = base;
@@ -479,7 +480,7 @@ extern "C" {
         return p;
     }
 
-    char *zplj__parse_object(zplj_object_t *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+    char *zplj__parse_object(zplj_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
         ZPL_ASSERT(obj && base);
         char *p = base;
         char *b = base;
@@ -492,7 +493,7 @@ extern "C" {
         if (*p == '{') p++;
 
         while(*p) {
-            zplj_object_t node = {0};
+            zplj_object node = {0};
             p = zplj__trim(p);
             if (*p == '}') return p;
 
