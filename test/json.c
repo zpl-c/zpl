@@ -50,7 +50,12 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) 
         }break;
 
         case ZPL_JSON_TYPE_INTEGER: {
-            zpl_printf("%ld", node->integer);
+            /**/ if (node->props == ZPL_JSON_PROPS_IS_HEX) {
+                zpl_printf("0x%lx", node->integer);
+            }
+            else {
+                zpl_printf("%ld", node->integer);
+            }
         }break;
 
         case ZPL_JSON_TYPE_REAL: {
@@ -70,12 +75,8 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) 
                 zpl_printf("%ld.%lde%c%ld", node->base, node->base2, node->exp_neg ? '-' : '+', node->exp);
             }
             else {
-                if (node->frac == 0) {
-                    zpl_printf("%.1lf", node->real);
-                }
-                else {
-                    zpl_printf("%.*lf", node->frac, node->real);
-                }
+                if (!node->lead_digit) zpl_printf(".%ld", node->base2);
+                else zpl_printf("%ld.%ld", node->base, node->base2);
             }
         }break;
 

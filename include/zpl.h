@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.4.0 - Improved storage support for numbers in JSON5 parser
   5.3.0 - Integrated zpl_json into ZPL
   5.2.0 - Added zpl_string_sprintf
   5.1.1 - Added zpl_system_command_nores for output-less execution
@@ -2353,6 +2354,7 @@ int main(void)
         ZPL_JSON_PROPS_INFINITY     = 3,
         ZPL_JSON_PROPS_INFINITY_NEG = 4,
         ZPL_JSON_PROPS_IS_EXP       = 5,
+        ZPL_JSON_PROPS_IS_HEX       = 6,
     } zpljProps;
 
     typedef enum zpljConst {
@@ -8519,6 +8521,9 @@ extern "C" {
                 while(zpl_char_is_digit(*++e));
             }
             else {
+                if (*e == '0' && (*(e+1) == 'x' || *(e+1) == 'X')) {
+                    obj->props = ZPL_JSON_PROPS_IS_HEX;
+                }
                 while(zpl_char_is_hex_digit(*e) || *e == 'x' || *e == 'X') {
                     buf[ib++] = *e++;
                 }
@@ -8580,16 +8585,17 @@ extern "C" {
                 obj->real = zpl_str_to_f64(buf, 0);
                 obj->frac = frac-1;
 
-                if (exp) {
-                    isize qs=zpl_strlen(buf)+1;
-                    char *q=(char *)zpl_malloc(qs), *qp=q, *qp2=q;
-                    zpl_memcopy(q,buf,qs);
-                    while (*qp != '.') ++qp;
-                    *qp='\0';
-                    qp2=qp+1;
+                isize qs=zpl_strlen(buf)+1;
+                char *q=(char *)zpl_malloc(qs), *qp=q, *qp2=q;
+                zpl_memcopy(q,buf,qs);
+                while (*qp != '.') ++qp;
+                *qp='\0';
+                qp2=qp+1;
 
-                    obj->base    = zpl_str_to_i64(q, 0, 0);
-                    obj->base2   = zpl_str_to_i64(qp2, 0, 0);
+                obj->base    = zpl_str_to_i64(q, 0, 0);
+                obj->base2   = zpl_str_to_i64(qp2, 0, 0);
+
+                if (exp) {
                     obj->exp     = exp;
                     obj->exp_neg = !(eb == 10.f);
                     obj->props   = ZPL_JSON_PROPS_IS_EXP;

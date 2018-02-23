@@ -31,7 +31,7 @@
 		a: 3,
 		b: .4,
 		val: 3.34e+12,
-		hex: 0x4D,
+		hex: 0xDEADbeef,
 		trailing_dot: 4.,
 	},
 }
