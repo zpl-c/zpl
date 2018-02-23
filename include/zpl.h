@@ -8324,7 +8324,7 @@ extern "C" {
                     }
 
                     // NOTE(ZaKlaus): inline comment
-                    if (p[0] == '/' && p[0] == '/') {
+                    if (p[0] == '/' && p[1] == '/') {
                         b = p;
                         l=2;
                         p+=2;
@@ -8332,7 +8332,6 @@ extern "C" {
                         while (p[0] != '\n') {
                             ++p; ++l;
                         }
-                        ++p;
                         ++l;
                         zpl_memset(b, ' ', l);
                     }
