@@ -67,10 +67,15 @@ void dump_value(zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) 
                 zpl_printf("-Infinity");
             }
             else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
-                zpl_printf("%.3lfe%c%ld", node->base, node->exp_neg ? '-' : '+', node->exp);
+                zpl_printf("%ld.%lde%c%ld", node->base, node->base2, node->exp_neg ? '-' : '+', node->exp);
             }
             else {
-                zpl_printf("%.3lf", node->real);
+                if (node->frac == 0) {
+                    zpl_printf("%.1lf", node->real);
+                }
+                else {
+                    zpl_printf("%.*lf", node->frac, node->real);
+                }
             }
         }break;
 

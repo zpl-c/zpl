@@ -2389,9 +2389,12 @@ int main(void)
             i64   integer;
             struct {
                 f64 real;
-                f32 base;
+                i64 base;
+                i64 base2;
                 i64 exp;
                 b32 exp_neg;
+                b32 lead_digit;
+                u8  frac;
             };
             u8    constant;
         };
@@ -8496,6 +8499,7 @@ extern "C" {
             e = b;
 
             isize ib = 0;
+            u8 frac=0;
             char buf[16] = {0};
 
             /**/ if (*e == '+') ++e;
@@ -8506,25 +8510,28 @@ extern "C" {
             if (*e == '.') {
                 obj->type = ZPL_JSON_TYPE_REAL;
                 buf[ib++] = '0';
+                obj->lead_digit = false;
 
                 do {
                     buf[ib++] = *e;
+                    ++frac;
                 }
                 while(zpl_char_is_digit(*++e));
             }
             else {
                 while(zpl_char_is_hex_digit(*e) || *e == 'x' || *e == 'X') {
                     buf[ib++] = *e++;
-
                 }
 
                 if (*e == '.') {
                     obj->type = ZPL_JSON_TYPE_REAL;
+                    obj->lead_digit = true;
                     u32 step = 0;
 
                     do {
                         buf[ib++] = *e;
                         ++step;
+                        ++frac;
                     }
                     while(zpl_char_is_digit(*++e));
 
@@ -8562,7 +8569,6 @@ extern "C" {
                 ZPL_JSON_ASSERT; if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
             }
 
-            // NOTE(ZaKlaus): @enhance
             if (obj->type == ZPL_JSON_TYPE_INTEGER) {
                 obj->integer = zpl_str_to_i64(buf, 0, 0);
 
@@ -8572,9 +8578,18 @@ extern "C" {
             }
             else {
                 obj->real = zpl_str_to_f64(buf, 0);
+                obj->frac = frac-1;
 
                 if (exp) {
-                    obj->base    = obj->real;
+                    isize qs=zpl_strlen(buf)+1;
+                    char *q=(char *)zpl_malloc(qs), *qp=q, *qp2=q;
+                    zpl_memcopy(q,buf,qs);
+                    while (*qp != '.') ++qp;
+                    *qp='\0';
+                    qp2=qp+1;
+
+                    obj->base    = zpl_str_to_i64(q, 0, 0);
+                    obj->base2   = zpl_str_to_i64(qp2, 0, 0);
                     obj->exp     = exp;
                     obj->exp_neg = !(eb == 10.f);
                     obj->props   = ZPL_JSON_PROPS_IS_EXP;
