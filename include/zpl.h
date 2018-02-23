@@ -2384,6 +2384,7 @@ int main(void)
         char *name;
         u8    type;
         u8    props;
+        b32   cfg_mode;
         zpl_array(struct zpl_json_object) nodes;
 
         union {
@@ -8271,6 +8272,7 @@ extern "C" {
 
 
     b32 zpl__json_is_control_char(char c);
+    char *zpl__json_trim(char *str);
 
     void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments, u8 *err_code) {
         ZPL_ASSERT(root && source);
@@ -8342,6 +8344,13 @@ extern "C" {
 
         if (err_code) *err_code = ZPL_JSON_ERROR_NONE;
         zpl_json_object root_ = {0};
+
+        dest=zpl__json_trim(dest);
+
+        if (*dest != '{' || *dest != '[') {
+            root_.cfg_mode=true;
+        }
+
         zpl__json_parse_object(&root_, dest, a, err_code);
 
         *root = root_;
@@ -8353,7 +8362,10 @@ extern "C" {
 
     void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
         zpl___ind(indent-4);
-        zpl_fprintf(f, "{\n");
+        if (!o->cfg_mode) zpl_fprintf(f, "{\n");
+        else {
+            indent-=4;
+        }
         isize cnt = zpl_array_count(o->nodes);
 
         for (int i = 0; i < cnt; ++i) {
@@ -8371,7 +8383,7 @@ extern "C" {
             zpl_fprintf(f, "}");
         }
         else {
-            zpl_fprintf(f, "}\n");
+            if (!o->cfg_mode) zpl_fprintf(f, "}\n");
         }
     }
 
@@ -8776,7 +8788,9 @@ extern "C" {
         obj->backing = a;
 
         p = zpl__json_trim(p);
-        if (*p == '{') p++;
+        if (*p == '{') {
+            ++p;
+        }
 
         while(*p) {
             zpl_json_object node = {0};
@@ -8866,8 +8880,9 @@ extern "C" {
             p = zpl__json_trim(p);
 
             /**/ if (*p == ',') {
-                ++p;
-                continue;
+                p=zpl__json_trim(p+1);
+                /**/ if (*p == '\0' || *p == '}') return p;
+                else continue;
             }
             else if (*p == '\0' || *p == '}') {
                 return p;
