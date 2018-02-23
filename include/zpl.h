@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.5.0 - Integrate JSON5 writer into the core
   5.4.0 - Improved storage support for numbers in JSON5 parser
   5.3.0 - Integrated zpl_json into ZPL
   5.2.0 - Added zpl_string_sprintf
@@ -2403,6 +2404,7 @@ int main(void)
     } zpl_json_object;
 
     ZPL_DEF void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator a, b32 strip_comments, u8 *err_code);
+    ZPL_DEF void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent);
     ZPL_DEF void zpl_json_free (zpl_json_object *obj);
 
     ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
@@ -8344,6 +8346,138 @@ extern "C" {
 
         *root = root_;
     }
+
+#define zpl___ind(x) for (int i = 0; i < x; ++i) zpl_fprintf(f, " ");
+
+    void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last);
+
+    void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
+        zpl___ind(indent-4);
+        zpl_fprintf(f, "{\n");
+        isize cnt = zpl_array_count(o->nodes);
+
+        for (int i = 0; i < cnt; ++i) {
+            if (i < cnt-1) {
+                zpl__json_write_value(f, o->nodes + i, indent, false, false);
+            }
+            else {
+                zpl__json_write_value(f, o->nodes + i, indent, false, true);
+            }
+        }
+
+        zpl___ind(indent);
+
+        if (indent > 0) {
+            zpl_fprintf(f, "}");
+        }
+        else {
+            zpl_fprintf(f, "}\n");
+        }
+    }
+
+    void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, isize indent, b32 is_inline, b32 is_last) {
+        zpl_json_object_t *node = o;
+        indent+=4;
+
+        if (!is_inline) {
+            zpl___ind(indent);
+            switch(node->name_style) {
+                case ZPL_JSON_NAME_STYLE_DOUBLE_QUOTE: {
+                    zpl_fprintf(f, "\"%s\": ", node->name);
+                }break;
+
+                case ZPL_JSON_NAME_STYLE_SINGLE_QUOTE: {
+                    zpl_fprintf(f, "\'%s\': ", node->name);
+                }break;
+
+                case ZPL_JSON_NAME_STYLE_NO_QUOTES: {
+                    zpl_fprintf(f, "%s: ", node->name);
+                }break;
+            }
+
+        }
+
+        switch (node->type) {
+            case ZPL_JSON_TYPE_STRING: {
+                zpl_fprintf(f, "\"%s\"", node->string);
+            }break;
+
+            case ZPL_JSON_TYPE_MULTISTRING: {
+                zpl_fprintf(f, "`%s`", node->string);
+            }break;
+
+            case ZPL_JSON_TYPE_ARRAY: {
+                zpl_fprintf(f, "[");
+                isize elemn = zpl_array_count(node->elements);
+                for (int j = 0; j < elemn; ++j) {
+                    zpl__json_write_value(f, node->elements + j, -4, true, true);
+
+                    if (j < elemn-1) {
+                        zpl_fprintf(f, ", ");
+                    }
+                }
+                zpl_fprintf(f, "]");
+            }break;
+
+            case ZPL_JSON_TYPE_INTEGER: {
+                /**/ if (node->props == ZPL_JSON_PROPS_IS_HEX) {
+                    zpl_fprintf(f, "0x%lx", node->integer);
+                }
+                else {
+                    zpl_fprintf(f, "%ld", node->integer);
+                }
+            }break;
+
+            case ZPL_JSON_TYPE_REAL: {
+                /**/ if (node->props == ZPL_JSON_PROPS_NAN) {
+                    zpl_fprintf(f, "NaN");
+                }
+                else if (node->props == ZPL_JSON_PROPS_NAN_NEG) {
+                    zpl_fprintf(f, "-NaN");
+                }
+                else if (node->props == ZPL_JSON_PROPS_INFINITY) {
+                    zpl_fprintf(f, "Infinity");
+                }
+                else if (node->props == ZPL_JSON_PROPS_INFINITY_NEG) {
+                    zpl_fprintf(f, "-Infinity");
+                }
+                else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
+                    zpl_fprintf(f, "%ld.%lde%c%ld", node->base, node->base2, node->exp_neg ? '-' : '+', node->exp);
+                }
+                else {
+                    if (!node->lead_digit) zpl_fprintf(f, ".%ld", node->base2);
+                    else zpl_fprintf(f, "%ld.%ld", node->base, node->base2);
+                }
+            }break;
+
+            case ZPL_JSON_TYPE_OBJECT: {
+                zpl_json_write(f, node, indent);
+            }break;
+
+            case ZPL_JSON_TYPE_CONSTANT: {
+                /**/ if (node->constant == ZPL_JSON_CONST_TRUE) {
+                    zpl_fprintf(f, "true");
+                }
+                else if (node->constant == ZPL_JSON_CONST_FALSE) {
+                    zpl_fprintf(f, "false");
+                }
+                else if (node->constant == ZPL_JSON_CONST_NULL) {
+                    zpl_fprintf(f, "null");
+                }
+            }break;
+        }
+
+        if (!is_inline) {
+
+            if (!is_last) {
+                zpl_fprintf(f, ",\n");
+            }
+            else {
+                zpl_fprintf(f, "\n");
+            }
+        }
+    }
+#undef zpl___ind
 
     void zpl_json_free(zpl_json_object *obj) {
         /**/ if (obj->type == ZPL_JSON_TYPE_ARRAY && obj->elements) {
