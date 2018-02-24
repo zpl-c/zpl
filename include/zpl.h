@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.5.1 - Fixed time method for win
   5.5.0 - Integrate JSON5 writer into the core
   5.4.0 - Improved storage support for numbers in JSON5 parser
   5.3.0 - Integrated zpl_json into ZPL
@@ -7751,7 +7752,7 @@ extern "C" {
 
         QueryPerformanceCounter(&counter);
 
-        result = (counter.QuadPart - win32_perf_count.QuadPart)  / cast(f64)(win32_perf_count_freq.QuadPart);
+        result = (counter.QuadPart - win32_perf_counter.QuadPart)  / cast(f64)(win32_perf_count_freq.QuadPart);
         return result;
     }
 
