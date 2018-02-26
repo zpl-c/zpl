@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.6.3 - Added support for flags without values
   5.6.2 - Improve error handling for zpl_opts
   5.6.1 - Added support for strings with spaces in zpl_opts
   5.6.0 - Added zpl_opts for CLI argument parsing
@@ -2439,6 +2440,7 @@ int main(int argc, char **argv)
     zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
     zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
     zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
+    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_DECISION);
 
     zpl_opts_positional_add(&opts, "4pay");
 
@@ -2450,6 +2452,14 @@ int main(int argc, char **argv)
         i32 right=zpl_opts_integer(&opts, "4pay", 42);
         zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
                                                                 right);
+
+        b32 gfx=zpl_opts_decision(&opts, "enablegfx", false);
+        if (gfx) {
+            zpl_printf("You wanted HD graphics? Here:\n\n");
+            for (int i=0; i<5; ++i) {
+                zpl_printf("iiiii\n");
+            }
+        }
     }
     else {
         zpl_opts_print_errors(&opts);
@@ -2461,6 +2471,7 @@ int main(int argc, char **argv)
 */
 
 typedef enum {
+    ZPL_OPTS_DECISION,
     ZPL_OPTS_STRING,
     ZPL_OPTS_FLOAT,
     ZPL_OPTS_INT,
@@ -2507,6 +2518,7 @@ ZPL_DEF void zpl_opts_print_errors(zpl_opts *opts);
 ZPL_DEF zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback);
 ZPL_DEF f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback);
 ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
+ZPL_DEF b32 zpl_opts_decision(zpl_opts *opts, char const *name, b32 fallback);
 ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
@@ -9121,6 +9133,13 @@ i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback)
     return (e && e->met) ? e->integer : fallback;
 }
 
+b32 zpl_opts_decision(zpl_opts *opts, char const *name, b32 fallback)
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    return (e && e->met) ? (b32)(e->integer) : fallback;
+}
+
 void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b)
 {
     t->met=true;
@@ -9220,9 +9239,14 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                     else if (*e == '\0') {
                         char *sp=argv[++i];
 
-                        if (sp) {
+                        if (sp && *sp!='-') {
                             p=sp;
                             b=e=sp;
+                        }
+                        else {
+                            t->integer=1;
+                            t->met=true;
+                            continue;
                         }
                     }
 

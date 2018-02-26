@@ -10,6 +10,7 @@ int main(int argc, char **argv)
     zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
     zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
     zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
+    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_DECISION);
 
     zpl_opts_positional_add(&opts, "4pay");
 
@@ -21,6 +22,14 @@ int main(int argc, char **argv)
         i32 right=zpl_opts_integer(&opts, "4pay", 42);
         zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
                                                                 right);
+
+        b32 gfx=zpl_opts_decision(&opts, "enablegfx", false);
+        if (gfx) {
+            zpl_printf("You wanted HD graphics? Here:\n\n");
+            for (int i=0; i<5; ++i) {
+                zpl_printf("iiiii\n");
+            }
+        }
     }
     else {
         zpl_opts_print_errors(&opts);
