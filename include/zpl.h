@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.6.1 - Added support for strings with spaces in zpl_opts
   5.6.0 - Added zpl_opts for CLI argument parsing
   5.5.1 - Fixed time method for win
   5.5.0 - Integrate JSON5 writer into the core
@@ -9127,6 +9128,8 @@ b32 zpl_opts_has_arg(zpl_opts *opts, char const *name)
     if (e) {
         return e->met;
     }
+
+    return false;
 }
 
 void zpl_opts_print_help(zpl_opts *opts)
@@ -9188,13 +9191,7 @@ void zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                         }
                     }
 
-                    while (zpl_char_is_alphanumeric(*e) || *e=='-' || *e=='_' 
-                                                        || *e==',' || *e=='.') {
-                        ++e;
-                    }
-
-                    *e='\0';
-
+                    e=zpl__skip(e, '\0');
                     zpl__opts_set_value(opts, t, b);
                 }
             }
