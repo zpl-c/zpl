@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.6.4 - Several tweaks to the zpl_opts API
   5.6.3 - Added support for flags without values
   5.6.2 - Improve error handling for zpl_opts
   5.6.1 - Added support for strings with spaces in zpl_opts
@@ -2453,7 +2454,7 @@ int main(int argc, char **argv)
         zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
                                                                 right);
 
-        b32 gfx=zpl_opts_decision(&opts, "enablegfx", false);
+        b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
         if (gfx) {
             zpl_printf("You wanted HD graphics? Here:\n\n");
             for (int i=0; i<5; ++i) {
@@ -2518,7 +2519,6 @@ ZPL_DEF void zpl_opts_print_errors(zpl_opts *opts);
 ZPL_DEF zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback);
 ZPL_DEF f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback);
 ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
-ZPL_DEF b32 zpl_opts_decision(zpl_opts *opts, char const *name, b32 fallback);
 ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
@@ -9131,13 +9131,6 @@ i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback)
     zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
 
     return (e && e->met) ? e->integer : fallback;
-}
-
-b32 zpl_opts_decision(zpl_opts *opts, char const *name, b32 fallback)
-{
-    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
-
-    return (e && e->met) ? (b32)(e->integer) : fallback;
 }
 
 void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b)

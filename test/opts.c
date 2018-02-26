@@ -23,7 +23,7 @@ int main(int argc, char **argv)
         zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
                                                                 right);
 
-        b32 gfx=zpl_opts_decision(&opts, "enablegfx", false);
+        b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
         if (gfx) {
             zpl_printf("You wanted HD graphics? Here:\n\n");
             for (int i=0; i<5; ++i) {
