@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.6.0 - Added zpl_opts for CLI argument parsing
   5.5.1 - Fixed time method for win
   5.5.0 - Integrate JSON5 writer into the core
   5.4.0 - Improved storage support for numbers in JSON5 parser
@@ -2413,9 +2414,87 @@ int main(void)
     ZPL_DEF char *zpl__json_parse_value (zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
     ZPL_DEF char *zpl__json_parse_array (zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
 
+    // TODO: Make it generic
+#define zpl__trim zpl__json_trim
+#define zpl__skip zpl__json_skip
     ZPL_DEF char *zpl__json_trim        (char *str);
     ZPL_DEF char *zpl__json_skip        (char *str, char c);
     ZPL_DEF b32 zpl__json_validate_name (char *str, char *err);
+
+
+////////////////////////////////////////////////////////////////
+// 
+// CLI Options
+//
+//
+/*
+int main(int argc, char **argv)
+{
+    zpl_opts opts={0};
+
+    zpl_opts_init(&opts, zpl_heap(), argv[0]);
+
+    zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
+    zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
+    zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
+
+    zpl_opts_positional_add(&opts, "4pay");
+
+    zpl_opts_compile(&opts, argc, argv);
+
+    zpl_string foo=zpl_opts_string(&opts, "foo", "WRONG!");
+    f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
+    i32 right=zpl_opts_integer(&opts, "4pay", 42);
+
+
+    if (zpl_opts_positionals_filled(&opts)) {
+        zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
+                                                                right);
+    }
+    else {
+        zpl_opts_print_help(&opts);
+    }
+
+    return 0;
+}
+*/
+
+typedef enum {
+    ZPL_OPTS_STRING,
+    ZPL_OPTS_FLOAT,
+    ZPL_OPTS_INT,
+} zpl_opts_types;
+
+typedef struct {
+    char const *name, *lname, *desc;
+    u8 type;
+    b32 met, pos;
+
+    union {
+        zpl_string text;
+        i64 integer;
+        f64 real;
+    };
+} zpl_opts_entry;
+
+typedef struct {
+    zpl_allocator alloc;
+    zpl_array(zpl_opts_entry) entries;
+    zpl_array(zpl_opts_entry *) positioned;
+    char const *appname;
+} zpl_opts;
+
+
+ZPL_DEF void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app);
+ZPL_DEF void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type);
+ZPL_DEF void zpl_opts_positional_add(zpl_opts *opts, char const *name);
+ZPL_DEF void zpl_opts_compile(zpl_opts *opts, int argc, char **argv);
+ZPL_DEF void zpl_opts_print_help(zpl_opts *opts);
+ZPL_DEF zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback);
+ZPL_DEF f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback);
+ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
+ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
+ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 #if defined(__cplusplus)
 }
@@ -8935,6 +9014,198 @@ extern "C" {
 
         return str;
     }
+
+
+////////////////////////////////////////////////////////////////
+// 
+// CLI Options
+//
+//
+
+void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app)
+{
+    zpl_opts opts_={0};
+    *opts=opts_;
+    opts->alloc=a;
+    opts->appname=app;
+
+    zpl_array_init(opts->entries, a);
+    zpl_array_init(opts->positioned, a);
+}
+
+void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type)
+{
+    zpl_opts_entry e={0};
+
+    e.name =name;
+    e.lname=lname;
+    e.desc =desc;
+    e.type =type;
+    e.met  =false;
+    e.pos  =false;
+
+    zpl_array_append(opts->entries, e);
+}
+
+zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, usize len, b32 longname)
+{
+    zpl_opts_entry *e=0;
+
+    for (int i=0; i<zpl_array_count(opts->entries); ++i) {
+        e=opts->entries+i;
+        char const *n=(longname ? e->lname : e->name);
+
+        if (zpl_strnlen(name, len) == zpl_strlen(n) && !zpl_strncmp(n, name, len)) {
+                return e;
+        }
+    }
+
+    return NULL;
+}
+
+void zpl_opts_positional_add(zpl_opts *opts, char const *name)
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    if (e) {
+        e->pos=true;
+        zpl_array_append(opts->positioned, e);
+    }
+}
+
+b32 zpl_opts_positionals_filled(zpl_opts *opts)
+{
+    return zpl_array_count(opts->positioned)==0;
+}
+
+zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback)
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    return (char *)((e && e->met) ? e->text : fallback);
+}
+
+f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback)
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    return (e && e->met) ? e->real : fallback;
+}
+
+i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback)
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    return (e && e->met) ? e->integer : fallback;
+}
+
+void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b)
+{
+    t->met=true;
+    switch (t->type) {
+        case ZPL_OPTS_STRING:
+            {
+                t->text=zpl_string_make(opts->alloc, b); 
+            }break;
+
+        case ZPL_OPTS_FLOAT:
+            {
+                t->real=zpl_str_to_f64(b, NULL);
+            }break;
+
+        case ZPL_OPTS_INT:
+            {
+                t->integer=zpl_str_to_i64(b, NULL, 10);
+            }break;
+    }
+}
+
+b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) 
+{
+    zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
+
+    if (e) {
+        return e->met;
+    }
+}
+
+void zpl_opts_print_help(zpl_opts *opts)
+{
+    zpl_printf("USAGE: %s", opts->appname);
+
+    for (int i=0; i<zpl_array_count(opts->entries); ++i) {
+        zpl_opts_entry *e=opts->entries+i;
+
+        if (e->pos==true) {
+            zpl_printf(" [%s]", e->lname);
+        }
+    }
+
+    zpl_printf("\nOPTIONS:\n");
+
+    for (int i=0; i<zpl_array_count(opts->entries); ++i) {
+        zpl_opts_entry *e=opts->entries+i;
+
+        zpl_printf("\t-%s, --%s: %s\n", e->name, e->lname, e->desc);
+    }
+}
+
+void zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
+{
+    for (int i=1; i<argc; ++i) {
+        char *p=argv[i];
+
+        if (*p) {
+            p=zpl__trim(p);
+            if (*p=='-') {
+                zpl_opts_entry *t=0;
+                b32 checkln=false;
+                if (*(p+1)=='-') {
+                    checkln=true;
+                    ++p;
+                }
+
+                char *b=p+1, *e=b;
+                    
+                while (zpl_char_is_alphanumeric(*e)) {
+                    ++e;
+                }
+
+                t=zpl__opts_find(opts, b, (e-b), checkln);
+
+                if (t) {
+                    b=e;
+
+                    /**/ if (*e=='=') {
+                        b=e=e+1;
+                    }
+                    else if (*e == '\0') {
+                        char *sp=argv[++i];
+
+                        if (sp) {
+                            p=sp;
+                            b=e=sp;
+                        }
+                    }
+
+                    while (zpl_char_is_alphanumeric(*e) || *e=='-' || *e=='_' 
+                                                        || *e==',' || *e=='.') {
+                        ++e;
+                    }
+
+                    *e='\0';
+
+                    zpl__opts_set_value(opts, t, b);
+                }
+            }
+            else {
+                zpl_opts_entry *l=zpl_array_back(opts->positioned);
+                zpl_array_pop(opts->positioned);
+                zpl__opts_set_value(opts, l, p);
+            }
+        }
+    }
+}
 
 
 #if defined(ZPL_COMPILER_MSVC)
