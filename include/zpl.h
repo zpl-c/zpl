@@ -15,6 +15,9 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.6.5 - Fixes extra error cases for zpl_opts when input is:
+        - missing a value for an option,
+        - having an extra value for a flag (e.g. --enable-log shouldn't get a value.)
   5.6.4 - Several tweaks to the zpl_opts API
   5.6.3 - Added support for flags without values
   5.6.2 - Improve error handling for zpl_opts
@@ -113,6 +116,9 @@ Version History:
   limitations under the License. 
 */
 
+//
+// TOP
+//
 
 #ifndef ZPL_INCLUDE_ZPL_H
 #define ZPL_INCLUDE_ZPL_H
@@ -2438,16 +2444,23 @@ int main(int argc, char **argv)
 
     zpl_opts_init(&opts, zpl_heap(), argv[0]);
 
+    zpl_opts_add(&opts, "?", "help", "the HELP section", ZPL_OPTS_FLAG);
     zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
     zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
     zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
-    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_DECISION);
+    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_FLAG);
 
     zpl_opts_positional_add(&opts, "4pay");
 
     b32 ok=zpl_opts_compile(&opts, argc, argv);
 
-    if (ok) {
+    if (ok && zpl_opts_positionals_filled(&opts)) {
+
+        b32 help=zpl_opts_has_arg(&opts, "help");
+        if (help) {
+            zpl_opts_print_help(&opts);
+            return 0;
+        }
         zpl_string foo=zpl_opts_string(&opts, "foo", "WRONG!");
         f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
         i32 right=zpl_opts_integer(&opts, "4pay", 42);
@@ -2472,9 +2485,9 @@ int main(int argc, char **argv)
 */
 
 typedef enum {
-    ZPL_OPTS_DECISION,
     ZPL_OPTS_STRING,
     ZPL_OPTS_FLOAT,
+    ZPL_OPTS_FLAG,
     ZPL_OPTS_INT,
 } zpl_opts_types;
 
@@ -2493,6 +2506,8 @@ typedef struct {
 typedef enum {
     ZPL_OPTS_ERR_VALUE,
     ZPL_OPTS_ERR_OPTION,
+    ZPL_OPTS_ERR_EXTRA_VALUE,
+    ZPL_OPTS_ERR_MISSING_VALUE,
 } zpl_opts_err_type;
 
 typedef struct {
@@ -2571,7 +2586,7 @@ ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 //
 //
 //
-// TOP
+// MIDDLE
 //
 // It's turtles all the way down!
 ////////////////////////////////////////////////////////////////
@@ -9191,12 +9206,36 @@ void zpl_opts_print_errors(zpl_opts *opts)
     for (int i=0; i<zpl_array_count(opts->errors); ++i) {
         zpl_opts_err *err=(opts->errors+i);
 
-        b32 val=(err->type == ZPL_OPTS_ERR_VALUE);
+        zpl_printf("ERROR: ");
 
-        zpl_printf("ERROR: Invalid %s \"%s\".\n", 
-                    (val ? "value" : "option"), 
-                    err->val);
+        switch (err->type) {
+            case ZPL_OPTS_ERR_OPTION:
+                zpl_printf("Invalid option \"%s\"", err->val);
+                break;
+
+            case ZPL_OPTS_ERR_VALUE:
+                zpl_printf("Invalid value \"%s\"", err->val);
+                break;
+
+            case ZPL_OPTS_ERR_MISSING_VALUE:
+                zpl_printf("Missing value for option \"%s\"", err->val);
+                break;
+
+            case ZPL_OPTS_ERR_EXTRA_VALUE:
+                zpl_printf("Extra value for option \"%s\"", err->val);
+                break;
+        }
+
+        zpl_printf("\n");
     }
+}
+
+void zpl__opts_push_error(zpl_opts *opts, char *b, u8 errtype)
+{
+    zpl_opts_err err={0};
+    err.val=b;
+    err.type=errtype;
+    zpl_array_append(opts->errors, err);
 }
 
 b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
@@ -9224,20 +9263,38 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                 t=zpl__opts_find(opts, b, (e-b), checkln);
 
                 if (t) {
+                    char *ob=b;
                     b=e;
 
                     /**/ if (*e=='=') {
+                        if (t->type == ZPL_OPTS_FLAG) {
+                            *e='\0';
+                            zpl__opts_push_error(opts, ob, ZPL_OPTS_ERR_EXTRA_VALUE);
+                            had_errors=true;
+                            continue;
+                        }
+
                         b=e=e+1;
                     }
                     else if (*e == '\0') {
                         char *sp=argv[++i];
 
                         if (sp && *sp!='-') {
+                            if (t->type == ZPL_OPTS_FLAG) {
+                                zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_EXTRA_VALUE);
+                                had_errors=true;
+                                continue;
+                            }
+
                             p=sp;
                             b=e=sp;
                         }
                         else {
-                            t->integer=1;
+                            if (t->type != ZPL_OPTS_FLAG) {
+                                zpl__opts_push_error(opts, ob, ZPL_OPTS_ERR_MISSING_VALUE);
+                                had_errors=true;
+                                continue;
+                            }
                             t->met=true;
                             continue;
                         }
@@ -9247,11 +9304,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                     zpl__opts_set_value(opts, t, b);
                 }
                 else {
-                    zpl_opts_err err={0};
-                    *e='\0';
-                    err.val=b;
-                    err.type=ZPL_OPTS_ERR_OPTION;
-                    zpl_array_append(opts->errors, err);
+                    zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_OPTION);
                     had_errors=true;
                 }
             }
@@ -9261,10 +9314,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                 zpl__opts_set_value(opts, l, p);
             }
             else {
-                zpl_opts_err err={0};
-                err.val=p;
-                err.type=ZPL_OPTS_ERR_VALUE;
-                zpl_array_append(opts->errors, err);
+                zpl__opts_push_error(opts, p, ZPL_OPTS_ERR_VALUE);
                 had_errors=true;
             }
         }

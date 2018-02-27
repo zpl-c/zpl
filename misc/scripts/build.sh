@@ -1,8 +1,3 @@
-if [ -z ${1+x} ]; then
-    echo "no test name provided, using 'main.c'";
-    set $1 'main.c';
-fi
+#!/bin/zsh
 
-mkdir -p build;
-gcc -std=c99 -g -I include -I vendor test/$1 -o build/test;
-./build/test
+g++ -pthread -g -Wall -Wextra -Wno-unused-function -Wno-missing-field-initializers -std=c++11 -I../include $1 -lm -ldl
