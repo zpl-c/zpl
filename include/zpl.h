@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.7.0 - Added a job system (zpl_thread_pool)
   5.6.5 - Fixes extra error cases for zpl_opts when input is:
         - missing a value for an option,
         - having an extra value for a flag (e.g. --enable-log shouldn't get a value.)
@@ -871,19 +872,19 @@ typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(
 ZPL_DEF i32  zpl_atomic32_load            (zpl_atomic32 const volatile *a);
 ZPL_DEF void zpl_atomic32_store           (zpl_atomic32 volatile *a, i32 value);
 ZPL_DEF i32  zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired);
-ZPL_DEF i32  zpl_atomic32_exchanged       (zpl_atomic32 volatile *a, i32 desired);
+ZPL_DEF i32  zpl_atomic32_exchange       (zpl_atomic32 volatile *a, i32 desired);
 ZPL_DEF i32  zpl_atomic32_fetch_add       (zpl_atomic32 volatile *a, i32 operand);
 ZPL_DEF i32  zpl_atomic32_fetch_and       (zpl_atomic32 volatile *a, i32 operand);
 ZPL_DEF i32  zpl_atomic32_fetch_or        (zpl_atomic32 volatile *a, i32 operand);
 ZPL_DEF b32  zpl_atomic32_spin_lock       (zpl_atomic32 volatile *a, isize time_out); // NOTE: time_out = -1 as default
 ZPL_DEF void zpl_atomic32_spin_unlock     (zpl_atomic32 volatile *a);
-ZPL_DEF b32  zpl_atomic32ry_acquire_lock(zpl_atomic32 volatile *a);
+ZPL_DEF b32  zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a);
 
 
 ZPL_DEF i64  zpl_atomic64_load            (zpl_atomic64 const volatile *a);
 ZPL_DEF void zpl_atomic64_store           (zpl_atomic64 volatile *a, i64 value);
 ZPL_DEF i64  zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expected, i64 desired);
-ZPL_DEF i64  zpl_atomic64_exchanged       (zpl_atomic64 volatile *a, i64 desired);
+ZPL_DEF i64  zpl_atomic64_exchange       (zpl_atomic64 volatile *a, i64 desired);
 ZPL_DEF i64  zpl_atomic64_fetch_add       (zpl_atomic64 volatile *a, i64 operand);
 ZPL_DEF i64  zpl_atomic64_fetch_and       (zpl_atomic64 volatile *a, i64 operand);
 ZPL_DEF i64  zpl_atomic64_fetch_or        (zpl_atomic64 volatile *a, i64 operand);
@@ -895,13 +896,13 @@ ZPL_DEF b32  zpl_atomic64_try_acquire_lock(zpl_atomic64 volatile *a);
 ZPL_DEF void *zpl_atomic_ptr_load            (zpl_atomic_ptr const volatile *a);
 ZPL_DEF void  zpl_atomic_ptr_store           (zpl_atomic_ptr volatile *a, void *value);
 ZPL_DEF void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired);
-ZPL_DEF void *zpl_atomic_ptr_exchanged       (zpl_atomic_ptr volatile *a, void *desired);
+ZPL_DEF void *zpl_atomic_ptr_exchange       (zpl_atomic_ptr volatile *a, void *desired);
 ZPL_DEF void *zpl_atomic_ptr_fetch_add       (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF void *zpl_atomic_ptr_fetch_and       (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF void *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF b32   zpl_atomic_ptr_spin_lock       (zpl_atomic_ptr volatile *a, isize time_out); // NOTE: time_out = -1 as default
 ZPL_DEF void  zpl_atomic_ptr_spin_unlock     (zpl_atomic_ptr volatile *a);
-ZPL_DEF b32   zpl_atomic_ptrry_acquire_lock(zpl_atomic_ptr volatile *a);
+ZPL_DEF b32   zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a);
 
 
 // Fences
@@ -2537,6 +2538,108 @@ ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
 ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
+///////////////////////////////////////////////////////////////
+// 
+// Thread Pool
+//
+// This job system follows thread pool pattern to minimize the costs of thread initialization.
+// It reuses fixed number of threads to process variable number of jobs.
+//
+/*
+#define TEST_ENQUEUE_JOB 0.8
+
+zpl_mutex print_mut;
+
+ZPL_JOBS_PROC(calc_nums)
+{
+    zpl_unused(data);
+    i64 nums=0;
+    zpl_random rnd={0};
+    zpl_random_init(&rnd);
+
+    for (int i=0; i<100; ++i) {
+        nums+=(zpl_random_gen_u64(&rnd) & 100);
+    }
+
+    //zpl_sleep_ms(50*zpl_random_range_i64(&rnd, 2, 8));
+
+    zpl_mutex_lock(&print_mut);
+    zpl_printf("Result is: %ld\n", nums);
+    zpl_mutex_unlock(&print_mut);
+}
+
+int main()
+{
+    zpl_random rng={0};
+    zpl_thread_pool p={0};
+    zpl_jobs_init(&p, zpl_heap(), 2);
+    zpl_random_init(&rng);
+    zpl_mutex_init(&print_mut);
+
+    zpl_jobs_enqueue(&p, calc_nums, NULL);
+
+    f64 time=zpl_time_now();
+
+    for (;;) {
+        f64 now=zpl_time_now();
+        f64 dt =now-time;
+        if (dt > TEST_ENQUEUE_JOB) {
+            time=now;
+            zpl_jobs_enqueue(&p, calc_nums, NULL);
+        }
+
+        zpl_jobs_process(&p);
+    }
+
+    return 0;
+}
+*/
+
+#ifdef ZPL_THREADING
+#define ZPL_JOBS_PROC(name) void name(void *data)
+typedef ZPL_JOBS_PROC(zpl_jobs_proc);
+
+#define ZPL_INVALID_JOB U32_MAX
+
+typedef enum {
+    ZPL_JOBS_STATUS_READY,
+    ZPL_JOBS_STATUS_BUSY,
+    ZPL_JOBS_STATUS_WAITING,
+    ZPL_JOBS_STATUS_TERM,
+} zpl_jobs_status;
+
+typedef struct {
+    zpl_jobs_proc *proc;
+    void *data;
+
+    // TODO: Priorities
+    u32 priority;
+} zpl_thread_job;
+
+typedef struct {
+    zpl_thread thread;
+    zpl_atomic32 status;
+    u32 jobid;
+    void *pool;
+} zpl_thread_worker;
+
+typedef struct {
+    zpl_allocator alloc;
+    u32 max_threads;
+    f32 job_spawn_treshold;
+    zpl_mutex access;
+    zpl_buffer(zpl_thread_worker) workers;
+    zpl_array(zpl_thread_job) jobs;
+    zpl_array(u32) queue;
+    zpl_array(u32) available;
+} zpl_thread_pool;
+
+ZPL_DEF void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads);
+ZPL_DEF void zpl_jobs_free(zpl_thread_pool *pool);
+ZPL_DEF void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
+ZPL_DEF b32  zpl_jobs_process(zpl_thread_pool *pool);
+#endif
+
 #if defined(__cplusplus)
 }
 #endif
@@ -3068,7 +3171,7 @@ zpl_inline void zpl_atomic32_store(zpl_atomic32 volatile *a, i32 value) { a->val
 zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired) {
     return _InterlockedCompareExchange(cast(long volatile *)a, desired, expected);
 }
-zpl_inline i32 zpl_atomic32_exchanged(zpl_atomic32 volatile *a, i32 desired) {
+zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired) {
     return _InterlockedExchange(cast(long volatile *)a, desired);
 }
 zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 volatile *a, i32 operand) {
@@ -3123,7 +3226,7 @@ zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expec
     return _InterlockedCompareExchange64(cast(i64 volatile *)a, desired, expected);
 }
 
-zpl_inline i64 zpl_atomic64_exchanged(zpl_atomic64 volatile *a, i64 desired) {
+zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
     return _InterlockedExchange64(cast(i64 volatile *)a, desired);
 #elif ZPL_CPU_X86
@@ -3204,7 +3307,7 @@ zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expec
     return original;
 }
 
-zpl_inline i32 zpl_atomic32_exchanged(zpl_atomic32 volatile *a, i32 desired) {
+zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired) {
     // NOTE: No lock prefix is necessary for xchgl
     i32 original;
     __asm__ volatile(
@@ -3306,7 +3409,7 @@ zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expec
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_exchanged(zpl_atomic64 volatile *a, i64 desired) {
+zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile(
@@ -3425,7 +3528,7 @@ zpl_inline void zpl_atomic64_spin_unlock(zpl_atomic64 volatile *a) {
     zpl_mfence();
 }
 
-zpl_inline b32 zpl_atomic32ry_acquire_lock(zpl_atomic32 volatile *a) {
+zpl_inline b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a) {
     i32 old_value;
     zpl_yield_thread();
     old_value = zpl_atomic32_compare_exchange(a, 1, 0);
@@ -3454,8 +3557,8 @@ zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr volatile *a, void *value) {
 zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired) {
     return cast(void *)cast(intptr)zpl_atomic32_compare_exchange(cast(zpl_atomic32 volatile *)a, cast(i32)cast(intptr)expected, cast(i32)cast(intptr)desired);
 }
-zpl_inline void *zpl_atomic_ptr_exchanged(zpl_atomic_ptr volatile *a, void *desired) {
-    return cast(void *)cast(intptr)zpl_atomic32_exchanged(cast(zpl_atomic32 volatile *)a, cast(i32)cast(intptr)desired);
+zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr volatile *a, void *desired) {
+    return cast(void *)cast(intptr)zpl_atomic32_exchange(cast(zpl_atomic32 volatile *)a, cast(i32)cast(intptr)desired);
 }
 zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr volatile *a, void *operand) {
     return cast(void *)cast(intptr)zpl_atomic32_fetch_add(cast(zpl_atomic32 volatile *)a, cast(i32)cast(intptr)operand);
@@ -3472,8 +3575,8 @@ zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr volatile *a, isize time_o
 zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr volatile *a) {
     zpl_atomic32_spin_unlock(cast(zpl_atomic32 volatile *)a);
 }
-zpl_inline b32 zpl_atomic_ptrry_acquire_lock(zpl_atomic_ptr volatile *a) {
-    return zpl_atomic32ry_acquire_lock(cast(zpl_atomic32 volatile *)a);
+zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a) {
+    return zpl_atomic32_try_acquire_lock(cast(zpl_atomic32 volatile *)a);
 }
 
 #elif defined(ZPL_ARCH_64_BIT)
@@ -3487,8 +3590,8 @@ zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr volatile *a, void *value) {
 zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired) {
     return cast(void *)cast(intptr)zpl_atomic64_compare_exchange(cast(zpl_atomic64 volatile *)a, cast(i64)cast(intptr)expected, cast(i64)cast(intptr)desired);
 }
-zpl_inline void *zpl_atomic_ptr_exchanged(zpl_atomic_ptr volatile *a, void *desired) {
-    return cast(void *)cast(intptr)zpl_atomic64_exchanged(cast(zpl_atomic64 volatile *)a, cast(i64)cast(intptr)desired);
+zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr volatile *a, void *desired) {
+    return cast(void *)cast(intptr)zpl_atomic64_exchange(cast(zpl_atomic64 volatile *)a, cast(i64)cast(intptr)desired);
 }
 zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr volatile *a, void *operand) {
     return cast(void *)cast(intptr)zpl_atomic64_fetch_add(cast(zpl_atomic64 volatile *)a, cast(i64)cast(intptr)operand);
@@ -3505,7 +3608,7 @@ zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr volatile *a, isize time_o
 zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr volatile *a) {
     zpl_atomic64_spin_unlock(cast(zpl_atomic64 volatile *)a);
 }
-zpl_inline b32 zpl_atomic_ptrry_acquire_lock(zpl_atomic_ptr volatile *a) {
+zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a) {
     return zpl_atomic64_try_acquire_lock(cast(zpl_atomic64 volatile *)a);
 }
 #endif
@@ -6790,7 +6893,7 @@ typedef struct {
     isize data_size;
 } zpl__async_file_ctl;
 
-ZPL_DEF ZPL_THREAD_PROC(zpl__async_file_read_proc) {
+ZPL_THREAD_PROC(zpl__async_file_read_proc) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *)thread->user_data;
 
     zpl_async_file *f = afops->f;
@@ -6810,7 +6913,7 @@ ZPL_DEF ZPL_THREAD_PROC(zpl__async_file_read_proc) {
     return 0;
 }
 
-ZPL_DEF ZPL_THREAD_PROC(zpl__async_file_write_proc) {
+ZPL_THREAD_PROC(zpl__async_file_write_proc) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *)thread->user_data;
 
     zpl_async_file *f = afops->f;
@@ -6830,7 +6933,7 @@ ZPL_DEF ZPL_THREAD_PROC(zpl__async_file_write_proc) {
     return 0;
 }
 
-ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
+void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
     ZPL_ASSERT(file && proc);
 
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
@@ -6852,7 +6955,7 @@ ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
     zpl_thread_start(&td, zpl__async_file_read_proc, cast(void *)afops);
 }
 
-ZPL_DEF void zpl_async_file_write(zpl_file *file, void const* buffer, isize size, zpl_async_file_cb *proc) {
+void zpl_async_file_write(zpl_file *file, void const* buffer, isize size, zpl_async_file_cb *proc) {
     ZPL_ASSERT(file && proc && buffer);
 
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
@@ -6874,6 +6977,146 @@ ZPL_DEF void zpl_async_file_write(zpl_file *file, void const* buffer, isize size
     afops->data_size = size;
 
     zpl_thread_start(&td, zpl__async_file_write_proc, cast(void *)afops);
+}
+  
+///////////////////////////////////////////////////////////////
+// 
+// Thread Pool
+//
+
+ZPL_THREAD_PROC(zpl__jobs_entry)
+{
+    zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
+    zpl_thread_pool *pool=(zpl_thread_pool *)tw->pool;
+
+    for (;;) {
+        u32 status = zpl_atomic32_load(&tw->status);
+
+        switch (status) {
+            case ZPL_JOBS_STATUS_READY:
+                {
+                    zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_BUSY);
+
+                    zpl_mutex_lock(&pool->access);
+                    zpl_thread_job *job=pool->jobs+tw->jobid;
+                    zpl_mutex_unlock(&pool->access);
+
+                    job->proc(job->data);
+
+                    zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_WAITING);
+                }break;
+
+            case ZPL_JOBS_STATUS_WAITING:
+                {
+                    zpl_yield_thread();
+                }break;
+
+            case ZPL_JOBS_STATUS_TERM:
+                {
+                    return 0;
+                }break;
+        }
+    }
+
+    return 0;
+}
+
+void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads)
+{
+    zpl_thread_pool pool_={0};
+    *pool=pool_;
+    zpl_mutex_init(&pool->access);
+
+    pool->alloc=a;
+    pool->max_threads=max_threads;
+    
+    // NOTE: Spawn a new job slot when number of available slots is below 25% 
+    // compared to the total number of slots.
+    pool->job_spawn_treshold=0.25; 
+
+    zpl_buffer_init(pool->workers, a, max_threads);
+    zpl_array_init(pool->jobs, a);
+    zpl_array_init(pool->queue, a);
+    zpl_array_init(pool->available, a);
+
+    for (isize i=0; i<max_threads; ++i) {
+        zpl_thread_worker worker_={0};
+        zpl_thread_worker *tw=pool->workers+i;
+        *tw=worker_;
+
+        zpl_thread_init(&tw->thread);
+        zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
+        tw->pool=pool;
+        tw->jobid=ZPL_INVALID_JOB;
+        zpl_thread_start(&tw->thread, zpl__jobs_entry, (void *)tw);
+    }
+}
+
+void zpl_jobs_free(zpl_thread_pool *pool)
+{
+    for (isize i=0; i<pool->max_threads; ++i) {
+        zpl_thread_worker *tw=pool->workers+i;
+
+        zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_TERM);
+        zpl_thread_join(&tw->thread);
+    }
+
+    zpl_buffer_free(pool->workers, pool->alloc);
+    zpl_array_free(pool->jobs);
+    zpl_array_free(pool->queue);
+    zpl_array_free(pool->available);
+}
+
+void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data)
+{
+    f32 treshold=0.0f;
+    
+    if (zpl_array_count(pool->queue) > 0) {
+        treshold=(zpl_array_count(pool->available)/(f32)zpl_array_count(pool->jobs));
+    }
+
+    if (treshold <= pool->job_spawn_treshold) {
+        zpl_thread_job job={0};
+        job.proc=proc;
+        job.data=data;
+
+        zpl_array_append(pool->jobs, job);
+        u32 jobid=zpl_array_count(pool->jobs)-1;
+        zpl_array_append(pool->queue, jobid);
+    }
+    else {
+        u32 jobid=zpl_array_back(pool->available);
+        zpl_thread_job *jp=pool->jobs+jobid;
+        zpl_array_pop(pool->available);
+
+        jp->proc=proc;
+        jp->data=data;
+
+        zpl_array_append(pool->queue, jobid);
+    }
+}
+
+b32 zpl_jobs_process(zpl_thread_pool *pool)
+{
+    for (isize i=0; i<pool->max_threads; ++i) {
+        zpl_thread_worker *tw=pool->workers+i;
+        if (zpl_array_count(pool->queue) == 0) return false;
+
+        u32 status=zpl_atomic32_load(&tw->status);
+
+        if (status==ZPL_JOBS_STATUS_WAITING) {
+            if (tw->jobid != ZPL_INVALID_JOB) {
+                zpl_array_append(pool->available, tw->jobid);
+            }
+
+            u32 jobid=zpl_array_count(pool->queue)-1;
+            zpl_array_pop(pool->queue);
+            tw->jobid=jobid;
+            zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_READY);
+        }
+    }
+
+    return true;
 }
 
 #endif // ZPL_THREADING
@@ -9343,7 +9586,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
 
 #endif // ZPL_IMPLEMENTATION
 
-////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 //
 // Code Snippets
 //
