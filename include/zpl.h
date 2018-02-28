@@ -7514,7 +7514,7 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
 
 void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *output, b32 recurse)
 {
-#ifdef ZPL_SYSTEM_UNIX
+#if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_OSX)
     DIR *d, *cd;
     struct dirent *dir;
     d = opendir(dirname);
