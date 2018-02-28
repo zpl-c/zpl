@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.7.1 - Fixed few things in job system + macOS support for zpl_path_dirlist
   5.7.0 - Added a job system (zpl_thread_pool)
   5.6.5 - Fixes extra error cases for zpl_opts when input is:
         - missing a value for an option,
