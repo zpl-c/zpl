@@ -16,6 +16,7 @@ GitHub:
 
 Version History:
   5.8.0 - Added instantiated scratch pad (circular buffer)
+  5.7.2 - Added Windows support for zpl_path_dirlist
   5.7.1 - Fixed few things in job system + macOS support for zpl_path_dirlist
   5.7.0 - Added a job system (zpl_thread_pool)
   5.6.5 - Fixes extra error cases for zpl_opts when input is:
@@ -298,6 +299,7 @@ Version History:
 
 #if defined(ZPL_SYSTEM_WINDOWS)
   #include <stdio.h>
+  #include <io.h>
 
   #if !defined(ZPL_NO_WINDOWS_H)
     #define NOMINMAX            1
@@ -7652,7 +7654,6 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
 #endif
 }
 
-
 void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *output, b32 recurse)
 {
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_OSX)
@@ -7679,6 +7680,55 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             }
             zpl_string_free(dirpath);
         }
+    }
+#elif defined(ZPL_SYSTEM_WINDOWS)
+    usize length = zpl_strlen(dirname);
+    struct _wfinddata_t data;
+    intptr_t findhandle;
+
+    char directory[MAX_PATH] = {0};
+    zpl_strncpy(directory, dirname, length);
+
+    // keeping it native
+    for (usize i = 0; i < length; i++) {
+        if (directory[i] == '/') directory[i] = '\\';
+    }
+
+    // remove trailing slashses
+    if (directory[length - 1] == '\\') {
+        directory[length - 1] = '\0';
+    }
+
+    // attach search parttern
+    zpl_string findpath=zpl_string_make(alloc, directory);
+    findpath=zpl_string_appendc(findpath, "\\");
+    findpath=zpl_string_appendc(findpath, "*");
+
+    findhandle = _wfindfirst((const wchar_t *)zpl_utf8_to_ucs2_buf(findpath), &data);
+    zpl_string_free(findpath);
+
+    if (findhandle != -1) {
+        do {
+            char *filename = zpl_ucs2_to_utf8_buf(data.name);
+            if (!zpl_strncmp(filename, "..", 2)) continue;
+            if (filename[0]=='.' && filename[1]==0) continue;
+
+            zpl_string dirpath=zpl_string_make(alloc, directory);
+            dirpath=zpl_string_appendc(dirpath, "\\");
+            dirpath=zpl_string_appendc(dirpath, filename);
+
+            if (!(data.attrib & _A_SUBDIR)) {
+                *output=zpl_string_appendc(*output, dirpath);
+                *output=zpl_string_appendc(*output, "\n");
+            }
+            else if (recurse) {
+                zpl__file_direntry(alloc, dirpath, output, recurse);
+            }
+
+            zpl_string_free(dirpath);
+        }
+        while (_wfindnext(findhandle, &data) != -1);
+        _findclose(findhandle);
     }
 #else
     // TODO: Implement other OSes
