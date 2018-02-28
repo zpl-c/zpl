@@ -6995,7 +6995,7 @@ ZPL_THREAD_PROC(zpl__jobs_entry)
         switch (status) {
             case ZPL_JOBS_STATUS_READY:
                 {
-                    zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_BUSY);
+                    zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_BUSY);
 
                     zpl_mutex_lock(&pool->access);
                     zpl_thread_job *job=pool->jobs+tw->jobid;
@@ -7003,12 +7003,12 @@ ZPL_THREAD_PROC(zpl__jobs_entry)
 
                     job->proc(job->data);
 
-                    zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_WAITING);
+                    zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
                 }break;
 
             case ZPL_JOBS_STATUS_WAITING:
                 {
-                    zpl_yield_thread();
+                    zpl_yield();
                 }break;
 
             case ZPL_JOBS_STATUS_TERM:
@@ -7057,8 +7057,8 @@ void zpl_jobs_free(zpl_thread_pool *pool)
     for (isize i=0; i<pool->max_threads; ++i) {
         zpl_thread_worker *tw=pool->workers+i;
 
-        zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_TERM);
-        zpl_thread_join(&tw->thread);
+        zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_TERM);
+        zpl_thread_destroy(&tw->thread);
     }
 
     zpl_buffer_free(pool->workers, pool->alloc);
@@ -7112,7 +7112,7 @@ b32 zpl_jobs_process(zpl_thread_pool *pool)
             u32 jobid=zpl_array_count(pool->queue)-1;
             zpl_array_pop(pool->queue);
             tw->jobid=jobid;
-            zpl_atomic32_exchange(&tw->status, ZPL_JOBS_STATUS_READY);
+            zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
         }
     }
 
