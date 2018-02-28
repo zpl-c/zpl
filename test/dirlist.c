@@ -5,7 +5,7 @@
 int main()
 {
     zpl_string_t files;
-    files = zpl_path_dirlist(zpl_heap_allocator(), "/home/zaklaus/dev/zpl", true);
+    files = zpl_path_dirlist(zpl_heap(), "../misc", true);
 
     char *p=strtok(files, "\n");
     while (p) {
