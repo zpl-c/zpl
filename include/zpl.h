@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.8.1 - Renames zpl_pad to zpl_ring
   5.8.0 - Added instantiated scratch pad (circular buffer)
   5.7.2 - Added Windows support for zpl_path_dirlist
   5.7.1 - Fixed few things in job system + macOS support for zpl_path_dirlist
@@ -2020,49 +2021,49 @@ void ZPL_JOIN2(FUNC,set)(NAME *h, u64 key, VALUE value) {           \
 
 ////////////////////////////////////////////////////////////////
 //
-// Instantiated Scratchpad - Circular buffer
+// Instantiated Circular buffer
 //
 /*
 int main()
 {
-    zpl_pad_u32 pad={0};
-    zpl_pad_u32_init(&pad, zpl_heap(), 3);
-    zpl_pad_u32_append(&pad, 1);
-    zpl_pad_u32_append(&pad, 2);
-    zpl_pad_u32_append(&pad, 3);
+    zpl_ring_u32 pad={0};
+    zpl_ring_u32_init(&pad, zpl_heap(), 3);
+    zpl_ring_u32_append(&pad, 1);
+    zpl_ring_u32_append(&pad, 2);
+    zpl_ring_u32_append(&pad, 3);
 
-    while (!zpl_pad_u32_empty(&pad)) {
-        zpl_printf("Result is %d\n", *zpl_pad_u32_get(&pad));
+    while (!zpl_ring_u32_empty(&pad)) {
+        zpl_printf("Result is %d\n", *zpl_ring_u32_get(&pad));
     }
 
-    zpl_pad_u32_free(&pad);
+    zpl_ring_u32_free(&pad);
 
     return 0;
 }
 */
 
-#define ZPL_PAD_DECLARE(type) \
+#define ZPL_RING_DECLARE(type) \
     typedef struct { \
         zpl_allocator backing; \
         zpl_buffer(type) buf; \
         usize head, tail; \
         usize capacity; \
-    } ZPL_JOIN2(zpl_pad_, type); \
+    } ZPL_JOIN2(zpl_ring_, type); \
         \
         \
-    ZPL_DEF void  ZPL_JOIN3(zpl_pad_, type, _init)         (ZPL_JOIN2(zpl_pad_, type) *pad, zpl_allocator a, isize max_size);\
-    ZPL_DEF void  ZPL_JOIN3(zpl_pad_, type, _free)         (ZPL_JOIN2(zpl_pad_, type) *pad);\
-    ZPL_DEF b32   ZPL_JOIN3(zpl_pad_, type, _full)         (ZPL_JOIN2(zpl_pad_, type) *pad);\
-    ZPL_DEF b32   ZPL_JOIN3(zpl_pad_, type, _empty)        (ZPL_JOIN2(zpl_pad_, type) *pad);\
-    ZPL_DEF void  ZPL_JOIN3(zpl_pad_, type, _append)       (ZPL_JOIN2(zpl_pad_, type) *pad, type data);\
-    ZPL_DEF void  ZPL_JOIN3(zpl_pad_, type, _append_array) (ZPL_JOIN2(zpl_pad_, type) *pad, zpl_array(type) data);\
-    ZPL_DEF type *ZPL_JOIN3(zpl_pad_, type, _get)          (ZPL_JOIN2(zpl_pad_, type) *pad);\
-    ZPL_DEF zpl_array(type)  ZPL_JOIN3(zpl_pad_, type, _get_array)    (ZPL_JOIN2(zpl_pad_, type) *pad, usize max_size, zpl_allocator a);\
+    ZPL_DEF void  ZPL_JOIN3(zpl_ring_, type, _init)         (ZPL_JOIN2(zpl_ring_, type) *pad, zpl_allocator a, isize max_size);\
+    ZPL_DEF void  ZPL_JOIN3(zpl_ring_, type, _free)         (ZPL_JOIN2(zpl_ring_, type) *pad);\
+    ZPL_DEF b32   ZPL_JOIN3(zpl_ring_, type, _full)         (ZPL_JOIN2(zpl_ring_, type) *pad);\
+    ZPL_DEF b32   ZPL_JOIN3(zpl_ring_, type, _empty)        (ZPL_JOIN2(zpl_ring_, type) *pad);\
+    ZPL_DEF void  ZPL_JOIN3(zpl_ring_, type, _append)       (ZPL_JOIN2(zpl_ring_, type) *pad, type data);\
+    ZPL_DEF void  ZPL_JOIN3(zpl_ring_, type, _append_array) (ZPL_JOIN2(zpl_ring_, type) *pad, zpl_array(type) data);\
+    ZPL_DEF type *ZPL_JOIN3(zpl_ring_, type, _get)          (ZPL_JOIN2(zpl_ring_, type) *pad);\
+    ZPL_DEF zpl_array(type)  ZPL_JOIN3(zpl_ring_, type, _get_array)    (ZPL_JOIN2(zpl_ring_, type) *pad, usize max_size, zpl_allocator a);\
 
-#define ZPL_PAD_DEFINE(type) \
-    void ZPL_JOIN3(zpl_pad_, type, _init)(ZPL_JOIN2(zpl_pad_, type) *pad, zpl_allocator a, isize max_size) \
+#define ZPL_RING_DEFINE(type) \
+    void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) *pad, zpl_allocator a, isize max_size) \
     { \
-        ZPL_JOIN2(zpl_pad_, type) pad_={0}; \
+        ZPL_JOIN2(zpl_ring_, type) pad_={0}; \
         *pad=pad_; \
             \
         pad->backing=a; \
@@ -2070,22 +2071,22 @@ int main()
         pad->capacity=max_size+1; \
         pad->head=pad->tail=0; \
     } \
-    void ZPL_JOIN3(zpl_pad_, type, _free)(ZPL_JOIN2(zpl_pad_, type) *pad) \
+    void ZPL_JOIN3(zpl_ring_, type, _free)(ZPL_JOIN2(zpl_ring_, type) *pad) \
     { \
         zpl_buffer_free(pad->buf, pad->backing); \
     } \
         \
-    b32 ZPL_JOIN3(zpl_pad_, type, _full)(ZPL_JOIN2(zpl_pad_, type) *pad) \
+    b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) *pad) \
     { \
         return ((pad->head+1)%pad->capacity)==pad->tail; \
     } \
         \
-    b32 ZPL_JOIN3(zpl_pad_, type, _empty)(ZPL_JOIN2(zpl_pad_, type) *pad) \
+    b32 ZPL_JOIN3(zpl_ring_, type, _empty)(ZPL_JOIN2(zpl_ring_, type) *pad) \
     { \
         return pad->head==pad->tail; \
     } \
         \
-    void ZPL_JOIN3(zpl_pad_, type, _append)(ZPL_JOIN2(zpl_pad_, type) *pad, type data) \
+    void ZPL_JOIN3(zpl_ring_, type, _append)(ZPL_JOIN2(zpl_ring_, type) *pad, type data) \
     { \
         pad->buf[pad->head]=data; \
         pad->head=(pad->head+1)%pad->capacity; \
@@ -2096,17 +2097,17 @@ int main()
             \
     } \
         \
-    void ZPL_JOIN3(zpl_pad_, type, _append_array) (ZPL_JOIN2(zpl_pad_, type) *pad, zpl_array(type) data) \
+    void ZPL_JOIN3(zpl_ring_, type, _append_array) (ZPL_JOIN2(zpl_ring_, type) *pad, zpl_array(type) data) \
     { \
         usize c=zpl_array_count(data); \
         for (usize i=0; i<c; ++i) { \
-            ZPL_JOIN3(zpl_pad_, type, _append)(pad, data[i]); \
+            ZPL_JOIN3(zpl_ring_, type, _append)(pad, data[i]); \
         } \
     } \
         \
-    type * ZPL_JOIN3(zpl_pad_, type, _get)(ZPL_JOIN2(zpl_pad_, type) *pad) \
+    type * ZPL_JOIN3(zpl_ring_, type, _get)(ZPL_JOIN2(zpl_ring_, type) *pad) \
     { \
-        if (ZPL_JOIN3(zpl_pad_, type, _empty)(pad)) { \
+        if (ZPL_JOIN3(zpl_ring_, type, _empty)(pad)) { \
             return NULL; \
         } \
             \
@@ -2116,29 +2117,29 @@ int main()
         return data; \
     } \
         \
-    zpl_array(type) ZPL_JOIN3(zpl_pad_, type, _get_array)(ZPL_JOIN2(zpl_pad_, type) *pad, usize max_size, zpl_allocator a) \
+    zpl_array(type) ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) *pad, usize max_size, zpl_allocator a) \
     { \
         zpl_array(type) vals; \
         zpl_array_init(vals, a); \
-        while (--max_size && ! ZPL_JOIN3(zpl_pad_, type, _empty)(pad)) {\
-            zpl_array_append(vals, *ZPL_JOIN3(zpl_pad_, type, _get)(pad)); \
+        while (--max_size && ! ZPL_JOIN3(zpl_ring_, type, _empty)(pad)) {\
+            zpl_array_append(vals, *ZPL_JOIN3(zpl_ring_, type, _get)(pad)); \
         } \
         return vals; \
     }
 
-ZPL_PAD_DECLARE(u8);
-ZPL_PAD_DECLARE(char);
-ZPL_PAD_DECLARE(u16);
-ZPL_PAD_DECLARE(i16);
-ZPL_PAD_DECLARE(u32);
-ZPL_PAD_DECLARE(i32);
-ZPL_PAD_DECLARE(u64);
-ZPL_PAD_DECLARE(i64);
-ZPL_PAD_DECLARE(f32);
-ZPL_PAD_DECLARE(f64);
-ZPL_PAD_DECLARE(usize);
-ZPL_PAD_DECLARE(isize);
-ZPL_PAD_DECLARE(uintptr);
+ZPL_RING_DECLARE(u8);
+ZPL_RING_DECLARE(char);
+ZPL_RING_DECLARE(u16);
+ZPL_RING_DECLARE(i16);
+ZPL_RING_DECLARE(u32);
+ZPL_RING_DECLARE(i32);
+ZPL_RING_DECLARE(u64);
+ZPL_RING_DECLARE(i64);
+ZPL_RING_DECLARE(f32);
+ZPL_RING_DECLARE(f64);
+ZPL_RING_DECLARE(usize);
+ZPL_RING_DECLARE(isize);
+ZPL_RING_DECLARE(uintptr);
 
 
 ////////////////////////////////////////////////////////////////
@@ -6178,19 +6179,19 @@ isize zpl_utf8_encode_rune(u8 buf[4], Rune r) {
 //
 
 
-ZPL_PAD_DEFINE(u8);
-ZPL_PAD_DEFINE(char);
-ZPL_PAD_DEFINE(u16);
-ZPL_PAD_DEFINE(i16);
-ZPL_PAD_DEFINE(u32);
-ZPL_PAD_DEFINE(i32);
-ZPL_PAD_DEFINE(u64);
-ZPL_PAD_DEFINE(i64);
-ZPL_PAD_DEFINE(f32);
-ZPL_PAD_DEFINE(f64);
-ZPL_PAD_DEFINE(usize);
-ZPL_PAD_DEFINE(isize);
-ZPL_PAD_DEFINE(uintptr);
+ZPL_RING_DEFINE(u8);
+ZPL_RING_DEFINE(char);
+ZPL_RING_DEFINE(u16);
+ZPL_RING_DEFINE(i16);
+ZPL_RING_DEFINE(u32);
+ZPL_RING_DEFINE(i32);
+ZPL_RING_DEFINE(u64);
+ZPL_RING_DEFINE(i64);
+ZPL_RING_DEFINE(f32);
+ZPL_RING_DEFINE(f64);
+ZPL_RING_DEFINE(usize);
+ZPL_RING_DEFINE(isize);
+ZPL_RING_DEFINE(uintptr);
 
 ////////////////////////////////////////////////////////////////
 //
