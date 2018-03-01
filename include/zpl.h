@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.8.2 - Job system now supports prioritized tasks
   5.8.1 - Renames zpl_pad to zpl_ring
   5.8.0 - Added instantiated scratch pad (circular buffer)
   5.7.2 - Added Windows support for zpl_path_dirlist
@@ -1300,7 +1301,7 @@ typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 
 #define ZPL_COMPARE_PROC_PTR(def) ZPL_COMPARE_PROC((*def))
 
-// Producure pointers
+// Procedure pointers
 // NOTE: The offset parameter specifies the offset in the structure
 // e.g. zpl_i32_cmp(zpl_offset_of(Thing, value))
 // Use 0 if it's just the type instead.
@@ -2737,8 +2738,7 @@ typedef struct {
     zpl_jobs_proc *proc;
     void *data;
 
-    // TODO: Priorities
-    u32 priority;
+    i32 priority;
 } zpl_thread_job;
 
 typedef struct {
@@ -2762,6 +2762,7 @@ typedef struct {
 ZPL_DEF void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads);
 ZPL_DEF void zpl_jobs_free(zpl_thread_pool *pool);
 ZPL_DEF void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
+ZPL_DEF void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, i32 priority);
 ZPL_DEF b32  zpl_jobs_process(zpl_thread_pool *pool);
 #endif
 
@@ -4992,7 +4993,7 @@ ZPL_COMPARE_PROC_PTR(zpl_str_cmp(isize offset)) {
 
 // TODO: Make user definable?
 #define ZPL__SORT_STACK_SIZE            64
-#define zpl__SORT_INSERT_SORTHRESHOLD  8
+#define zpl__SORT_INSERT_SORT_TRESHOLD  8
 
 #define ZPL__SORT_PUSH(_base, _limit) do {      \
     stack_ptr[0] = (_base);                 \
@@ -5013,7 +5014,7 @@ void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
     u8 *i, *j;
     u8 *base = cast(u8 *)base_;
     u8 *limit = base + count*size;
-    isize threshold = zpl__SORT_INSERT_SORTHRESHOLD * size;
+    isize threshold = zpl__SORT_INSERT_SORT_TRESHOLD * size;
 
     // NOTE: Prepare the stack
     u8 *stack[ZPL__SORT_STACK_SIZE] = {0};
@@ -7211,8 +7212,9 @@ void zpl_jobs_free(zpl_thread_pool *pool)
     zpl_array_free(pool->available);
 }
 
-void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data)
+void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, i32 priority)
 {
+    ZPL_ASSERT_NOT_NULL(proc);
     f32 treshold=0.0f;
     
     if (zpl_array_count(pool->queue) > 0) {
@@ -7223,6 +7225,7 @@ void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data)
         zpl_thread_job job={0};
         job.proc=proc;
         job.data=data;
+        job.priority=priority;
 
         zpl_array_append(pool->jobs, job);
         u32 jobid=zpl_array_count(pool->jobs)-1;
@@ -7235,13 +7238,36 @@ void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data)
 
         jp->proc=proc;
         jp->data=data;
+        jp->priority=priority;
 
         zpl_array_append(pool->queue, jobid);
     }
 }
+void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data)
+{
+    ZPL_ASSERT_NOT_NULL(proc);
+    zpl_jobs_enqueue_with_priority(pool, proc, data, 0);
+}
+
+zpl_thread_local zpl_thread_pool *zpl__thread_pool; ZPL_COMPARE_PROC(zpl___jobs_cmp) {
+    zpl_thread_job *p = (zpl_thread_job *)(zpl__thread_pool->jobs + *(u32 *)a);
+    zpl_thread_job *q = (zpl_thread_job *)(zpl__thread_pool->jobs + *(u32 *)b);
+    return p->priority < q->priority ? 1 : p->priority > q->priority;
+}
+
+ZPL_COMPARE_PROC_PTR(zpl__jobs_cmp(zpl_thread_pool *pool)) {
+    zpl__thread_pool=pool;
+    return &zpl___jobs_cmp;
+}
 
 b32 zpl_jobs_process(zpl_thread_pool *pool)
 {
+    // NOTE: Sort the queue based on the job priority
+    if (zpl_array_count(pool->queue)) {
+        zpl_sort_array(pool->queue, zpl_array_count(pool->queue), zpl__jobs_cmp(pool));
+    }
+
+    // NOTE: Process the jobs
     for (isize i=0; i<pool->max_threads; ++i) {
         zpl_thread_worker *tw=pool->workers+i;
         if (zpl_array_count(pool->queue) == 0) return false;
@@ -7253,8 +7279,8 @@ b32 zpl_jobs_process(zpl_thread_pool *pool)
                 zpl_array_append(pool->available, tw->jobid);
             }
 
-            u32 jobid=zpl_array_count(pool->queue)-1;
-            zpl_array_pop(pool->queue);
+            u32 jobid=*pool->queue;
+            zpl_array_remove_at(pool->queue, 0);
             tw->jobid=jobid;
             zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
         }
