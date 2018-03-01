@@ -3,10 +3,10 @@
 ZPL - Math module
 
 Usage:
-    #define ZPLM_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
-
-    #define ZPLM_IMPLEMENTATION
-    #include"zpl_math.h"
+  #define ZPLM_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
+  
+  #define ZPLM_IMPLEMENTATION
+  #include"zpl_math.h"
 
 Credits:
   Read AUTHORS.md
@@ -15,24 +15,25 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
-    1.1.2 - Fixed a typo caused by improvements
-    1.1.1 - Improved Cubic Hermite, added derivative (velocity) interpolation
-    1.1.0 - Added Cubic Hermite interpolation
-    1.0.1 - Initial Version
+  1.1.3 - Fixed few names
+  1.1.2 - Fixed a typo caused by improvements
+  1.1.1 - Improved Cubic Hermite, added derivative (velocity) interpolation
+  1.1.0 - Added Cubic Hermite interpolation
+  1.0.1 - Initial Version
 
-    
-    Copyright 2017-2018 Dominik Madarász
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
 
+  Copyright 2017-2018 Dominik Madarász
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License. 
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. 
 */
 
 #ifndef ZPL_MATH_INCLUDE_ZPL_MATH_H
@@ -152,11 +153,11 @@ typedef short zplm_half;
 #define ZPLM_EPSILON      1.19209290e-7f
 #define ZPLM_ZERO         0.0f
 #define ZPLM_ONE          1.0f
-#define zplm_TWO_THIRDS   0.666666666666666666666666666666666666667f
+#define ZPLM_TWO_THIRDS   0.666666666666666666666666666666666666667f
 
 #define ZPLM_TAU          6.28318530717958647692528676655900576f
 #define ZPLM_PI           3.14159265358979323846264338327950288f
-#define zplm_ONE_OVER_TAU 0.636619772367581343075535053490057448f
+#define ZPLM_ONE_OVER_TAU 0.636619772367581343075535053490057448f
 #define ZPLM_ONE_OVER_PI  0.159154943091895335768883763372514362f
 
 #define ZPLM_TAU_OVER_2   3.14159265358979323846264338327950288f
@@ -164,12 +165,12 @@ typedef short zplm_half;
 #define ZPLM_TAU_OVER_8   0.785398163397448309615660845819875721f
 
 #define ZPLM_E            2.71828182845904523536f
-#define zplm_SQRT_TWO     1.41421356237309504880168872420969808f
-#define zplm_SQRT_THREE   1.73205080756887729352744634150587236f
+#define ZPLM_SQRT_TWO     1.41421356237309504880168872420969808f
+#define ZPLM_SQRT_THREE   1.73205080756887729352744634150587236f
 #define ZPLM_SQRT_FIVE    2.23606797749978969640917366873127623f
 
-#define zplm_LOG_TWO      0.693147180559945309417232121458176568f
-#define zplm_LOG_TEN      2.30258509299404568401799145468436421f
+#define ZPLM_LOG_TWO      0.693147180559945309417232121458176568f
+#define ZPLM_LOG_TEN      2.30258509299404568401799145468436421f
 #endif
 
 
@@ -996,8 +997,8 @@ float zplm_log(float x)          { return logf(x); }
 float zplm_pow(float x, float y) { return powf(x, y); }
 #endif
 
-float zplm_exp2(float x) { return zplm_exp(zplm_LOG_TWO * x); }
-float zplm_log2(float x) { return zplm_log(x) / zplm_LOG_TWO; }
+float zplm_exp2(float x) { return zplm_exp(ZPLM_LOG_TWO * x); }
+float zplm_log2(float x) { return zplm_log(x) / ZPLM_LOG_TWO; }
 
 
 float zplm_fast_exp(float x) {
@@ -1006,7 +1007,7 @@ float zplm_fast_exp(float x) {
     return e;
 }
 
-float zplm_fast_exp2(float x) { return zplm_fast_exp(zplm_LOG_TWO * x); }
+float zplm_fast_exp2(float x) { return zplm_fast_exp(ZPLM_LOG_TWO * x); }
 
 
 
