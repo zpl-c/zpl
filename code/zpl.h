@@ -15,6 +15,8 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.0.0 - New build, include/ was renamed to code/
+  
   5.8.3 - Naming fixes
   5.8.2 - Job system now supports prioritized tasks
   5.8.1 - Renames zpl_pad to zpl_ring
