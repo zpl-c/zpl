@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  5.8.3 - Naming fixes
   5.8.2 - Job system now supports prioritized tasks
   5.8.1 - Renames zpl_pad to zpl_ring
   5.8.0 - Added instantiated scratch pad (circular buffer)
@@ -5552,7 +5553,7 @@ i64 zpl_str_to_i64(char const *str, char **end_ptr, i32 base) {
 }
 
 // TODO: Are these good enough for characters?
-zpl_global char const zpl__num_to_charable[] =
+zpl_global char const zpl__num_to_char_table[] =
     "0123456789"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
@@ -5571,7 +5572,7 @@ zpl_inline void zpl_i64_to_str(i64 value, char *string, i32 base) {
     v = cast(u64)value;
     if (v != 0) {
         while (v > 0) {
-            *buf++ = zpl__num_to_charable[v % base];
+            *buf++ = zpl__num_to_char_table[v % base];
             v /= base;
         }
     } else {
@@ -5590,7 +5591,7 @@ zpl_inline void zpl_u64_to_str(u64 value, char *string, i32 base) {
 
     if (value) {
         while (value > 0) {
-            *buf++ = zpl__num_to_charable[value % base];
+            *buf++ = zpl__num_to_char_table[value % base];
             value /= base;
         }
     } else {
@@ -6176,7 +6177,7 @@ isize zpl_utf8_encode_rune(u8 buf[4], Rune r) {
 
 ////////////////////////////////////////////////////////////////
 //
-// zpl_scratchpad
+// zpl_ring
 //
 
 
@@ -6306,7 +6307,7 @@ u32 zpl_adler32(void const *data, isize len) {
 }
 
 
-zpl_global u32 const zpl__CRC32ABLE[256] = {
+zpl_global u32 const zpl__CRC32_TABLE[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
     0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
     0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -6373,7 +6374,7 @@ zpl_global u32 const zpl__CRC32ABLE[256] = {
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
 
-zpl_global u64 const zpl__CRC64ABLE[256] = {
+zpl_global u64 const zpl__CRC64_TABLE[256] = {
     0x0000000000000000ull, 0x42f0e1eba9ea3693ull, 0x85e1c3d753d46d26ull, 0xc711223cfa3e5bb5ull,
     0x493366450e42ecdfull, 0x0bc387aea7a8da4cull, 0xccd2a5925d9681f9ull, 0x8e224479f47cb76aull,
     0x9266cc8a1c85d9beull, 0xd0962d61b56fef2dull, 0x17870f5d4f51b498ull, 0x5577eeb6e6bb820bull,
@@ -6445,7 +6446,7 @@ u32 zpl_crc32(void const *data, isize len) {
     u32 result = ~(cast(u32)0);
     u8 const *c = cast(u8 const *)data;
     for (remaining = len; remaining--; c++)
-        result = (result >> 8) ^ (zpl__CRC32ABLE[(result ^ *c) & 0xff]);
+        result = (result >> 8) ^ (zpl__CRC32_TABLE[(result ^ *c) & 0xff]);
     return ~result;
 }
 
@@ -6454,7 +6455,7 @@ u64 zpl_crc64(void const *data, isize len) {
     u64 result = ~(cast(u64)0);
     u8 const *c = cast(u8 const *)data;
     for (remaining = len; remaining--; c++)
-        result = (result >> 8) ^ (zpl__CRC64ABLE[(result ^ *c) & 0xff]);
+        result = (result >> 8) ^ (zpl__CRC64_TABLE[(result ^ *c) & 0xff]);
     return ~result;
 }
 
@@ -8556,7 +8557,7 @@ zpl_global zpl_atomic32 zpl__random_shared_counter = {0};
 zpl_global i32 zpl__random_shared_counter = 0;
 #endif
 
-zpl_internal u32 zpl__get_noise_fromime(void) {
+zpl_internal u32 zpl__get_noise_from_time(void) {
     u32 accum = 0;
     f64 start, remaining, end, curr = 0;
     u64 interval = 100000ll;
@@ -8599,7 +8600,7 @@ void zpl_random_init(zpl_random *r) {
     u32 x = 0;
     r->value = 0;
 
-    r->offsets[0] = zpl__get_noise_fromime();
+    r->offsets[0] = zpl__get_noise_from_time();
 #ifdef ZPL_THREADING
     r->offsets[1] = zpl_atomic32_fetch_add(&zpl__random_shared_counter, 1);
     r->offsets[2] = zpl_thread_current_id();
@@ -8612,7 +8613,7 @@ void zpl_random_init(zpl_random *r) {
     time = zpl_utc_time_now();
     r->offsets[4] = cast(u32)(time >> 32);
     r->offsets[5] = cast(u32)time;
-    r->offsets[6] = zpl__get_noise_fromime();
+    r->offsets[6] = zpl__get_noise_from_time();
     tick = zpl_rdtsc();
     r->offsets[7] = cast(u32)(tick ^ (tick >> 32));
 
