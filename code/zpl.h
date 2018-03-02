@@ -15,8 +15,9 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.0.1 - Fixed warnings for particual win compiler in dirlist method
   6.0.0 - New build, include/ was renamed to code/
-  
+
   5.8.3 - Naming fixes
   5.8.2 - Job system now supports prioritized tasks
   5.8.1 - Renames zpl_pad to zpl_ring
@@ -4023,8 +4024,9 @@ void zpl_sync_init(zpl_sync *s) {
 }
 
 void zpl_sync_destroy(zpl_sync *s) {
-    if (s->waiting)
+    if (s->waiting) {
         ZPL_PANIC("Cannot destroy while threads are waiting!");
+    }
 
     zpl_mutex_destroy(&s->mutex);
     zpl_mutex_destroy(&s->start);
@@ -7734,12 +7736,12 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     findpath=zpl_string_appendc(findpath, "\\");
     findpath=zpl_string_appendc(findpath, "*");
 
-    findhandle = _wfindfirst((const wchar_t *)zpl_utf8_to_ucs2_buf(findpath), &data);
+    findhandle = _wfindfirst((const wchar_t *)zpl_utf8_to_ucs2_buf((const u8 *)findpath), &data);
     zpl_string_free(findpath);
 
     if (findhandle != -1) {
         do {
-            char *filename = zpl_ucs2_to_utf8_buf(data.name);
+            char *filename = (char *)zpl_ucs2_to_utf8_buf((const u16 *)data.name);
             if (!zpl_strncmp(filename, "..", 2)) continue;
             if (filename[0]=='.' && filename[1]==0) continue;
 
