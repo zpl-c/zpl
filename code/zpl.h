@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.0.2 - Fixed warnings for json5 i64 printfs
   6.0.1 - Fixed warnings for particual win compiler in dirlist method
   6.0.0 - New build, include/ was renamed to code/
 
@@ -9019,10 +9020,10 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, isize indent, b32 
 
         case ZPL_JSON_TYPE_INTEGER: {
             /**/ if (node->props == ZPL_JSON_PROPS_IS_HEX) {
-                zpl_fprintf(f, "0x%lx", node->integer);
+                zpl_fprintf(f, "0x%llx", (long long)node->integer);
             }
             else {
-                zpl_fprintf(f, "%ld", node->integer);
+                zpl_fprintf(f, "%lld", (long long)node->integer);
             }
         }break;
 
@@ -9040,11 +9041,11 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, isize indent, b32 
                 zpl_fprintf(f, "-Infinity");
             }
             else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
-                zpl_fprintf(f, "%ld.%lde%c%ld", node->base, node->base2, node->exp_neg ? '-' : '+', node->exp);
+                zpl_fprintf(f, "%lld.%llde%c%lld", (long long)node->base, (long long)node->base2, node->exp_neg ? '-' : '+', (long long)node->exp);
             }
             else {
-                if (!node->lead_digit) zpl_fprintf(f, ".%ld", node->base2);
-                else zpl_fprintf(f, "%ld.%ld", node->base, node->base2);
+                if (!node->lead_digit) zpl_fprintf(f, ".%lld", (long long)node->base2);
+                else zpl_fprintf(f, "%lld.%lld", (long long)node->base, (long long)node->base2);
             }
         }break;
 
