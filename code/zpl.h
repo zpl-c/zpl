@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.0.3 - Satisfy MSVC by fixing a warning
   6.0.2 - Fixed warnings for json5 i64 printfs
   6.0.1 - Fixed warnings for particual win compiler in dirlist method
   6.0.0 - New build, include/ was renamed to code/
@@ -8615,7 +8616,7 @@ void zpl_random_init(zpl_random *r) {
     r->offsets[2] = 0;
     r->offsets[3] = 1;
 #endif
-    time = zpl_utc_time_now();
+    time = cast(u64)zpl_utc_time_now();
     r->offsets[4] = cast(u32)(time >> 32);
     r->offsets[5] = cast(u32)time;
     r->offsets[6] = zpl__get_noise_from_time();
