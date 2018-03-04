@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.0.4 - More MSVC(++) satisfaction by fixing warnings
   6.0.3 - Satisfy MSVC by fixing a warning
   6.0.2 - Fixed warnings for json5 i64 printfs
   6.0.1 - Fixed warnings for particual win compiler in dirlist method
@@ -125,7 +126,7 @@ Version History:
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. 
+  limitations under the License.
 */
 
 //
@@ -2403,7 +2404,7 @@ ZPL_DEF void zpl_event_remove (zpl_event_pool *pool, u64 slot, u64 index);
 ZPL_DEF void zpl_event_trigger(zpl_event_pool *pool, u64 slot, zpl_event_data evt);
 
 
-//////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////
 //
 // Timer
 //
@@ -2566,7 +2567,7 @@ ZPL_DEF b32 zpl__json_validate_name (char *str, char *err);
 
 
 ////////////////////////////////////////////////////////////////
-// 
+//
 // CLI Options
 //
 //
@@ -2671,7 +2672,7 @@ ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 ///////////////////////////////////////////////////////////////
-// 
+//
 // Thread Pool
 //
 // This job system follows thread pool pattern to minimize the costs of thread initialization.
@@ -7130,9 +7131,9 @@ void zpl_async_file_write(zpl_file *file, void const* buffer, isize size, zpl_as
 
     zpl_thread_start(&td, zpl__async_file_write_proc, cast(void *)afops);
 }
-  
+
 ///////////////////////////////////////////////////////////////
-// 
+//
 // Thread Pool
 //
 
@@ -7181,17 +7182,17 @@ void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads)
 
     pool->alloc=a;
     pool->max_threads=max_threads;
-    
-    // NOTE: Spawn a new job slot when number of available slots is below 25% 
+
+    // NOTE: Spawn a new job slot when number of available slots is below 25%
     // compared to the total number of slots.
-    pool->job_spawn_treshold=0.25; 
+    pool->job_spawn_treshold=0.25;
 
     zpl_buffer_init(pool->workers, a, max_threads);
     zpl_array_init(pool->jobs, a);
     zpl_array_init(pool->queue, a);
     zpl_array_init(pool->available, a);
 
-    for (isize i=0; i<max_threads; ++i) {
+    for (usize i=0; i<max_threads; ++i) {
         zpl_thread_worker worker_={0};
         zpl_thread_worker *tw=pool->workers+i;
         *tw=worker_;
@@ -7206,7 +7207,7 @@ void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads)
 
 void zpl_jobs_free(zpl_thread_pool *pool)
 {
-    for (isize i=0; i<pool->max_threads; ++i) {
+    for (usize i=0; i<pool->max_threads; ++i) {
         zpl_thread_worker *tw=pool->workers+i;
 
         zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_TERM);
@@ -7223,7 +7224,7 @@ void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, v
 {
     ZPL_ASSERT_NOT_NULL(proc);
     f32 treshold=0.0f;
-    
+
     if (zpl_array_count(pool->queue) > 0) {
         treshold=(zpl_array_count(pool->available)/(f32)zpl_array_count(pool->jobs));
     }
@@ -7275,7 +7276,7 @@ b32 zpl_jobs_process(zpl_thread_pool *pool)
     }
 
     // NOTE: Process the jobs
-    for (isize i=0; i<pool->max_threads; ++i) {
+    for (usize i=0; i<pool->max_threads; ++i) {
         zpl_thread_worker *tw=pool->workers+i;
         if (zpl_array_count(pool->queue) == 0) return false;
 
@@ -7564,7 +7565,7 @@ char *zpl_file_read_lines(zpl_allocator alloc, char ***lines, char const *filena
 {
     zpl_file f = {0};
     zpl_file_open(&f, filename);
-    i64 fsize = zpl_file_size(&f);
+    isize fsize = (isize)zpl_file_size(&f);
 
     char *contents = (char *)zpl_alloc(alloc, fsize+1);
     zpl_file_read(&f, contents, fsize);
@@ -9526,7 +9527,7 @@ zpl_inline char *zpl__json_skip(char *str, char c) {
 
 
 ////////////////////////////////////////////////////////////////
-// 
+//
 // CLI Options
 //
 //
@@ -9622,7 +9623,7 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b)
     switch (t->type) {
         case ZPL_OPTS_STRING:
             {
-                t->text=zpl_string_make(opts->alloc, b); 
+                t->text=zpl_string_make(opts->alloc, b);
             }break;
 
         case ZPL_OPTS_FLOAT:
@@ -9637,7 +9638,7 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b)
     }
 }
 
-b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) 
+b32 zpl_opts_has_arg(zpl_opts *opts, char const *name)
 {
     zpl_opts_entry *e=zpl__opts_find(opts, name, zpl_strlen(name), true);
 
@@ -9655,7 +9656,7 @@ void zpl_opts_print_help(zpl_opts *opts)
     for (int i=0; i<zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e=opts->entries+i;
 
-        if (e->pos==true) {
+        if (e->pos==(b32)true) {
             zpl_printf(" [%s]", e->lname);
         }
     }
@@ -9723,7 +9724,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv)
                 }
 
                 char *b=p+1, *e=b;
-                    
+
                 while (zpl_char_is_alphanumeric(*e)) {
                     ++e;
                 }
