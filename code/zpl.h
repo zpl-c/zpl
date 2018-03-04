@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.1.0 - Added zpl_path_mkdir, zpl_path_rmdir, and few new zplFileErrors
   6.0.4 - More MSVC(++) satisfaction by fixing warnings
   6.0.3 - Satisfy MSVC by fixing a warning
   6.0.2 - Fixed warnings for json5 i64 printfs
@@ -977,12 +978,12 @@ typedef struct {
     zpl_async_cb *work;
     zpl_async_cb *cb;
 } zpl_async_ctl;
-#define zpl_async(data, work, cb) do {                                   \
-    zpl_thread td = {0};                                           \
-    zpl_thread_init(&td);                                            \
-    zpl_async_ctl  ctl_ = {data, work, cb};                        \
-    zpl_async_ctl *ctl = zpl_malloc(zpl_size_of(zpl_async_ctl)); \
-    *ctl = ctl_;                                                     \
+#define zpl_async(data, work, cb) do {                            \
+    zpl_thread td = {0};                                          \
+    zpl_thread_init(&td);                                         \
+    zpl_async_ctl  ctl_ = {data, work, cb};                       \
+    zpl_async_ctl *ctl = zpl_malloc(zpl_size_of(zpl_async_ctl));  \
+    *ctl = ctl_;                                                  \
     zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
 #endif
 
@@ -995,13 +996,13 @@ typedef struct zpl_thread {
 #endif
 
     zpl_thread_proc *proc;
-    void *             user_data;
-    isize              user_index;
-    isize              return_value;
+    void *           user_data;
+    isize            user_index;
+    isize            return_value;
 
-    zpl_semaphore   semaphore;
-    isize         stack_size;
-    b32           is_running;
+    zpl_semaphore    semaphore;
+    isize            stack_size;
+    b32              is_running;
 } zpl_thread;
 
 ZPL_DEF void zpl_thread_init            (zpl_thread *t);
@@ -1113,17 +1114,17 @@ typedef enum zplAllocationType {
 } zplAllocationType;
 
 // NOTE: This is useful so you can define an allocator of the same type and parameters
-#define ZPL_ALLOCATOR_PROC(name)                                  \
+#define ZPL_ALLOCATOR_PROC(name)                          \
 void *name(void *allocator_data, zplAllocationType type,  \
-            isize size, isize alignment,                       \
-            void *old_memory, isize old_size,                  \
+            isize size, isize alignment,                  \
+            void *old_memory, isize old_size,             \
             u64 flags)
 typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
 #define zpl_allocator_t zpl_allocator
 typedef struct zpl_allocator {
     zpl_allocator_proc *proc;
-    void *           data;
+    void *              data;
 } zpl_allocator;
 
 typedef enum zplAllocatorFlag {
@@ -1175,10 +1176,10 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 #define zpl_arena_t zpl_arena
 typedef struct zpl_arena {
     zpl_allocator backing;
-    void *      physical_start;
-    isize       total_size;
-    isize       total_allocated;
-    isize       temp_count;
+    void *        physical_start;
+    isize         total_size;
+    isize         total_allocated;
+    isize         temp_count;
 } zpl_arena;
 
 ZPL_DEF void zpl_arena_init_from_memory   (zpl_arena *arena, void *start, isize size);
@@ -2180,7 +2181,10 @@ typedef enum zplFileError {
     ZPL_FILE_ERROR_EXISTS,
     ZPL_FILE_ERROR_NOT_EXISTS,
     ZPL_FILE_ERROR_PERMISSION,
-    zpl_FILE_ERROR_TRUNCATION_FAILURE,
+    ZPL_FILE_ERROR_TRUNCATION_FAILURE,
+    ZPL_FILE_ERROR_NOT_EMPTY,
+    ZPL_FILE_ERROR_NAME_TOO_LONG,
+    ZPL_FILE_ERROR_UNKNOWN,
 } zplFileError;
 
 #define zpl_file_descriptor_t zpl_file_descriptor
@@ -2255,25 +2259,25 @@ typedef enum zplFileStandardType {
 
 ZPL_DEF zpl_file *zpl_file_get_standard(zplFileStandardType std);
 
-ZPL_DEF zplFileError zpl_file_create        (zpl_file *file, char const *filename);
-ZPL_DEF zplFileError zpl_file_open          (zpl_file *file, char const *filename);
-ZPL_DEF zplFileError zpl_file_open_mode     (zpl_file *file, zpl_file_mode mode, char const *filename);
-ZPL_DEF zplFileError zpl_file_new           (zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename);
-ZPL_DEF b32         zpl_file_read_at_check (zpl_file *file, void *buffer, isize size, i64 offset, isize *bytes_read);
-ZPL_DEF b32         zpl_file_write_at_check(zpl_file *file, void const *buffer, isize size, i64 offset, isize *bytes_written);
-ZPL_DEF b32         zpl_file_read_at       (zpl_file *file, void *buffer, isize size, i64 offset);
-ZPL_DEF b32         zpl_file_write_at      (zpl_file *file, void const *buffer, isize size, i64 offset);
-ZPL_DEF i64         zpl_file_seek          (zpl_file *file, i64 offset);
-ZPL_DEF i64         zpl_file_seek_to_end   (zpl_file *file);
-ZPL_DEF i64         zpl_file_skip          (zpl_file *file, i64 bytes); // NOTE: Skips a certain amount of bytes
-ZPL_DEF i64         zpl_file_tell          (zpl_file *file);
-ZPL_DEF zplFileError zpl_file_close         (zpl_file *file);
-ZPL_DEF b32         zpl_file_read          (zpl_file *file, void *buffer, isize size);
-ZPL_DEF b32         zpl_file_write         (zpl_file *file, void const *buffer, isize size);
-ZPL_DEF i64         zpl_file_size          (zpl_file *file);
-ZPL_DEF char const *zpl_file_name          (zpl_file *file);
-ZPL_DEF zplFileError zpl_file_truncate      (zpl_file *file, i64 size);
-ZPL_DEF b32         zpl_file_has_changed   (zpl_file *file); // NOTE: Changed since lasted checked
+ZPL_DEF zplFileError  zpl_file_create        (zpl_file *file, char const *filename);
+ZPL_DEF zplFileError  zpl_file_open          (zpl_file *file, char const *filename);
+ZPL_DEF zplFileError  zpl_file_open_mode     (zpl_file *file, zpl_file_mode mode, char const *filename);
+ZPL_DEF zplFileError  zpl_file_new           (zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename);
+ZPL_DEF b32           zpl_file_read_at_check (zpl_file *file, void *buffer, isize size, i64 offset, isize *bytes_read);
+ZPL_DEF b32           zpl_file_write_at_check(zpl_file *file, void const *buffer, isize size, i64 offset, isize *bytes_written);
+ZPL_DEF b32           zpl_file_read_at       (zpl_file *file, void *buffer, isize size, i64 offset);
+ZPL_DEF b32           zpl_file_write_at      (zpl_file *file, void const *buffer, isize size, i64 offset);
+ZPL_DEF i64           zpl_file_seek          (zpl_file *file, i64 offset);
+ZPL_DEF i64           zpl_file_seek_to_end   (zpl_file *file);
+ZPL_DEF i64           zpl_file_skip          (zpl_file *file, i64 bytes); // NOTE: Skips a certain amount of bytes
+ZPL_DEF i64           zpl_file_tell          (zpl_file *file);
+ZPL_DEF zplFileError  zpl_file_close         (zpl_file *file);
+ZPL_DEF b32           zpl_file_read          (zpl_file *file, void *buffer, isize size);
+ZPL_DEF b32           zpl_file_write         (zpl_file *file, void const *buffer, isize size);
+ZPL_DEF i64           zpl_file_size          (zpl_file *file);
+ZPL_DEF char const   *zpl_file_name          (zpl_file *file);
+ZPL_DEF zplFileError  zpl_file_truncate      (zpl_file *file, i64 size);
+ZPL_DEF b32           zpl_file_has_changed   (zpl_file *file); // NOTE: Changed since lasted checked
 
 #ifdef ZPL_THREADING
 ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc);
@@ -2291,18 +2295,18 @@ typedef struct zpl_file_contents {
 
 
 ZPL_DEF zpl_file_contents zpl_file_read_contents(zpl_allocator a, b32 zero_terminate, char const *filepath);
-ZPL_DEF void                zpl_file_free_contents(zpl_file_contents *fc);
+ZPL_DEF void              zpl_file_free_contents(zpl_file_contents *fc);
 
 // NOTE: Make sure you free both the returned buffer and the lines (zpl_array)
-ZPL_DEF char *zpl_file_read_lines   (zpl_allocator alloc, zpl_array(char *) *lines, char const *filename, b32 strip_whitespace);
+ZPL_DEF char             *zpl_file_read_lines   (zpl_allocator alloc, zpl_array(char *) *lines, char const *filename, b32 strip_whitespace);
 
 
 // TODO: Should these have different names as they do not take in a zpl_file * ???
-ZPL_DEF b32        zpl_file_exists         (char const *filepath);
+ZPL_DEF b32           zpl_file_exists         (char const *filepath);
 ZPL_DEF zpl_file_time zpl_file_last_write_time(char const *filepath);
-ZPL_DEF b32        zpl_file_copy           (char const *existing_filename, char const *new_filename, b32 fail_if_exists);
-ZPL_DEF b32        zpl_file_move           (char const *existing_filename, char const *new_filename);
-ZPL_DEF b32        zpl_file_remove         (char const *filename);
+ZPL_DEF b32           zpl_file_copy           (char const *existing_filename, char const *new_filename, b32 fail_if_exists);
+ZPL_DEF b32           zpl_file_move           (char const *existing_filename, char const *new_filename);
+ZPL_DEF b32           zpl_file_remove         (char const *filename);
 
 #ifndef ZPL_PATH_SEPARATOR
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -2318,6 +2322,9 @@ ZPL_DEF b32         zpl_path_is_root      (char const *path);
 ZPL_DEF char const *zpl_path_base_name    (char const *path);
 ZPL_DEF char const *zpl_path_extension    (char const *path);
 ZPL_DEF char *      zpl_path_get_full_name(zpl_allocator a, char const *path);
+
+ZPL_DEF zplFileError zpl_path_mkdir(char const *path, i32 mode);
+ZPL_DEF zplFileError zpl_path_rmdir(char const *path);
 
 // NOTE: Returns file paths terminated by newline (\n)
 zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse);
@@ -7329,7 +7336,7 @@ zplFileError zpl_file_truncate(zpl_file *f, i64 size) {
     i64 prev_offset = zpl_file_tell(f);
     zpl_file_seek(f, size);
     if (!SetEndOfFile(f))
-        err = zpl_FILE_ERROR_TRUNCATION_FAILURE;
+        err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
     zpl_file_seek(f, prev_offset);
     return err;
 }
@@ -7379,7 +7386,7 @@ zpl_inline i64 zpl_file_size(zpl_file *f) {
 zpl_inline zplFileError zpl_file_truncate(zpl_file *f, i64 size) {
     zplFileError err = ZPL_FILE_ERROR_NONE;
     int i = ftruncate(f->fd.i, size);
-    if (i != 0) err = zpl_FILE_ERROR_TRUNCATION_FAILURE;
+    if (i != 0) err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
     return err;
 }
 
@@ -7689,8 +7696,53 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
 #endif
 }
 
-void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *output, b32 recurse)
-{
+
+zplFileError zpl_path_mkdir(char const *path, i32 mode) {
+    i32 error = 0;
+    #if defined(ZPL_SYSTEM_WINDOWS)
+        error = _wmkdir((const wchar_t *)zpl_utf8_to_ucs2_buf((const u8 *)path));
+    #else
+        error = mkdir(path, (mode_t)mode);
+    #endif
+
+    if (error == 0) {
+        return ZPL_FILE_ERROR_NONE;
+    }
+
+    switch (errno)  {
+        case EPERM:
+        case EACCES:        return ZPL_FILE_ERROR_PERMISSION;
+        case EEXIST:        return ZPL_FILE_ERROR_EXISTS;
+        case ENAMETOOLONG:  return ZPL_FILE_ERROR_NAME_TOO_LONG;
+    }
+
+    return ZPL_FILE_ERROR_UNKNOWN;
+}
+
+zplFileError zpl_path_rmdir(char const *path) {
+    i32 error = 0;
+    #if defined(ZPL_SYSTEM_WINDOWS)
+        error = _wrmdir((const wchar_t *)zpl_utf8_to_ucs2_buf((const u8 *)path));
+    #else
+        error = rmdir(path);
+    #endif
+
+    if (error == 0) {
+        return ZPL_FILE_ERROR_NONE;
+    }
+
+    switch (errno)  {
+        case EPERM:
+        case EACCES:        return ZPL_FILE_ERROR_PERMISSION;
+        case ENOENT:        return ZPL_FILE_ERROR_NOT_EXISTS;
+        case ENOTEMPTY:     return ZPL_FILE_ERROR_NOT_EMPTY;
+        case ENAMETOOLONG:  return ZPL_FILE_ERROR_NAME_TOO_LONG;
+    }
+
+    return ZPL_FILE_ERROR_UNKNOWN;
+}
+
+void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *output, b32 recurse) {
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_OSX)
     DIR *d, *cd;
     struct dirent *dir;
@@ -7770,12 +7822,9 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
 #endif
 }
 
-zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse)
-{
+zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse) {
     zpl_string buf=zpl_string_make_reserve(alloc, 4);
-
     zpl__file_direntry(alloc, dirname, &buf, recurse);
-
     return buf;
 }
 
