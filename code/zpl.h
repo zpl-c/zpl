@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.1.1 - Added direct.h include for win c++ dir methods
   6.1.0 - Added zpl_path_mkdir, zpl_path_rmdir, and few new zplFileErrors
   6.0.4 - More MSVC(++) satisfaction by fixing warnings
   6.0.3 - Satisfy MSVC by fixing a warning
@@ -308,8 +309,9 @@ Version History:
 #include <math.h>
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-  #include <stdio.h>
   #include <io.h>
+  #include <stdio.h>
+  #include <direct.h> // TODO: remove and use native winapi methods
 
   #if !defined(ZPL_NO_WINDOWS_H)
     #define NOMINMAX            1
