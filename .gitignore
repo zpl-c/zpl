@@ -9,3 +9,5 @@ include/quick.c
 .DS_Store
 .swp
 tags
+
+.vscode
