@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.2.1 - Remove math redundancies
   6.2.0 - Integrated zpl_math.h into zpl.h
   6.1.1 - Added direct.h include for win c++ dir methods
   6.1.0 - Added zpl_path_mkdir, zpl_path_rmdir, and few new zplFileErrors
@@ -2928,6 +2929,14 @@ ZPL_DEF f32 zpl_angle_diff(f32 radians_a, f32 radians_b);
 ZPL_DEF f32 zpl_copy_sign(f32 x, f32 y);
 ZPL_DEF f32 zpl_remainder(f32 x, f32 y);
 ZPL_DEF f32 zpl_mod(f32 x, f32 y);
+ZPL_DEF f64 zpl_copy_sign64(f64 x, f64 y);
+ZPL_DEF f64 zpl_floor64    (f64 x);
+ZPL_DEF f64 zpl_ceil64     (f64 x);
+ZPL_DEF f64 zpl_round64    (f64 x);
+ZPL_DEF f64 zpl_remainder64(f64 x, f64 y);
+ZPL_DEF f64 zpl_abs64      (f64 x);
+ZPL_DEF f64 zpl_sign64     (f64 x);
+ZPL_DEF f64 zpl_mod64(f64 x, f64 y);
 ZPL_DEF f32 zpl_sqrt(f32 a);
 ZPL_DEF f32 zpl_rsqrt(f32 a);
 ZPL_DEF f32 zpl_quake_rsqrt(f32 a); /* NOTE: It's probably better to use 1.0f/zpl_sqrt(a)
@@ -9132,38 +9141,11 @@ isize zpl_random_range_isize(zpl_random *r, isize lower_inc, isize higher_inc) {
     return i;
 }
 
-// NOTE: Semi-cc'ed from zpl_math to remove need for fmod and math.h
-f64 zpl__copy_sign64(f64 x, f64 y) {
-    i64 ix, iy;
-    ix = *(i64 *)&x;
-    iy = *(i64 *)&y;
-
-    ix &= 0x7fffffffffffffff;
-    ix |= iy & 0x8000000000000000;
-    return *cast(f64 *)&ix;
-}
-
-f64 zpl__floor64    (f64 x)        { return cast(f64)((x >= 0.0) ? cast(i64)x : cast(i64)(x-0.9999999999999999)); }
-f64 zpl__ceil64     (f64 x)        { return cast(f64)((x < 0) ? cast(i64)x : (cast(i64)x)+1); }
-f64 zpl__round64    (f64 x)        { return cast(f64)((x >= 0.0) ? zpl__floor64(x + 0.5) : zpl__ceil64(x - 0.5)); }
-f64 zpl__remainder64(f64 x, f64 y) { return x - (zpl__round64(x/y)*y); }
-f64 zpl__abs64      (f64 x)        { return x < 0 ? -x : x; }
-f64 zpl__sign64     (f64 x)        { return x < 0 ? -1.0 : +1.0; }
-
-f64 zpl__mod64(f64 x, f64 y) {
-    f64 result;
-    y = zpl__abs64(y);
-    result = zpl__remainder64(zpl__abs64(x), y);
-    if (zpl__sign64(result)) result += y;
-    return zpl__copy_sign64(result, x);
-}
-
-
 f64 zpl_random_range_f64(zpl_random *r, f64 lower_inc, f64 higher_inc) {
     u64 u = zpl_random_gen_u64(r);
     f64 f = *cast(f64 *)&u;
     f64 diff = higher_inc-lower_inc+1.0;
-    f = zpl__mod64(f, diff);
+    f = zpl_mod64(f, diff);
     f += lower_inc;
     return f;
 }
@@ -10623,6 +10605,32 @@ f32 zpl_mod(f32 x, f32 y) {
     if (zpl_sign(result)) result += y;
     return zpl_copy_sign(result, x);
 }
+
+f64 zpl_copy_sign64(f64 x, f64 y) {
+    i64 ix, iy;
+    ix = *(i64 *)&x;
+    iy = *(i64 *)&y;
+
+    ix &= 0x7fffffffffffffff;
+    ix |= iy & 0x8000000000000000;
+    return *cast(f64 *)&ix;
+}
+
+f64 zpl_floor64    (f64 x)        { return cast(f64)((x >= 0.0) ? cast(i64)x : cast(i64)(x-0.9999999999999999)); }
+f64 zpl_ceil64     (f64 x)        { return cast(f64)((x < 0) ? cast(i64)x : (cast(i64)x)+1); }
+f64 zpl_round64    (f64 x)        { return cast(f64)((x >= 0.0) ? zpl_floor64(x + 0.5) : zpl_ceil64(x - 0.5)); }
+f64 zpl_remainder64(f64 x, f64 y) { return x - (zpl_round64(x/y)*y); }
+f64 zpl_abs64      (f64 x)        { return x < 0 ? -x : x; }
+f64 zpl_sign64     (f64 x)        { return x < 0 ? -1.0 : +1.0; }
+
+f64 zpl_mod64(f64 x, f64 y) {
+    f64 result;
+    y = zpl_abs64(y);
+    result = zpl_remainder64(zpl_abs64(x), y);
+    if (zpl_sign64(result)) result += y;
+    return zpl_copy_sign64(result, x);
+}
+
 
 f32 zpl_quake_rsqrt(f32 a) {
     union {
