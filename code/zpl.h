@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.4.0 - Deprecated zpl_buffer_free and added zpl_array_end, zpl_buffer_end
   6.3.0 - Added zpl_strdup
   6.2.1 - Remove math redundancies
   6.2.0 - Integrated zpl_math.h into zpl.h
@@ -1576,6 +1577,7 @@ ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, char const *fmt, ...);
 
 #define zpl_buffer_header_t zpl_buffer_header
 typedef struct zpl_buffer_header {
+    zpl_allocator backing;
     isize count;
     isize capacity;
 } zpl_buffer_header;
@@ -1586,17 +1588,21 @@ typedef struct zpl_buffer_header {
 #define ZPL_BUFFER_HEADER(x)   (cast(zpl_buffer_header *)(x) - 1)
 #define zpl_buffer_count(x)    (ZPL_BUFFER_HEADER(x)->count)
 #define zpl_buffer_capacity(x) (ZPL_BUFFER_HEADER(x)->capacity)
+#define zpl_buffer_end(x)      (x + (zpl_buffer_count(x) - 1))
 
 #define zpl_buffer_init(x, allocator, cap) do {                         \
     void **nx = cast(void **)&(x);                                  \
     zpl_buffer_header *zpl__bh = cast(zpl_buffer_header *)zpl_alloc((allocator), sizeof(zpl_buffer_header)+(cap)*zpl_size_of(*(x))); \
+    zpl__bh->backing = allocator; \
     zpl__bh->count = 0;                                             \
     zpl__bh->capacity = cap;                                        \
     *nx = cast(void *)(zpl__bh+1);                                  \
 } while (0)
 
 
+// DEPRECATED(zpl_buffer_free): Use zpl_buffer_free2 instead
 #define zpl_buffer_free(x, allocator) (zpl_free(allocator, ZPL_BUFFER_HEADER(x)))
+#define zpl_buffer_free2(x) (zpl_free(ZPL_BUFFER_HEADER(x)->backing, ZPL_BUFFER_HEADER(x)))
 
 #define zpl_buffer_append(x, item) do { (x)[zpl_buffer_count(x)++] = (item); } while (0)
 
@@ -1750,6 +1756,7 @@ ZPL_STATIC_ASSERT(ZPL_ARRAY_GROW_FORMULA(0) > 0);
 #define zpl_array_allocator(x) (ZPL_ARRAY_HEADER(x)->allocator)
 #define zpl_array_count(x)     (ZPL_ARRAY_HEADER(x)->count)
 #define zpl_array_capacity(x)  (ZPL_ARRAY_HEADER(x)->capacity)
+#define zpl_array_end(x)       (x + (zpl_array_count(x) - 1))
 
 #define zpl_array_init_reserve(x, allocator_, cap) do {                 \
     void **zpl__array_ = cast(void **)&(x);                         \
