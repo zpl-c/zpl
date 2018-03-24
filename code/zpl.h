@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.4.1 - Use zpl_strlen in zpl_strdup
   6.4.0 - Deprecated zpl_buffer_free and added zpl_array_end, zpl_buffer_end
   6.3.0 - Added zpl_strdup
   6.2.1 - Remove math redundancies
@@ -5739,7 +5740,7 @@ zpl_inline char *zpl_strcpy(char *dest, char const *source) {
 
 zpl_inline char *zpl_strdup(zpl_allocator a, char *src, isize max_len) {
     ZPL_ASSERT_NOT_NULL(src);
-    isize len=strlen(src);
+    isize len=zpl_strlen(src);
     char *dest = cast(char *)zpl_alloc(a, max_len);
     zpl_memset(dest + len, 0, max_len - len);
     zpl_strncpy(dest, src, max_len);
