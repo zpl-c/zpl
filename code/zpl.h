@@ -15,6 +15,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.3.0 - Added zpl_strdup
   6.2.1 - Remove math redundancies
   6.2.0 - Integrated zpl_math.h into zpl.h
   6.1.1 - Added direct.h include for win c++ dir methods
