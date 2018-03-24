@@ -1377,6 +1377,7 @@ ZPL_DEF isize zpl_strnlen(char const *str, isize max_len);
 ZPL_DEF i32   zpl_strcmp (char const *s1, char const *s2);
 ZPL_DEF i32   zpl_strncmp(char const *s1, char const *s2, isize len);
 ZPL_DEF char *zpl_strcpy (char *dest, char const *source);
+ZPL_DEF char *zpl_strdup (zpl_allocator a, char *src, isize max_len);
 ZPL_DEF char *zpl_strncpy(char *dest, char const *source, isize len);
 ZPL_DEF isize zpl_strlcpy(char *dest, char const *source, isize len);
 ZPL_DEF char *zpl_strrev (char *str); // NOTE: ASCII only
@@ -5725,6 +5726,16 @@ zpl_inline char *zpl_strcpy(char *dest, char const *source) {
         char *str = dest;
         while (*source) *str++ = *source++;
     }
+    return dest;
+}
+
+zpl_inline char *zpl_strdup(zpl_allocator a, char *src, isize max_len) {
+    ZPL_ASSERT_NOT_NULL(src);
+    isize len=strlen(src);
+    char *dest = cast(char *)zpl_alloc(a, max_len);
+    zpl_memset(dest + len, 0, max_len - len);
+    zpl_strncpy(dest, src, max_len);
+
     return dest;
 }
 
