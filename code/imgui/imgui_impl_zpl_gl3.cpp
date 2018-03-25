@@ -352,9 +352,13 @@ bool ImGui_ImplZPLGL3_ProcessUpdate(zpl_platform *platform)
 {
     ImGuiIO& io = ImGui::GetIO();
     
-    // TODO mouse wheel
+    // mouse wheel
     {
+        if (platform->mouse_wheel_delta > 0)
+            io.MouseWheel += 1;
 
+        if (platform->mouse_wheel_delta < 0)
+            io.MouseWheel -= 1;
     }
 
     // Mouse buttons

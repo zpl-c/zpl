@@ -13064,6 +13064,7 @@ void zpl_platform_update(zpl_platform *p) {
     if (p->window_has_focus) {
         p->char_buffer[0] = '\0';
         p->char_buffer_count = 0; // TODO(bill): Reset buffer count here or else where?
+        p->mouse_wheel_delta = 0.0f;
 
         // NOTE(bill): Need to update as the keys only get updates on events
         for (i = 0; i < ZPL_KEY_COUNT; i++) {
