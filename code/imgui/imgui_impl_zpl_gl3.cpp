@@ -383,6 +383,12 @@ bool ImGui_ImplZPLGL3_ProcessUpdate(zpl_platform *platform)
         for (isize i=0; i<ZPL_KEY_COUNT; i++) {
             io.KeysDown[i] = platform->keys[i] == ZPL_KEY_STATE_DOWN;
         }
+
+        io.KeyShift = platform->keys[ZPL_KEY_LSHIFT]   | platform->keys[ZPL_KEY_RSHIFT];
+        io.KeyCtrl  = platform->keys[ZPL_KEY_LCONTROL] | platform->keys[ZPL_KEY_RCONTROL];
+        io.KeyAlt   = platform->keys[ZPL_KEY_LALT]     | platform->keys[ZPL_KEY_RALT];
+        io.KeySuper = platform->keys[ZPL_KEY_LSYSTEM]  | platform->keys[ZPL_KEY_RSYSTEM];
+
     }
 
     return false;
