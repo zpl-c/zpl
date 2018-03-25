@@ -99,6 +99,7 @@ bool ImGui_ImplZPLGL3_Init(zpl_platform* platform, const char* glsl_version /*= 
     g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
     g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);*/
 
+
     return true;
 }
 
@@ -374,9 +375,11 @@ bool ImGui_ImplZPLGL3_ProcessEvent(zpl_platform *platform)
         io.AddInputCharactersUTF8((char *)platform->char_buffer);
     }
 
-    // TODO Keyboard input
+    // Keyboard input
     {
-
+        for (isize i=0; i<ZPL_KEY_COUNT; i++) {
+            io.KeysDown[i] = platform->keys[i] == ZPL_KEY_STATE_DOWN;
+        }
     }
 
     return false;

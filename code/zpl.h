@@ -3558,6 +3558,7 @@ ZPL_DEF void zpl_platform_set_controller_vibration(zpl_platform *p, isize index,
 ZPL_DEF b32 zpl_platform_has_clipboard_text(zpl_platform *p);
 ZPL_DEF void zpl_platform_set_clipboard_text(zpl_platform *p, char const *str);
 ZPL_DEF char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a);
+ZPL_DEF u32  zpl_platform_get_scancode(zpl_platform *p, zplKeyType key);
 ZPL_DEF void zpl_platform_set_window_position(zpl_platform *p, i32 x, i32 y);
 ZPL_DEF void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) ZPL_PRINTF_ARGS(2);
 ZPL_DEF void zpl_platform_toggle_fullscreen(zpl_platform *p, b32 fullscreen_desktop);
@@ -12577,7 +12578,8 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
         rid[0].usUsagePage = 0x01;
         rid[0].usUsage = 0x06;
         rid[0].dwFlags =
-            0x00000030 /*RIDEV_NOLEGACY*/; // NOTE(bill): Do not generate legacy messages such as WM_KEYDOWN
+            0x00002000; /*RIDEV_DEVNOTIFY*/
+            //0x00000030 /*RIDEV_NOLEGACY*/; // NOTE(bill): Do not generate legacy messages such as WM_KEYDOWN
         rid[0].hwndTarget = hWnd;
 
         // NOTE(bill): Mouse
@@ -12605,13 +12607,16 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
         platform->quit_requested = true;
     } break;
 
+    case WM_CHAR:
     case WM_UNICHAR: {
         if (window_has_focus) {
             if (wParam == '\r') { wParam = '\n'; }
             // TODO(bill): Does this need to be thread-safe?
-            platform->char_buffer[platform->char_buffer_count++] = cast(Rune) wParam;
+            b32 shift_down = platform->key_modifiers.shift == ZPL_KEY_DOWN;
+            platform->char_buffer[platform->char_buffer_count++] = cast(Rune) (shift_down ? wParam + ('a' - 'A') : wParam);
         }
     } break;
+
 
     case WM_INPUT: {
         RAWINPUT raw = { 0 };
@@ -13056,6 +13061,7 @@ void zpl_platform_update(zpl_platform *p) {
 
     // NOTE(bill): Set Key/Button states
     if (p->window_has_focus) {
+        p->char_buffer[0] = '\0';
         p->char_buffer_count = 0; // TODO(bill): Reset buffer count here or else where?
 
         // NOTE(bill): Need to update as the keys only get updates on events
@@ -13373,6 +13379,13 @@ char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a) {
     }
 
     return text;
+}
+
+u32  zpl_platform_get_scancode(zpl_platform *p, zplKeyType key) {
+    u32 vk = p->keys[key];
+
+    u32 scancode = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
+    return scancode;
 }
 
 // TODO: Refactor OS X part
