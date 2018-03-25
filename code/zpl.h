@@ -3466,6 +3466,8 @@ typedef struct zpl_platform {
     void *window_handle;
     i32 window_x, window_y;
     i32 window_width, window_height;
+    i32 outline_x, outline_y;
+    i32 outline_width, outline_height;
     u32 window_flags;
     b16 window_is_closed, window_has_focus;
 
@@ -12991,6 +12993,18 @@ void zpl_platform_update(zpl_platform *p) {
         ZPL_MASK_SET(p->window_flags, IsIconic(cast(HWND) p->window_handle) != 0, ZPL_WINDOW_MINIMIZED);
 
         p->window_has_focus = GetFocus( ) == cast(HWND) p->window_handle;
+
+        RECT outline_rect;
+        GetWindowRect(cast(HWND) p->window_handle, &outline_rect);
+        x = window_rect.left;
+        y = window_rect.top;
+        w = window_rect.right - window_rect.left;
+        h = window_rect.bottom - window_rect.top;
+
+        p->outline_x = x;
+        p->outline_y = y;
+        p->outline_width = w;
+        p->outline_height = h;
     }
 
     { // NOTE(bill): Set mouse position
