@@ -90,6 +90,10 @@ bool ImGui_ImplZPLGL3_Init(zpl_platform* platform, const char* glsl_version /*= 
     io.GetClipboardTextFn = ImGui_ImplZPLGL3_GetClipboardText;
     io.ClipboardUserData = NULL;
 
+#ifdef _WIN32
+    io.ImeWindowHandle = cast(HWND)platform->window_handle;
+#endif
+
     // TODO
     /*g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
@@ -344,16 +348,11 @@ void ImGui_ImplZPLGL3_InvalidateDeviceObjects()
     }
 }
 
-bool ImGui_ImplZPLGL3_ProcessEvent(zpl_platform *platform)
+bool ImGui_ImplZPLGL3_ProcessUpdate(zpl_platform *platform)
 {
     ImGuiIO& io = ImGui::GetIO();
     
     // TODO mouse wheel
-    {
-
-    }
-
-    // Mouse position
     {
 
     }

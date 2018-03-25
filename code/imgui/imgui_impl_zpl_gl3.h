@@ -14,7 +14,7 @@ IMGUI_API bool        ImGui_ImplZPLGL3_Init(zpl_platform* platform, const char* 
 IMGUI_API void        ImGui_ImplZPLGL3_Shutdown();
 IMGUI_API void        ImGui_ImplZPLGL3_NewFrame(zpl_platform* platform);
 IMGUI_API void        ImGui_ImplZPLGL3_RenderDrawData(ImDrawData* draw_data);
-IMGUI_API bool        ImGui_ImplZPLGL3_ProcessEvent(zpl_platform* platform);
+IMGUI_API bool        ImGui_ImplZPLGL3_ProcessUpdate(zpl_platform* platform);
 
 // Use if you want to reset your rendering device without losing ImGui state.
 IMGUI_API void        ImGui_ImplZPLGL3_InvalidateDeviceObjects();

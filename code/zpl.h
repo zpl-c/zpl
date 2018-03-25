@@ -12607,6 +12607,7 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
         platform->quit_requested = true;
     } break;
 
+    // TODO Improve to handle different keyboard layouts
     case WM_CHAR:
     case WM_UNICHAR: {
         if (window_has_focus) {
