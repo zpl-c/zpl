@@ -28,6 +28,7 @@ library     | category   | description
 zpl.h       | core       | Core library used as a foundation for the projects.
 zpl_math.h  | math       | Standalone math library that is gamedev friendly. (Integrated into zpl.h)
 zpl_image.h | graphics   | Image manipulation library &amp; GIF animation loader.
+zpl_opengl.h| graphics   | OpenGL Helpers library.
 zpl_sg.h    | misc       | Scene Graph library. (WIP)
 zpl_cull.h  | misc       | k-d tree culling library.
 

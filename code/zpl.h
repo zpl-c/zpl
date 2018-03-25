@@ -3356,7 +3356,7 @@ typedef enum zplKeyStateFlag {
     ZPL_KEY_STATE_RELEASED = ZPL_BIT(2)
 } zplKeyStateFlag;
 
-ZPL_DEF void zplKeyState_update(zplKeyState *s, b32 is_down);
+ZPL_DEF void zpl_key_state_update(zplKeyState *s, b32 is_down);
 
 typedef enum zplMouseButtonType {
     ZPL_MOUSEBUTTON_LEFT,
@@ -8039,7 +8039,7 @@ void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, v
         job.priority=priority;
 
         zpl_array_append(pool->jobs, job);
-        u32 jobid=zpl_array_count(pool->jobs)-1;
+        u32 jobid=(u32)zpl_array_count(pool->jobs)-1;
         zpl_array_append(pool->queue, jobid);
     }
     else {
