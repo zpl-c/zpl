@@ -32,7 +32,8 @@ GitHub:
 https://github.com/zpl-c/zpl
 
 Version History:
-1.0.0 - Initial port from https://raw.githubusercontent.com/gingerBill/gb/master/ZPL_gl.h
+  1.0.1 - Small fixes
+  1.0.0 - Initial port from https://raw.githubusercontent.com/gingerBill/gb/master/ZPL_gl.h
 
 Copyright 2017-2018 Dominik Madarász <zaklaus@outlook.com>
 
@@ -175,6 +176,16 @@ extern "C" {
 	glEnableVertexAttribArray(index);                                    \
 } while (0)
 
+#define zplgl_vert_ptr_aa_f32b(index, element_count) do {  \
+	glVertexAttribPointer(index,                                         \
+	                      element_count,                                 \
+	                      GL_FLOAT,                                      \
+	                      false,                                         \
+	                      0,                                             \
+	                      (void const *)0); \
+	glEnableVertexAttribArray(index);                                    \
+} while (0)
+
 #define zplgl_vert_ptr_aa_u8(index, element_count, Type, var_name) do {   \
 	glVertexAttribPointer(index,                                         \
 	                      element_count,                                 \
@@ -301,6 +312,8 @@ extern "C" {
     // NOTE(bill): usage_hint == (GL_STATIC_DRAW, GL_STREAM_DRAW, GL_DYNAMIC_DRAW)
     ZPLGL_DEF u32     zplgl_make_vbo(void const *data, isize size, i32 usage_hint);
     ZPLGL_DEF u32     zplgl_make_ebo(void const *data, isize size, i32 usage_hint);
+    ZPLGL_DEF u32     zplgl_make_vao(void);
+    
     ZPLGL_DEF zplgl_tbo zplgl_make_tbo(zplglBufferDataType data_type, i32 channel_count, void const *data, isize size, i32 usage_hint);
 
     ZPLGL_DEF void zplgl_vbo_copy(u32 vbo_handle, void *const data, isize size, isize offset);
@@ -835,6 +848,13 @@ zpl_inline u32 zplgl_make_vbo(void const *data, isize size, i32 usage_hint) {
 
 zpl_inline u32 zplgl_make_ebo(void const *data, isize size, i32 usage_hint) {
     return zplgl__make_buffer(size, data, GL_ELEMENT_ARRAY_BUFFER, usage_hint);
+}
+
+zpl_inline u32 zplgl_make_vao(void) {
+    u32 vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    return vao;
 }
 
 zpl_inline zplgl_tbo zplgl_make_tbo(zplglBufferDataType data_type, i32 channel_count, void const *data, isize size, i32 usage_hint) {
