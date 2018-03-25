@@ -26,7 +26,7 @@
 zpl_platform *g_platform = NULL;
 static f64       g_Time = 0;
 static bool         g_MousePressed[3] = { false, false, false };
-//static SDL_Cursor*  g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
+static void*  g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
 
 
 // OpenGL data
@@ -94,15 +94,15 @@ bool ImGui_ImplZPLGL3_Init(zpl_platform* platform, const char* glsl_version /*= 
     io.ImeWindowHandle = cast(HWND)platform->window_handle;
 #endif
 
-    // TODO
-    /*g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-    g_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-    g_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-    g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);*/
-
+#ifdef _WIN32
+    g_MouseCursors[ImGuiMouseCursor_Arrow] = LoadCursor(NULL, IDC_ARROW);
+    g_MouseCursors[ImGuiMouseCursor_TextInput] = LoadCursor(NULL, IDC_IBEAM);
+    g_MouseCursors[ImGuiMouseCursor_ResizeAll] = LoadCursor(NULL, IDC_SIZEALL);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNS] = LoadCursor(NULL, IDC_SIZENS);
+    g_MouseCursors[ImGuiMouseCursor_ResizeEW] = LoadCursor(NULL, IDC_SIZEWE);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = LoadCursor(NULL, IDC_SIZENESW);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = LoadCursor(NULL, IDC_SIZENWSE);
+#endif
 
     return true;
 }
@@ -416,6 +416,20 @@ void ImGui_ImplZPLGL3_NewFrame(zpl_platform *platform)
     g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
 
     io.MousePos = ImVec2((float)mx, (float)my);
+
+    if ((io.ConfigFlags & ImGuiConfigFlags_NoSetMouseCursor) == 0)
+    {
+        ImGuiMouseCursor cursor = ImGui::GetMouseCursor();
+        if (io.MouseDrawCursor || cursor == ImGuiMouseCursor_None)
+        {
+            zpl_platform_show_cursor(platform, false);
+        }
+        else
+        {
+            zpl_platform_set_cursor(platform, g_MouseCursors[cursor] ? g_MouseCursors[cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+            zpl_platform_show_cursor(platform, true);
+        }
+    }
 
     // Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
     ImGui::NewFrame();

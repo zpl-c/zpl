@@ -3509,6 +3509,7 @@ typedef struct zpl_platform {
     Rune char_buffer[256];
     isize char_buffer_count;
 
+    void *window_cursor;
     b32 mouse_clip;
     i32 mouse_x, mouse_y;
     i32 mouse_dx, mouse_dy;         // NOTE(bill): Not raw mouse movement
@@ -3553,6 +3554,7 @@ ZPL_DEF void zpl_platform_update(zpl_platform *p);
 ZPL_DEF void zpl_platform_display(zpl_platform *p);
 ZPL_DEF void zpl_platform_destroy(zpl_platform *p);
 ZPL_DEF void zpl_platform_show_cursor(zpl_platform *p, b32 show);
+ZPL_DEF void zpl_platform_set_cursor(zpl_platform *p, void *handle);
 ZPL_DEF void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y);
 ZPL_DEF void zpl_platform_set_controller_vibration(zpl_platform *p, isize index, f32 left_motor, f32 right_motor);
 ZPL_DEF b32 zpl_platform_has_clipboard_text(zpl_platform *p);
@@ -12748,6 +12750,8 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
     wc.lpszMenuName = NULL;
     wc.lpszClassName = L"zpl-win32-wndclass"; // TODO(bill): Is this enough?
     wc.hInstance = GetModuleHandleW(NULL);
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    p->window_cursor = (void*)wc.hCursor;
 
     if (RegisterClassExW(&wc) == 0) {
         MessageBoxW(NULL, L"Failed to register the window class", L"ERROR", MB_OK | MB_ICONEXCLAMATION);
@@ -13146,6 +13150,10 @@ void zpl_platform_update(zpl_platform *p) {
             switch (message.message) {
             case WM_QUIT: p->quit_requested = true; break;
 
+            case WM_SETCURSOR: {
+                SetCursor((HCURSOR)p->window_cursor);
+            } break;
+
             default:
                 TranslateMessage(&message);
                 DispatchMessageW(&message);
@@ -13187,6 +13195,12 @@ void zpl_platform_destroy(zpl_platform *p) {
 void zpl_platform_show_cursor(zpl_platform *p, b32 show) {
     zpl_unused(p);
     ShowCursor(show);
+}
+
+void zpl_platform_set_cursor(zpl_platform *p, void *handle) {
+    ZPL_ASSERT_NOT_NULL(p);
+    p->window_cursor = handle;
+    SetCursor((HCURSOR)handle);
 }
 
 void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y) {
