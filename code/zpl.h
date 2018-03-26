@@ -3211,7 +3211,7 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 #if defined(ZPL_PLATFORM)
 
 // NOTE(bill):
-// Coordiate system - +ve x - left to right
+// Coordinate system - +ve x - left to right
 //                  - +ve y - bottom to top
 //                  - Relative to window
 
@@ -3219,7 +3219,7 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 
 // Window Support - Complete
 // OS X Support (Not ported yet) - Missing:
-//     * Sofware framebuffer
+//     * Software framebuffer
 //     * (show|hide) window
 //     * show_cursor
 //     * toggle (fullscreen|borderless)
@@ -12614,9 +12614,8 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
     case WM_UNICHAR: {
         if (window_has_focus) {
             if (wParam == '\r') { wParam = '\n'; }
-            // TODO(bill): Does this need to be thread-safe?
-            b32 shift_down = platform->key_modifiers.shift == ZPL_KEY_DOWN;
-            platform->char_buffer[platform->char_buffer_count++] = cast(Rune) (shift_down ? wParam + ('a' - 'A') : wParam);
+            
+            platform->char_buffer[platform->char_buffer_count++] = cast(Rune) wParam;
         }
     } break;
 
