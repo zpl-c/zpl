@@ -3511,6 +3511,7 @@ typedef struct zpl_platform {
 
     void *window_cursor;
     b32 mouse_clip;
+    b32 mouse_outside;
     i32 mouse_x, mouse_y;
     i32 mouse_dx, mouse_dy;         // NOTE(bill): Not raw mouse movement
     i32 mouse_raw_dx, mouse_raw_dy; // NOTE(bill): Raw mouse movement
@@ -13059,7 +13060,13 @@ void zpl_platform_update(zpl_platform *p) {
                 update = true;
             }
 
-            if (update) { zpl_platform_set_mouse_position(p, x, y); }
+            if (update) { 
+                zpl_platform_set_mouse_position(p, x, y); 
+                p->mouse_outside = true;
+            }
+            else {
+                p->mouse_outside = false;
+            }
         }
     }
 

@@ -405,7 +405,6 @@ void ImGui_ImplZPLGL3_NewFrame(zpl_platform *platform)
     int w = platform->outline_width, h = platform->window_height;
     int display_w=platform->window_width, display_h=platform->window_height;
 
-    // TODO figure this out
     io.DisplaySize = ImVec2((float)w, (float)h);
     io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
 
