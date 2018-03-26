@@ -21,6 +21,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.6.0 - Several significant changes made to the repository
   6.5.0 - Ported platform layer from https://github.com/gingerBill/gb/
   6.4.1 - Use zpl_strlen in zpl_strdup
   6.4.0 - Deprecated zpl_buffer_free and added zpl_array_end, zpl_buffer_end
