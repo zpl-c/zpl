@@ -310,25 +310,30 @@ extern "C" {
     } zplgl_tbo;
 
     // NOTE(bill): usage_hint == (GL_STATIC_DRAW, GL_STREAM_DRAW, GL_DYNAMIC_DRAW)
-    ZPLGL_DEF u32     zplgl_make_vbo(void const *data, isize size, i32 usage_hint);
-    ZPLGL_DEF u32     zplgl_make_ebo(void const *data, isize size, i32 usage_hint);
-    ZPLGL_DEF u32     zplgl_make_vao(void);
+    // NOTE(zaklaus): ssbo_usage_hint == (GL_DYNAMIC_COPY, ...)
+    ZPLGL_DEF u32 zplgl_make_vbo(void const *data, isize size, i32 usage_hint);
+    ZPLGL_DEF u32 zplgl_make_ebo(void const *data, isize size, i32 usage_hint);
+    ZPLGL_DEF u32 zplgl_make_ssbo(void const *data, isize size, i32 ssbo_usage_hint);
+    ZPLGL_DEF u32 zplgl_make_vao(void);
     
     ZPLGL_DEF zplgl_tbo zplgl_make_tbo(zplglBufferDataType data_type, i32 channel_count, void const *data, isize size, i32 usage_hint);
 
     ZPLGL_DEF void zplgl_vbo_copy(u32 vbo_handle, void *const data, isize size, isize offset);
     ZPLGL_DEF void zplgl_ebo_copy(u32 ebo_handle, void *const data, isize size, isize offset);
+    ZPLGL_DEF void zplgl_ssbo_copy(u32 ssbo_handle, void *const data, isize size, isize offset);
     ZPLGL_DEF void zplgl_tbo_copy(zplgl_tbo tbo, void *const data, isize size, isize offset);
 
 
 
     ZPLGL_DEF void zplgl_bind_vbo(u32 vbo_handle);
     ZPLGL_DEF void zplgl_bind_ebo(u32 ebo_handle);
+    ZPLGL_DEF void zplgl_bind_ssbo(u32 ssbo_handle);
     ZPLGL_DEF void zplgl_bind_tbo(zplgl_tbo tbo, i32 sampler_handle, i32 tex_unit);
 
     // NOTE(bill): access = GL_WRITE_ONLY, etc.
     ZPLGL_DEF void *zplgl_map_vbo(u32 vbo_handle, i32 access);
     ZPLGL_DEF void *zplgl_map_ebo(u32 ebo_handle, i32 access);
+    ZPLGL_DEF void *zplgl_map_ssbo(u32 ssbo_handle, i32 access);
     ZPLGL_DEF void zplgl_unmap_vbo(void);
     ZPLGL_DEF void zplgl_unmap_ebo(void);
 
@@ -367,6 +372,10 @@ extern "C" {
 #define ZPLGL_MAX_UNIFORM_COUNT 32
 #endif
 
+#ifndef ZPLGL_MAX_STORAGE_BLOCK_COUNT
+#define ZPLGL_MAX_STORAGE_BLOCK_COUNT 32
+#endif
+
     typedef struct zplgl_shader {
         u32 shaders[ZPLGL_SHADER_COUNT];
         u32 program;
@@ -374,6 +383,10 @@ extern "C" {
         i32   uniform_locs[ZPLGL_MAX_UNIFORM_COUNT];
         char *uniform_names[ZPLGL_MAX_UNIFORM_COUNT];
         i32   uniform_count;
+
+        i32   sblock_locs[ZPLGL_MAX_STORAGE_BLOCK_COUNT];
+        char *sblock_names[ZPLGL_MAX_STORAGE_BLOCK_COUNT];
+        i32   sblock_count;
 
         u32   type_flags;
 
@@ -401,6 +414,8 @@ extern "C" {
     ZPLGL_DEF b32  zplgl_is_shader_in_use(zplgl_shader *shader);
 
     ZPLGL_DEF i32 zplgl_get_uniform(zplgl_shader *shader, char const *name);
+    ZPLGL_DEF i32 zplgl_get_storage_block(zplgl_shader *s, char const *name);
+    ZPLGL_DEF void zplgl_bind_ssbo_storage_block(zplgl_shader *s, i32 binding_point, i32 block_index, i32 ssbo_handle);
 
     ZPLGL_DEF void zplgl_set_uniform_int(zplgl_shader *s, char const *name, i32 i);
     ZPLGL_DEF void zplgl_set_uniform_float(zplgl_shader *s, char const *name, f32 f);
@@ -850,6 +865,10 @@ zpl_inline u32 zplgl_make_ebo(void const *data, isize size, i32 usage_hint) {
     return zplgl__make_buffer(size, data, GL_ELEMENT_ARRAY_BUFFER, usage_hint);
 }
 
+zpl_inline u32 zplgl_make_ssbo(void const *data, isize size, i32 ssbo_usage_hint) {
+    return zplgl__make_buffer(size, data, GL_SHADER_STORAGE_BUFFER, ssbo_usage_hint);
+}
+
 zpl_inline u32 zplgl_make_vao(void) {
     u32 vao;
     glGenVertexArrays(1, &vao);
@@ -878,12 +897,17 @@ zpl_inline void zplgl_ebo_copy(u32 ebo_handle, void *const data, isize size, isi
     zplgl__buffer_copy(ebo_handle, GL_ELEMENT_ARRAY_BUFFER, data, size, offset);
 }
 
+zpl_inline void zplgl_ssbo_copy(u32 ssbo_handle, void *const data, isize size, isize offset) {
+    zplgl__buffer_copy(ssbo_handle, GL_SHADER_STORAGE_BUFFER, data, size, offset);
+}
+
 zpl_inline void zplgl_tbo_copy(zplgl_tbo tbo, void *const data, isize size, isize offset) {
     zplgl__buffer_copy(tbo.buffer_obj_handle, GL_TEXTURE_BUFFER, data, size, offset);
 }
 
 zpl_inline void zplgl_bind_vbo(u32 vbo_handle) { glBindBuffer(GL_ARRAY_BUFFER, vbo_handle); }
 zpl_inline void zplgl_bind_ebo(u32 ebo_handle) { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle); }
+zpl_inline void zplgl_bind_ssbo(u32 ssbo_handle) { glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_handle); }
 
 zpl_inline void zplgl_bind_tbo(zplgl_tbo tbo, i32 sampler_handle, i32 tex_unit) {
     glActiveTexture(GL_TEXTURE0 + tex_unit);
@@ -1149,6 +1173,29 @@ i32 zplgl_get_uniform(zplgl_shader *s, char const *name) {
     return loc;
 }
 
+i32 zplgl_get_storage_block(zplgl_shader *s, char const *name) {
+    i32 i, loc = -1;
+    for (i = 0; i < s->sblock_count; i++) {
+        if (zpl_strcmp(s->sblock_names[i], name) == 0) {
+            return s->sblock_locs[i];
+        }
+    }
+
+    ZPL_ASSERT_MSG(s->sblock_count < ZPLGL_MAX_STORAGE_BLOCK_COUNT,
+        "Storage block array for shader is full");
+
+    loc = glGetProgramResourceIndex(s->program, GL_SHADER_STORAGE_BLOCK, name);
+    s->sblock_names[s->sblock_count] = zpl_alloc_str(zpl_heap(), name);
+    s->sblock_locs[s->sblock_count] = loc;
+    s->sblock_count++;
+
+    return loc;
+}
+
+void zplgl_bind_ssbo_storage_block(zplgl_shader *s, i32 binding_point, i32 block_index, i32 ssbo_handle) {
+    glShaderStorageBlockBinding(s->program, block_index, binding_point);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding_point, ssbo_handle);
+}
 
 
 zpl_inline void zplgl_set_uniform_int(zplgl_shader *s, char const *name, i32 i) {

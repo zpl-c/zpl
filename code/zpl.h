@@ -10,7 +10,6 @@ Usage:
 
   To make use of platform layer, define ZPL_PLATFORM, like:
 
-  #define ZPL_IMPLEMENTATION
   #define ZPL_PLATFORM
   #include "zpl.h"
 
