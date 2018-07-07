@@ -11,3 +11,4 @@ include/quick.c
 tags
 
 .vscode
+.vs

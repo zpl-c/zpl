@@ -20,6 +20,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  6.7.0 - Several fixes and added switches
   6.6.0 - Several significant changes made to the repository
   6.5.0 - Ported platform layer from https://github.com/gingerBill/gb/
   6.4.1 - Use zpl_strlen in zpl_strdup
@@ -325,6 +326,8 @@ Version History:
   #include <stdio.h>
   #include <direct.h> // TODO: remove and use native winapi methods
 
+  #define ZPL_WINMAIN() int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+
   #if !defined(ZPL_NO_WINDOWS_H)
     #define NOMINMAX            1
     #define WIN32_LEAN_AND_MEAN 1
@@ -338,7 +341,10 @@ Version History:
   #endif
 
   #include <malloc.h> // NOTE: _aligned_*()
+
+#if !defined(ZPL_NO_SIMD)
   #include <intrin.h>
+#endif
 
     // TODO(ZaKlaus): Find a better way to get this flag in MinGW.
   #if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
@@ -346,6 +352,8 @@ Version History:
   #endif
 
 #else
+
+  #define ZPL_WINMAIN int main(void)  
 
   #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
     #include <pthread.h>
@@ -375,6 +383,7 @@ Version History:
     #include <spawn.h>
   #endif
 
+#if !defined(ZPL_NO_SIMD)
   #if !defined(ZPL_SYSTEM_ANDROID) && !defined(ZPL_SYSTEM_IOS)
     #if !defined(ZPL_SYSTEM_EMSCRIPTEN)
       #include <emmintrin.h>
@@ -384,6 +393,7 @@ Version History:
       #include <sched.h>
     #endif
   #endif
+#endif
 
 #endif
 
@@ -8559,12 +8569,10 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             dirpath=zpl_string_appendc(dirpath, "/");
             dirpath=zpl_string_appendc(dirpath, dir->d_name);
 
-            if ((cd = opendir(dirpath)) == NULL) {
-                *output=zpl_string_appendc(*output, dirpath);
-                *output=zpl_string_appendc(*output, "\n");
-            }
+            *output=zpl_string_appendc(*output, dirpath);
+            *output=zpl_string_appendc(*output, "\n");
 
-            if (recurse) {
+            if (recurse && (cd = opendir(dirpath)) != NULL) {
                 zpl__file_direntry(alloc, dirpath, output, recurse);
             }
             zpl_string_free(dirpath);
@@ -8606,11 +8614,10 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             dirpath=zpl_string_appendc(dirpath, "\\");
             dirpath=zpl_string_appendc(dirpath, filename);
 
-            if (!(data.attrib & _A_SUBDIR)) {
-                *output=zpl_string_appendc(*output, dirpath);
-                *output=zpl_string_appendc(*output, "\n");
-            }
-            else if (recurse) {
+            *output=zpl_string_appendc(*output, dirpath);
+            *output=zpl_string_appendc(*output, "\n");
+            
+            if (recurse && (data.attrib & _A_SUBDIR)) {
                 zpl__file_direntry(alloc, dirpath, output, recurse);
             }
 
