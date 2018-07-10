@@ -52,17 +52,18 @@ typedef enum zpljNameStyle {
 #define zpl_json_object_t zpl_json_object
 typedef struct zpl_json_object {
     zpl_allocator backing;
-    u8 name_style;
     char *name;
-    u8 type;
+    u8 type : 6;
+    u8 name_style : 2;
     u8 props;
     b32 cfg_mode;
-    zpl_array(struct zpl_json_object) nodes;
-
+    
     union {
-        char *string;
+        
         zpl_array(struct zpl_json_object) elements;
+        zpl_array(struct zpl_json_object) nodes;
         i64 integer;
+        char *string;
         struct {
             f64 real;
             i64 base;
@@ -665,10 +666,10 @@ zpl_inline char *zpl__json_trim(char *str) {
 }
 
 zpl_inline b32 zpl__json_is_control_char(char c) {
-    return (c == '"' || c == '\\' || c == '/' || c == 'b' || c == 'f' || c == 'n' || c == 'r' || c == 't');
+    return !!strchr("\"\\/bfnrt", c);
 }
 
-zpl_inline b32 zpl__json_is_special_char(char c) { return (c == '<' || c == '>' || c == ':' || c == '/'); }
+zpl_inline b32 zpl__json_is_special_char(char c) { return !!strchr("<>:/", c); }
 
 #define jx(x) !zpl_char_is_hex_digit(str[x])
 zpl_inline b32 zpl__json_validate_name(char *str, char *err) {
