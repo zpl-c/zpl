@@ -55,8 +55,8 @@ typedef struct zpl_json_object {
     char *name;
     u8 type : 6;
     u8 name_style : 2;
-    u8 props;
-    b32 cfg_mode;
+    u8 props : 7;
+    u8 cfg_mode : 1;
     
     union {
         
@@ -66,12 +66,11 @@ typedef struct zpl_json_object {
         char *string;
         struct {
             f64 real;
-            i64 base;
-            i64 base2;
-            i64 exp;
-            b32 exp_neg;
-            b32 lead_digit;
-            u8 frac;
+            i32 base;
+            i32 base2;
+            i32 exp;
+            u8 exp_neg : 1;
+            u8 lead_digit : 1;
         };
         u8 constant;
     };
@@ -443,7 +442,6 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
         e = b;
 
         isize ib = 0;
-        u8 frac = 0;
         char buf[16] = { 0 };
 
         /**/ if (*e == '+')
@@ -459,7 +457,6 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
 
             do {
                 buf[ib++] = *e;
-                ++frac;
             } while (zpl_char_is_digit(*++e));
         } else {
             if (*e == '0' && (*(e + 1) == 'x' || *(e + 1) == 'X')) { obj->props = ZPL_JSON_PROPS_IS_HEX; }
@@ -473,14 +470,13 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
                 do {
                     buf[ib++] = *e;
                     ++step;
-                    ++frac;
                 } while (zpl_char_is_digit(*++e));
 
                 if (step < 2) { buf[ib++] = '0'; }
             }
         }
 
-        i64 exp = 0;
+        i32 exp = 0;
         f32 eb = 10;
         char expbuf[6] = { 0 };
         isize expi = 0;
@@ -495,7 +491,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
                 while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
             }
 
-            exp = zpl_str_to_i64(expbuf, NULL, 10);
+            exp = (i32)zpl_str_to_i64(expbuf, NULL, 10);
         }
 
         if (*e == '\0') {
@@ -509,17 +505,14 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
             while (--exp > 0) { obj->integer *= (i64)eb; }
         } else {
             obj->real = zpl_str_to_f64(buf, 0);
-            obj->frac = frac - 1;
 
-            isize qs = zpl_strlen(buf) + 1;
-            char *q = (char *)zpl_malloc(qs), *qp = q, *qp2 = q;
-            zpl_memcopy(q, buf, qs);
+            char *q = buf, *qp = q, *qp2 = q;
             while (*qp != '.') ++qp;
             *qp = '\0';
             qp2 = qp + 1;
 
-            obj->base = zpl_str_to_i64(q, 0, 0);
-            obj->base2 = zpl_str_to_i64(qp2, 0, 0);
+            obj->base = (i32)zpl_str_to_i64(q, 0, 0);
+            obj->base2 = (i32)zpl_str_to_i64(qp2, 0, 0);
 
             if (exp) {
                 obj->exp = exp;
