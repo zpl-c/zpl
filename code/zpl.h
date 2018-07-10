@@ -213,6 +213,14 @@ extern "C" {
 #endif
 #endif
 
+#ifdef ZPL_IMPL
+#define ZPL_IMPLEMENTATION
+#endif
+
+#ifdef ZPL_DEFINE
+#define ZPL_IMPLEMENTATION
+#endif
+
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
     defined(__ppc64__) || defined(__aarch64__)
 #ifndef ZPL_ARCH_64_BIT
@@ -13634,7 +13642,7 @@ ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
 
 #endif // ZPL_IMPLEMENTATION
 
-//<<_macros.c>>
+//<<_header.c>>
 //<<_mem.c>>
 //<<_threads.c>>
 //<<_sort.c>>

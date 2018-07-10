@@ -20,6 +20,14 @@
 #endif
 #endif
 
+#ifdef ZPL_IMPL
+#define ZPL_IMPLEMENTATION
+#endif
+
+#ifdef ZPL_DEFINE
+#define ZPL_IMPLEMENTATION
+#endif
+
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
     defined(__ppc64__) || defined(__aarch64__)
 #ifndef ZPL_ARCH_64_BIT

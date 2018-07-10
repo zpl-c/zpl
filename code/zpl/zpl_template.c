@@ -233,7 +233,7 @@ extern "C" {
 
 #endif // ZPL_IMPLEMENTATION
 
-//<<_macros.c>>
+//<<_header.c>>
 //<<_mem.c>>
 //<<_threads.c>>
 //<<_sort.c>>
