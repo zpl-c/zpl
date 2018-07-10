@@ -1,4 +1,3 @@
-
 #ifdef ZPL_THREADING
 
 // Atomics
