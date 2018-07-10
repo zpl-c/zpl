@@ -2579,6 +2579,7 @@ typedef enum zpljError {
     ZPL_JSON_ERROR_NONE,
     ZPL_JSON_ERROR_INVALID_NAME,
     ZPL_JSON_ERROR_INVALID_VALUE,
+    ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL,
 } zpljError;
 
 typedef enum zpljNameStyle {
@@ -9073,7 +9074,14 @@ char *zpl__json_trim(char *str);
 
 void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments,
                     u8 *err_code) {
-    ZPL_ASSERT(root && source);
+    
+    if (!root || !source)
+    {
+        ZPL_JSON_ASSERT;
+        if (err_code) *err_code = ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL;
+        return;
+    }
+    
     zpl_unused(len);
 
     char *dest = source;
