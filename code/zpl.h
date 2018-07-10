@@ -583,16 +583,16 @@ typedef b8 bool;
 #define I64_MAX 0x7fffffffffffffffll
 
 #if defined(ZPL_ARCH_32_BIT)
-#define USIZE_MIX U32_MIN
+#define USIZE_MIN U32_MIN
 #define USIZE_MAX U32_MAX
 
-#define ISIZE_MIX S32_MIN
+#define ISIZE_MIN S32_MIN
 #define ISIZE_MAX S32_MAX
 #elif defined(ZPL_ARCH_64_BIT)
-#define USIZE_MIX U64_MIN
+#define USIZE_MIN U64_MIN
 #define USIZE_MAX U64_MAX
 
-#define ISIZE_MIX I64_MIN
+#define ISIZE_MIN I64_MIN
 #define ISIZE_MAX I64_MAX
 #else
 #error Unknown architecture size. This library only supports 32 bit and 64 bit architectures.
