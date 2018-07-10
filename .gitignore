@@ -1,6 +1,7 @@
 # project files & folders
 build
 build.*
+!build.py
 include/project.4coder
 include/build.sh
 include/quick.c
