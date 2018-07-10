@@ -414,6 +414,7 @@ extern "C" {
 #include <sys/time.h>
 #include <sys/types.h>
 #include <time.h>
+#include <string.h>
 #include <unistd.h>
 
 #if !defined(ZPL_SYSTEM_ANDROID)
