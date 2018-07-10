@@ -202,8 +202,8 @@ typedef struct zpl_affinity {
     b32 is_accurate;
     isize core_count;
     isize thread_count;
-#define zpl_WIN32_MAXHREADS (8 * zpl_size_of(usize))
-    usize core_masks[zpl_WIN32_MAXHREADS];
+#define ZPL_WIN32_MAX_THREADS (8 * zpl_size_of(usize))
+    usize core_masks[ZPL_WIN32_MAX_THREADS];
 
 } zpl_affinity;
 
@@ -1017,10 +1017,10 @@ void zpl_affinity_init(zpl_affinity *a) {
                     isize thread = zpl_count_set_bits(processor_info->ProcessorMask);
                     if (thread == 0) {
                         a->is_accurate = false;
-                    } else if (a->thread_count + thread > zpl_WIN32_MAXHREADS) {
+                    } else if (a->thread_count + thread > ZPL_WIN32_MAX_THREADS) {
                         a->is_accurate = false;
                     } else {
-                        ZPL_ASSERT(a->core_count <= a->thread_count && a->thread_count < zpl_WIN32_MAXHREADS);
+                        ZPL_ASSERT(a->core_count <= a->thread_count && a->thread_count < ZPL_WIN32_MAX_THREADS);
                         a->core_masks[a->core_count++] = processor_info->ProcessorMask;
                         a->thread_count += thread;
                     }
