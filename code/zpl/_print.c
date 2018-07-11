@@ -290,9 +290,9 @@ zpl_no_inline isize zpl_snprintf_va(char *text, isize max_len, char const *fmt, 
             int width = va_arg(va, int);
             if (width < 0) {
                 info.flags |= ZPL_FMT_MINUS;
-                info.width = -info.width;
+                info.width = -width;
             } else {
-                info.width = -info.width;
+                info.width = width;
             }
             fmt++;
         } else {

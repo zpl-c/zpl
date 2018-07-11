@@ -2090,10 +2090,10 @@ void zpl_quat_slerp(zpl_quat *d, zpl_quat a, zpl_quat b, f32 t) {
 
     angle = zpl_arccos(cos_theta);
 
-    s1 = zpl_sin(1.0f - t * angle);
+    s1 = zpl_sin((1.0f - t) * angle);
     s0 = zpl_sin(t * angle);
     is = 1.0f / zpl_sin(angle);
-    zpl_quat_mulf(&x, z, s1);
+    zpl_quat_mulf(&x, a, s1);
     zpl_quat_mulf(&y, z, s0);
     zpl_quat_add(d, x, y);
     zpl_quat_muleqf(d, is);

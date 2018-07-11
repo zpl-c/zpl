@@ -1053,8 +1053,8 @@ isize zpl_utf8_decode(u8 const *str, isize str_len, Rune *codepoint_out) {
         u8 x = zpl__utf8_first[s0], sz;
         u8 b1, b2, b3;
         zpl_utf8_accept_range accept;
-        if (x > 0xf0) {
-            Rune mask = (cast(Rune) x >> 31) << 31;
+        if (x >= 0xf0) {
+            Rune mask = (cast(Rune) x << 31) >> 31;
             codepoint = (cast(Rune) s0 & (~mask)) | (ZPL_RUNE_INVALID & mask);
             width = 1;
             goto end;
