@@ -11,7 +11,7 @@ int main(void) {
     zpl_json_object root = {0};
 
     u8 err;
-    zpl_json_parse(&root, fc.size, (char *const)fc.data, zpl_heap_allocator(), true, &err);
+    zpl_json_parse(&root, fc.size, (char const *)fc.data, zpl_heap_allocator(), true, &err);
 
     zpl_json_object *replace = NULL;
     isize index = zpl_json_find(&root, "replace_me", false, &replace);
@@ -132,15 +132,15 @@ typedef struct zpl_json_object {
     };
 } zpl_json_object;
 
-ZPL_DEF void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator a, b32 strip_comments,
+ZPL_DEF void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator a, b32 strip_comments,
                             u8 *err_code);
 ZPL_DEF void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent);
 ZPL_DEF void zpl_json_free(zpl_json_object *obj);
 
-ZPL_DEF isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl_json_object **node);
-ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char *const name, u8 type);
-ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type);
-ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type);
+ZPL_DEF isize zpl_json_find(zpl_json_object *obj, char const *name, b32 deep_search, zpl_json_object **node);
+ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char const *name, u8 type);
+ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char const *name, u8 type);
+ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, u8 type);
 
 ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
 ZPL_DEF char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
@@ -163,7 +163,7 @@ b32 zpl__json_is_control_char(char c);
 b32 zpl__json_is_assign_char(char c);
 b32 zpl__json_is_delim_char(char c);
 
-void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments,
+void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator_t a, b32 strip_comments,
                     u8 *err_code) {
     
     if (!root || !source)
@@ -175,7 +175,7 @@ void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_al
     
     zpl_unused(len);
 
-    char *dest = source;
+    char *dest = (char *)source;
 
     if (strip_comments) {
         b32 is_lit = false;
@@ -782,7 +782,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
     return p;
 }
 
-isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl_json_object **node)
+isize zpl_json_find(zpl_json_object *obj, char const *name, b32 deep_search, zpl_json_object **node)
 {
     if (obj->type != ZPL_JSON_TYPE_OBJECT)
     {
@@ -814,9 +814,9 @@ isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl
     return -1;
 }
 
-void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char *const name, u8 type)
+void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char const *name, u8 type)
 {
-    obj->name = name;
+    obj->name = (char *)name;
     obj->type = type;
     obj->backing = backing;
 
@@ -826,7 +826,7 @@ void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char *const
     }
 }
 
-zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type)
+zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char const *name, u8 type)
 {
     if (!obj || (obj->type != ZPL_JSON_TYPE_OBJECT && obj->type != ZPL_JSON_TYPE_ARRAY))
     {
@@ -847,7 +847,7 @@ zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const 
     return obj->nodes + index;
 }
 
-zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
+zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, u8 type)
 {
     if (!obj || (obj->type != ZPL_JSON_TYPE_OBJECT && obj->type != ZPL_JSON_TYPE_ARRAY))
     {

@@ -13,6 +13,7 @@ ZPL_DEF b32 zpl_char_is_alpha(char c);
 ZPL_DEF b32 zpl_char_is_alphanumeric(char c);
 ZPL_DEF i32 zpl_digit_to_int(char c);
 ZPL_DEF i32 zpl_hex_digit_to_int(char c);
+ZPL_DEF u8  zpl_char_to_hex_digit(char c);
 
 // NOTE: ASCII only
 ZPL_DEF void zpl_str_to_lower(char *str);
@@ -259,6 +260,17 @@ zpl_inline i32 zpl_hex_digit_to_int(char c) {
         return c - 'A' + 10;
     return -1;
 }
+
+zpl_inline u8 zpl_char_to_hex_digit(char c) {
+    if (c >= '0' && c <= '9')
+        return (u8)(c - '0');
+    if (c >= 'a' && c <= 'f')
+        return (u8)(c - 'a');
+    if (c >= 'A' && c <= 'F')
+        return (u8)(c - 'A');
+    return 0;
+}
+
 
 zpl_inline void zpl_str_to_lower(char *str) {
     if (!str) return;
