@@ -2690,6 +2690,7 @@ ZPL_DEF void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent);
 ZPL_DEF void zpl_json_free(zpl_json_object *obj);
 
 ZPL_DEF isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl_json_object **node);
+ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char *const name, u8 type);
 ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type);
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type);
 
@@ -9239,19 +9240,26 @@ void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_al
 void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last);
 
 void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
+    if (!o)
+        return;
+    
     zpl___ind(indent - 4);
     if (!o->cfg_mode)
         zpl_fprintf(f, "{\n");
     else {
         indent -= 4;
     }
-    isize cnt = zpl_array_count(o->nodes);
 
-    for (int i = 0; i < cnt; ++i) {
-        if (i < cnt - 1) {
-            zpl__json_write_value(f, o->nodes + i, o, indent, false, false);
-        } else {
-            zpl__json_write_value(f, o->nodes + i, o, indent, false, true);
+    if (o->nodes)
+    {
+        isize cnt = zpl_array_count(o->nodes);
+
+        for (int i = 0; i < cnt; ++i) {
+            if (i < cnt - 1) {
+                zpl__json_write_value(f, o->nodes + i, o, indent, false, false);
+            } else {
+                zpl__json_write_value(f, o->nodes + i, o, indent, false, true);
+            }
         }
     }
 
@@ -9790,6 +9798,18 @@ isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl
     return -1;
 }
 
+void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char *const name, u8 type)
+{
+    obj->name = name;
+    obj->type = type;
+    obj->backing = backing;
+
+    if (type == ZPL_JSON_TYPE_ARRAY || type == ZPL_JSON_TYPE_OBJECT)
+    {
+        zpl_array_init(obj->nodes, backing);
+    }
+}
+
 zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type)
 {
     if (!obj || (obj->type != ZPL_JSON_TYPE_OBJECT && obj->type != ZPL_JSON_TYPE_ARRAY))
@@ -9804,16 +9824,8 @@ zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const 
         return NULL;
 
     zpl_json_object o = {0};
+    zpl_json_init_node(&o, obj->backing, name, type);
     
-    o.name = name;
-    o.type = type;
-    o.backing = obj->backing;
-
-    if (type == ZPL_JSON_TYPE_ARRAY || type == ZPL_JSON_TYPE_OBJECT)
-    {
-        zpl_array_init(o.nodes, o.backing);
-    }
-
     zpl_array_append_at(obj->nodes, o, index);
 
     return obj->nodes + index;
