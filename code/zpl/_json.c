@@ -510,7 +510,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
         if (obj->type == ZPL_JSON_TYPE_INTEGER) {
             obj->integer = zpl_str_to_i64(buf, 0, 0);
 
-            while (--exp > 0) { obj->integer *= (i64)eb; }
+            while (exp-- > 0) { obj->integer *= (i64)eb; }
         } else {
             obj->real = zpl_str_to_f64(buf, 0);
 
@@ -528,7 +528,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
                 obj->props = ZPL_JSON_PROPS_IS_EXP;
             }
 
-            while (--exp > 0) { obj->real *= eb; }
+            while (exp-- > 0) { obj->real *= eb; }
         }
         p = e;
     } else if (*p == '[') {
