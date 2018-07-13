@@ -361,11 +361,7 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t
 #undef zpl___ind
 
 void zpl_json_free(zpl_json_object *obj) {
-    if (obj->type == ZPL_JSON_TYPE_ARRAY && obj->nodes) {
-        for (isize i = 0; i < zpl_array_count(obj->nodes); ++i) { zpl_json_free(obj->nodes + i); }
-
-        zpl_array_free(obj->nodes);
-    } else if (obj->type == ZPL_JSON_TYPE_OBJECT && obj->nodes) {
+    if ((obj->type == ZPL_JSON_TYPE_OBJECT || obj->type == ZPL_JSON_TYPE_ARRAY) && obj->nodes) {
         for (isize i = 0; i < zpl_array_count(obj->nodes); ++i) { zpl_json_free(obj->nodes + i); }
 
         zpl_array_free(obj->nodes);
