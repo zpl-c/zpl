@@ -2,20 +2,13 @@
 #include <zpl.h>
 
 int main(void) {
-
-    zpl_file_t file;
-    zpl_file_open(&file, "../data/test.json5");
-    isize file_size = zpl_file_size(&file);
-    char *content = (char *)zpl_malloc(file_size+1);
-    zpl_file_read(&file, content, file_size);
-    content[file_size] = 0;
-    zpl_file_close(&file);
-
+    zpl_file_contents fc;
+    fc = zpl_file_read_contents(zpl_heap(), true, "../data/test.json5");
 
     zpl_json_object root = {0};
 
     u8 err;
-    zpl_json_parse(&root, file_size, content, zpl_heap_allocator(), true, &err);
+    zpl_json_parse(&root, fc.size, (char *const)fc.data, zpl_heap_allocator(), true, &err);
 
     zpl_json_object *replace = NULL;
     isize index = zpl_json_find(&root, "replace_me", false, &replace);
@@ -45,6 +38,6 @@ int main(void) {
 
     zpl_json_free(&root);
 
-    zpl_mfree(content);
+    zpl_file_free_contents(&fc);
     return 0;
 }
