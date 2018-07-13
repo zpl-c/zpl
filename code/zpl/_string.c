@@ -30,6 +30,7 @@ ZPL_DEF char *zpl_strdup(zpl_allocator a, char *src, isize max_len);
 ZPL_DEF char *zpl_strncpy(char *dest, char const *source, isize len);
 ZPL_DEF isize zpl_strlcpy(char *dest, char const *source, isize len);
 ZPL_DEF char *zpl_strrev(char *str); // NOTE: ASCII only
+ZPL_DEF char *zpl_strchr(char *str, Rune c);
 
 ZPL_DEF char const *zpl_strtok(char *output, char const *src, char const *delimit);
 
@@ -410,6 +411,18 @@ zpl_inline char *zpl_strrev(char *str) {
         a++, b--;
     }
     return str;
+}
+
+zpl_inline char *zpl_strchr(char *str, Rune c) {
+    u8 c_u8 = (u8)c;
+
+    for (isize i = 0; i < zpl_strlen(str); i++)
+    {
+        if (*(str+i) == c_u8)
+            return str + i;
+    }
+
+    return NULL;
 }
 
 zpl_inline i32 zpl_strncmp(char const *s1, char const *s2, isize len) {

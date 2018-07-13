@@ -15,6 +15,7 @@ typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 // Use 0 if it's just the type instead.
 
 ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i16_cmp(isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_u8_cmp(isize offset));
 ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i32_cmp(isize offset));
 ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i64_cmp(isize offset));
 ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_isize_cmp(isize offset));
@@ -71,6 +72,7 @@ ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
         return &zpl__##Type##_cmp;                                                                                     \
     }
 
+ZPL__COMPARE_PROC(u8);
 ZPL__COMPARE_PROC(i16);
 ZPL__COMPARE_PROC(i32);
 ZPL__COMPARE_PROC(i64);

@@ -861,12 +861,12 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
 }
 
 zpl_inline b32 zpl__json_is_control_char(char c) {
-    return !!strchr("\"\\/bfnrt", c);
+    return !!zpl_strchr("\"\\/bfnrt", c);
 }
 
-zpl_inline b32 zpl__json_is_special_char(char c) { return !!strchr("<>:/", c); }
-zpl_inline b32 zpl__json_is_assign_char(char c) { return !!strchr(":=|", c); }
-zpl_inline b32 zpl__json_is_delim_char(char c) { return !!strchr(",|\n", c); }
+zpl_inline b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
+zpl_inline b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
+zpl_inline b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
 
 #define jx(x) !zpl_char_is_hex_digit(str[x])
 zpl_inline b32 zpl__json_validate_name(char *str, char *err) {
