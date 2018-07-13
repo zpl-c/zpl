@@ -20,6 +20,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
   8.10.2 - Fix zpl_strtok
   8.10.1 - Replace zpl_strchr by zpl_char_last_occurence
   8.10.0 - Added zpl_strchr
@@ -1643,7 +1644,7 @@ ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, char const *fmt, ...);
 //
 // Regex
 //
-// Based on https://github.com/gingerBill/zpl_/blob/master/zpl__regex.h
+// Based on https://github.com/gingerBill/zpl_/blob/master/gb_regex.h
 //
 /* 
 Supported Matching:
@@ -7376,7 +7377,7 @@ static int zpl_re__encode_escape(char code) {
 
 static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len, isize offset, isize *new_offset) {
     zplreError err = ZPL_RE_ERROR_NONE;
-    unsigned char buffer[256] = {0};
+    char buffer[256] = {0};
     isize buffer_len = 0, buffer_cap = zpl_size_of(buffer);
     b32 closed = 0;
     zplreOp op = ZPL_RE_OP_ANY_OF;
@@ -7394,8 +7395,8 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
             err = zpl_re__emit_ops(re, 2, (i32)op, (i32)buffer_len);
             if (err) break;
 
-            err = zpl_re__emit_ops_buffer(re, buffer_len, buffer);
-            if (buffer && err) break;
+            err = zpl_re__emit_ops_buffer(re, buffer_len, (const char*)buffer);
+            if (err) break;
             offset++;
             closed = 1;
             break;
@@ -7609,7 +7610,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                 last_buf_len = re->buf_len;
                 err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_EXACT_MATCH, (int)size);
                 if (err) return err;
-                err = zpl_re__emit_ops_buffer(re, size, (unsigned char const *)match_start);
+                err = zpl_re__emit_ops_buffer(re, size, (char const *)match_start);
                 if (err) return err;
             } break;
         }
@@ -7622,7 +7623,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
 zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len) {
     zplreError err;
     re->capture_count = 0;
-    re->buf = (unsigned char *)buffer;
+    re->buf = (char *)buffer;
     re->buf_len = 0;
     re->buf_cap = re->buf_len;
     re->can_realloc = 0;
@@ -7638,7 +7639,7 @@ zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern
 
     re->backing = backing;
     re->capture_count = 0;
-    re->buf = (unsigned char *)zpl_alloc(backing, cap);
+    re->buf = (char *)zpl_alloc(backing, cap);
     re->buf_len = 0;
     re->buf_cap = cap;
     re->can_realloc = 1;
