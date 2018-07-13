@@ -32,6 +32,15 @@ int main(void) {
         replace->name = "i_am_replaced ";
     }
 
+    zpl_json_object *first = zpl_json_add_at(&root, 0, "first", ZPL_JSON_TYPE_STRING);
+
+    if (first)
+    {
+        first->string = "I am first!";
+        first->assign_style = ZPL_JSON_ASSIGN_STYLE_EQUALS;
+    }
+    
+
     zpl_printf("Error code: %d\n", err);
 
     zpl_json_write(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), &root, 0);

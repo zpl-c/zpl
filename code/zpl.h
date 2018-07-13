@@ -1885,9 +1885,11 @@ ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element
 #define zpl_array_append_at(x, item, ind)                                                                              \
     do {                                                                                                               \
         zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
-        zpl_array_grow(x, zpl__ah->count + 1);                                                                         \
-        zpl_memcopy(x + ind + 1, x + ind, zpl_size_of(x[0]) * (zpl__ah->count - ind));                                 \
+        if (ind == zpl__ah->count) { zpl_array_append(x, item); break; }                                               \
+        if (zpl_array_capacity(x) < zpl_array_count(x) + 1) zpl_array_grow(x, 0);                                      \
+        zpl_memmove(&(x)[ind + 1], (x + ind), zpl_size_of(x[0]) * (zpl__ah->count - ind));                             \
         x[ind] = item;                                                                                                 \
+        zpl__ah->count++;                                                                                              \
     } while (0)
 
 #define zpl_array_appendv(x, items, item_count)                                                                        \
@@ -1903,7 +1905,7 @@ ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element
     do {                                                                                                               \
         zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
         ZPL_ASSERT(index < zpl__ah->count);                                                                            \
-        zpl_memcopy(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index));                           \
+        zpl_memmove(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index));                           \
         --zpl__ah->count;                                                                                              \
     } while (0)
 
@@ -2688,6 +2690,7 @@ ZPL_DEF void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent);
 ZPL_DEF void zpl_json_free(zpl_json_object *obj);
 
 ZPL_DEF isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl_json_object **node);
+ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type);
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type);
 
 ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
@@ -9787,7 +9790,7 @@ isize zpl_json_find(zpl_json_object *obj, char *const name, b32 deep_search, zpl
     return -1;
 }
 
-zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
+zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char *const name, u8 type)
 {
     if (!obj || (obj->type != ZPL_JSON_TYPE_OBJECT && obj->type != ZPL_JSON_TYPE_ARRAY))
     {
@@ -9795,6 +9798,9 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
     }
 
     if (!obj->nodes)
+        return NULL;
+
+    if (index < 0 || index > zpl_array_count(obj->nodes))
         return NULL;
 
     zpl_json_object o = {0};
@@ -9808,9 +9814,22 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
         zpl_array_init(o.nodes, o.backing);
     }
 
-    zpl_array_append(obj->nodes, o);
+    zpl_array_append_at(obj->nodes, o, index);
 
-    return zpl_array_end(obj->nodes);
+    return obj->nodes + index;
+}
+
+zpl_json_object *zpl_json_add(zpl_json_object *obj, char *const name, u8 type)
+{
+    if (!obj || (obj->type != ZPL_JSON_TYPE_OBJECT && obj->type != ZPL_JSON_TYPE_ARRAY))
+    {
+        return NULL;
+    }
+
+    if (!obj->nodes)
+        return NULL;
+
+    return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
 }
 
 zpl_inline char *zpl__json_trim(char *str, b32 skip_newline) {

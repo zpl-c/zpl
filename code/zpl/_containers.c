@@ -253,9 +253,11 @@ ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element
 #define zpl_array_append_at(x, item, ind)                                                                              \
     do {                                                                                                               \
         zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
-        zpl_array_grow(x, zpl__ah->count + 1);                                                                         \
-        zpl_memcopy(x + ind + 1, x + ind, zpl_size_of(x[0]) * (zpl__ah->count - ind));                                 \
+        if (ind == zpl__ah->count) { zpl_array_append(x, item); break; }                                               \
+        if (zpl_array_capacity(x) < zpl_array_count(x) + 1) zpl_array_grow(x, 0);                                      \
+        zpl_memmove(&(x)[ind + 1], (x + ind), zpl_size_of(x[0]) * (zpl__ah->count - ind));                             \
         x[ind] = item;                                                                                                 \
+        zpl__ah->count++;                                                                                              \
     } while (0)
 
 #define zpl_array_appendv(x, items, item_count)                                                                        \
@@ -271,7 +273,7 @@ ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element
     do {                                                                                                               \
         zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
         ZPL_ASSERT(index < zpl__ah->count);                                                                            \
-        zpl_memcopy(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index));                           \
+        zpl_memmove(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index));                           \
         --zpl__ah->count;                                                                                              \
     } while (0)
 
