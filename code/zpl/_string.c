@@ -18,6 +18,9 @@ ZPL_DEF i32 zpl_hex_digit_to_int(char c);
 ZPL_DEF void zpl_str_to_lower(char *str);
 ZPL_DEF void zpl_str_to_upper(char *str);
 
+ZPL_DEF char *zpl_str_trim(char *str, b32 skip_newline);
+ZPL_DEF char *zpl_str_skip(char *str, char c);
+
 ZPL_DEF isize zpl_strlen(char const *str);
 ZPL_DEF isize zpl_strnlen(char const *str, isize max_len);
 ZPL_DEF i32 zpl_strcmp(char const *s1, char const *s2);
@@ -475,6 +478,17 @@ zpl_inline char const *zpl_char_last_occurence(char const *s, char c) {
     } while (*s++);
 
     return result;
+}
+
+zpl_inline char *zpl_str_trim(char *str, b32 skip_newline)
+{
+    while (*str && zpl_char_is_space(*str) && (!skip_newline || (skip_newline && *str != '\n'))) { ++str; }
+    return str;
+}
+
+zpl_inline char *zpl_str_skip(char *str, char c) {
+    while (*str && *str != c) { ++str; }
+    return str;
 }
 
 zpl_inline void zpl_str_concat(char *dest, isize dest_len, char const *src_a, isize src_a_len, char const *src_b,
