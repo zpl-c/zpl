@@ -2,7 +2,7 @@
 //
 // Regex
 //
-// Based on https://github.com/gingerBill/zpl_/blob/master/zpl__regex.h
+// Based on https://github.com/gingerBill/zpl_/blob/master/gb_regex.h
 //
 /* 
 Supported Matching:
