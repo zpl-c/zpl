@@ -20,6 +20,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.8.4 - Add support for SJSON formatting http://bitsquid.blogspot.com/2009/10/simplified-json-notation.html
   6.8.3 - JSON5 exp fix
   6.8.2 - Bugfixes applied from gb
   6.8.1 - Performance improvements for JSON5 parser
