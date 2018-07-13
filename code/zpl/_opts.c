@@ -258,7 +258,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
         char *p = argv[i];
 
         if (*p) {
-            p = zpl__trim(p);
+            p = zpl__trim(p, false);
             if (*p == '-') {
                 zpl_opts_entry *t = 0;
                 b32 checkln = false;

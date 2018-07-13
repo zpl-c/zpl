@@ -89,7 +89,7 @@ ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_alloca
 // TODO: Make it generic
 #define zpl__trim zpl__json_trim
 #define zpl__skip zpl__json_skip
-ZPL_DEF char *zpl__json_trim(char *str);
+ZPL_DEF char *zpl__json_trim(char *str, b32 skip_newline);
 ZPL_DEF char *zpl__json_skip(char *str, char c);
 ZPL_DEF b32 zpl__json_validate_name(char *str, char *err);
 
@@ -104,7 +104,6 @@ ZPL_DEF b32 zpl__json_validate_name(char *str, char *err);
 b32 zpl__json_is_control_char(char c);
 b32 zpl__json_is_assign_char(char c);
 b32 zpl__json_is_delim_char(char c);
-char *zpl__json_trim(char *str);
 
 void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_allocator_t a, b32 strip_comments,
                     u8 *err_code) {
@@ -184,7 +183,7 @@ void zpl_json_parse(zpl_json_object *root, usize len, char *const source, zpl_al
     if (err_code) *err_code = ZPL_JSON_ERROR_NONE;
     zpl_json_object root_ = { 0 };
 
-    dest = zpl__json_trim(dest);
+    dest = zpl__json_trim(dest, false);
 
     if (*dest != '{' || *dest != '[') { root_.cfg_mode = true; }
 
@@ -340,7 +339,7 @@ char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a,
     obj->backing = a;
 
     while (*p) {
-        p = zpl__json_trim(p);
+        p = zpl__json_trim(p, false);
 
         zpl_json_object elem = { 0 };
         p = zpl__json_parse_value(&elem, p, a, err_code);
@@ -349,7 +348,7 @@ char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a,
 
         zpl_array_append(obj->elements, elem);
 
-        p = zpl__json_trim(p);
+        p = zpl__json_trim(p, false);
 
         if (*p == ',') {
             ++p;
@@ -534,7 +533,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
         }
         p = e;
     } else if (*p == '[') {
-        p = zpl__json_trim(p + 1);
+        p = zpl__json_trim(p + 1, false);
         if (*p == ']') return p;
         p = zpl__json_parse_array(obj, p, a, err_code);
 
@@ -542,7 +541,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
 
         ++p;
     } else if (*p == '{') {
-        p = zpl__json_trim(p + 1);
+        p = zpl__json_trim(p + 1, false);
         p = zpl__json_parse_object(obj, p, a, err_code);
 
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
@@ -562,12 +561,12 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
     zpl_array_init(obj->nodes, a);
     obj->backing = a;
 
-    p = zpl__json_trim(p);
+    p = zpl__json_trim(p, false);
     if (*p == '{') { ++p; }
 
     while (*p) {
         zpl_json_object node = { 0 };
-        p = zpl__json_trim(p);
+        p = zpl__json_trim(p, false);
         if (*p == '}') return p;
 
         if (*p == '"' || *p == '\'') {
@@ -584,7 +583,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
             *e = '\0';
 
             p = ++e;
-            p = zpl__json_trim(p);
+            p = zpl__json_trim(p, false);
 
             if (*p && !zpl__json_is_assign_char(*p)) {
                 ZPL_JSON_ASSERT;
@@ -611,7 +610,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
                         if (*e && (!zpl_char_is_space(*e) || zpl__json_is_assign_char(*e))) { break; }
                         ++e;
                     }
-                    e = zpl__json_trim(e);
+                    e = zpl__json_trim(e, false);
                     p = e;
 
                     if (*p && !zpl__json_is_assign_char(*p)) {
@@ -634,7 +633,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
             return NULL;
         }
 
-        p = zpl__json_trim(p + 1);
+        p = zpl__json_trim(p + 1, false);
         p = zpl__json_parse_value(&node, p, a, err_code);
 
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
@@ -643,12 +642,10 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
 
         zpl_array_append(obj->nodes, node);
 
-        p = zpl__json_trim(p);
+        p = zpl__json_trim(p, true);
 
-        if (zpl__json_is_delim_char(*p) || zpl__json_is_delim_char(*(p-1))) {
-            if (!zpl__json_is_delim_char(*p) && zpl__json_is_delim_char(*(p-1)))
-                p -= 1;
-            p = zpl__json_trim(p + 1);
+        if (zpl__json_is_delim_char(*p)) {
+            p = zpl__json_trim(p + 1, false);
             if (*p == '\0' || *p == '}')
                 return p;
             else
@@ -664,8 +661,8 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
     return p;
 }
 
-zpl_inline char *zpl__json_trim(char *str) {
-    while (*str && zpl_char_is_space(*str)) { ++str; }
+zpl_inline char *zpl__json_trim(char *str, b32 skip_newline) {
+    while (*str && zpl_char_is_space(*str) && (!skip_newline || (skip_newline && *str != '\n'))) { ++str; }
 
     return str;
 }
