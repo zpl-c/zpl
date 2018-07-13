@@ -20,6 +20,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.10.1 - Replace zpl_strchr by zpl_char_last_occurence
   8.10.0 - Added zpl_strchr
   8.9.0  - API improvements for JSON5 parser
   8.8.4  - Add support for SJSON formatting http://bitsquid.blogspot.com/2009/10/simplified-json-notation.html
