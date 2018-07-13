@@ -424,7 +424,7 @@ zpl_inline i32 zpl_strncmp(char const *s1, char const *s2, isize len) {
 }
 
 zpl_inline char const *zpl_strtok(char *output, char const *src, char const *delimit) {
-    while (*src && zpl_char_first_occurence(delimit, *src) != NULL) *output++ = *src++;
+    while (*src && zpl_char_first_occurence(delimit, *src) == NULL) *output++ = *src++;
 
     *output = 0;
     return *src ? src + 1 : src;
