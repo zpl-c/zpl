@@ -28,7 +28,7 @@ int main(void) {
         if (!ok) break;
         p += offset;
 
-        zpl_printf("Matched? %s! Offset: %d, String Length: %d\n", ok ? "Yes" : "No", offset, str_len);
+        zpl_printf("Matched? %s! Offset: %d, String Length: %d\n", ok ? "Yes" : "No", offset, end - p);
 
         for (isize i = 0; i < re.capture_count; i++)
         {
