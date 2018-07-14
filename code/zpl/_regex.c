@@ -67,7 +67,7 @@ ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const 
 ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len);
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
 ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
-ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count);
+ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
 
 //!!
 
@@ -782,17 +782,17 @@ zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern
 
 isize zpl_re_capture_count(zpl_re *re) { return re->capture_count; }
 
-b32 zpl_re_match(zpl_re *re, char const *str, isize len, zpl_re_capture *captures, isize max_capture_count) {
+b32 zpl_re_match(zpl_re *re, char const *str, isize len, zpl_re_capture *captures, isize max_capture_count, isize *offset) {
 	if (re && re->buf_len > 0) {
 		if (re->buf[0] == ZPL_RE_OP_BEGINNING_OF_LINE) {
 			zpl_re_ctx c = zpl_re__exec(re, 0, str, len, 0, captures, max_capture_count);
-			if (c.offset >= 0 && c.offset <= len)   return 1;
+			if (c.offset >= 0 && c.offset <= len) { if (offset) *offset = c.offset; return 1; };
 			if (c.offset == ZPL_RE__INTERNAL_FAILURE) return 0;
 		} else {
 			isize i;
 			for (i = 0; i < len; i++) {
 				zpl_re_ctx c = zpl_re__exec(re, 0, str, len, i, captures, max_capture_count);
-				if (c.offset >= 0 && c.offset <= len)   return 1;
+				if (c.offset >= 0 && c.offset <= len) { if (offset) *offset = c.offset; return 1; };
 				if (c.offset == ZPL_RE__INTERNAL_FAILURE) return 0;
 			}
 		}
