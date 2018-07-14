@@ -417,7 +417,7 @@ static zpl_re_ctx zpl_re__exec(zpl_re *re, isize op, char const *str, isize str_
     while (c.op < re->buf_len) {
         c = zpl_re__exec_single(re, c.op, str, str_len, c.offset, captures, max_capture_count);
 
-        if (c.offset > str_len)
+        if (c.offset > str_len || c.offset == -1)
             break;
     }
 
