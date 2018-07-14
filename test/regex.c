@@ -7,7 +7,10 @@ int main(void) {
 
     char *pat = "(//<<([\\w._]+)>>)";
 
-    zpl_re_compile(&re, zpl_heap(), pat, zpl_strlen(pat));
+    u32 err = zpl_re_compile(&re, zpl_heap(), pat, zpl_strlen(pat));
+    if (err) {
+        zpl_printf("Regex pattern is invalid! Error code: %d\n", err);
+    }
 
     zpl_printf("Regex pattern was compiled!\n");
 
