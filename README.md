@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-    <a href="https://discord.gg/2fZVEym"><img src="https://discordapp.com/api/guilds/219565308007022592/embed.png" alt="Discord server" />
+    <a href="https://discord.gg/2fZVEym"><img src="https://discordapp.com/api/guilds/219565308007022592/embed.png" alt="Discord server" /></a>
 </div>
     
 A simple set of libraries and tools I use and develop to simplify the development on C/C++ workspace. Let it be string manipulations, threading or even JSON5 parser, ZPL offers whatever you need. "Money" back guarantee if you're not satisfied!
