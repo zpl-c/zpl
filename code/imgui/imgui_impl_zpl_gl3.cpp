@@ -62,6 +62,7 @@ bool ImGui_ImplZPLGL3_Init(zpl_platform* platform, const char* glsl_version /*= 
     // Setup back-end capabilities flags
     ImGuiIO& io = ImGui::GetIO();
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   // We can honor GetMouseCursor() values (optional)
+    io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
                                                             // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_Tab] = ZPL_KEY_TAB;
@@ -407,6 +408,7 @@ void ImGui_ImplZPLGL3_NewFrame(zpl_platform *platform)
 
     io.DisplaySize = ImVec2((float)w, (float)h);
     io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+    const ImVec2 mouse_pos_backup = io.MousePos;
 
     f64 current_time = zpl_time_now();
     io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time)) : (float)(1.0f / 60.0f);
@@ -422,7 +424,10 @@ void ImGui_ImplZPLGL3_NewFrame(zpl_platform *platform)
 
     io.MousePos = ImVec2((float)mx, (float)my);
 
-    if ((io.ConfigFlags & ImGuiConfigFlags_NoSetMouseCursor) == 0)
+    if (io.WantSetMousePos)
+        SetCursorPos((i32)mouse_pos_backup.x, (i32)mouse_pos_backup.y);
+
+    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
     {
         ImGuiMouseCursor cursor = ImGui::GetMouseCursor();
         if (io.MouseDrawCursor || cursor == ImGuiMouseCursor_None)
