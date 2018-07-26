@@ -439,6 +439,7 @@ typedef zpl_b8 bool;
 
 #endif
 
+#ifdef ZPL_DEFINE_NULL_MACRO
 #ifndef NULL
 #if defined(__cplusplus)
 #if __cplusplus >= 201103L
@@ -448,6 +449,7 @@ typedef zpl_b8 bool;
 #endif
 #else
 #define NULL ((void *)0)
+#endif
 #endif
 #endif
 

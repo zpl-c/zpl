@@ -13,6 +13,12 @@ Usage:
   #define ZPL_PLATFORM
   #include "zpl.h"
 
+Options:
+  
+  ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
+  ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for.
+
+
 Credits:
   Read AUTHORS.md
 
@@ -20,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.11.1 - Small code improvements
   8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
   8.10.2 - Fix zpl_strtok
   8.10.1 - Replace zpl_strchr by zpl_char_last_occurence
@@ -640,6 +647,7 @@ typedef zpl_b8 bool;
 
 #endif
 
+#ifdef ZPL_DEFINE_NULL_MACRO
 #ifndef NULL
 #if defined(__cplusplus)
 #if __cplusplus >= 201103L
@@ -649,6 +657,7 @@ typedef zpl_b8 bool;
 #endif
 #else
 #define NULL ((void *)0)
+#endif
 #endif
 #endif
 
@@ -1516,7 +1525,7 @@ ZPL_DEF void zpl_u64_to_str(u64 value, char *string, i32 base);
 ZPL_DEF isize zpl_utf8_strlen(u8 const *str);
 ZPL_DEF isize zpl_utf8_strnlen(u8 const *str, isize max_len);
 
-// NOTE: Windows doesn't handle 8 bit filenames well ('cause Micro$hit)
+// NOTE: Windows doesn't handle 8 bit filenames well
 ZPL_DEF u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str);
 ZPL_DEF u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str);
 ZPL_DEF u16 *zpl_utf8_to_ucs2_buf(u8 const *str); // NOTE: Uses locally persisting buffer

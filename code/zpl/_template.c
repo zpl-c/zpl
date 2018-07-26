@@ -15,7 +15,9 @@ Usage:
 
 Options:
   
-  define ZPL_PREFIX_TYPES to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
+  ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
+  ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for.
+
 
 Credits:
   Read AUTHORS.md
