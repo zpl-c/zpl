@@ -242,7 +242,7 @@ extern "C" {
 
 #ifndef ZPL_ENDIAN_ORDER
 #define ZPL_ENDIAN_ORDER
-#define ZPL_IS_BIG_ENDIAN (!*(u8 *)&(u16){ 1 })
+#define ZPL_IS_BIG_ENDIAN (!*(zpl_u8 *)&(zpl_u16){ 1 })
 #define ZPL_IS_LITTLE_ENDIAN (!ZPL_IS_BIG_ENDIAN)
 #endif
 
@@ -480,55 +480,55 @@ extern "C" {
 
 #if defined(ZPL_COMPILER_MSVC)
 #if _MSC_VER < 1300
-typedef unsigned char u8;
-typedef signed char i8;
-typedef unsigned short u16;
-typedef signed short i16;
-typedef unsigned int u32;
-typedef signed int i32;
+typedef unsigned char zpl_u8;
+typedef signed char zpl_i8;
+typedef unsigned short zpl_u16;
+typedef signed short zpl_i16;
+typedef unsigned int zpl_u32;
+typedef signed int zpl_i32;
 #else
-typedef unsigned __int8 u8;
-typedef signed __int8 i8;
-typedef unsigned __int16 u16;
-typedef signed __int16 i16;
-typedef unsigned __int32 u32;
-typedef signed __int32 i32;
+typedef unsigned __int8 zpl_u8;
+typedef signed __int8 zpl_i8;
+typedef unsigned __int16 zpl_u16;
+typedef signed __int16 zpl_i16;
+typedef unsigned __int32 zpl_u32;
+typedef signed __int32 zpl_i32;
 #endif
-typedef unsigned __int64 u64;
-typedef signed __int64 i64;
+typedef unsigned __int64 zpl_u64;
+typedef signed __int64 zpl_i64;
 #else
 #include <stdint.h>
-typedef uint8_t u8;
-typedef int8_t i8;
-typedef uint16_t u16;
-typedef int16_t i16;
-typedef uint32_t u32;
-typedef int32_t i32;
-typedef uint64_t u64;
-typedef int64_t i64;
+typedef uint8_t zpl_u8;
+typedef int8_t zpl_i8;
+typedef uint16_t zpl_u16;
+typedef int16_t zpl_i16;
+typedef uint32_t zpl_u32;
+typedef int32_t zpl_i32;
+typedef uint64_t zpl_u64;
+typedef int64_t zpl_i64;
 #endif
 
-ZPL_STATIC_ASSERT(sizeof(u8) == sizeof(i8));
-ZPL_STATIC_ASSERT(sizeof(u16) == sizeof(i16));
-ZPL_STATIC_ASSERT(sizeof(u32) == sizeof(i32));
-ZPL_STATIC_ASSERT(sizeof(u64) == sizeof(i64));
+ZPL_STATIC_ASSERT(sizeof(zpl_u8) == sizeof(zpl_i8));
+ZPL_STATIC_ASSERT(sizeof(zpl_u16) == sizeof(zpl_i16));
+ZPL_STATIC_ASSERT(sizeof(zpl_u32) == sizeof(zpl_i32));
+ZPL_STATIC_ASSERT(sizeof(zpl_u64) == sizeof(zpl_i64));
 
-ZPL_STATIC_ASSERT(sizeof(u8) == 1);
-ZPL_STATIC_ASSERT(sizeof(u16) == 2);
-ZPL_STATIC_ASSERT(sizeof(u32) == 4);
-ZPL_STATIC_ASSERT(sizeof(u64) == 8);
+ZPL_STATIC_ASSERT(sizeof(zpl_u8) == 1);
+ZPL_STATIC_ASSERT(sizeof(zpl_u16) == 2);
+ZPL_STATIC_ASSERT(sizeof(zpl_u32) == 4);
+ZPL_STATIC_ASSERT(sizeof(zpl_u64) == 8);
 
-typedef size_t usize;
-typedef ptrdiff_t isize;
+typedef size_t zpl_usize;
+typedef ptrdiff_t zpl_isize;
 
-ZPL_STATIC_ASSERT(sizeof(usize) == sizeof(isize));
+ZPL_STATIC_ASSERT(sizeof(zpl_usize) == sizeof(zpl_isize));
 
-// NOTE: (u)intptr is only here for semantic reasons really as this library will only support 32/64 bit OSes.
+// NOTE: (u)zpl_intptr is only here for semantic reasons really as this library will only support 32/64 bit OSes.
 #if defined(_WIN64)
-typedef signed __int64 intptr;
-typedef unsigned __int64 uintptr;
+typedef signed __int64 zpl_intptr;
+typedef unsigned __int64 zpl_uintptr;
 #elif defined(_WIN32)
-// NOTE; To mark types changing their size, e.g. intptr
+// NOTE; To mark types changing their size, e.g. zpl_intptr
 #ifndef _W64
 #if !defined(__midl) && (defined(_X86_) || defined(_M_IX86)) && _MSC_VER >= 1300
 #define _W64 __w64
@@ -537,31 +537,31 @@ typedef unsigned __int64 uintptr;
 #endif
 #endif
 
-typedef _W64 signed int intptr;
-typedef _W64 unsigned int uintptr;
+typedef _W64 signed int zpl_intptr;
+typedef _W64 unsigned int zpl_uintptr;
 #else
-typedef uintptr_t uintptr;
-typedef intptr_t intptr;
+typedef uintptr_t zpl_uintptr;
+typedef intptr_t zpl_intptr;
 #endif
 
-ZPL_STATIC_ASSERT(sizeof(uintptr) == sizeof(intptr));
+ZPL_STATIC_ASSERT(sizeof(zpl_uintptr) == sizeof(zpl_intptr));
 
-typedef float f32;
-typedef double f64;
+typedef float zpl_f32;
+typedef double zpl_f64;
 
-ZPL_STATIC_ASSERT(sizeof(f32) == 4);
-ZPL_STATIC_ASSERT(sizeof(f64) == 8);
+ZPL_STATIC_ASSERT(sizeof(zpl_f32) == 4);
+ZPL_STATIC_ASSERT(sizeof(zpl_f64) == 8);
 
-typedef i32 Rune; // NOTE: Unicode codepoint
-typedef i32 char32;
+typedef zpl_i32 Rune; // NOTE: Unicode codepoint
+typedef zpl_i32 char32;
 #define ZPL_RUNE_INVALID cast(Rune)(0xfffd)
 #define ZPL_RUNE_MAX cast(Rune)(0x0010ffff)
 #define ZPL_RUNE_BOM cast(Rune)(0xfeff)
 #define ZPL_RUNE_EOF cast(Rune)(-1)
 
-typedef i8 b8;
-typedef i16 b16;
-typedef i32 b32;
+typedef zpl_i8 zpl_b8;
+typedef zpl_i16 zpl_b16;
+typedef zpl_i32 zpl_b32;
 
 #if !defined(__cplusplus)
 #if (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && !defined(__STDC_VERSION__))
@@ -571,11 +571,29 @@ typedef i32 b32;
 #ifndef false
 #define false(0 != 0)
 #endif
-typedef b8 bool;
+typedef zpl_b8 bool;
 #else
 #include <stdbool.h>
 #endif
 #endif
+
+#define u8 zpl_u8
+#define i8 zpl_i8
+#define u16 zpl_u16
+#define i16 zpl_i16
+#define u32 zpl_u32
+#define i32 zpl_i32
+#define u64 zpl_u64
+#define i64 zpl_i64
+#define b8 zpl_b8
+#define b16 zpl_b16
+#define b32 zpl_b32
+#define f32 zpl_f32
+#define f64 zpl_f64
+#define usize zpl_usize
+#define isize zpl_isize
+#define uintptr zpl_uintptr
+#define intptr zpl_intptr
 
 #ifndef U8_MIN
 #define U8_MIN 0u
@@ -857,7 +875,7 @@ template <typename T> struct zpl_alignment_trick {
 #define ZPL_ASSERT_MSG(cond, msg, ...)                                                                                 \
     do {                                                                                                               \
         if (!(cond)) {                                                                                                 \
-            zpl_assert_handler(#cond, __FILE__, cast(i64) __LINE__, msg, ##__VA_ARGS__);                               \
+            zpl_assert_handler(#cond, __FILE__, cast(zpl_i64) __LINE__, msg, ##__VA_ARGS__);                               \
             ZPL_DEBUG_TRAP( );                                                                                         \
         }                                                                                                              \
     } while (0)
@@ -14699,6 +14717,30 @@ ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
 //<<_threadpool.c>>
 //<<_math.c>>
 //<<_platform.c>>
+
+#if defined(ZPL_PREFIX_TYPES)
+
+#undef u8
+#undef i8
+#undef u16
+#undef i16
+#undef u32
+#undef i32
+#undef u64
+#undef i64
+#undef b8
+#undef b16
+#undef b32
+#undef f32
+#undef f64
+#undef usize
+#undef isize
+#undef uintptr
+#undef intptr
+#undef cast
+#undef hard_cast
+
+#endif
 
 #endif // ZPL_INCLUDE_ZPL_H
 

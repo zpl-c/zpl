@@ -67,7 +67,7 @@ ZPL_DEF void zpl_u64_to_str(u64 value, char *string, i32 base);
 ZPL_DEF isize zpl_utf8_strlen(u8 const *str);
 ZPL_DEF isize zpl_utf8_strnlen(u8 const *str, isize max_len);
 
-// NOTE: Windows doesn't handle 8 bit filenames well ('cause Micro$hit)
+// NOTE: Windows doesn't handle 8 bit filenames well
 ZPL_DEF u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str);
 ZPL_DEF u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str);
 ZPL_DEF u16 *zpl_utf8_to_ucs2_buf(u8 const *str); // NOTE: Uses locally persisting buffer

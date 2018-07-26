@@ -13,6 +13,10 @@ Usage:
   #define ZPL_PLATFORM
   #include "zpl.h"
 
+Options:
+  
+  define ZPL_PREFIX_TYPES to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
+
 Credits:
   Read AUTHORS.md
 
@@ -20,6 +24,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.11.1 - Small code improvements
   8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
   8.10.2 - Fix zpl_strtok
   8.10.1 - Replace zpl_strchr by zpl_char_last_occurence
@@ -261,6 +266,30 @@ extern "C" {
 //<<_threadpool.c>>
 //<<_math.c>>
 //<<_platform.c>>
+
+#if defined(ZPL_PREFIX_TYPES)
+
+#undef u8
+#undef i8
+#undef u16
+#undef i16
+#undef u32
+#undef i32
+#undef u64
+#undef i64
+#undef b8
+#undef b16
+#undef b32
+#undef f32
+#undef f64
+#undef usize
+#undef isize
+#undef uintptr
+#undef intptr
+#undef cast
+#undef hard_cast
+
+#endif
 
 #endif // ZPL_INCLUDE_ZPL_H
 
