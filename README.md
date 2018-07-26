@@ -157,7 +157,7 @@ I personally found it rather cumbersome to re-implement commonly used features i
 
 **Can I contribute to the project?**
 
-Yes, indeed. This project is dual-licensed according to LICENSE.md, you are free to fork it, contribute to it or even sell it as you see fit.
+Yes, indeed. This project is dual-licensed according to LICENSE, you are free to fork it, contribute to it or even sell it as you see fit.
 
 **Why C99?**
 
