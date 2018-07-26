@@ -67,7 +67,7 @@ In this example, I'll show you how to write a simple JSON5 benchmark tool by usi
 
 First, I recommend looking at zpl.h header file, which describes how to use the library. Now you know, that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE** including the zpl.h file itself to successfully embed it.
 
-Afterwards, we need to deal with file loading, this time, we can either search for file module inside of zpl.h, or we can navigate to code/zpl/ to see the original form of the ZPL library. 
+Afterwards, we need to deal with file loading, this time, we can either search for file module inside of zpl.h (not recommended), or we can navigate to `code/zpl/` to see the original form of the ZPL library. 
 
 As you can see, each module is contained within its own source file. There's also a Python script called `build.py` which generates a new zpl.h file, combining all these modules together. 
 
