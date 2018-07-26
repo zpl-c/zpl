@@ -71,7 +71,7 @@ Afterwards, we need to deal with file loading, this time, we can either search f
 
 As you can see, each module is contained within its own source file. There's also a Python script called `build.py` which generates a new zpl.h file, combining all these modules together. 
 
-Here we need `_file.c`, which contains necessary file i/o operations. Write a code to open `test.json5` file (you can use zpl_file_read_contents) and try to print its content (either use libc's printf or methods from `_print.c`) Check test folder for code examples.
+Here we need `_file.c`, which contains necessary file i/o operations. Write a code to read `test.json5` file (you can use zpl_file_read_contents) and try to print its content (either use libc's printf or methods from `_print.c`) Check test folder for code examples.
 
 Done? Great! Now we need to parse this file, but how? Well guess what, `_json.c` is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
 
