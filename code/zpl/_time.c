@@ -31,6 +31,7 @@ typedef struct zpl_timer {
 
 typedef zpl_array(zpl_timer) zpl_timer_pool;
 
+#define zpl_timer_init(pool, allocator) zpl_array_init(pool, allocator)
 ZPL_DEF zpl_timer *zpl_timer_add(zpl_timer_pool pool);
 ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
 
