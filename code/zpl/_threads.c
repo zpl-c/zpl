@@ -9,15 +9,15 @@
 #if defined(ZPL_COMPILER_MSVC)
 #define zpl_atomic32_t zpl_atomic32
 typedef struct zpl_atomic32 {
-    _Atomic i32 value;
+    i32  _Atomic value;
 } zpl_atomic32;
 #define zpl_atomic64_t zpl_atomic64
 typedef struct zpl_atomic64 {
-    _Atomic i64 value;
+    i64  _Atomic value;
 } zpl_atomic64;
 #define zpl_atomic_ptr_t zpl_atomic_ptr
 typedef struct zpl_atomic_ptr {
-    _Atomic void *value;
+    void *_Atomic value;
 } zpl_atomic_ptr;
 #else
 #if defined(ZPL_ARCH_32_BIT)
@@ -30,18 +30,21 @@ typedef struct zpl_atomic_ptr {
 
 #define zpl_atomic32_t zpl_atomic32
 typedef struct zpl_atomic32 {
-    _Atomic i32 value;
+    i32  _Atomic value;
 } __attribute__((aligned(4))) zpl_atomic32;
 #define zpl_atomic64_t zpl_atomic64
 typedef struct zpl_atomic64 {
-    _Atomic i64 value;
+    i64  _Atomic value;
 } __attribute__((aligned(8))) zpl_atomic64;
 #define zpl_atomic_ptr_t zpl_atomic_ptr
 typedef struct zpl_atomic_ptr {
-    _Atomic void *value;
+    void *_Atomic value;
 } __attribute__((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 #else
+
+// IMPORTANT TODO: Deal with atomicity on pre-C11 compilers somehow.
+
 #if defined(ZPL_COMPILER_MSVC)
 #define zpl_atomic32_t zpl_atomic32
 typedef struct zpl_atomic32 {
