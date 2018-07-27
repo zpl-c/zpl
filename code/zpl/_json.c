@@ -243,9 +243,14 @@ void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_al
 
     dest = zpl_str_trim(dest, false);
 
-    if (*dest != '{' || *dest != '[') { root_.cfg_mode = true; }
+    if (*dest != '{' && *dest != '[') { root_.cfg_mode = true; }
 
-    zpl__json_parse_object(&root_, dest, a, err_code);
+    char *endp = zpl__json_parse_object(&root_, dest, a, err_code);
+
+    if (!root_.cfg_mode && endp == NULL)
+    {
+        if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+    }
 
     *root = root_;
 }
@@ -591,11 +596,6 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
             exp = (i32)zpl_str_to_i64(expbuf, NULL, 10);
         }
 
-        if (*e == '\0') {
-            ZPL_JSON_ASSERT;
-            if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-        }
-
         if (obj->type == ZPL_JSON_TYPE_INTEGER) {
             obj->integer = zpl_str_to_i64(buf, 0, 0);
 
@@ -650,7 +650,9 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
     obj->backing = a;
 
     p = zpl_str_trim(p, false);
-    if (*p == '{') { ++p; }
+    b32 starts_with_brace = false;
+    b32 starts_with_bracket = false;
+    if (*p == '{') { ++p; starts_with_brace = true; }
 
     while (*p) {
         zpl_json_object node = { 0 };
@@ -681,6 +683,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
         } 
         else {
             if (*p == '[') {
+                starts_with_bracket = true;
                 if (node.name) *node.name = '\0';
                 p = zpl__json_parse_value(&node, p, a, err_code);
                 goto l_parsed;
@@ -778,6 +781,18 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
             else
                 continue;
         } else if (*p == '\0' || *p == '}' || *p == ']') {
+            if (starts_with_brace && *p != '}')
+            {
+                if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+                return NULL;
+            }
+
+            if (starts_with_bracket && *p != ']')
+            {
+                if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+                return NULL;
+            }
+
             return p;
         } else {
             ZPL_JSON_ASSERT;
