@@ -678,12 +678,14 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
                 if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_NAME;
                 return NULL;
             }
-        } else {
+        } 
+        else {
             if (*p == '[') {
                 if (node.name) *node.name = '\0';
                 p = zpl__json_parse_value(&node, p, a, err_code);
                 goto l_parsed;
-            } else if (zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
+            } 
+            else if (zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
                 b = p;
                 e = b;
 
@@ -698,8 +700,8 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
                         node.assign_style = ZPL_JSON_ASSIGN_STYLE_EQUALS;
                     else if (*e == '|')
                         node.assign_style = ZPL_JSON_ASSIGN_STYLE_LINE;
-
-                } else {
+                } 
+                else {
                     while (*e) {
                         if (*e && (!zpl_char_is_space(*e) || zpl__json_is_assign_char(*e))) 
                         { 
@@ -712,6 +714,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
                         }
                         ++e;
                     }
+
                     e = zpl_str_trim(e, false);
                     p = e;
 
@@ -736,7 +739,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
         }
 
         char errc;
-        if (!zpl__json_validate_name(node.name, &errc)) {
+        if (node.name && !zpl__json_validate_name(node.name, &errc)) {
             ZPL_JSON_ASSERT;
             if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_NAME;
             return NULL;
@@ -766,12 +769,15 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a
                 n->delim_line_width = wl;
             }
 
+            if (*p == '\0')
+                return NULL;
+
             p = zpl_str_trim(p + 1, false);
             if (*p == '\0' || *p == '}')
                 return p;
             else
                 continue;
-        } else if (*p == '\0' || *p == '}') {
+        } else if (*p == '\0' || *p == '}' || *p == ']') {
             return p;
         } else {
             ZPL_JSON_ASSERT;
