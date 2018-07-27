@@ -289,7 +289,7 @@ zpl_inline isize zpl_pointer_diff(void const *begin, void const *end) {
 
 zpl_inline void zpl_zero_size(void *ptr, isize size) { zpl_memset(ptr, 0, size); }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma intrinsic(__movsb)
 #endif
 

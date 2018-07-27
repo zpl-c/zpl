@@ -16,7 +16,7 @@ Usage:
 Options:
   
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
-  ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for.
+  ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
 
 
 Credits:
@@ -1174,18 +1174,19 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 // TODO: Be specific with memory order?
 // e.g. relaxed, acquire, release, acquire_release
 
+#if __STDC_VERSION__ >= 201112L
 #if defined(ZPL_COMPILER_MSVC)
 #define zpl_atomic32_t zpl_atomic32
 typedef struct zpl_atomic32 {
-    i32 volatile value;
+    _Atomic i32 value;
 } zpl_atomic32;
 #define zpl_atomic64_t zpl_atomic64
 typedef struct zpl_atomic64 {
-    i64 volatile value;
+    _Atomic i64 value;
 } zpl_atomic64;
 #define zpl_atomic_ptr_t zpl_atomic_ptr
 typedef struct zpl_atomic_ptr {
-    void *volatile value;
+    _Atomic void *value;
 } zpl_atomic_ptr;
 #else
 #if defined(ZPL_ARCH_32_BIT)
@@ -1198,50 +1199,87 @@ typedef struct zpl_atomic_ptr {
 
 #define zpl_atomic32_t zpl_atomic32
 typedef struct zpl_atomic32 {
-    i32 volatile value;
+    _Atomic i32 value;
 } __attribute__((aligned(4))) zpl_atomic32;
 #define zpl_atomic64_t zpl_atomic64
 typedef struct zpl_atomic64 {
-    i64 volatile value;
+    _Atomic i64 value;
 } __attribute__((aligned(8))) zpl_atomic64;
 #define zpl_atomic_ptr_t zpl_atomic_ptr
 typedef struct zpl_atomic_ptr {
-    void *volatile value;
+    _Atomic void *value;
 } __attribute__((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
+#else
+#if defined(ZPL_COMPILER_MSVC)
+#define zpl_atomic32_t zpl_atomic32
+typedef struct zpl_atomic32 {
+    i32 value;
+} zpl_atomic32;
+#define zpl_atomic64_t zpl_atomic64
+typedef struct zpl_atomic64 {
+    i64 value;
+} zpl_atomic64;
+#define zpl_atomic_ptr_t zpl_atomic_ptr
+typedef struct zpl_atomic_ptr {
+    void *value;
+} zpl_atomic_ptr;
+#else
+#if defined(ZPL_ARCH_32_BIT)
+#define ZPL_ATOMIC_PTR_ALIGNMENT 4
+#elif defined(ZPL_ARCH_64_BIT)
+#define ZPL_ATOMIC_PTR_ALIGNMENT 8
+#else
+#error Unknown architecture
+#endif
 
-ZPL_DEF i32 zpl_atomic32_load(zpl_atomic32 const volatile *a);
-ZPL_DEF void zpl_atomic32_store(zpl_atomic32 volatile *a, i32 value);
-ZPL_DEF i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired);
-ZPL_DEF i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired);
-ZPL_DEF i32 zpl_atomic32_fetch_add(zpl_atomic32 volatile *a, i32 operand);
-ZPL_DEF i32 zpl_atomic32_fetch_and(zpl_atomic32 volatile *a, i32 operand);
-ZPL_DEF i32 zpl_atomic32_fetch_or(zpl_atomic32 volatile *a, i32 operand);
-ZPL_DEF b32 zpl_atomic32_spin_lock(zpl_atomic32 volatile *a, isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void zpl_atomic32_spin_unlock(zpl_atomic32 volatile *a);
-ZPL_DEF b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a);
+#define zpl_atomic32_t zpl_atomic32
+typedef struct zpl_atomic32 {
+    i32 value;
+} __attribute__((aligned(4))) zpl_atomic32;
+#define zpl_atomic64_t zpl_atomic64
+typedef struct zpl_atomic64 {
+    i64 value;
+} __attribute__((aligned(8))) zpl_atomic64;
+#define zpl_atomic_ptr_t zpl_atomic_ptr
+typedef struct zpl_atomic_ptr {
+    void *value;
+} __attribute__((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
+#endif
+#endif
 
-ZPL_DEF i64 zpl_atomic64_load(zpl_atomic64 const volatile *a);
-ZPL_DEF void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value);
-ZPL_DEF i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expected, i64 desired);
-ZPL_DEF i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired);
-ZPL_DEF i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand);
-ZPL_DEF i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand);
-ZPL_DEF i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand);
-ZPL_DEF b32 zpl_atomic64_spin_lock(zpl_atomic64 volatile *a, isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void zpl_atomic64_spin_unlock(zpl_atomic64 volatile *a);
-ZPL_DEF b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 volatile *a);
+ZPL_DEF i32 zpl_atomic32_load(zpl_atomic32 const *a);
+ZPL_DEF void zpl_atomic32_store(zpl_atomic32 *a, i32 value);
+ZPL_DEF i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, i32 expected, i32 desired);
+ZPL_DEF i32 zpl_atomic32_exchange(zpl_atomic32 *a, i32 desired);
+ZPL_DEF i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, i32 operand);
+ZPL_DEF i32 zpl_atomic32_fetch_and(zpl_atomic32 *a, i32 operand);
+ZPL_DEF i32 zpl_atomic32_fetch_or(zpl_atomic32 *a, i32 operand);
+ZPL_DEF b32 zpl_atomic32_spin_lock(zpl_atomic32 *a, isize time_out); // NOTE: time_out = -1 as default
+ZPL_DEF void zpl_atomic32_spin_unlock(zpl_atomic32 *a);
+ZPL_DEF b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 *a);
 
-ZPL_DEF void *zpl_atomic_ptr_load(zpl_atomic_ptr const volatile *a);
-ZPL_DEF void zpl_atomic_ptr_store(zpl_atomic_ptr volatile *a, void *value);
-ZPL_DEF void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired);
-ZPL_DEF void *zpl_atomic_ptr_exchange(zpl_atomic_ptr volatile *a, void *desired);
-ZPL_DEF void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr volatile *a, isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr volatile *a);
-ZPL_DEF b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a);
+ZPL_DEF i64 zpl_atomic64_load(zpl_atomic64 const *a);
+ZPL_DEF void zpl_atomic64_store(zpl_atomic64 *a, i64 value);
+ZPL_DEF i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, i64 expected, i64 desired);
+ZPL_DEF i64 zpl_atomic64_exchange(zpl_atomic64 *a, i64 desired);
+ZPL_DEF i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, i64 operand);
+ZPL_DEF i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, i64 operand);
+ZPL_DEF i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, i64 operand);
+ZPL_DEF b32 zpl_atomic64_spin_lock(zpl_atomic64 *a, isize time_out); // NOTE: time_out = -1 as default
+ZPL_DEF void zpl_atomic64_spin_unlock(zpl_atomic64 *a);
+ZPL_DEF b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 *a);
+
+ZPL_DEF void *zpl_atomic_ptr_load(zpl_atomic_ptr const *a);
+ZPL_DEF void zpl_atomic_ptr_store(zpl_atomic_ptr *a, void *value);
+ZPL_DEF void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr *a, void *expected, void *desired);
+ZPL_DEF void *zpl_atomic_ptr_exchange(zpl_atomic_ptr *a, void *desired);
+ZPL_DEF void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr *a, void *operand);
+ZPL_DEF void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr *a, void *operand);
+ZPL_DEF void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr *a, void *operand);
+ZPL_DEF b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr *a, isize time_out); // NOTE: time_out = -1 as default
+ZPL_DEF void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr *a);
+ZPL_DEF b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr *a);
 
 // Fences
 ZPL_DEF void zpl_yield_thread(void);
@@ -3796,9 +3834,14 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
 #define ZPL_IMPLEMENTATION_DONE
 
-#if defined(__GCC__) || defined(__GNUC__)
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wstatic-in-inline"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
@@ -3862,7 +3905,7 @@ zpl_inline isize zpl_pointer_diff(void const *begin, void const *end) {
 
 zpl_inline void zpl_zero_size(void *ptr, isize size) { zpl_memset(ptr, 0, size); }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma intrinsic(__movsb)
 #endif
 
@@ -4859,26 +4902,26 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
 // IMPORTANT TODO: Use compiler intrinsics for the atomics
 
 #if defined(ZPL_COMPILER_MSVC) && !defined(ZPL_COMPILER_CLANG)
-zpl_inline i32 zpl_atomic32_load(zpl_atomic32 const volatile *a) { return a->value; }
-zpl_inline void zpl_atomic32_store(zpl_atomic32 volatile *a, i32 value) { a->value = value; }
+zpl_inline i32 zpl_atomic32_load(zpl_atomic32 const *a) { return a->value; }
+zpl_inline void zpl_atomic32_store(zpl_atomic32 *a, i32 value) { a->value = value; }
 
-zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired) {
-    return _InterlockedCompareExchange(cast(long volatile *) a, desired, expected);
+zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, i32 expected, i32 desired) {
+    return _InterlockedCompareExchange(cast(long *) a, desired, expected);
 }
-zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired) {
-    return _InterlockedExchange(cast(long volatile *) a, desired);
+zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 *a, i32 desired) {
+    return _InterlockedExchange(cast(long *) a, desired);
 }
-zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 volatile *a, i32 operand) {
-    return _InterlockedExchangeAdd(cast(long volatile *) a, operand);
+zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, i32 operand) {
+    return _InterlockedExchangeAdd(cast(long *) a, operand);
 }
-zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 volatile *a, i32 operand) {
-    return _InterlockedAnd(cast(long volatile *) a, operand);
+zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 *a, i32 operand) {
+    return _InterlockedAnd(cast(long *) a, operand);
 }
-zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 volatile *a, i32 operand) {
-    return _InterlockedOr(cast(long volatile *) a, operand);
+zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 *a, i32 operand) {
+    return _InterlockedOr(cast(long *) a, operand);
 }
 
-zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const volatile *a) {
+zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const *a) {
 #if defined(ZPL_ARCH_64_BIT)
     return a->value;
 #elif ZPL_CPU_X86
@@ -4898,7 +4941,7 @@ zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const volatile *a) {
 #endif
 }
 
-zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
+zpl_inline void zpl_atomic64_store(zpl_atomic64 *a, i64 value) {
 #if defined(ZPL_ARCH_64_BIT)
     a->value = value;
 #elif ZPL_CPU_X86
@@ -4916,17 +4959,17 @@ zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expected, i64 desired) {
-    return _InterlockedCompareExchange64(cast(i64 volatile *) a, desired, expected);
+zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, i64 expected, i64 desired) {
+    return _InterlockedCompareExchange64(cast(i64 *) a, desired, expected);
 }
 
-zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
+zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 *a, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
-    return _InterlockedExchange64(cast(i64 volatile *) a, desired);
+    return _InterlockedExchange64(cast(i64 *) a, desired);
 #elif ZPL_CPU_X86
     i64 expected = a->value;
     for (;;) {
-        i64 original = _InterlockedCompareExchange64(cast(i64 volatile *) a, desired, expected);
+        i64 original = _InterlockedCompareExchange64(cast(i64 *) a, desired, expected);
         if (original == expected) return original;
         expected = original;
     }
@@ -4935,13 +4978,13 @@ zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
-    return _InterlockedExchangeAdd64(cast(i64 volatile *) a, operand);
+    return _InterlockedExchangeAdd64(cast(i64 *) a, operand);
 #elif ZPL_CPU_X86
     i64 expected = a->value;
     for (;;) {
-        i64 original = _InterlockedCompareExchange64(cast(i64 volatile *) a, expected + operand, expected);
+        i64 original = _InterlockedCompareExchange64(cast(i64 *) a, expected + operand, expected);
         if (original == expected) return original;
         expected = original;
     }
@@ -4950,13 +4993,13 @@ zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
-    return _InterlockedAnd64(cast(i64 volatile *) a, operand);
+    return _InterlockedAnd64(cast(i64 *) a, operand);
 #elif ZPL_CPU_X86
     i64 expected = a->value;
     for (;;) {
-        i64 original = _InterlockedCompareExchange64(cast(i64 volatile *) a, expected & operand, expected);
+        i64 original = _InterlockedCompareExchange64(cast(i64 *) a, expected & operand, expected);
         if (original == expected) return original;
         expected = original;
     }
@@ -4965,13 +5008,13 @@ zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
-    return _InterlockedOr64(cast(i64 volatile *) a, operand);
+    return _InterlockedOr64(cast(i64 *) a, operand);
 #elif ZPL_CPU_X86
     i64 expected = a->value;
     for (;;) {
-        i64 original = _InterlockedCompareExchange64(cast(i64 volatile *) a, expected | operand, expected);
+        i64 original = _InterlockedCompareExchange64(cast(i64 *) a, expected | operand, expected);
         if (original == expected) return original;
         expected = original;
     }
@@ -4982,29 +5025,29 @@ zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand) {
 
 #elif defined(ZPL_CPU_X86)
 
-zpl_inline i32 zpl_atomic32_load(zpl_atomic32 const volatile *a) { return a->value; }
-zpl_inline void zpl_atomic32_store(zpl_atomic32 volatile *a, i32 value) { a->value = value; }
+zpl_inline i32 zpl_atomic32_load(zpl_atomic32 const *a) { return a->value; }
+zpl_inline void zpl_atomic32_store(zpl_atomic32 *a, i32 value) { a->value = value; }
 
-zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired) {
+zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, i32 expected, i32 desired) {
     i32 original;
     __asm__ volatile("lock; cmpxchgl %2, %1" : "=a"(original), "+m"(a->value) : "q"(desired), "0"(expected));
     return original;
 }
 
-zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired) {
+zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 *a, i32 desired) {
     // NOTE: No lock prefix is necessary for xchgl
     i32 original;
     __asm__ volatile("xchgl %0, %1" : "=r"(original), "+m"(a->value) : "0"(desired));
     return original;
 }
 
-zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 volatile *a, i32 operand) {
+zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, i32 operand) {
     i32 original;
     __asm__ volatile("lock; xaddl %0, %1" : "=r"(original), "+m"(a->value) : "0"(operand));
     return original;
 }
 
-zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 volatile *a, i32 operand) {
+zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 *a, i32 operand) {
     i32 original;
     i32 tmp;
     __asm__ volatile("1:     movl    %1, %0\n"
@@ -5017,7 +5060,7 @@ zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 volatile *a, i32 operand) {
     return original;
 }
 
-zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 volatile *a, i32 operand) {
+zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 *a, i32 operand) {
     i32 original;
     i32 temp;
     __asm__ volatile("1:     movl    %1, %0\n"
@@ -5030,7 +5073,7 @@ zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 volatile *a, i32 operand) {
     return original;
 }
 
-zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const volatile *a) {
+zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const *a) {
 #if defined(ZPL_ARCH_64_BIT)
     return a->value;
 #else
@@ -5044,7 +5087,7 @@ zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const volatile *a) {
 #endif
 }
 
-zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
+zpl_inline void zpl_atomic64_store(zpl_atomic64 *a, i64 value) {
 #if defined(ZPL_ARCH_64_BIT)
     a->value = value;
 #else
@@ -5056,7 +5099,7 @@ zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expected, i64 desired) {
+zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, i64 expected, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile("lock; cmpxchgq %2, %1" : "=a"(original), "+m"(a->value) : "q"(desired), "0"(expected));
@@ -5070,7 +5113,7 @@ zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expec
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
+zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 *a, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile("xchgq %0, %1" : "=r"(original), "+m"(a->value) : "0"(desired));
@@ -5085,7 +5128,7 @@ zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile("lock; xaddq %0, %1" : "=r"(original), "+m"(a->value) : "0"(operand));
@@ -5098,7 +5141,7 @@ zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     i64 tmp;
@@ -5118,7 +5161,7 @@ zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand) {
 #endif
 }
 
-zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand) {
+zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     i64 temp;
@@ -5142,7 +5185,7 @@ zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand) {
 #error TODO: Implement Atomics for this CPU
 #endif
 
-zpl_inline b32 zpl_atomic32_spin_lock(zpl_atomic32 volatile *a, isize time_out) {
+zpl_inline b32 zpl_atomic32_spin_lock(zpl_atomic32 *a, isize time_out) {
     i32 old_value = zpl_atomic32_compare_exchange(a, 1, 0);
     i32 counter = 0;
     while (old_value != 0 && (time_out < 0 || counter++ < time_out)) {
@@ -5152,12 +5195,12 @@ zpl_inline b32 zpl_atomic32_spin_lock(zpl_atomic32 volatile *a, isize time_out) 
     }
     return old_value == 0;
 }
-zpl_inline void zpl_atomic32_spin_unlock(zpl_atomic32 volatile *a) {
+zpl_inline void zpl_atomic32_spin_unlock(zpl_atomic32 *a) {
     zpl_atomic32_store(a, 0);
     zpl_mfence( );
 }
 
-zpl_inline b32 zpl_atomic64_spin_lock(zpl_atomic64 volatile *a, isize time_out) {
+zpl_inline b32 zpl_atomic64_spin_lock(zpl_atomic64 *a, isize time_out) {
     i64 old_value = zpl_atomic64_compare_exchange(a, 1, 0);
     i64 counter = 0;
     while (old_value != 0 && (time_out < 0 || counter++ < time_out)) {
@@ -5168,12 +5211,12 @@ zpl_inline b32 zpl_atomic64_spin_lock(zpl_atomic64 volatile *a, isize time_out) 
     return old_value == 0;
 }
 
-zpl_inline void zpl_atomic64_spin_unlock(zpl_atomic64 volatile *a) {
+zpl_inline void zpl_atomic64_spin_unlock(zpl_atomic64 *a) {
     zpl_atomic64_store(a, 0);
     zpl_mfence( );
 }
 
-zpl_inline b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a) {
+zpl_inline b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 *a) {
     i32 old_value;
     zpl_yield_thread( );
     old_value = zpl_atomic32_compare_exchange(a, 1, 0);
@@ -5181,7 +5224,7 @@ zpl_inline b32 zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a) {
     return old_value == 0;
 }
 
-zpl_inline b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 volatile *a) {
+zpl_inline b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 *a) {
     i64 old_value;
     zpl_yield_thread( );
     old_value = zpl_atomic64_compare_exchange(a, 1, 0);
@@ -5191,78 +5234,78 @@ zpl_inline b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 volatile *a) {
 
 #if defined(ZPL_ARCH_32_BIT)
 
-zpl_inline void *zpl_atomic_ptr_load(zpl_atomic_ptr const volatile *a) {
-    return cast(void *) cast(intptr) zpl_atomic32_load(cast(zpl_atomic32 const volatile *) a);
+zpl_inline void *zpl_atomic_ptr_load(zpl_atomic_ptr const *a) {
+    return cast(void *) cast(intptr) zpl_atomic32_load(cast(zpl_atomic32 const *) a);
 }
-zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr volatile *a, void *value) {
-    zpl_atomic32_store(cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) value);
+zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr *a, void *value) {
+    zpl_atomic32_store(cast(zpl_atomic32 *) a, cast(i32) cast(intptr) value);
 }
-zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired) {
+zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr *a, void *expected, void *desired) {
     return cast(void *) cast(intptr) zpl_atomic32_compare_exchange(
-        cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) expected, cast(i32) cast(intptr) desired);
+        cast(zpl_atomic32 *) a, cast(i32) cast(intptr) expected, cast(i32) cast(intptr) desired);
 }
-zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr volatile *a, void *desired) {
+zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr *a, void *desired) {
     return cast(void *) cast(intptr)
-        zpl_atomic32_exchange(cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) desired);
+        zpl_atomic32_exchange(cast(zpl_atomic32 *) a, cast(i32) cast(intptr) desired);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic32_fetch_add(cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) operand);
+        zpl_atomic32_fetch_add(cast(zpl_atomic32 *) a, cast(i32) cast(intptr) operand);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic32_fetch_and(cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) operand);
+        zpl_atomic32_fetch_and(cast(zpl_atomic32 *) a, cast(i32) cast(intptr) operand);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic32_fetch_or(cast(zpl_atomic32 volatile *) a, cast(i32) cast(intptr) operand);
+        zpl_atomic32_fetch_or(cast(zpl_atomic32 *) a, cast(i32) cast(intptr) operand);
 }
-zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr volatile *a, isize time_out) {
-    return zpl_atomic32_spin_lock(cast(zpl_atomic32 volatile *) a, time_out);
+zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr *a, isize time_out) {
+    return zpl_atomic32_spin_lock(cast(zpl_atomic32 *) a, time_out);
 }
-zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr volatile *a) {
-    zpl_atomic32_spin_unlock(cast(zpl_atomic32 volatile *) a);
+zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr *a) {
+    zpl_atomic32_spin_unlock(cast(zpl_atomic32 *) a);
 }
-zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a) {
-    return zpl_atomic32_try_acquire_lock(cast(zpl_atomic32 volatile *) a);
+zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr *a) {
+    return zpl_atomic32_try_acquire_lock(cast(zpl_atomic32 *) a);
 }
 
 #elif defined(ZPL_ARCH_64_BIT)
 
-zpl_inline void *zpl_atomic_ptr_load(zpl_atomic_ptr const volatile *a) {
-    return cast(void *) cast(intptr) zpl_atomic64_load(cast(zpl_atomic64 const volatile *) a);
+zpl_inline void *zpl_atomic_ptr_load(zpl_atomic_ptr const *a) {
+    return cast(void *) cast(intptr) zpl_atomic64_load(cast(zpl_atomic64 const *) a);
 }
-zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr volatile *a, void *value) {
-    zpl_atomic64_store(cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) value);
+zpl_inline void zpl_atomic_ptr_store(zpl_atomic_ptr *a, void *value) {
+    zpl_atomic64_store(cast(zpl_atomic64 *) a, cast(i64) cast(intptr) value);
 }
-zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired) {
+zpl_inline void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr *a, void *expected, void *desired) {
     return cast(void *) cast(intptr) zpl_atomic64_compare_exchange(
-        cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) expected, cast(i64) cast(intptr) desired);
+        cast(zpl_atomic64 *) a, cast(i64) cast(intptr) expected, cast(i64) cast(intptr) desired);
 }
-zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr volatile *a, void *desired) {
+zpl_inline void *zpl_atomic_ptr_exchange(zpl_atomic_ptr *a, void *desired) {
     return cast(void *) cast(intptr)
-        zpl_atomic64_exchange(cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) desired);
+        zpl_atomic64_exchange(cast(zpl_atomic64 *) a, cast(i64) cast(intptr) desired);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_add(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic64_fetch_add(cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) operand);
+        zpl_atomic64_fetch_add(cast(zpl_atomic64 *) a, cast(i64) cast(intptr) operand);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_and(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic64_fetch_and(cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) operand);
+        zpl_atomic64_fetch_and(cast(zpl_atomic64 *) a, cast(i64) cast(intptr) operand);
 }
-zpl_inline void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr volatile *a, void *operand) {
+zpl_inline void *zpl_atomic_ptr_fetch_or(zpl_atomic_ptr *a, void *operand) {
     return cast(void *) cast(intptr)
-        zpl_atomic64_fetch_or(cast(zpl_atomic64 volatile *) a, cast(i64) cast(intptr) operand);
+        zpl_atomic64_fetch_or(cast(zpl_atomic64 *) a, cast(i64) cast(intptr) operand);
 }
-zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr volatile *a, isize time_out) {
-    return zpl_atomic64_spin_lock(cast(zpl_atomic64 volatile *) a, time_out);
+zpl_inline b32 zpl_atomic_ptr_spin_lock(zpl_atomic_ptr *a, isize time_out) {
+    return zpl_atomic64_spin_lock(cast(zpl_atomic64 *) a, time_out);
 }
-zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr volatile *a) {
-    zpl_atomic64_spin_unlock(cast(zpl_atomic64 volatile *) a);
+zpl_inline void zpl_atomic_ptr_spin_unlock(zpl_atomic_ptr *a) {
+    zpl_atomic64_spin_unlock(cast(zpl_atomic64 *) a);
 }
-zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a) {
-    return zpl_atomic64_try_acquire_lock(cast(zpl_atomic64 volatile *) a);
+zpl_inline b32 zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr *a) {
+    return zpl_atomic64_try_acquire_lock(cast(zpl_atomic64 *) a);
 }
 #endif
 
@@ -14700,7 +14743,7 @@ ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
 #pragma warning(pop)
 #endif
 
-#if defined(__GCC__) || defined(__GNUC__)
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 

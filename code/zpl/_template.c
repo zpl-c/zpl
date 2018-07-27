@@ -215,9 +215,14 @@ extern "C" {
 #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
 #define ZPL_IMPLEMENTATION_DONE
 
-#if defined(__GCC__) || defined(__GNUC__)
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wstatic-in-inline"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
@@ -242,7 +247,7 @@ extern "C" {
 #pragma warning(pop)
 #endif
 
-#if defined(__GCC__) || defined(__GNUC__)
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 

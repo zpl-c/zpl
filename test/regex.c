@@ -28,11 +28,9 @@ int main(void) {
         if (!ok) break;
         p += offset;
 
-        zpl_printf("Matched? %s! Offset: %d, String Length: %d\n", ok ? "Yes" : "No", offset, end - p);
-
         for (isize i = 0; i < re.capture_count; i++)
         {
-            zpl_printf("Group %lld: %.*s\n", i, cps[i].len, cps[i].str);
+            zpl_printf("Group %lld: %.*s\n", i, (i32)cps[i].len, cps[i].str);
         }
     }
 
