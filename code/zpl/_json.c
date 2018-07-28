@@ -108,12 +108,12 @@ typedef enum zpljDelimStyle {
 typedef struct zpl_json_object {
     zpl_allocator backing;
     char *name;
-    u8 type : 6;
-    u8 name_style : 2;
-    u8 props : 7;
-    u8 cfg_mode : 1;
-    u8 assign_style : 4;
-    u8 delim_style : 4;
+    u8 type:6;
+    u8 name_style:2;
+    u8 props:7;
+    u8 cfg_mode:1;
+    u8 assign_style:4;
+    u8 delim_style:4;
     u8 delim_line_width;
     
     union {
@@ -125,8 +125,8 @@ typedef struct zpl_json_object {
             i32 base;
             i32 base2;
             i32 exp;
-            u8 exp_neg : 1;
-            u8 lead_digit : 1;
+            u8 exp_neg:1;
+            u8 lead_digit:1;
         };
         u8 constant;
     };
