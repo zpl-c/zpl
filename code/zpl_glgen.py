@@ -60,7 +60,7 @@ except ImportError:
     import urllib2
 
 # CODE_HEADER copyright header
-CODE_HEADER = br'''/*
+CODE_HEADER = r'''/*
 
 ZPL - GLGEN module
 
@@ -148,15 +148,17 @@ with open('glcorearb.h', 'r') as f:
             procs.append(m.group(1))
 procs.sort()
 
+
 def proc_t(proc):
-    return { 'p': proc,
-             'p_s': 'glgen' + proc[2:],
-             'p_t': 'PFN' + proc.upper() + 'PROC' }
+    return {'p': proc,
+            'p_s': 'glgen' + proc[2:],
+            'p_t': 'PFN' + proc.upper() + 'PROC'}
+
 
 # Generate glgen.h
 print('Generating zpl_glgen.h...')
 with open('zpl_glgen.h', 'wb') as f:
-    f.write(CODE_HEADER)
+    f.write(bytes(CODE_HEADER, 'utf-8'))
     f.write(br'''#ifndef ZPL_INCLUDE_ZPL_GLGEN_H
 #define ZPL_INCLUDE_ZPL_GLGEN_H
 
@@ -180,10 +182,12 @@ zpl_gl3WglProc zpl_glgen_get_proc_address(char const *proc);
 /* OpenGL functions */
 ''')
     for proc in procs:
-        f.write('extern {0[p_t]: <52} {0[p_s]};\n'.format(proc_t(proc)).encode("utf-8"))
+        f.write('extern {0[p_t]: <52} {0[p_s]};\n'.format(
+            proc_t(proc)).encode("utf-8"))
     f.write(b'\n')
     for proc in procs:
-        f.write('#define {0[p]: <45} {0[p_s]}\n'.format(proc_t(proc)).encode("utf-8"))
+        f.write('#define {0[p]: <45} {0[p_s]}\n'.format(
+            proc_t(proc)).encode("utf-8"))
     f.write(br'''
 #ifdef __cplusplus
 }
@@ -320,16 +324,17 @@ zpl_gl3WglProc zpl_glgen_get_proc_address(char const *proc)
 
 ''')
     for proc in procs:
-        f.write('{0[p_t]: <52} {0[p_s]};\n'.format(proc_t(proc)).encode("utf-8"))
+        f.write('{0[p_t]: <52} {0[p_s]};\n'.format(
+            proc_t(proc)).encode("utf-8"))
     f.write(br'''
 static void zpl__glgen_load_procs(void)
 {
 ''')
     for proc in procs:
-        f.write('\t{0[p_s]} = ({0[p_t]}) zpl__glgen_get_proc("{0[p]}");\n'.format(proc_t(proc)).encode("utf-8"))
+        f.write('\t{0[p_s]} = ({0[p_t]}) zpl__glgen_get_proc("{0[p]}");\n'.format(
+            proc_t(proc)).encode("utf-8"))
     f.write(b'''}
 
 
 #endif /* ZPL_GLGEN_IMPLEMENTATION */
 ''')
-
