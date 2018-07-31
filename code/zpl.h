@@ -12372,7 +12372,6 @@ void zpl_mat4_inverse(zpl_mat4 *out, zpl_mat4 *in) {
     zpl_float4 *m = zpl_float44_m(in);
 
     f32 ood;
-    // f32 tmp;
 
     f32 sf00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
     f32 sf01 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
@@ -12566,9 +12565,9 @@ void zpl_mat4_look_at(zpl_mat4 *out, zpl_vec3 eye, zpl_vec3 centre, zpl_vec3 up)
     m[1][2] = -f.y;
     m[2][2] = -f.z;
 
-    m[3][0] = zpl_vec3_dot(s, eye);
-    m[3][1] = zpl_vec3_dot(u, eye);
-    m[3][2] = zpl_vec3_dot(f, eye);
+    m[3][0] = -zpl_vec3_dot(s, eye);
+    m[3][1] = -zpl_vec3_dot(u, eye);
+    m[3][2] = +zpl_vec3_dot(f, eye);
 }
 
 zpl_quat zpl_quatf(f32 x, f32 y, f32 z, f32 w) {
