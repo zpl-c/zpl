@@ -295,6 +295,11 @@ zpl_inline void zpl_zero_size(void *ptr, isize size) { zpl_memset(ptr, 0, size);
 
 zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     if (dest == NULL) { return NULL; }
+
+    return memcpy(dest, source, n);
+
+// TODO: Re-work the whole method
+#if 0
 #if defined(_MSC_VER)
     __movsb(cast(u8 *) dest, cast(u8 *) source, n);
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
@@ -451,6 +456,8 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     }
 
 #endif
+#endif
+
     return dest;
 }
 

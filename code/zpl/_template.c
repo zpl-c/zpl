@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.11.2 - Fix bug in opts module
   8.11.1 - Small code improvements
   8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
   8.10.2 - Fix zpl_strtok

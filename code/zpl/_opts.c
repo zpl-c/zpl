@@ -184,6 +184,7 @@ i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback) {
 
 void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     t->met = true;
+    
     switch (t->type) {
     case ZPL_OPTS_STRING: {
         t->text = zpl_string_make(opts->alloc, b);
@@ -196,6 +197,13 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     case ZPL_OPTS_INT: {
         t->integer = zpl_str_to_i64(b, NULL, 10);
     } break;
+    }
+
+    for (isize i=0; i < zpl_array_count(opts->positioned); i++) {
+        if (!zpl_strcmp(opts->positioned[i]->lname, t->lname)) {
+            zpl_array_remove_at(opts->positioned, i);
+            break;
+        }
     }
 }
 

@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.11.2 - Fix bug in opts module
   8.11.1 - Small code improvements
   8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
   8.10.2 - Fix zpl_strtok
@@ -724,7 +725,11 @@ typedef zpl_b8 bool;
 #endif
 
 #ifndef zpl_offset_of
+#ifdef _MSC_VER
 #define zpl_offset_of(Type, element) ((isize) & (((Type *)0)->element))
+#else
+#define zpl_offset_of(Type, element) __builtin_offsetof(Type, element)
+#endif
 #endif
 
 #if defined(__cplusplus)
@@ -2810,12 +2815,12 @@ typedef enum zpljDelimStyle {
 typedef struct zpl_json_object {
     zpl_allocator backing;
     char *name;
-    u8 type : 6;
-    u8 name_style : 2;
-    u8 props : 7;
-    u8 cfg_mode : 1;
-    u8 assign_style : 4;
-    u8 delim_style : 4;
+    u8 type:6;
+    u8 name_style:2;
+    u8 props:7;
+    u8 cfg_mode:1;
+    u8 assign_style:4;
+    u8 delim_style:4;
     u8 delim_line_width;
     
     union {
@@ -2827,8 +2832,8 @@ typedef struct zpl_json_object {
             i32 base;
             i32 base2;
             i32 exp;
-            u8 exp_neg : 1;
-            u8 lead_digit : 1;
+            u8 exp_neg:1;
+            u8 lead_digit:1;
         };
         u8 constant;
     };
@@ -3915,6 +3920,11 @@ zpl_inline void zpl_zero_size(void *ptr, isize size) { zpl_memset(ptr, 0, size);
 
 zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     if (dest == NULL) { return NULL; }
+
+    return memcpy(dest, source, n);
+
+// TODO: Re-work the whole method
+#if 0
 #if defined(_MSC_VER)
     __movsb(cast(u8 *) dest, cast(u8 *) source, n);
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
@@ -4071,6 +4081,8 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     }
 
 #endif
+#endif
+
     return dest;
 }
 
@@ -6605,7 +6617,7 @@ zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, isize n
     header->allocator = a;
     header->length = num_bytes;
     header->capacity = num_bytes;
-    if (num_bytes && init_str) zpl_memcopy(str, init_str, num_bytes);
+    if (num_bytes && init_str) zpl_memmove(str, init_str, num_bytes);
     str[num_bytes] = '\0';
 
     return str;
@@ -10883,6 +10895,7 @@ i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback) {
 
 void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     t->met = true;
+    
     switch (t->type) {
     case ZPL_OPTS_STRING: {
         t->text = zpl_string_make(opts->alloc, b);
@@ -10895,6 +10908,13 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     case ZPL_OPTS_INT: {
         t->integer = zpl_str_to_i64(b, NULL, 10);
     } break;
+    }
+
+    for (isize i=0; i < zpl_array_count(opts->positioned); i++) {
+        if (!zpl_strcmp(opts->positioned[i]->lname, t->lname)) {
+            zpl_array_remove_at(opts->positioned, i);
+            break;
+        }
     }
 }
 

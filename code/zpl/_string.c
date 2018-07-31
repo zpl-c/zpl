@@ -765,7 +765,7 @@ zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, isize n
     header->allocator = a;
     header->length = num_bytes;
     header->capacity = num_bytes;
-    if (num_bytes && init_str) zpl_memcopy(str, init_str, num_bytes);
+    if (num_bytes && init_str) zpl_memmove(str, init_str, num_bytes);
     str[num_bytes] = '\0';
 
     return str;
