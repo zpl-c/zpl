@@ -1809,6 +1809,7 @@ typedef struct zpl_buffer_header {
 
 #define zpl_buffer(Type) Type *
 #define zpl_buffer_t zpl_buffer
+#define zpl_buffer_make(Type, Name, allocator, cap) Type *Name; zpl_buffer_init(Name, allocator, cap)
 
 #define ZPL_BUFFER_HEADER(x) (cast(zpl_buffer_header *)(x) - 1)
 #define zpl_buffer_count(x) (ZPL_BUFFER_HEADER(x)->count)
@@ -1978,6 +1979,7 @@ typedef struct zpl_array_header {
 
 #define zpl_array(Type) Type *
 #define zpl_array_t zpl_array
+#define zpl_array_make(Type, Name, allocator) Type *Name; zpl_array_init(Name, allocator)
 
 #ifndef ZPL_ARRAY_GROW_FORMULA
 #define ZPL_ARRAY_GROW_FORMULA(x) (2 * (x) + 8)
