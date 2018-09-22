@@ -204,6 +204,18 @@ Version History:
 #ifndef ZPL_INCLUDE_ZPL_H
 #define ZPL_INCLUDE_ZPL_H
 
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4201)
+#pragma warning(disable : 4127) // Conditional expression is constant
+#endif
+
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -3841,6 +3853,14 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 
 #if defined(__cplusplus)
 }
+#endif
+
+#if defined(ZPL_COMPILER_MSVC)
+#pragma warning(pop)
+#endif
+
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
 #endif
 
 #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
