@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.12.2 - JSON parsing remark added
   8.12.1 - Fixed a lot of important stuff
   8.12.0 - Added helper constructors for containers
   8.11.2 - Fix bug in opts module

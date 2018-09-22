@@ -132,7 +132,13 @@ typedef struct zpl_json_object {
     };
 } zpl_json_object;
 
-ZPL_DEF void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator a, b32 strip_comments,
+/*
+    We can parse JSON5 files in two different modes:
+    1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.
+    2) Slower way (useful for config files), which handles comments perfectly but **might** have performance impact
+        on bigger JSON files. (+50MiB)
+*/
+ZPL_DEF void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator a, b32 handle_comments,
                             u8 *err_code);
 ZPL_DEF void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent);
 ZPL_DEF void zpl_json_free(zpl_json_object *obj);
@@ -163,7 +169,7 @@ b32 zpl__json_is_control_char(char c);
 b32 zpl__json_is_assign_char(char c);
 b32 zpl__json_is_delim_char(char c);
 
-void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator_t a, b32 strip_comments,
+void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator_t a, b32 handle_comments,
                     u8 *err_code) {
     
     if (!root || !source)
@@ -177,7 +183,7 @@ void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_al
 
     char *dest = (char *)source;
 
-    if (strip_comments) {
+    if (handle_comments) {
         b32 is_lit = false;
         char lit_c = '\0';
         char *p = dest;
