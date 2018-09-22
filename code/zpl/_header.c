@@ -13,11 +13,11 @@
 #endif
 
 #ifndef ZPL_DEF
-#ifdef ZPL_STATIC
-#define ZPL_DEF static
-#else
-#define ZPL_DEF extern
-#endif
+    #ifdef ZPL_STATIC
+        #define ZPL_DEF static
+    #else
+        #define ZPL_DEF extern
+    #endif
 #endif
 
 #ifdef ZPL_IMPL
@@ -30,13 +30,13 @@
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
     defined(__ppc64__) || defined(__aarch64__)
-#ifndef ZPL_ARCH_64_BIT
-#define ZPL_ARCH_64_BIT 1
-#endif
+    #ifndef ZPL_ARCH_64_BIT
+        #define ZPL_ARCH_64_BIT 1
+    #endif
 #else
-#ifndef ZPL_ARCH_32_BIT
-#define ZPL_ARCH_32_BIT 1
-#endif
+    #ifndef ZPL_ARCH_32_BIT
+        #define ZPL_ARCH_32_BIT 1
+    #endif
 #endif
 
 #ifndef ZPL_ENDIAN_ORDER
@@ -46,52 +46,53 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-#ifndef ZPL_SYSTEM_WINDOWS
-#define ZPL_SYSTEM_WINDOWS 1
-#endif
+    #ifndef ZPL_SYSTEM_WINDOWS
+        #define ZPL_SYSTEM_WINDOWS 1
+    #endif
 #elif defined(__APPLE__) && defined(__MACH__)
-#ifndef ZPL_SYSTEM_OSX
-#define ZPL_SYSTEM_OSX 1
-#endif
-#ifndef ZPL_SYSTEM_MACOS
-#define ZPL_SYSTEM_MACOS 1
-#endif
-#include <TargetConditionals.h>
-#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
-#ifndef ZPL_SYSTEM_IOS
-#define ZPL_SYSTEM_IOS 1
-#endif
-#endif
+    #ifndef ZPL_SYSTEM_OSX
+        #define ZPL_SYSTEM_OSX 1
+    #endif
+    #ifndef ZPL_SYSTEM_MACOS
+        #define ZPL_SYSTEM_MACOS 1
+    #endif
+    #include <TargetConditionals.h>
+    #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+        #ifndef ZPL_SYSTEM_IOS
+            #define ZPL_SYSTEM_IOS 1
+        #endif
+    #endif
 #elif defined(__unix__)
-#ifndef ZPL_SYSTEM_UNIX
-#define ZPL_SYSTEM_UNIX 1
+    #ifndef ZPL_SYSTEM_UNIX
+    #define ZPL_SYSTEM_UNIX 1
+    #endif
+
+    #if defined(ANDROID) || defined(__ANDROID__)
+        #ifndef ZPL_SYSTEM_ANDROID
+            #define ZPL_SYSTEM_ANDROID 1
+        #endif
+        #ifndef ZPL_SYSTEM_LINUX
+            #define ZPL_SYSTEM_LINUX 1
+        #endif
+    #elif defined(__linux__)
+        #ifndef ZPL_SYSTEM_LINUX
+            #define ZPL_SYSTEM_LINUX 1
+        #endif
+    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+        #ifndef ZPL_SYSTEM_FREEBSD
+            #define ZPL_SYSTEM_FREEBSD 1
+        #endif
+    #elif defined(__EMSCRIPTEN__)
+        #ifndef ZPL_SYSTEM_EMSCRIPTEN
+            #define ZPL_SYSTEM_EMSCRIPTEN 1
+        #endif
+    #else
+        #error This UNIX operating system is not supported
+    #endif
+#else
+    #error This operating system is not supported
 #endif
 
-#if defined(ANDROID) || defined(__ANDROID__)
-#ifndef ZPL_SYSTEM_ANDROID
-#define ZPL_SYSTEM_ANDROID 1
-#endif
-#ifndef ZPL_SYSTEM_LINUX
-#define ZPL_SYSTEM_LINUX 1
-#endif
-#elif defined(__linux__)
-#ifndef ZPL_SYSTEM_LINUX
-#define ZPL_SYSTEM_LINUX 1
-#endif
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-#ifndef ZPL_SYSTEM_FREEBSD
-#define ZPL_SYSTEM_FREEBSD 1
-#endif
-#elif defined(__EMSCRIPTEN__)
-#ifndef ZPL_SYSTEM_EMSCRIPTEN
-#define ZPL_SYSTEM_EMSCRIPTEN 1
-#endif
-#else
-#error This UNIX operating system is not supported
-#endif
-#else
-#error This operating system is not supported
-#endif
 
 #if defined(_MSC_VER)
 #define ZPL_COMPILER_MSVC 1
@@ -138,8 +139,14 @@
 #if !defined(ZPL_SYSTEM_EMSCRIPTEN) && !defined(ZPL_CPU_ARM) // disabled for __EMSCRIPTEN__
 #ifndef ZPL_THREADING
 #define ZPL_THREADING 1
+#else
+    #if ZPL_THREADING == 0 || defined(ZPL_NO_THREADING)
+        #undef ZPL_THREADING
+    #endif
 #endif
 #endif
+
+
 
 #ifndef ZPL_STATIC_ASSERT
 #define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond)) * 2 - 1]

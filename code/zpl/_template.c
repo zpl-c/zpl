@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.12.1 - Fixed a lot of important stuff
   8.12.0 - Added helper constructors for containers
   8.11.2 - Fix bug in opts module
   8.11.1 - Small code improvements
@@ -35,6 +36,7 @@ Version History:
   8.10.0 - Added zpl_strchr
   8.9.0  - API improvements for JSON5 parser
   8.8.4  - Add support for SJSON formatting http://bitsquid.blogspot.com/2009/10/simplified-json-notation.html
+
   6.8.3  - JSON5 exp fix
   6.8.2  - Bugfixes applied from gb
   6.8.1  - Performance improvements for JSON5 parser
@@ -296,8 +298,6 @@ extern "C" {
 //<<_math.c>>
 //<<_platform.c>>
 
-#if defined(ZPL_PREFIX_TYPES)
-
 #undef u8
 #undef i8
 #undef u16
@@ -315,10 +315,29 @@ extern "C" {
 #undef isize
 #undef uintptr
 #undef intptr
+
+#if !defined(ZPL_PREFIX_TYPES)
+typedef zpl_u8 u8;
+typedef zpl_i8 i8;
+typedef zpl_u16 u16;
+typedef zpl_i16 i16;
+typedef zpl_u32 u32;
+typedef zpl_i32 i32;
+typedef zpl_u64 u64;
+typedef zpl_i64 i64;
+typedef zpl_b8 b8;
+typedef zpl_b16 b16;
+typedef zpl_b32 b32;
+typedef zpl_f32 f32;
+typedef zpl_f64 f64;
+typedef zpl_usize usize;
+typedef zpl_isize isize;
+typedef zpl_uintptr uintptr;
+typedef zpl_intptr intptr;
+#else
 #undef cast
 #undef hard_cast
-
-#endif
+#endif // ZPL_PREFIX_TYPES
 
 #endif // ZPL_INCLUDE_ZPL_H
 

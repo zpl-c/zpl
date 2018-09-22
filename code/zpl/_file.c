@@ -600,6 +600,8 @@ void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_as
     zpl_thread_start(&td, zpl__async_file_write_proc, cast(void *) afops);
 }
 
+#endif // ZPL_THREADING
+
 // TODO: Is this a bad idea?
 zpl_global b32 zpl__std_file_set = false;
 zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };

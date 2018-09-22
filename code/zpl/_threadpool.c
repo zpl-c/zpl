@@ -107,6 +107,8 @@ ZPL_DEF b32 zpl_jobs_process(zpl_thread_pool *pool);
 // Thread Pool
 //
 
+#ifdef ZPL_THREADING
+
 ZPL_THREAD_PROC(zpl__jobs_entry) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
