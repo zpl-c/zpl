@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.12.4 - Fixed opts positionals ordering
   8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
   8.12.1 - Fixed a lot of important stuff
@@ -10859,7 +10860,7 @@ void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const cha
     e.met = false;
     e.pos = false;
 
-    zpl_array_append(opts->entries, e);
+    zpl_array_append_at(opts->entries, e, 0);
 }
 
 zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, usize len, b32 longname) {
@@ -10880,7 +10881,7 @@ void zpl_opts_positional_add(zpl_opts *opts, char const *name) {
 
     if (e) {
         e->pos = true;
-        zpl_array_append(opts->positioned, e);
+        zpl_array_append_at(opts->positioned, e, 0);
     }
 }
 
