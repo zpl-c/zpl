@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
   8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
@@ -11020,7 +11021,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                     } else if (*e == '\0') {
                         char *sp = argv[i+1];
 
-                        if (sp && *sp != '-' && zpl_array_count(opts->positioned) < 1) {
+                        if (sp && *sp != '-' && (zpl_array_count(opts->positioned) < 1  || t->type != ZPL_OPTS_FLAG)) {
                             if (t->type == ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_EXTRA_VALUE);
                                 had_errors = true;
