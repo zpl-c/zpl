@@ -295,9 +295,9 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
                         b = e = e + 1;
                     } else if (*e == '\0') {
-                        char *sp = argv[++i];
+                        char *sp = argv[i+1];
 
-                        if (sp && *sp != '-') {
+                        if (sp && *sp != '-' && zpl_array_count(opts->positioned) < 1) {
                             if (t->type == ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_EXTRA_VALUE);
                                 had_errors = true;
@@ -306,6 +306,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
                             p = sp;
                             b = e = sp;
+                            ++i;
                         } else {
                             if (t->type != ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, ob, ZPL_OPTS_ERR_MISSING_VALUE);

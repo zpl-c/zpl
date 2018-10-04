@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
   8.12.1 - Fixed a lot of important stuff
   8.12.0 - Added helper constructors for containers
@@ -2681,48 +2682,6 @@ ZPL_DEF u32 zpl_system_command_str(char const *command, zpl_array(u8) * str);
 // JSON5 Parser
 //
 //
-/*
-int main(void) {
-    zpl_file_contents fc;
-    fc = zpl_file_read_contents(zpl_heap(), true, "../data/test.json5");
-
-    zpl_json_object root = {0};
-
-    u8 err;
-    zpl_json_parse(&root, fc.size, (char const *)fc.data, zpl_heap_allocator(), true, &err);
-
-    zpl_json_object *replace = NULL;
-    isize index = zpl_json_find(&root, "replace_me", false, &replace);
-
-    if (index != -1)
-    {
-        zpl_printf("Field was found! Current value: %lld\nReplacing with an array!\n", replace->integer);
-
-        replace->type = ZPL_JSON_TYPE_ARRAY;
-        zpl_array_init(replace->nodes, replace->backing);
-
-        for (size_t i = 0; i < 5; i++)
-        {
-            zpl_json_object *o = zpl_json_add(replace, NULL, ZPL_JSON_TYPE_INTEGER);
-
-            if (o) {
-                o->integer = (i64)i+1;
-            }
-        }
-
-        replace->name = "i_am_replaced ";
-    }
-
-    zpl_printf("Error code: %d\n", err);
-
-    zpl_json_write(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), &root, 0);
-
-    zpl_json_free(&root);
-
-    zpl_file_free_contents(&fc);
-    return 0;
-}
-*/
 
 #ifdef ZPL_JSON_DEBUG
 #define ZPL_JSON_ASSERT ZPL_ASSERT(0)
@@ -11058,9 +11017,9 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
                         b = e = e + 1;
                     } else if (*e == '\0') {
-                        char *sp = argv[++i];
+                        char *sp = argv[i+1];
 
-                        if (sp && *sp != '-') {
+                        if (sp && *sp != '-' && zpl_array_count(opts->positioned) < 1) {
                             if (t->type == ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_EXTRA_VALUE);
                                 had_errors = true;
@@ -11069,6 +11028,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
                             p = sp;
                             b = e = sp;
+                            ++i;
                         } else {
                             if (t->type != ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, ob, ZPL_OPTS_ERR_MISSING_VALUE);
