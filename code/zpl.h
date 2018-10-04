@@ -10860,7 +10860,7 @@ void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const cha
     e.met = false;
     e.pos = false;
 
-    zpl_array_append_at(opts->entries, e, 0);
+    zpl_array_append(opts->entries, e);
 }
 
 zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, usize len, b32 longname) {
@@ -10941,7 +10941,7 @@ b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) {
 void zpl_opts_print_help(zpl_opts *opts) {
     zpl_printf("USAGE: %s", opts->appname);
 
-    for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
+    for (int i = zpl_array_count(opts->entries); i >= 0; --i) {
         zpl_opts_entry *e = opts->entries + i;
 
         if (e->pos == (b32) true) { zpl_printf(" [%s]", e->lname); }
