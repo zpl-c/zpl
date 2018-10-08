@@ -2696,11 +2696,13 @@ ZPL_DEF isize zpl_count_set_bits(u64 mask);
 ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
 ZPL_DEF zpl_string zpl_system_command_str(char const *command, zpl_allocator backing);
 
-////////////////////////////////////////////////////////////////
-//
-// JSON5 Parser
-//
-//
+/** @file _json.c
+@brief JSON5 Parser/Writer
+
+Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
+*/
+
+//! Debug mode
 
 #ifdef ZPL_JSON_DEBUG
 #define ZPL_JSON_ASSERT ZPL_ASSERT(0)
@@ -2866,11 +2868,11 @@ ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_alloca
 ZPL_DEF char *zpl__json_skip(char *str, char c);
 ZPL_DEF b32 zpl__json_validate_name(char *str, char *err);
 
-////////////////////////////////////////////////////////////////
-//
-// CLI Options
-//
-//
+/** @file _opts.c
+@brief CLI options processor
+
+ Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
+ */
 
 typedef enum {
     ZPL_OPTS_STRING,
@@ -2911,17 +2913,81 @@ typedef struct {
     char const *appname;
 } zpl_opts;
 
-ZPL_DEF void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app);
+//! Initializes options parser.
+
+//! Initializes CLI options parser using specified memory allocator and provided application name.
+//! @param opts Options parser to initialize.
+//! @param allocator Memory allocator to use. (ex. zpl_heap())
+//! @param app Application name displayed in help screen.
+ZPL_DEF void zpl_opts_init(zpl_opts *opts, zpl_allocator allocator, char const *app);
+
+//! Releases the resources used by options parser.
 ZPL_DEF void zpl_opts_free(zpl_opts *opts);
+
+//! Registers an option.
+
+//! Registers an option with its short and long name, specifies option's type and its description.
+//! @param opts Options parser to add to.
+//! @param Shorter name of option. (ex. "f")
+//! @param Full name of option. (ex. "foo") Note that rest of the module uses longer names to manipulate opts.
+//! @param desc Description shown in the help screen.
+//! @param type Option's type (see zpl_opts_types)
+//! @see zpl_opts_types
 ZPL_DEF void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type);
+
+//! Registers option as positional.
+
+//! Registers added option as positional, so that we can pass it anonymously. Arguments are expected on the command input in the same order they were registered as.
+//! @param opts
+//! @param name Name of already registered option.
 ZPL_DEF void zpl_opts_positional_add(zpl_opts *opts, char const *name);
+
+//! Compiles CLI arguments.
+
+// This method takes CLI arguments as input and processes them based on rules that were set up.
+//! @param opts
+//! @param argc Argument count in an array.
+//! @param argv Array of arguments.
 ZPL_DEF b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv);
+
+//! Prints out help screen.
+
+//! Prints out help screen with example usage of application as well as with all the flags available.
 ZPL_DEF void zpl_opts_print_help(zpl_opts *opts);
+
+//! Prints out parsing errors.
+
+//! Prints out possible errors caused by CLI input.
 ZPL_DEF void zpl_opts_print_errors(zpl_opts *opts);
+
+//! Fetches a string from an option.
+
+//! @param opts
+//! @param name Name of an option.
+//! @param fallback Fallback string we return if option wasn't found.
 ZPL_DEF zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback);
+
+//! Fetches a real number from an option.
+
+//! @param opts
+//! @param name Name of an option.
+//! @param fallback Fallback real number we return if option was not found.
 ZPL_DEF f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback);
+
+//! Fetches an integer number from an option.
+
+//! @param opts
+//! @param name Name of an option.
+//! @param fallback Fallback integer number we return if option was not found.
 ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
+
+//! Checks whether an option was used.
+
+//! @param opts
+//! @param name Name of an option.
 ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
+
+//! Checks whether all positionals have been passed in.
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 ///////////////////////////////////////////////////////////////

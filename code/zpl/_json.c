@@ -1,8 +1,10 @@
-////////////////////////////////////////////////////////////////
-//
-// JSON5 Parser
-//
-//
+/** @file _json.c
+@brief JSON5 Parser/Writer
+
+Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
+*/
+
+//! Debug mode
 
 #ifdef ZPL_JSON_DEBUG
 #define ZPL_JSON_ASSERT ZPL_ASSERT(0)
