@@ -22,7 +22,7 @@ ZPL_EXTERN u64 zpl_murmur64(void const *data, isize len);
 ZPL_EXTERN u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
 ZPL_EXTERN u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

@@ -397,7 +397,7 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 #define ZPL_MURMUR64_DEFAULT_SEED 0x9747b28c
 #endif
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

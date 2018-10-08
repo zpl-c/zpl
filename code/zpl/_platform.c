@@ -369,7 +369,7 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 
 #endif // ZPL_PLATFORM
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

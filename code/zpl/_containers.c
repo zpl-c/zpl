@@ -413,7 +413,7 @@ ZPL_RING_DECLARE(usize);
 ZPL_RING_DECLARE(isize);
 ZPL_RING_DECLARE(uintptr);
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

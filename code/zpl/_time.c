@@ -40,7 +40,7 @@ ZPL_DEF void zpl_timer_set(zpl_timer *timer, f64 /* microseconds */ duration, i3
 ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
 ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

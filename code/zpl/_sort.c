@@ -50,7 +50,7 @@ ZPL_DEF void zpl_shuffle(void *base, isize count, isize size);
 #define zpl_reverse_array(array, count) zpl_reverse(array, count, zpl_size_of(*(array)))
 ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

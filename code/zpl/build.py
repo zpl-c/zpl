@@ -78,7 +78,7 @@ with open(TPL_PATH, 'r') as loader:
         with open(wd + "/" + fn, 'r') as fi:
             c = fi.read()
 
-            p = c.split("//!!")
+            p = c.split("//$$")
             head += p[0]
             source += p[1]
 

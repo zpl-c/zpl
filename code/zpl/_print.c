@@ -18,7 +18,7 @@ ZPL_DEF isize zpl_snprintf(char *str, isize n, char const *fmt, ...) ZPL_PRINTF_
 ZPL_DEF isize zpl_snprintf_va(char *str, isize n, char const *fmt, va_list va);
 
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

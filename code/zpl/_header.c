@@ -709,7 +709,7 @@ template <typename T> struct zpl_alignment_trick {
 ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
 ZPL_DEF i32 zpl_assert_crash(char const *condition);
 
-//!!
+//$$
 
 void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...) {
     zpl_printf_err("%s:(%d): Assert Failure: ", file, line);

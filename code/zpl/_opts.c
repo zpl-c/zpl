@@ -56,7 +56,7 @@ ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
 ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
-//!!
+//$$
 
 ////////////////////////////////////////////////////////////////
 //

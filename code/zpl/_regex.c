@@ -71,7 +71,7 @@ ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_
 ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
-//!!
+//$$
 
 typedef enum zplreOp {
 	ZPL_RE_OP_BEGIN_CAPTURE,
