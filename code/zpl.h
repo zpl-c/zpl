@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+8.13.6 - Update system command API
   8.12.6 - Fix warning in CLI options parser
 8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
@@ -2677,8 +2678,7 @@ ZPL_DEF u64 zpl_endian_swap64(u64 i);
 ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
 ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
-ZPL_DEF u32 zpl_system_command_str(char const *command, zpl_array(u8) * str);
-#define zpl_system_command_nores(cmd) zpl_system_command_str(cmd, NULL)
+ZPL_DEF zpl_string zpl_system_command_str(char const *command, zpl_allocator backing);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -9715,11 +9715,11 @@ zpl_internal u32 zpl__get_noise_from_time(void) {
     u32 accum = 0;
     f64 start, remaining, end, curr = 0;
     u64 interval = 100000ll;
-
+    
     start     = zpl_time_now();
     remaining = (interval - cast(u64)(interval*start)%interval) / cast(f64)interval;
     end       = start + remaining;
-
+    
     do {
         curr = zpl_time_now();
         accum += cast(u32)curr;
@@ -9753,7 +9753,7 @@ void zpl_random_init(zpl_random *r) {
     isize i, j;
     u32 x = 0;
     r->value = 0;
-
+    
     r->offsets[0] = zpl__get_noise_from_time();
 #ifdef ZPL_THREADING
     r->offsets[1] = zpl_atomic32_fetch_add(&zpl__random_shared_counter, 1);
@@ -9770,7 +9770,7 @@ void zpl_random_init(zpl_random *r) {
     r->offsets[6] = zpl__get_noise_from_time();
     tick = zpl_rdtsc();
     r->offsets[7] = cast(u32)(tick ^ (tick >> 32));
-
+    
     for (j = 0; j < 4; j++) {
         for (i = 0; i < zpl_count_of(r->offsets); i++) {
             r->offsets[i] = x = zpl__permute_with_offset(x, r->offsets[i]);
@@ -9788,7 +9788,7 @@ u32 zpl_random_gen_u32(zpl_random *r) {
             carry = ++r->offsets[i] ? 0 : 1;
         }
     }
-
+    
     r->value = x;
     return x;
 }
@@ -9800,7 +9800,7 @@ u32 zpl_random_gen_u32_unique(zpl_random *r) {
     for (i = 0; i < zpl_count_of(r->offsets); i++) {
         x = zpl__permute_with_offset(x, r->offsets[i]);
     }
-
+    
     return x;
 }
 
@@ -9864,7 +9864,7 @@ zpl_inline void zpl_yield(void) {
 
 zpl_inline char const *zpl_get_env(char const *name) {
     return getenv(name);
-
+    
     // TODO: Use GetEnvironmentVariable on Windows?
 }
 
@@ -9921,15 +9921,15 @@ zpl_inline u32 zpl_system_command(char const *command, usize buffer_len, char *b
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else
-
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     FILE *handle = _popen(command, "r");
 #else
     FILE *handle =  popen(command, "r");
 #endif
-
+    
     if(!handle) return 0;
-
+    
     char c;
     usize i=0;
     while ((c = getc(handle)) != EOF && i++ < buffer_len) {
@@ -9940,38 +9940,42 @@ zpl_inline u32 zpl_system_command(char const *command, usize buffer_len, char *b
 #else
     pclose(handle);
 #endif
-
+    
 #endif
     return 1;
 }
 
-zpl_inline u32 zpl_system_command_str(char const *command, zpl_array(u8) *str) {
+zpl_inline zpl_string zpl_system_command_str(char const *command, zpl_allocator backing) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else
-
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     FILE *handle = _popen(command, "r");
 #else
     FILE *handle =  popen(command, "r");
 #endif
-
-    if(!handle) return 0;
-
+    
+    if(!handle) return NULL;
+    
+    zpl_string output = zpl_string_make_reserve(backing, 4);
+    
     char c;
     while ((c = getc(handle)) != EOF) {
-        if (str) {
-            zpl_array_append(*str, c);
-        }
+        char ins[2] = {c,0};
+        output = zpl_string_appendc(output, ins);
     }
+    
+    
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     _pclose(handle);
 #else
     pclose(handle);
 #endif
-
+    
 #endif
-    return 1;
+    return output;
 }
 
 

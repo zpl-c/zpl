@@ -14,11 +14,10 @@
 int main(void)
 {
     char buf[BUF_LEN] = {0};
-    zpl_array_t(u8) arr = {0};
-    zpl_array_init(arr, zpl_heap_allocator());
+    zpl_string text = NULL;
     
     zpl_system_command("fortune | cowsay", BUF_LEN, buf);
-    zpl_system_command_str("fortune | cowsay", &arr);
-    zpl_printf("Output:\n %s\n\n%s", buf, arr);
+    text = zpl_system_command_str("fortune | cowsay");
+    zpl_printf("Output:\n %s\n\n%s", buf, text);
     return 0;
 }

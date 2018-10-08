@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+8.13.6 - Update system command API
   8.12.6 - Fix warning in CLI options parser
 8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
