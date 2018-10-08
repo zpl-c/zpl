@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+8.14.1 - Fix string library
 8.14.0 - Added zpl_re_match_all
 8.13.0 - Update system command API
   8.12.6 - Fix warning in CLI options parser

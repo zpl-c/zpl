@@ -17,7 +17,7 @@ int main(void)
     zpl_string text = NULL;
     
     zpl_system_command("fortune | cowsay", BUF_LEN, buf);
-    text = zpl_system_command_str("fortune | cowsay");
+    text = zpl_system_command_str("fortune | cowsay", zpl_heap());
     zpl_printf("Output:\n %s\n\n%s", buf, text);
     return 0;
 }
