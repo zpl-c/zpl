@@ -14,7 +14,9 @@ set SUBSYSTEM=console
 set INCLUDEPATHS=/I..\..\code /IC:\VulkanSDK\1.1.82.1\Include /IC:\glfw\include
 set LIBPATHS=/LIBPATH:C:\VulkanSDK\1.1.82.1\Lib /LIBPATH:C:\glfw\lib-vc2015
 
-ctime -begin %1.ctm
-cl ..\%1 %WARN% %OPTS% %CMN% %INCLUDEPATHS% /link %LIBPATHS% /NODEFAULTLIB:glfw3 /SUBSYSTEM:%SUBSYSTEM% %LIBS%
-ctime -end %1.ctm
+echo %1
+
+ctime -begin build.ctm
+cl %1 %WARN% %OPTS% %CMN% %INCLUDEPATHS% /link %LIBPATHS% /NODEFAULTLIB:glfw3 /SUBSYSTEM:%SUBSYSTEM% %LIBS%
+ctime -end build.ctm
 popd
