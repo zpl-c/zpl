@@ -1,6 +1,7 @@
 # project files & folders
 build
 build.*
+!build.bat
 !build.py
 include/project.4coder
 include/build.sh

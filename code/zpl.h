@@ -1,32 +1,33 @@
 /*
 
   ZPL - Global module
-
+  
 Usage:
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
-
+  
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
-
+  
   To make use of platform layer, define ZPL_PLATFORM, like:
-
+  
   #define ZPL_PLATFORM
   #include "zpl.h"
-
-Options:
   
+Options:
+
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
   ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
-
-
+  
+  
 Credits:
   Read AUTHORS.md
-
+  
 GitHub:
   https://github.com/zpl-c/zpl
-
+  
 Version History:
-  8.12.5 - Support parametric options preceding positionals
+  8.12.6 - Fix warning in CLI options parser
+8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
   8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
@@ -40,7 +41,7 @@ Version History:
   8.10.0 - Added zpl_strchr
   8.9.0  - API improvements for JSON5 parser
   8.8.4  - Add support for SJSON formatting http://bitsquid.blogspot.com/2009/10/simplified-json-notation.html
-
+  
   6.8.3  - JSON5 exp fix
   6.8.2  - Bugfixes applied from gb
   6.8.1  - Performance improvements for JSON5 parser
@@ -60,7 +61,7 @@ Version History:
   6.0.2  - Fixed warnings for json5 i64 printfs
   6.0.1  - Fixed warnings for particual win compiler in dirlist method
   6.0.0  - New build, include/ was renamed to code/
- 
+  
   5.8.3  - Naming fixes
   5.8.2  - Job system now supports prioritized tasks
   5.8.1  - Renames zpl_pad to zpl_ring
@@ -88,7 +89,7 @@ Version History:
   5.0.2  - Fix segfault when using zpl_stack_memory
   5.0.1  - Small code improvements
   5.0.0  - Project structure changes
- 
+  
   4.7.2  - Got rid of size arg for zpl_str_split_lines
   4.7.1  - Added an example
   4.7.0  - Added zpl_path_dirlist
@@ -113,7 +114,7 @@ Version History:
   4.0.2  - Warning fix for _LARGEFILE64_SOURCE
   4.0.1  - include stdlib.h for getenv (temp)
   4.0.0  - ARM support, coding style changes and various improvements
- 
+  
   3.4.1  - zpl_memcopy now uses memcpy for ARM arch-family
   3.4.0  - Removed obsolete code
   3.3.4  - Added Travis CI config
@@ -134,7 +135,7 @@ Version History:
   3.0.2  - Fixed linux part, and removed trailing spaces
   3.0.1  - Small bugfix in zpl_file_open
   3.0.0  - Added several fixes and features
- 
+  
   2.4.0  - Added remove to hash table
   2.3.3  - Removed redundant code
   2.3.2  - Eliminated extra warnings
@@ -147,23 +148,23 @@ Version History:
   2.0.8  - Small adjustments
   2.0.7  - MinGW related fixes
   2.0.0  - New NPM based version
- 
+  
   1.2.2  - Small fix
   1.2.1  - Macro fixes
   1.2.0  - Added zpl_async macro
   1.1.0  - Added timer feature
   1.0.0  - Initial version
-
+  
   This Software is dual licensed under the following licenses:
-
+  
   Unlicense
   This is free and unencumbered software released into the public domain.
-
+  
   Anyone is free to copy, modify, publish, use, compile, sell, or
   distribute this software, either in source code form or as a compiled
   binary, for any purpose, commercial or non-commercial, and by any
   means.
-
+  
   In jurisdictions that recognize copyright laws, the author or authors
   of this software dedicate any and all copyright interest in the
   software to the public domain. We make this dedication for the benefit
@@ -171,7 +172,7 @@ Version History:
   successors. We intend this dedication to be an overt act of
   relinquishment in perpetuity of all present and future rights to this
   software under copyright law.
-
+  
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -179,23 +180,23 @@ Version History:
   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.
-
+  
   For more information, please refer to <http://unlicense.org/>
-
+  
   Apache 2.0
   Copyright 2017-2018 Dominik Madarász <zaklaus@outlook.com>
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-    
+  
       http://www.apache.org/licenses/LICENSE-2.0
-    
+      
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License. 
-
+  
 */
 
 //
@@ -225,8 +226,8 @@ Version History:
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-#if defined(__cplusplus)
+    
+    #if defined(__cplusplus)
 #define ZPL_EXTERN extern "C"
 #else
 #define ZPL_EXTERN extern
@@ -2801,52 +2802,6 @@ ZPL_DEF b32 zpl__json_validate_name(char *str, char *err);
 // CLI Options
 //
 //
-/*
-int main(int argc, char **argv)
-{
-    zpl_opts opts={0};
-
-    zpl_opts_init(&opts, zpl_heap(), argv[0]);
-
-    zpl_opts_add(&opts, "?", "help", "the HELP section", ZPL_OPTS_FLAG);
-    zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
-    zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
-    zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
-    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_FLAG);
-
-    zpl_opts_positional_add(&opts, "4pay");
-
-    b32 ok=zpl_opts_compile(&opts, argc, argv);
-
-    if (ok && zpl_opts_positionals_filled(&opts)) {
-
-        b32 help=zpl_opts_has_arg(&opts, "help");
-        if (help) {
-            zpl_opts_print_help(&opts);
-            return 0;
-        }
-        zpl_string foo=zpl_opts_string(&opts, "foo", "WRONG!");
-        f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
-        i32 right=zpl_opts_integer(&opts, "4pay", 42);
-        zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
-                                                                right);
-
-        b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
-        if (gfx) {
-            zpl_printf("You wanted HD graphics? Here:\n\n");
-            for (int i=0; i<5; ++i) {
-                zpl_printf("iiiii\n");
-            }
-        }
-    }
-    else {
-        zpl_opts_print_errors(&opts);
-        zpl_opts_print_help(&opts);
-    }
-
-    return 0;
-}
-*/
 
 typedef enum {
     ZPL_OPTS_STRING,
@@ -2859,7 +2814,7 @@ typedef struct {
     char const *name, *lname, *desc;
     u8 type;
     b32 met, pos;
-
+    
     union {
         zpl_string text;
         i64 integer;
@@ -2907,55 +2862,6 @@ ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 // This job system follows thread pool pattern to minimize the costs of thread initialization.
 // It reuses fixed number of threads to process variable number of jobs.
 //
-/*
-#define TEST_ENQUEUE_JOB 0.8
-
-zpl_mutex print_mut;
-
-ZPL_JOBS_PROC(calc_nums)
-{
-    zpl_unused(data);
-    i64 nums=0;
-    zpl_random rnd={0};
-    zpl_random_init(&rnd);
-
-    for (int i=0; i<100; ++i) {
-        nums+=(zpl_random_gen_u64(&rnd) & 100);
-    }
-
-    //zpl_sleep_ms(50*zpl_random_range_i64(&rnd, 2, 8));
-
-    zpl_mutex_lock(&print_mut);
-    zpl_printf("Result is: %ld\n", nums);
-    zpl_mutex_unlock(&print_mut);
-}
-
-int main()
-{
-    zpl_random rng={0};
-    zpl_thread_pool p={0};
-    zpl_jobs_init(&p, zpl_heap(), 2);
-    zpl_random_init(&rng);
-    zpl_mutex_init(&print_mut);
-
-    zpl_jobs_enqueue(&p, calc_nums, NULL);
-
-    f64 time=zpl_time_now();
-
-    for (;;) {
-        f64 now=zpl_time_now();
-        f64 dt =now-time;
-        if (dt > TEST_ENQUEUE_JOB) {
-            time=now;
-            zpl_jobs_enqueue(&p, calc_nums, NULL);
-        }
-
-        zpl_jobs_process(&p);
-    }
-
-    return 0;
-}
-*/
 
 #ifdef ZPL_THREADING
 #define ZPL_JOBS_PROC(name) void name(void *data)
@@ -3773,7 +3679,7 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 #endif // ZPL_PLATFORM
 
 
-
+    
 #if defined(__cplusplus)
 }
 #endif
@@ -3810,8 +3716,8 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-
+    
+    
 
 void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...) {
     zpl_printf_err("%s:(%d): Assert Failure: ", file, line);
@@ -10839,7 +10745,7 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
     *opts = opts_;
     opts->alloc = a;
     opts->appname = app;
-
+    
     zpl_array_init(opts->entries, a);
     zpl_array_init(opts->positioned, a);
     zpl_array_init(opts->errors, a);
@@ -10853,33 +10759,33 @@ void zpl_opts_free(zpl_opts *opts) {
 
 void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type) {
     zpl_opts_entry e = { 0 };
-
+    
     e.name = name;
     e.lname = lname;
     e.desc = desc;
     e.type = type;
     e.met = false;
     e.pos = false;
-
+    
     zpl_array_append(opts->entries, e);
 }
 
 zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, usize len, b32 longname) {
     zpl_opts_entry *e = 0;
-
+    
     for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
         e = opts->entries + i;
         char const *n = (longname ? e->lname : e->name);
-
+        
         if (zpl_strnlen(name, len) == zpl_strlen(n) && !zpl_strncmp(n, name, len)) { return e; }
     }
-
+    
     return NULL;
 }
 
 void zpl_opts_positional_add(zpl_opts *opts, char const *name) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
-
+    
     if (e) {
         e->pos = true;
         zpl_array_append_at(opts->positioned, e, 0);
@@ -10890,19 +10796,19 @@ b32 zpl_opts_positionals_filled(zpl_opts *opts) { return zpl_array_count(opts->p
 
 zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
-
+    
     return (char *)((e && e->met) ? e->text : fallback);
 }
 
 f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
-
+    
     return (e && e->met) ? e->real : fallback;
 }
 
 i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
-
+    
     return (e && e->met) ? e->integer : fallback;
 }
 
@@ -10910,19 +10816,19 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     t->met = true;
     
     switch (t->type) {
-    case ZPL_OPTS_STRING: {
-        t->text = zpl_string_make(opts->alloc, b);
-    } break;
-
-    case ZPL_OPTS_FLOAT: {
-        t->real = zpl_str_to_f64(b, NULL);
-    } break;
-
-    case ZPL_OPTS_INT: {
-        t->integer = zpl_str_to_i64(b, NULL, 10);
-    } break;
+        case ZPL_OPTS_STRING: {
+            t->text = zpl_string_make(opts->alloc, b);
+        } break;
+        
+        case ZPL_OPTS_FLOAT: {
+            t->real = zpl_str_to_f64(b, NULL);
+        } break;
+        
+        case ZPL_OPTS_INT: {
+            t->integer = zpl_str_to_i64(b, NULL, 10);
+        } break;
     }
-
+    
     for (isize i=0; i < zpl_array_count(opts->positioned); i++) {
         if (!zpl_strcmp(opts->positioned[i]->lname, t->lname)) {
             zpl_array_remove_at(opts->positioned, i);
@@ -10933,26 +10839,26 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
 
 b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
-
+    
     if (e) { return e->met; }
-
+    
     return false;
 }
 
 void zpl_opts_print_help(zpl_opts *opts) {
     zpl_printf("USAGE: %s", opts->appname);
-
-    for (int i = zpl_array_count(opts->entries); i >= 0; --i) {
+    
+    for (isize i = zpl_array_count(opts->entries); i >= 0; --i) {
         zpl_opts_entry *e = opts->entries + i;
-
+        
         if (e->pos == (b32) true) { zpl_printf(" [%s]", e->lname); }
     }
-
+    
     zpl_printf("\nOPTIONS:\n");
-
-    for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
+    
+    for (isize i = 0; i < zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e = opts->entries + i;
-
+        
         zpl_printf("\t-%s, --%s: %s\n", e->name, e->lname, e->desc);
     }
 }
@@ -10960,19 +10866,19 @@ void zpl_opts_print_help(zpl_opts *opts) {
 void zpl_opts_print_errors(zpl_opts *opts) {
     for (int i = 0; i < zpl_array_count(opts->errors); ++i) {
         zpl_opts_err *err = (opts->errors + i);
-
+        
         zpl_printf("ERROR: ");
-
+        
         switch (err->type) {
-        case ZPL_OPTS_ERR_OPTION: zpl_printf("Invalid option \"%s\"", err->val); break;
-
-        case ZPL_OPTS_ERR_VALUE: zpl_printf("Invalid value \"%s\"", err->val); break;
-
-        case ZPL_OPTS_ERR_MISSING_VALUE: zpl_printf("Missing value for option \"%s\"", err->val); break;
-
-        case ZPL_OPTS_ERR_EXTRA_VALUE: zpl_printf("Extra value for option \"%s\"", err->val); break;
+            case ZPL_OPTS_ERR_OPTION: zpl_printf("Invalid option \"%s\"", err->val); break;
+            
+            case ZPL_OPTS_ERR_VALUE: zpl_printf("Invalid value \"%s\"", err->val); break;
+            
+            case ZPL_OPTS_ERR_MISSING_VALUE: zpl_printf("Missing value for option \"%s\"", err->val); break;
+            
+            case ZPL_OPTS_ERR_EXTRA_VALUE: zpl_printf("Extra value for option \"%s\"", err->val); break;
         }
-
+        
         zpl_printf("\n");
     }
 }
@@ -10988,7 +10894,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
     b32 had_errors = false;
     for (int i = 1; i < argc; ++i) {
         char *p = argv[i];
-
+        
         if (*p) {
             p = zpl__trim(p, false);
             if (*p == '-') {
@@ -10998,17 +10904,17 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                     checkln = true;
                     ++p;
                 }
-
+                
                 char *b = p + 1, *e = b;
-
+                
                 while (zpl_char_is_alphanumeric(*e)) { ++e; }
-
+                
                 t = zpl__opts_find(opts, b, (e - b), checkln);
-
+                
                 if (t) {
                     char *ob = b;
                     b = e;
-
+                    
                     /**/ if (*e == '=') {
                         if (t->type == ZPL_OPTS_FLAG) {
                             *e = '\0';
@@ -11016,18 +10922,18 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                             had_errors = true;
                             continue;
                         }
-
+                        
                         b = e = e + 1;
                     } else if (*e == '\0') {
                         char *sp = argv[i+1];
-
+                        
                         if (sp && *sp != '-' && (zpl_array_count(opts->positioned) < 1  || t->type != ZPL_OPTS_FLAG)) {
                             if (t->type == ZPL_OPTS_FLAG) {
                                 zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_EXTRA_VALUE);
                                 had_errors = true;
                                 continue;
                             }
-
+                            
                             p = sp;
                             b = e = sp;
                             ++i;
@@ -11041,7 +10947,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                             continue;
                         }
                     }
-
+                    
                     e = zpl__skip(e, '\0');
                     zpl__opts_set_value(opts, t, b);
                 } else {
@@ -14450,7 +14356,7 @@ ZPL_COMPARE_PROC(zpl_video_mode_cmp) {
 ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
 
 #endif // defined(ZPL_PLATFORM)
-
+    
 #if defined(__cplusplus)
 }
 #endif
