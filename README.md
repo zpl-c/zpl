@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/9026786/43263060-7c0a8b86-90e2-11e8-96e3-3e71e559f62a.png" alt="zpl" /></a>
+    ![zpl](https://user-images.githubusercontent.com/9026786/43263060-7c0a8b86-90e2-11e8-96e3-3e71e559f62a.png)
 </div>
 
 <div align="center">
@@ -15,8 +15,8 @@
 
 <div align="center">
   <sub>
-    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>, 
-     <a href="https://github.com/inlife">@inlife</a>,
+    Brought to you by [zaklaus](https://github.com/zaklaus), 
+     [inlife](https://github.com/inlife),
     and <strong>contributors</strong>
   </sub>
 </div>
