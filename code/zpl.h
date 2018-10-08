@@ -26,7 +26,8 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
-8.13.6 - Update system command API
+8.14.0 - Added zpl_re_match_all
+8.13.0 - Update system command API
   8.12.6 - Fix warning in CLI options parser
 8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
@@ -1691,7 +1692,7 @@ ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, char const *fmt, ...);
 //
 // Regex
 //
-// Based on https://github.com/gingerBill/zpl_/blob/master/gb_regex.h
+// Based on https://github.com/gingerBill/gb/blob/master/gb_regex.h
 //
 /* 
 Supported Matching:
@@ -1757,6 +1758,8 @@ ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, i
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
 ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
 ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
+ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
+                                    zpl_re_capture **out_captures);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -6949,23 +6952,23 @@ isize zpl_utf8_encode_rune(u8 buf[4], Rune r) {
 typedef enum zplreOp {
 	ZPL_RE_OP_BEGIN_CAPTURE,
 	ZPL_RE_OP_END_CAPTURE,
-
+    
     ZPL_RE_OP_BEGINNING_OF_LINE,
 	ZPL_RE_OP_END_OF_LINE,
-
+    
 	ZPL_RE_OP_EXACT_MATCH,
 	ZPL_RE_OP_META_MATCH,
-
+    
 	ZPL_RE_OP_ANY,
 	ZPL_RE_OP_ANY_OF,
 	ZPL_RE_OP_ANY_BUT,
-
+    
 	ZPL_RE_OP_ZERO_OR_MORE,
 	ZPL_RE_OP_ONE_OR_MORE,
 	ZPL_RE_OP_ZERO_OR_MORE_SHORTEST,
 	ZPL_RE_OP_ONE_OR_MORE_SHORTEST,
 	ZPL_RE_OP_ZERO_OR_ONE,
-
+    
 	ZPL_RE_OP_BRANCH_START,
 	ZPL_RE_OP_BRANCH_END
 } zplreOp;
@@ -6981,7 +6984,7 @@ typedef enum zplreCode {
 	ZPL_RE_CODE_UPPER             = 0x0700,
 	ZPL_RE_CODE_WORD              = 0x0800,
 	ZPL_RE_CODE_NOT_WORD          = 0x0900,
-
+    
 	ZPL_RE_CODE_XDIGIT            = 0x0a00,
 	ZPL_RE_CODE_PRINTABLE         = 0x0b00,
 } zplreCode;
@@ -7026,41 +7029,41 @@ static isize zpl_re__strfind(char const *s, isize len, char c, isize offset) {
         if (found)
             return found - s;
     }
-
+    
     return -1;
 }
 
 static b32 zpl_re__match_escape(char c, int code) {
 	switch (code) {
-	case ZPL_RE_CODE_NULL:           return c == 0;
-	case ZPL_RE_CODE_WHITESPACE:     return zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__WHITESPACE), c, 0) >= 0;
-	case ZPL_RE_CODE_NOT_WHITESPACE: return zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__WHITESPACE), c, 0) < 0;
-	case ZPL_RE_CODE_DIGIT:          return (c >= '0' && c <= '9');
-	case ZPL_RE_CODE_NOT_DIGIT:      return !(c >= '0' && c <= '9');
-	case ZPL_RE_CODE_ALPHA:          return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-	case ZPL_RE_CODE_LOWER:          return (c >= 'a' && c <= 'z');
-	case ZPL_RE_CODE_UPPER:          return (c >= 'A' && c <= 'Z');
-
-	/* TODO(bill): Make better? */
-	case ZPL_RE_CODE_WORD:           return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_';
-	case ZPL_RE_CODE_NOT_WORD:       return !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_');
-
-	/* TODO(bill): Maybe replace with between tests? */
-	case ZPL_RE_CODE_XDIGIT:         return zpl_re__strfind(ZPL_RE__LITERAL("0123456789ABCDEFabcdef"), c, 0) >= 0;
-	case ZPL_RE_CODE_PRINTABLE:      return c >= 0x20 && c <= 0x7e;
-	default: break;
+        case ZPL_RE_CODE_NULL:           return c == 0;
+        case ZPL_RE_CODE_WHITESPACE:     return zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__WHITESPACE), c, 0) >= 0;
+        case ZPL_RE_CODE_NOT_WHITESPACE: return zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__WHITESPACE), c, 0) < 0;
+        case ZPL_RE_CODE_DIGIT:          return (c >= '0' && c <= '9');
+        case ZPL_RE_CODE_NOT_DIGIT:      return !(c >= '0' && c <= '9');
+        case ZPL_RE_CODE_ALPHA:          return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        case ZPL_RE_CODE_LOWER:          return (c >= 'a' && c <= 'z');
+        case ZPL_RE_CODE_UPPER:          return (c >= 'A' && c <= 'Z');
+        
+        /* TODO(bill): Make better? */
+        case ZPL_RE_CODE_WORD:           return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_';
+        case ZPL_RE_CODE_NOT_WORD:       return !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_');
+        
+        /* TODO(bill): Maybe replace with between tests? */
+        case ZPL_RE_CODE_XDIGIT:         return zpl_re__strfind(ZPL_RE__LITERAL("0123456789ABCDEFabcdef"), c, 0) >= 0;
+        case ZPL_RE_CODE_PRINTABLE:      return c >= 0x20 && c <= 0x7e;
+        default: break;
 	}
-
+    
 	return 0;
 }
 
 static zpl_re_ctx zpl_re__consume(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count, b32 is_greedy)
 {
     zpl_re_ctx c, best_c, next_c;
-
+    
     c.op = op;
     c.offset = offset;
-
+    
     best_c.op = ZPL_RE__NO_MATCH;
     best_c.offset = offset;
     
@@ -7068,7 +7071,7 @@ static zpl_re_ctx zpl_re__consume(zpl_re *re, isize op, char const *str, isize s
         c = zpl_re__exec_single(re, op, str, str_len, c.offset, 0, 0);
         if (c.offset > str_len || c.offset == -1) break;
         if (c.op >= re->buf_len) return c;
-
+        
         next_c = zpl_re__exec(re, c.op, str, str_len, c.offset, captures, max_capture_count);
         if (next_c.offset <= str_len) {
             if (captures)
@@ -7077,12 +7080,12 @@ static zpl_re_ctx zpl_re__consume(zpl_re *re, isize op, char const *str, isize s
             best_c = next_c;
             if (!is_greedy) break;
         }
-
+        
         if (best_c.op > re->buf_len)
             best_c.op = c.op;
-
+        
     }
-
+    
     return best_c;
 }
 
@@ -7092,30 +7095,30 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
     isize match_len;
     isize next_op;
     isize skip;
-
+    
     switch (re->buf[op++]) {
         case ZPL_RE_OP_BEGIN_CAPTURE: {
             u8 capture = re->buf[op++];
             if (captures && (capture < max_capture_count))
                 captures[capture].str = str + offset;
         } break;
-
+        
         case ZPL_RE_OP_END_CAPTURE: {
             u8 capture = re->buf[op++];
             if (captures && (capture < max_capture_count))
                 captures[capture].len = (str + offset) - captures[capture].str;
         } break;
-
+        
         case ZPL_RE_OP_BEGINNING_OF_LINE: {
             if (offset != 0)
                 return zpl_re__ctx_no_match(op);
         } break;
-
+        
         case ZPL_RE_OP_END_OF_LINE: {
             if (offset != str_len)
                 return zpl_re__ctx_no_match(op);
         } break;
-
+        
         case ZPL_RE_OP_BRANCH_START: {
             skip = re->buf[op++];
             ctx = zpl_re__exec(re, op, str, str_len, offset, captures, max_capture_count);
@@ -7128,12 +7131,12 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
                 op = ctx.op;
             }
         } break;
-
+        
         case ZPL_RE_OP_BRANCH_END: {
             skip = re->buf[op++];
             op += skip;
         } break;
-
+        
         case ZPL_RE_OP_ANY: {
             if (offset < str_len) {
                 offset++;
@@ -7141,15 +7144,15 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
             }
             return zpl_re__ctx_no_match(op);
         } break;
-
+        
         case ZPL_RE_OP_ANY_OF: {
             isize i;
             char cin = str[offset];
             buffer_len = re->buf[op++];
-
+            
             if (offset >= str_len)
                 return zpl_re__ctx_no_match(op + buffer_len);
-
+            
             for (i = 0; i < buffer_len; i++) {
                 char cmatch = (char)re->buf[op+i];
                 if (!cmatch) {
@@ -7160,22 +7163,22 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
                     break;
                 }
             }
-
+            
             if (i == buffer_len)
                 return zpl_re__ctx_no_match(op + buffer_len);
-
+            
             offset++;
             op += buffer_len;
         } break;
-
+        
         case ZPL_RE_OP_ANY_BUT: {
             isize i;
             char cin = str[offset];
             buffer_len = re->buf[op++];
-
+            
             if (offset >= str_len)
                 return zpl_re__ctx_no_match(op + buffer_len);
-
+            
             for (i = 0; i < buffer_len; i++) {
                 char cmatch = (char)re->buf[op + i];
                 if (!cmatch) {
@@ -7186,22 +7189,22 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
                     return zpl_re__ctx_no_match(op + buffer_len);
                 }
             }
-
+            
             offset++;
             op += buffer_len;
         } break;
-
+        
         case ZPL_RE_OP_EXACT_MATCH: {
             match_len = re->buf[op++];
             
             if ((match_len > (str_len - offset)) ||
                 zpl_strncmp(str+offset, (const char*)re->buf + op, match_len) != 0)
                 return zpl_re__ctx_no_match(op + match_len);
-
+            
             op += match_len;
             offset += match_len;
         } break;
-
+        
         case ZPL_RE_OP_META_MATCH: {
             char cin = (char)re->buf[op++];
             char cmatch = str[offset++];
@@ -7211,27 +7214,27 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
                     break;
             }
             else if (cin == cmatch) break;
-
+            
             return zpl_re__ctx_no_match(op);
         } break;
-
+        
         case ZPL_RE_OP_ZERO_OR_MORE: {
             ctx = zpl_re__consume(re, op, str, str_len, offset, captures, max_capture_count, 1);
             offset = ctx.offset;
             op = ctx.op;
         } break;
-
+        
         case ZPL_RE_OP_ONE_OR_MORE: {
             ctx = zpl_re__exec_single(re, op, str, str_len, offset, captures, max_capture_count);
             
             if (ctx.offset > str_len)
                 return ctx;
-                
+            
             ctx = zpl_re__consume(re, op, str, str_len, offset, captures, max_capture_count, 1);
             offset = ctx.offset;
             op = ctx.op;
         } break;
-
+        
         case ZPL_RE_OP_ZERO_OR_MORE_SHORTEST: {
             ctx = zpl_re__consume(re, op, str, str_len, offset, captures, max_capture_count, 0);
             offset = ctx.offset;
@@ -7243,28 +7246,28 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
             
             if (ctx.offset > str_len)
                 return ctx;
-                
+            
             ctx = zpl_re__consume(re, op, str, str_len, offset, captures, max_capture_count, 0);
             offset = ctx.offset;
             op = ctx.op;
         } break;
-
+        
         case ZPL_RE_OP_ZERO_OR_ONE: {
             ctx = zpl_re__exec_single(re, op, str, str_len, offset, captures, max_capture_count);
-
+            
             if (ctx.offset <= str_len) {
                 zpl_re_ctx possible_ctx = zpl_re__exec(re, ctx.op, str, str_len, ctx.offset, captures, max_capture_count);
-
+                
                 if (possible_ctx.offset <= str_len) {
                     op = possible_ctx.op;
                     offset = possible_ctx.offset;
                     break;
                 }
             }
-
+            
             next_op = ctx.op;
             ctx = zpl_re__exec(re, next_op, str, str_len, offset, captures, max_capture_count);
-
+            
             if (ctx.offset <= str_len) {
                 op = ctx.op;
                 offset = ctx.offset;
@@ -7272,15 +7275,15 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
             }
             return zpl_re__ctx_no_match(op);
         } break;
-
+        
         default: {
             return zpl_re__ctx_internal_failure(op);
         } break;
     }
-
+    
     ctx.op = op;
     ctx.offset = offset;
-
+    
     return ctx;
 }
 
@@ -7288,20 +7291,20 @@ static zpl_re_ctx zpl_re__exec(zpl_re *re, isize op, char const *str, isize str_
     zpl_re_ctx c;
     c.op = op;
     c.offset = offset;
-
+    
     while (c.op < re->buf_len) {
         c = zpl_re__exec_single(re, c.op, str, str_len, c.offset, captures, max_capture_count);
-
+        
         if (c.offset > str_len || c.offset == -1)
             break;
     }
-
+    
     return c;
 }
 
 static zplreError zpl_re__emit_ops(zpl_re *re, isize op_count, ...) {
     va_list va;
-
+    
     if (re->buf_len + op_count > re->buf_cap) {
         if (!re->can_realloc) {
             return ZPL_RE_ERROR_TOO_LONG;
@@ -7312,7 +7315,7 @@ static zplreError zpl_re__emit_ops(zpl_re *re, isize op_count, ...) {
             re->buf_cap = new_cap;
         }
     }
-
+    
     va_start(va, op_count);
     for (isize i = 0; i < op_count; i++)
     {
@@ -7337,7 +7340,7 @@ static zplreError zpl_re__emit_ops_buffer(zpl_re *re, isize op_count, char const
             re->buf_cap = new_cap;
         }
     }
-
+    
     for (isize i = 0; i < op_count; i++)
     {
         re->buf[re->buf_len++] = buffer[i];
@@ -7348,32 +7351,32 @@ static zplreError zpl_re__emit_ops_buffer(zpl_re *re, isize op_count, char const
 
 static int zpl_re__encode_escape(char code) {
 	switch (code) {
-	default:   break; /* NOTE(bill): It's a normal character */
-
-	/* TODO(bill): Are there anymore? */
-	case 't':  return '\t';
-	case 'n':  return '\n';
-	case 'r':  return '\r';
-	case 'f':  return '\f';
-	case 'v':  return '\v';
-
-	case '0':  return ZPL_RE_CODE_NULL;
-
-	case 's':  return ZPL_RE_CODE_WHITESPACE;
-	case 'S':  return ZPL_RE_CODE_NOT_WHITESPACE;
-
-	case 'd':  return ZPL_RE_CODE_DIGIT;
-	case 'D':  return ZPL_RE_CODE_NOT_DIGIT;
-
-	case 'a':  return ZPL_RE_CODE_ALPHA;
-	case 'l':  return ZPL_RE_CODE_LOWER;
-	case 'u':  return ZPL_RE_CODE_UPPER;
-
-	case 'w':  return ZPL_RE_CODE_WORD;
-	case 'W':  return ZPL_RE_CODE_NOT_WORD;
-
-	case 'x':  return ZPL_RE_CODE_XDIGIT;
-	case 'p':  return ZPL_RE_CODE_PRINTABLE;
+        default:   break; /* NOTE(bill): It's a normal character */
+        
+        /* TODO(bill): Are there anymore? */
+        case 't':  return '\t';
+        case 'n':  return '\n';
+        case 'r':  return '\r';
+        case 'f':  return '\f';
+        case 'v':  return '\v';
+        
+        case '0':  return ZPL_RE_CODE_NULL;
+        
+        case 's':  return ZPL_RE_CODE_WHITESPACE;
+        case 'S':  return ZPL_RE_CODE_NOT_WHITESPACE;
+        
+        case 'd':  return ZPL_RE_CODE_DIGIT;
+        case 'D':  return ZPL_RE_CODE_NOT_DIGIT;
+        
+        case 'a':  return ZPL_RE_CODE_ALPHA;
+        case 'l':  return ZPL_RE_CODE_LOWER;
+        case 'u':  return ZPL_RE_CODE_UPPER;
+        
+        case 'w':  return ZPL_RE_CODE_WORD;
+        case 'W':  return ZPL_RE_CODE_NOT_WORD;
+        
+        case 'x':  return ZPL_RE_CODE_XDIGIT;
+        case 'p':  return ZPL_RE_CODE_PRINTABLE;
 	}
 	return code;
 }
@@ -7384,43 +7387,43 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
     isize buffer_len = 0, buffer_cap = zpl_size_of(buffer);
     b32 closed = 0;
     zplreOp op = ZPL_RE_OP_ANY_OF;
-
+    
     if (pattern[offset] == '^') {
         offset++;
         op = ZPL_RE_OP_ANY_BUT;
     }
-
+    
     while(!closed &&
-            err == ZPL_RE_ERROR_NONE &&
-            offset < len)
+          err == ZPL_RE_ERROR_NONE &&
+          offset < len)
     {
         if (pattern[offset] == ']') {
             err = zpl_re__emit_ops(re, 2, (i32)op, (i32)buffer_len);
             if (err) break;
-
+            
             err = zpl_re__emit_ops_buffer(re, buffer_len, (const char*)buffer);
             if (err) break;
             offset++;
             closed = 1;
             break;
         }
-
+        
         if (buffer_len >= buffer_cap)
             return ZPL_RE_ERROR_TOO_LONG;
-
+        
         if (pattern[offset] == '\\') {
             offset++;
-
+            
             if ((offset + 1 < len) && zpl_char_is_hex_digit(*(pattern+offset))) {
                 buffer[buffer_len++] = zpl_re__hex((pattern+offset));
                 offset++;
             }
             else if (offset < len) {
                 i32 code = zpl_re__encode_escape(pattern[offset]);
-
+                
                 if (!code || code > 0xff) {
                     buffer[buffer_len++] = 0;
-
+                    
                     if (buffer_len >= buffer_cap)
                         return ZPL_RE_ERROR_TOO_LONG;
                     
@@ -7434,10 +7437,10 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
         else {
             buffer[buffer_len++] = (unsigned char)pattern[offset];
         }
-
+        
         offset++;
     }
-
+    
     if (err) return err;
     if (!closed) return ZPL_RE_ERROR_MISMATCHED_BLOCKS;
     if (new_offset) *new_offset = offset;
@@ -7447,27 +7450,27 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
 static zplreError zpl_re__compile_quantifier(zpl_re *re, isize last_buf_len, unsigned char quantifier) {
     zplreError err;
     isize move_size;
-
+    
     if ((re->buf[last_buf_len] == ZPL_RE_OP_EXACT_MATCH) &&
         (re->buf[last_buf_len+1] > 1)) 
     {    
         unsigned char last_char = re->buf[re->buf_len-1];
-
+        
         re->buf[last_buf_len+1]--;
         re->buf_len--;
         err = zpl_re__emit_ops(re, 4, (i32)quantifier, (i32)ZPL_RE_OP_EXACT_MATCH, 1, (i32)last_char);
         if (err) return err;
         return ZPL_RE_ERROR_NONE;
     }
-
+    
     move_size = re->buf_len - last_buf_len + 1;
-
+    
     err = zpl_re__emit_ops(re, 1, 0);
     if (err) return err;
-
+    
     zpl_memmove(re->buf+last_buf_len+1, re->buf+last_buf_len, move_size);
     re->buf[last_buf_len] = quantifier;
-
+    
     return ZPL_RE_ERROR_NONE;
 }
 
@@ -7476,52 +7479,52 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
     isize last_buf_len = re->buf_len;
     isize branch_begin = re->buf_len;
     isize branch_op = -1;
-
+    
     while (offset < len) {
         switch (pattern[offset++]) {
             case '^': {
                 err = zpl_re__emit_ops(re, 1, ZPL_RE_OP_BEGINNING_OF_LINE);
                 if (err) return err;
             } break;
-
+            
             case '$': {
                 err = zpl_re__emit_ops(re, 1, ZPL_RE_OP_END_OF_LINE);
                 if (err) return err;
             } break;
-
+            
             case '(': {
                 isize capture = re->capture_count++;
                 last_buf_len = re->buf_len;
                 err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_BEGIN_CAPTURE, (i32)capture);
                 if (err) return err;
-
+                
                 err = zpl_re__parse(re, pattern, len, offset, level+1, &offset);
-
+                
                 if ((offset > len) || (pattern[offset-1] != ')'))
                     return ZPL_RE_ERROR_MISMATCHED_CAPTURES;
-
+                
                 err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_END_CAPTURE, (i32)capture);
                 if (err) return err;
             } break;
-
+            
             case ')': {
                 if (branch_op != -1)
                     re->buf[branch_op + 1] = (unsigned char)(re->buf_len - (branch_op+2));
-
+                
                 if (level == 0)
                     return ZPL_RE_ERROR_MISMATCHED_CAPTURES;
                 
                 if (new_offset) *new_offset = offset;
                 return ZPL_RE_ERROR_NONE;
             } break;
-
+            
             case '[': {
                 last_buf_len = re->buf_len;
                 err = zpl_re__parse_group(re, pattern, len, offset, &offset);
                 if (offset > len)
                     return err;
             } break;
-
+            
             /* NOTE(bill): Branching magic! */
             case '|': {
                 if (branch_begin >= re->buf_len) {
@@ -7530,56 +7533,56 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                     isize size = re->buf_len - branch_begin;
                     err = zpl_re__emit_ops(re, 4, 0, 0, ZPL_RE_OP_BRANCH_END, 0);
                     if (err) return err;
-
+                    
                     zpl_memmove(re->buf + branch_begin + 2, re->buf + branch_begin, size);
                     re->buf[branch_begin] = ZPL_RE_OP_BRANCH_START;
                     re->buf[branch_begin+1] = (size+2) & 0xff;
                     branch_op = re->buf_len-2;
                 }
             } break;
-
+            
             case '.': {
                 last_buf_len = re->buf_len;
                 err = zpl_re__emit_ops(re, 1, ZPL_RE_OP_ANY);
                 if (err) return err;
             } break;
-
+            
             case '*':
             case '+':
             {
                 unsigned char quantifier = ZPL_RE_OP_ONE_OR_MORE;
                 if (pattern[offset-1] == '*')
                     quantifier = ZPL_RE_OP_ZERO_OR_MORE;
-
+                
                 if (last_buf_len >= re->buf_len)
                     return ZPL_RE_ERROR_INVALID_QUANTIFIER;
                 if ((re->buf[last_buf_len] < ZPL_RE_OP_EXACT_MATCH) ||
-                        (re->buf[last_buf_len] > ZPL_RE_OP_ANY_BUT))
+                    (re->buf[last_buf_len] > ZPL_RE_OP_ANY_BUT))
                     return ZPL_RE_ERROR_INVALID_QUANTIFIER;
-
+                
                 if ((offset < len) && (pattern[offset] == '?')) {
                     quantifier = ZPL_RE_OP_ONE_OR_MORE_SHORTEST;
                     if (quantifier == ZPL_RE_OP_ZERO_OR_MORE)
                         quantifier = ZPL_RE_OP_ZERO_OR_MORE_SHORTEST;
                     offset++;
                 }
-
+                
                 err = zpl_re__compile_quantifier(re, last_buf_len, quantifier);
                 if (err) return err;
             } break;
-
+            
             case '?': {
                 if (last_buf_len >= re->buf_len)
                     return ZPL_RE_ERROR_INVALID_QUANTIFIER;
                 if ((re->buf[last_buf_len] < ZPL_RE_OP_EXACT_MATCH) ||
-                        (re->buf[last_buf_len] > ZPL_RE_OP_ANY_BUT))
+                    (re->buf[last_buf_len] > ZPL_RE_OP_ANY_BUT))
                     return ZPL_RE_ERROR_INVALID_QUANTIFIER;
-
+                
                 err = zpl_re__compile_quantifier(re, last_buf_len,
-                                            (unsigned char)ZPL_RE_OP_ZERO_OR_ONE);
+                                                 (unsigned char)ZPL_RE_OP_ZERO_OR_ONE);
                 if (err) return err;
             } break;
-
+            
             case '\\': {
                 last_buf_len = re->buf_len;
                 if ((offset+1 < len) && zpl_char_is_hex_digit(*(pattern+offset))) {
@@ -7598,7 +7601,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                     }
                 }
             } break;
-
+            
             /* NOTE(bill): Exact match */
             default: {
                 char const *match_start;
@@ -7606,10 +7609,10 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                 offset--;
                 match_start = pattern+offset;
                 while ((offset < len) &&
-                        (zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__META_CHARS), pattern[offset], 0) < 0)) {
+                       (zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__META_CHARS), pattern[offset], 0) < 0)) {
                     size++, offset++;
                 }
-
+                
                 last_buf_len = re->buf_len;
                 err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_EXACT_MATCH, (int)size);
                 if (err) return err;
@@ -7618,7 +7621,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
             } break;
         }
     }
-
+    
     if (new_offset) *new_offset = offset;
     return ZPL_RE_ERROR_NONE;
 }
@@ -7630,7 +7633,7 @@ zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pat
     re->buf_len = 0;
     re->buf_cap = re->buf_len;
     re->can_realloc = 0;
-
+    
     err = zpl_re__parse(re, pattern, pattern_len, 0, 0, 0);
     return err;
 }
@@ -7639,19 +7642,19 @@ zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern
     zplreError err;
     isize cap = pattern_len+128;
     isize offset = 0;
-
+    
     re->backing = backing;
     re->capture_count = 0;
     re->buf = (char *)zpl_alloc(backing, cap);
     re->buf_len = 0;
     re->buf_cap = cap;
     re->can_realloc = 1;
-
+    
     err = zpl_re__parse(re, pattern, pattern_len, 0, 0, &offset);
-
+    
     if (offset != pattern_len)
         zpl_free(backing, re->buf);
-
+    
     return err;
 }
 
@@ -7675,6 +7678,38 @@ b32 zpl_re_match(zpl_re *re, char const *str, isize len, zpl_re_capture *capture
 	}
 	return 1;
 }
+
+
+b32 zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
+                     zpl_re_capture **out_captures)
+{
+    char *end = (char *)str + str_len;
+    char *p = (char *)str;
+    
+    zpl_buffer_make(zpl_re_capture, cps, zpl_heap(), max_capture_count);
+    
+    isize offset = 0;
+    
+    while (p < end)
+    {
+        b32 ok = zpl_re_match(re, p, end - p, cps, max_capture_count, &offset);
+        if (!ok) {
+            zpl_buffer_free2(cps);
+            return false;
+        }
+        
+        p += offset;
+        
+        for (isize i = 0; i < max_capture_count; i++) {
+            zpl_array_append(*out_captures, cps[i]);
+        }
+    }
+    
+    zpl_buffer_free2(cps);
+    
+    return true;
+}
+
 
 
 ////////////////////////////////////////////////////////////////
