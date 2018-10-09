@@ -229,11 +229,11 @@ span.lineno {
 	padding-right: 4px;
 	text-align: right;
 	border-right: 2px solid #0F0;
-	background-color: #E8E8E8;
+	/*! background-color: #E8E8E8; */
         white-space: pre;
 }
 span.lineno a {
-	background-color: #D8D8D8;
+	background-color: #272727;
 }
 
 span.lineno a:hover {
@@ -358,11 +358,11 @@ img.footer {
 /* @group Code Colorization */
 
 span.keyword {
-	color: #008000
+	color: #24f924;
 }
 
 span.keywordtype {
-	color: #604020
+	color: #c3976a;
 }
 
 span.keywordflow {
@@ -370,11 +370,11 @@ span.keywordflow {
 }
 
 span.comment {
-	color: #800000
+	color: #f0ff00;
 }
 
 span.preprocessor {
-	color: #806020
+	color: #cc9f46;
 }
 
 span.stringliteral {
