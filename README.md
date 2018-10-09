@@ -65,7 +65,7 @@ This repository also contains third-party libraries which were either included o
 ## Documentation
 Documentation is available in its generated form at [zpl.readthedocs.io](https://zpl.rtfd.io/).
 
-On the left panel access **Files** > **File List** to see all modules.
+You can see all modules by accessing the left panel's **Modules** link by accessing **Files** > **File List** to see all files instead.
 
 Note that the documentation is still work in progress and will be tweaked further.
 
