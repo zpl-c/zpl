@@ -1,8 +1,11 @@
 /** @file threadpool.c
 @brief Job system
+@defgroup jobs Job system
 
  This job system follows thread pool pattern to minimize the costs of thread initialization.
  It reuses fixed number of threads to process variable number of jobs.
+ 
+ @{
  */
 
 
@@ -60,6 +63,7 @@ ZPL_DEF void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc
 ZPL_DEF b32 zpl_jobs_process(zpl_thread_pool *pool);
 #endif
 
+//! @}
 //$$
 
 ///////////////////////////////////////////////////////////////

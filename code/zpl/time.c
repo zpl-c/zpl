@@ -1,7 +1,10 @@
 /** @file time.c
 @brief Time helper methods.
+@defgroup time Time helpers
 
  Helper methods for retrieving the current time in many forms under different precisions. It also offers a simple to use timer library.
+ 
+ @{
  */
 
 //! Return CPU timestamp.
@@ -27,7 +30,7 @@ typedef ZPL_TIMER_CB(zpl_timer_cb);
 
 #define zpl_timer_t zpl_timer
 typedef struct zpl_timer {
-    zpl_timer_cb *callback;
+    zpl_timer_cb *calledallback;
     b32 enabled;
     i32 remaining_calls;
     i32 initial_calls;
@@ -65,6 +68,7 @@ ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
 //! Stop timer and prevent it from triggering.
 ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////

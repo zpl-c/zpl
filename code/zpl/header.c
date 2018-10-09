@@ -1,7 +1,10 @@
 /** @file header.c
-@brief Macro helpers and symbols.
+@brief Macro helpers and symbols
+@defgroup header Macro helpers and symbols
 
  This module contains many useful macros helpful for debugging as well as development itself.
+ 
+ @{
  */
 
 #if defined(__cplusplus)
@@ -715,6 +718,7 @@ do {                                                                            
 ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
 ZPL_DEF i32 zpl_assert_crash(char const *condition);
 
+//! @}
 //$$
 
 void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...) {

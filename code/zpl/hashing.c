@@ -1,7 +1,10 @@
 /** @file hashing.c
 @brief Hashing and Checksum Functions
+@defgroup hashing Hashing and Checksum Functions
 
 Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
+
+@{
 */
 
 ZPL_DEF u32 zpl_adler32(void const *data, isize len);
@@ -23,6 +26,7 @@ ZPL_DEF u64 zpl_murmur64(void const *data, isize len);
 ZPL_DEF u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
 ZPL_DEF u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////

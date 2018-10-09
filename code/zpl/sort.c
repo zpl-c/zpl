@@ -1,7 +1,10 @@
 /** @file sort.c
 @brief Sorting and searching methods.
+@defgroup sort Sorting and searching
 
 Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
+
+@{
 */
 
 #define ZPL_COMPARE_PROC(name) int name(void const *a, void const *b)
@@ -63,6 +66,7 @@ ZPL_DEF void zpl_shuffle(void *base, isize count, isize size);
 //! Reverses memory's contents
 ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////

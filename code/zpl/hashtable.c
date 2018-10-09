@@ -1,5 +1,6 @@
 /** @file hashtable.c
 @brief Instantiated hash table
+@defgroup hashtable Instantiated hash table 
 
 @n
 @n This is an attempt to implement a templated hash table
@@ -20,6 +21,8 @@
 @n tablename_grow(NAME * h);
   @n tablename_rehash(NAME * h, isize new_count);
  @n tablename_remove(NAME * h, u64 key);
+ 
+ @{
 */
 
 #define zpl_hash_table_find_result_t zpl_hash_table_find_result
@@ -161,5 +164,6 @@ void ZPL_JOIN2(FUNC, set)(NAME * h, u64 key, VALUE value) {                     
     if (ZPL_JOIN2(FUNC, _full)(h)) ZPL_JOIN2(FUNC, grow)(h);                                                       \
 }\
 
+//! @}
 //$$
 

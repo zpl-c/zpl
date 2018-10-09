@@ -1,7 +1,10 @@
 /** @file threads.c
 @brief Threading methods, blocking models...
+@defgroup threads Threading management
 
 This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
+
+@{
 */
 
 #ifdef ZPL_THREADING
@@ -228,6 +231,7 @@ ZPL_DEF isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core);
 
 #endif // ZPL_THREADING
 
+//! @}
 //$$
 
 #ifdef ZPL_THREADING
