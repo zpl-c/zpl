@@ -62,6 +62,15 @@ These are modules that work either as a standalone library or didn't fit into th
 
 This repository also contains third-party libraries which were either included or modified to be used by some of these ZPL external modules.
 
+## Documentation
+Documentation is available in its generated form at [zpl.readthedocs.io](https://zpl.rtfd.io/).
+
+On the left panel access **Files** > **File List** to see all modules.
+
+Note that the documentation is still work in progress and will be tweaked further.
+
+You can build the documentation using Doxygen 1.8.11 or later. We use Sphinx to build ReadTheDocs.io friendly documentation, which uses Doxygen to generate it.
+
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
 

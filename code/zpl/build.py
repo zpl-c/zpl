@@ -51,7 +51,7 @@ import os
 
 wd = os.path.dirname(os.path.abspath(__file__))
 
-TPL_PATH   = wd + "/_template.c"
+TPL_PATH   = wd + "/template.c"
 BUILD_PATH = wd + "/../zpl.h"
 
 with open(TPL_PATH, 'r') as loader:
