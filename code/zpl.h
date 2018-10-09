@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+9.0.3 - Small fixes and removals
 9.0.0 - New documentation format, removed deprecated code, changed styles
 
 8.14.1 - Fix string library
