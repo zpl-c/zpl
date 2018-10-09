@@ -1,7 +1,11 @@
-////////////////////////////////////////////////////////////////
-//
-// File Handling
-//
+/** @file file.c
+@brief File handling
+@defgroup fileio File handling
+
+File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
+
+@{
+*/
 
 typedef u32 zpl_file_mode;
 typedef enum zplFileModeFlag {
@@ -9,7 +13,7 @@ typedef enum zplFileModeFlag {
     ZPL_FILE_MODE_WRITE = ZPL_BIT(1),
     ZPL_FILE_MODE_APPEND = ZPL_BIT(2),
     ZPL_FILE_MODE_RW = ZPL_BIT(3),
-
+    
     zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
 } zplFileModeFlag;
 
@@ -44,11 +48,11 @@ typedef union zpl_file_descriptor {
 typedef struct zpl_file_operations zpl_file_operations;
 
 #define ZPL_FILE_OPEN_PROC(name)                                                                                       \
-    zplFileError name(zpl_file_descriptor *fd, zpl_file_operations *ops, zpl_file_mode mode, char const *filename)
+zplFileError name(zpl_file_descriptor *fd, zpl_file_operations *ops, zpl_file_mode mode, char const *filename)
 #define ZPL_FILE_READ_AT_PROC(name)                                                                                    \
-    b32 name(zpl_file_descriptor fd, void *buffer, isize size, i64 offset, isize *bytes_read, b32 stop_at_newline)
+b32 name(zpl_file_descriptor fd, void *buffer, isize size, i64 offset, isize *bytes_read, b32 stop_at_newline)
 #define ZPL_FILE_WRITE_AT_PROC(name)                                                                                   \
-    b32 name(zpl_file_descriptor fd, void const *buffer, isize size, i64 offset, isize *bytes_written)
+b32 name(zpl_file_descriptor fd, void const *buffer, isize size, i64 offset, isize *bytes_written)
 #define ZPL_FILE_SEEK_PROC(name) b32 name(zpl_file_descriptor fd, i64 offset, zplSeekWhenceType whence, i64 *new_offset)
 #define ZPL_FILE_CLOSE_PROC(name) void name(zpl_file_descriptor fd)
 typedef ZPL_FILE_OPEN_PROC(zpl_file_open_proc);
@@ -101,7 +105,7 @@ typedef enum zplFileStandardType {
     ZPL_FILE_STANDARD_INPUT,
     ZPL_FILE_STANDARD_OUTPUT,
     ZPL_FILE_STANDARD_ERROR,
-
+    
     ZPL_FILE_STANDARD_COUNT,
 } zplFileStandardType;
 
@@ -177,6 +181,7 @@ ZPL_DEF zplFileError zpl_path_rmdir(char const *path);
 // NOTE: Returns file paths terminated by newline (\n)
 zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse);
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////
@@ -220,7 +225,7 @@ zpl_internal ZPL_FILE_SEEK_PROC(zpl__win32_file_seek) {
     LARGE_INTEGER li_offset;
     li_offset.QuadPart = offset;
     if (!SetFilePointerEx(fd.p, li_offset, &li_offset, whence)) { return false; }
-
+    
     if (new_offset) *new_offset = li_offset.QuadPart;
     return true;
 }
@@ -235,7 +240,7 @@ zpl_internal ZPL_FILE_READ_AT_PROC(zpl__win32_file_read) {
         if (bytes_read) *bytes_read = bytes_read_;
         result = true;
     }
-
+    
     return result;
 }
 
@@ -253,59 +258,59 @@ zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__win32_file_write) {
 zpl_internal ZPL_FILE_CLOSE_PROC(zpl__win32_file_close) { CloseHandle(fd.p); }
 
 zpl_file_operations const zpl_default_file_operations = { zpl__win32_file_read, zpl__win32_file_write,
-                                                          zpl__win32_file_seek, zpl__win32_file_close };
+    zpl__win32_file_seek, zpl__win32_file_close };
 
 zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
     DWORD desired_access;
     DWORD creation_disposition;
     void *handle;
     wchar_t *w_text;
-
+    
     switch (mode & zpl_file_mode_modes_ev) {
-    case ZPL_FILE_MODE_READ:
+        case ZPL_FILE_MODE_READ:
         desired_access = GENERIC_READ;
         creation_disposition = OPEN_EXISTING;
         break;
-    case ZPL_FILE_MODE_WRITE:
+        case ZPL_FILE_MODE_WRITE:
         desired_access = GENERIC_WRITE;
         creation_disposition = CREATE_ALWAYS;
         break;
-    case ZPL_FILE_MODE_APPEND:
+        case ZPL_FILE_MODE_APPEND:
         desired_access = GENERIC_WRITE;
         creation_disposition = OPEN_ALWAYS;
         break;
-    case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
         desired_access = GENERIC_READ | GENERIC_WRITE;
         creation_disposition = OPEN_EXISTING;
         break;
-    case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
         desired_access = GENERIC_READ | GENERIC_WRITE;
         creation_disposition = CREATE_ALWAYS;
         break;
-    case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
         desired_access = GENERIC_READ | GENERIC_WRITE;
         creation_disposition = OPEN_ALWAYS;
         break;
-    default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
+        default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
-
+    
     w_text = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator( ), filename, NULL);
     handle = CreateFileW(w_text, desired_access, FILE_SHARE_READ | FILE_SHARE_DELETE, NULL, creation_disposition,
                          FILE_ATTRIBUTE_NORMAL, NULL);
-
+    
     zpl_free(zpl_heap_allocator( ), w_text);
-
+    
     if (handle == INVALID_HANDLE_VALUE) {
         DWORD err = GetLastError( );
         switch (err) {
-        case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
-        case ERROR_FILE_EXISTS: return ZPL_FILE_ERROR_EXISTS;
-        case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
-        case ERROR_ACCESS_DENIED: return ZPL_FILE_ERROR_PERMISSION;
+            case ERROR_FILE_NOT_FOUND: return ZPL_FILE_ERROR_NOT_EXISTS;
+            case ERROR_FILE_EXISTS: return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ALREADY_EXISTS: return ZPL_FILE_ERROR_EXISTS;
+            case ERROR_ACCESS_DENIED: return ZPL_FILE_ERROR_PERMISSION;
         }
         return ZPL_FILE_ERROR_INVALID;
     }
-
+    
     if (mode & ZPL_FILE_MODE_APPEND) {
         LARGE_INTEGER offset = { 0 };
         if (!SetFilePointerEx(handle, offset, NULL, ZPL_SEEK_WHENCE_END)) {
@@ -313,7 +318,7 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
             return ZPL_FILE_ERROR_INVALID;
         }
     }
-
+    
     fd->p = handle;
     *ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
@@ -357,26 +362,26 @@ zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__posix_file_write) {
 zpl_internal ZPL_FILE_CLOSE_PROC(zpl__posix_file_close) { close(fd.i); }
 
 zpl_file_operations const zpl_default_file_operations = { zpl__posix_file_read, zpl__posix_file_write,
-                                                          zpl__posix_file_seek, zpl__posix_file_close };
+    zpl__posix_file_seek, zpl__posix_file_close };
 
 zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
     i32 os_mode;
     switch (mode & zpl_file_mode_modes_ev) {
-    case ZPL_FILE_MODE_READ: os_mode = O_RDONLY; break;
-    case ZPL_FILE_MODE_WRITE: os_mode = O_WRONLY | O_CREAT | O_TRUNC; break;
-    case ZPL_FILE_MODE_APPEND: os_mode = O_WRONLY | O_APPEND | O_CREAT; break;
-    case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW: os_mode = O_RDWR; break;
-    case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW: os_mode = O_RDWR | O_CREAT | O_TRUNC; break;
-    case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW: os_mode = O_RDWR | O_APPEND | O_CREAT; break;
-    default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
+        case ZPL_FILE_MODE_READ: os_mode = O_RDONLY; break;
+        case ZPL_FILE_MODE_WRITE: os_mode = O_WRONLY | O_CREAT | O_TRUNC; break;
+        case ZPL_FILE_MODE_APPEND: os_mode = O_WRONLY | O_APPEND | O_CREAT; break;
+        case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW: os_mode = O_RDWR; break;
+        case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW: os_mode = O_RDWR | O_CREAT | O_TRUNC; break;
+        case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW: os_mode = O_RDWR | O_APPEND | O_CREAT; break;
+        default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
-
+    
     fd->i = open(filename, os_mode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     if (fd->i < 0) {
         // TODO: More file errors
         return ZPL_FILE_ERROR_INVALID;
     }
-
+    
     *ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
 }
@@ -386,13 +391,13 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
 zplFileError zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename) {
     zplFileError err = ZPL_FILE_ERROR_NONE;
     isize len = zpl_strlen(filename);
-
+    
     f->ops = ops;
     f->fd = fd;
     f->filename = zpl_alloc_array(zpl_heap_allocator( ), char, len + 1);
     zpl_memcopy(cast(char *) f->filename, cast(char *) filename, len + 1);
     f->last_write_time = zpl_file_last_write_time(f->filename);
-
+    
     return err;
 }
 
@@ -409,18 +414,18 @@ zplFileError zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *fil
 
 zplFileError zpl_file_close(zpl_file *f) {
     if (!f) return ZPL_FILE_ERROR_INVALID;
-
+    
     if (f->filename) zpl_free(zpl_heap_allocator( ), cast(char *) f->filename);
-
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     if (f->fd.p == INVALID_HANDLE_VALUE) return ZPL_FILE_ERROR_INVALID;
 #else
     if (f->fd.i < 0) return ZPL_FILE_ERROR_INVALID;
 #endif
-
+    
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.close(f->fd);
-
+    
     return ZPL_FILE_ERROR_NONE;
 }
 
@@ -516,87 +521,87 @@ typedef struct {
 
 ZPL_THREAD_PROC(zpl__async_file_read_proc) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
-
+    
     zpl_async_file *f = afops->f;
-
+    
     i64 file_size = zpl_file_size(&f->handle);
     void *file_contents = zpl_malloc((isize)file_size);
     zpl_file_read(&f->handle, file_contents, (isize)file_size);
-
+    
     f->size = (isize)file_size;
     f->data = file_contents;
-
+    
     afops->proc(f);
-
+    
     zpl_free(zpl_heap_allocator( ), afops->f);
     zpl_free(zpl_heap_allocator( ), afops);
-
+    
     return 0;
 }
 
 ZPL_THREAD_PROC(zpl__async_file_write_proc) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
-
+    
     zpl_async_file *f = afops->f;
-
+    
     i64 file_size = afops->data_size;
     void *file_contents = afops->data;
     zpl_file_write(&f->handle, file_contents, (isize)file_size);
-
+    
     f->size = (isize)file_size;
     f->data = file_contents;
-
+    
     afops->proc(f);
-
+    
     zpl_free(zpl_heap_allocator( ), afops->f);
     zpl_free(zpl_heap_allocator( ), afops);
-
+    
     return 0;
 }
 
 void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
     ZPL_ASSERT(file && proc);
-
+    
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
     zpl_async_file a_ = { 0 };
     *a = a_;
-
+    
     a->handle = *file;
-
+    
     zpl_thread td = { 0 };
     zpl_thread_init(&td);
-
+    
     zpl__async_file_ctl *afops = (zpl__async_file_ctl *)zpl_malloc(sizeof(zpl__async_file_ctl));
     zpl__async_file_ctl afops_ = { 0 };
     *afops = afops_;
-
+    
     afops->f = a;
     afops->proc = proc;
-
+    
     zpl_thread_start(&td, zpl__async_file_read_proc, cast(void *) afops);
 }
 
 void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb *proc) {
     ZPL_ASSERT(file && proc && buffer);
-
+    
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
     zpl_async_file a_ = { 0 };
     *a = a_;
-
+    
     a->handle = *file;
-
+    
     zpl_thread td = { 0 };
     zpl_thread_init(&td);
-
+    
     zpl__async_file_ctl *afops = (zpl__async_file_ctl *)zpl_malloc(sizeof(zpl__async_file_ctl));
     zpl__async_file_ctl afops_ = { 0 };
     *afops = afops_;
-
+    
     afops->f = a;
     afops->proc = proc;
     afops->data = cast(void *) buffer;
     afops->data_size = size;
-
+    
     zpl_thread_start(&td, zpl__async_file_write_proc, cast(void *) afops);
 }
 
@@ -611,8 +616,8 @@ zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };
 zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
-    zpl__std_files[type].fd.p = v;                                                                                     \
-    zpl__std_files[type].ops = zpl_default_file_operations
+        zpl__std_files[type].fd.p = v;                                                                                     \
+        zpl__std_files[type].ops = zpl_default_file_operations
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT, GetStdHandle(STD_INPUT_HANDLE));
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, GetStdHandle(STD_OUTPUT_HANDLE));
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR, GetStdHandle(STD_ERROR_HANDLE));
@@ -643,7 +648,7 @@ b32 zpl_file_exists(char const *name) {
     void *handle;
     b32 found = false;
     zpl_allocator a = zpl_heap_allocator( );
-
+    
     w_text = zpl__alloc_utf8_to_ucs2(a, name, NULL);
     if (w_text == NULL) { return false; }
     handle = FindFirstFileW(w_text, &data);
@@ -658,8 +663,8 @@ b32 zpl_file_exists(char const *name) {
 zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
-    zpl__std_files[type].fd.i = v;                                                                                     \
-    zpl__std_files[type].ops = zpl_default_file_operations
+        zpl__std_files[type].fd.i = v;                                                                                     \
+        zpl__std_files[type].ops = zpl_default_file_operations
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_INPUT, 0);
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_OUTPUT, 1);
         ZPL__SET_STD_FILE(ZPL_FILE_STANDARD_ERROR, 2);
@@ -695,9 +700,9 @@ zplFileError zpl_file_temp(zpl_file *file) {
 #else
     zpl_zero_item(file);
     FILE *fd = tmpfile( );
-
+    
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
-
+    
     file->fd.p = fd;
     file->ops = zpl_default_file_operations;
 #endif
@@ -710,13 +715,13 @@ zpl_file_time zpl_file_last_write_time(char const *filepath) {
     FILETIME last_write_time = { 0 };
     WIN32_FILE_ATTRIBUTE_DATA data = { 0 };
     zpl_allocator a = zpl_heap_allocator( );
-
+    
     wchar_t *w_text = zpl__alloc_utf8_to_ucs2(a, filepath, NULL);
     if (w_text == NULL) { return 0; }
     if (GetFileAttributesExW(w_text, GetFileExInfoStandard, &data)) last_write_time = data.ftLastWriteTime;
-
+    
     zpl_free(a, w_text);
-
+    
     li.LowPart = last_write_time.dwLowDateTime;
     li.HighPart = last_write_time.dwHighDateTime;
     return cast(zpl_file_time) li.QuadPart;
@@ -725,13 +730,13 @@ zpl_file_time zpl_file_last_write_time(char const *filepath) {
 zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-
+    
     wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
     if (w_old == NULL) { return false; }
-
+    
     wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
     if (w_new != NULL) { result = CopyFileW(w_old, w_new, fail_if_exists); }
-
+    
     zpl_free(a, w_old);
     zpl_free(a, w_new);
     return result;
@@ -740,13 +745,13 @@ zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_file
 zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_filename) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-
+    
     wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
     if (w_old == NULL) { return false; }
-
+    
     wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
     if (w_new != NULL) { result = MoveFileW(w_old, w_new); }
-
+    
     zpl_free(a, w_old);
     zpl_free(a, w_new);
     return result;
@@ -755,12 +760,12 @@ zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_file
 zpl_inline b32 zpl_file_remove(char const *filename) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-
+    
     wchar_t *w_filename = zpl__alloc_utf8_to_ucs2(a, filename, NULL);
     if (w_filename == NULL) { return false; }
-
+    
     result = DeleteFileW(w_filename);
-
+    
     zpl_free(a, w_filename);
     return result;
 }
@@ -770,9 +775,9 @@ zpl_inline b32 zpl_file_remove(char const *filename) {
 zpl_file_time zpl_file_last_write_time(char const *filepath) {
     time_t result = 0;
     struct stat file_stat;
-
+    
     if (stat(filepath, &file_stat)) result = file_stat.st_mtime;
-
+    
     return cast(zpl_file_time) result;
 }
 
@@ -784,15 +789,15 @@ zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_file
     isize size;
     int existing_fd = open(existing_filename, O_RDONLY, 0);
     int new_fd = open(new_filename, O_WRONLY | O_CREAT, 0666);
-
+    
     struct stat stat_existing;
     fstat(existing_fd, &stat_existing);
-
+    
     size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size);
-
+    
     close(new_fd);
     close(existing_fd);
-
+    
     return size == stat_existing.st_size;
 #endif
 }
@@ -815,9 +820,9 @@ zpl_inline b32 zpl_file_remove(char const *filename) {
 zpl_file_contents zpl_file_read_contents(zpl_allocator a, b32 zero_terminate, char const *filepath) {
     zpl_file_contents result = { 0 };
     zpl_file file = { 0 };
-
+    
     result.allocator = a;
-
+    
     if (zpl_file_open(&file, filepath) == ZPL_FILE_ERROR_NONE) {
         isize file_size = cast(isize) zpl_file_size(&file);
         if (file_size > 0) {
@@ -831,7 +836,7 @@ zpl_file_contents zpl_file_read_contents(zpl_allocator a, b32 zero_terminate, ch
         }
         zpl_file_close(&file);
     }
-
+    
     return result;
 }
 
@@ -839,13 +844,13 @@ char *zpl_file_read_lines(zpl_allocator alloc, char ***lines, char const *filena
     zpl_file f = { 0 };
     zpl_file_open(&f, filename);
     isize fsize = (isize)zpl_file_size(&f);
-
+    
     char *contents = (char *)zpl_alloc(alloc, fsize + 1);
     zpl_file_read(&f, contents, fsize);
     contents[fsize] = 0;
     *lines = zpl_str_split_lines(alloc, contents, strip_whitespace);
     zpl_file_close(&f);
-
+    
     return contents;
 }
 
@@ -917,7 +922,7 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
     GetFullPathNameW(w_path, cast(int) w_len, w_fullpath, NULL);
     w_fullpath[w_len] = 0;
     zpl_free(zpl_heap_allocator( ), w_path);
-
+    
     new_len = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, NULL, 0, NULL, NULL);
     if (new_len == 0) {
         zpl_free(zpl_heap_allocator( ), w_fullpath);
@@ -942,14 +947,14 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
         // NOTE(bill): File does not exist
         fullpath = cast(char *) path;
     }
-
+    
     len = zpl_strlen(fullpath);
-
+    
     result = zpl_alloc_array(a, char, len + 1);
     zpl_memmove(result, fullpath, len);
     result[len] = 0;
     zpl_free(a, p);
-
+    
     return result;
 #endif
 }
@@ -961,16 +966,16 @@ zplFileError zpl_path_mkdir(char const *path, i32 mode) {
 #else
     error = mkdir(path, (mode_t)mode);
 #endif
-
+    
     if (error == 0) { return ZPL_FILE_ERROR_NONE; }
-
+    
     switch (errno) {
-    case EPERM:
-    case EACCES: return ZPL_FILE_ERROR_PERMISSION;
-    case EEXIST: return ZPL_FILE_ERROR_EXISTS;
-    case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
+        case EPERM:
+        case EACCES: return ZPL_FILE_ERROR_PERMISSION;
+        case EEXIST: return ZPL_FILE_ERROR_EXISTS;
+        case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
     }
-
+    
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
@@ -981,17 +986,17 @@ zplFileError zpl_path_rmdir(char const *path) {
 #else
     error = rmdir(path);
 #endif
-
+    
     if (error == 0) { return ZPL_FILE_ERROR_NONE; }
-
+    
     switch (errno) {
-    case EPERM:
-    case EACCES: return ZPL_FILE_ERROR_PERMISSION;
-    case ENOENT: return ZPL_FILE_ERROR_NOT_EXISTS;
-    case ENOTEMPTY: return ZPL_FILE_ERROR_NOT_EMPTY;
-    case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
+        case EPERM:
+        case EACCES: return ZPL_FILE_ERROR_PERMISSION;
+        case ENOENT: return ZPL_FILE_ERROR_NOT_EXISTS;
+        case ENOTEMPTY: return ZPL_FILE_ERROR_NOT_EMPTY;
+        case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
     }
-
+    
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
@@ -1000,19 +1005,19 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     DIR *d, *cd;
     struct dirent *dir;
     d = opendir(dirname);
-
+    
     if (d) {
         while ((dir = readdir(d))) {
             if (!zpl_strncmp(dir->d_name, "..", 2)) continue;
             if (dir->d_name[0] == '.' && dir->d_name[1] == 0) continue;
-
+            
             zpl_string dirpath = zpl_string_make(alloc, dirname);
             dirpath = zpl_string_appendc(dirpath, "/");
             dirpath = zpl_string_appendc(dirpath, dir->d_name);
-
+            
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
-
+            
             if (recurse && (cd = opendir(dirpath)) != NULL) { zpl__file_direntry(alloc, dirpath, output, recurse); }
             zpl_string_free(dirpath);
         }
@@ -1021,41 +1026,41 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     usize length = zpl_strlen(dirname);
     struct _wfinddata_t data;
     intptr_t findhandle;
-
+    
     char directory[MAX_PATH] = { 0 };
     zpl_strncpy(directory, dirname, length);
-
+    
     // keeping it native
     for (usize i = 0; i < length; i++) {
         if (directory[i] == '/') directory[i] = '\\';
     }
-
+    
     // remove trailing slashses
     if (directory[length - 1] == '\\') { directory[length - 1] = '\0'; }
-
+    
     // attach search parttern
     zpl_string findpath = zpl_string_make(alloc, directory);
     findpath = zpl_string_appendc(findpath, "\\");
     findpath = zpl_string_appendc(findpath, "*");
-
+    
     findhandle = _wfindfirst((const wchar_t *)zpl_utf8_to_ucs2_buf((const u8 *)findpath), &data);
     zpl_string_free(findpath);
-
+    
     if (findhandle != -1) {
         do {
             char *filename = (char *)zpl_ucs2_to_utf8_buf((const u16 *)data.name);
             if (!zpl_strncmp(filename, "..", 2)) continue;
             if (filename[0] == '.' && filename[1] == 0) continue;
-
+            
             zpl_string dirpath = zpl_string_make(alloc, directory);
             dirpath = zpl_string_appendc(dirpath, "\\");
             dirpath = zpl_string_appendc(dirpath, filename);
-
+            
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
-
+            
             if (recurse && (data.attrib & _A_SUBDIR)) { zpl__file_direntry(alloc, dirpath, output, recurse); }
-
+            
             zpl_string_free(dirpath);
         } while (_wfindnext(findhandle, &data) != -1);
         _findclose(findhandle);

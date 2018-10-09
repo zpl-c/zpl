@@ -1,8 +1,11 @@
-////////////////////////////////////////////////////////////////
-//
-// Miscellany
-//
-//
+/** @file misc.c
+@brief Various other stuff
+@defgroup misc Various other stuff
+
+ Methods that don't belong anywhere but are still very useful in many occasions.
+ 
+ @{
+ */
 
 #define zpl_random_t zpl_random
 typedef struct zpl_random {
@@ -35,6 +38,7 @@ ZPL_DEF isize zpl_count_set_bits(u64 mask);
 ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
 ZPL_DEF zpl_string zpl_system_command_str(char const *command, zpl_allocator backing);
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////

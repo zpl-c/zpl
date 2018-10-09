@@ -1,5 +1,6 @@
 /** @file regex.c
 @brief Regular expressions parser.
+@defgroup regex Regex processor
 
 Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
 
@@ -35,6 +36,8 @@ Supported Matching:
     @n \r      - Return carriage
     @n \v      - Vertical Tab
     @n \f      - Form feed
+    
+    @{
 */
 
 typedef struct zpl_re {
@@ -80,6 +83,7 @@ ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_
 ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
+//! @}
 //$$
 
 typedef enum zplreOp {

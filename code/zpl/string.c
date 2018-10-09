@@ -1,3 +1,12 @@
+/** @file string.c
+@brief String operations and library
+@defgroup string String library
+
+Offers methods for c-string manipulation, but also a string library based on gb_string, which is c-string friendly.
+
+@{
+*/
+
 ////////////////////////////////////////////////////////////////
 //
 // Char Functions
@@ -211,6 +220,7 @@ ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
 ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...);
 
 
+//! @}
 //$$
 
 ////////////////////////////////////////////////////////////////

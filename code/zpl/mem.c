@@ -1,7 +1,10 @@
 /** @file mem.c
 @brief Memory manipulation and helpers.
+@defgroup memman Memory management
 
  Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
+ 
+ @{
  */
 
 //! Checks if value is power of 2.
@@ -370,6 +373,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 // TODO: Fixed heap allocator
 // TODO: General heap allocator. Maybe a TCMalloc like clone?
 
+//! @}
 //$$
 
 b32 zpl_is_power_of_two(isize x) {
