@@ -19,12 +19,6 @@ ZPL_DEF f64 zpl_utc_time_now(void);
 //! Sleep for specified number of milliseconds.
 ZPL_DEF void zpl_sleep_ms(u32 ms);
 
-////////////////////////////////////////////////////////////////
-//
-// Timer
-//
-//
-
 #define ZPL_TIMER_CB(name) void name(void *user_data)
 typedef ZPL_TIMER_CB(zpl_timer_cb);
 

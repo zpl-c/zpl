@@ -17,25 +17,25 @@ Supported Matching:
     @n *       - Zero or more (greedy)
     @n *?      - Zero or more (non-greedy)
     @n ?       - Zero or once
-    @n \XX     - Hex decimal digit (must be 2 digits)
-    @n \meta   - Meta character
-    @n \s      - Whitespace
-    @n \S      - Not whitespace
-    @n \d      - Digit
-    @n \D      - Not digit
-    @n \a      - Alphabetic character
-    @n \l      - Lower case letter
-    @n \u      - Upper case letter
-    @n \w      - Word
-    @n \W      - Not word
-    @n \x      - Hex Digit
-    @n \p      - Printable ASCII character
+    @n [BACKSLASH]XX     - Hex decimal digit (must be 2 digits)
+    @n [BACKSLASH]meta   - Meta character
+    @n [BACKSLASH]s      - Whitespace
+    @n [BACKSLASH]S      - Not whitespace
+    @n [BACKSLASH]d      - Digit
+    @n [BACKSLASH]D      - Not digit
+    @n [BACKSLASH]a      - Alphabetic character
+    @n [BACKSLASH]l      - Lower case letter
+    @n [BACKSLASH]u      - Upper case letter
+    @n [BACKSLASH]w      - Word
+    @n [BACKSLASH]W      - Not word
+    @n [BACKSLASH]x      - Hex Digit
+    @n [BACKSLASH]p      - Printable ASCII character
     @n --Whitespace--
-    @n \t      - Tab
-    @n \n      - New line
-    @n \r      - Return carriage
-    @n \v      - Vertical Tab
-    @n \f      - Form feed
+    @n [BACKSLASH]t      - Tab
+    @n [BACKSLASH]n      - New line
+    @n [BACKSLASH]r      - Return carriage
+    @n [BACKSLASH]v      - Vertical Tab
+    @n [BACKSLASH]f      - Form feed
     
     @{
 */
