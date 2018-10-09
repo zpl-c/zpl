@@ -30,7 +30,7 @@ typedef ZPL_TIMER_CB(zpl_timer_cb);
 
 #define zpl_timer_t zpl_timer
 typedef struct zpl_timer {
-    zpl_timer_cb *calledallback;
+    zpl_timer_cb *callback;
     b32 enabled;
     i32 remaining_calls;
     i32 initial_calls;

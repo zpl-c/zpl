@@ -2814,7 +2814,7 @@ typedef ZPL_TIMER_CB(zpl_timer_cb);
 
 #define zpl_timer_t zpl_timer
 typedef struct zpl_timer {
-    zpl_timer_cb *calledallback;
+    zpl_timer_cb *callback;
     b32 enabled;
     i32 remaining_calls;
     i32 initial_calls;
@@ -3733,7 +3733,7 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 @n Linux Support - None
 @n Other OS Support - None
 @n
-@n Ported from https://github.com/gingerBill/zpl/
+@n Ported from https://github.com/gingerBill/gb/
 
 @{
 */
