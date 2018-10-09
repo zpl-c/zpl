@@ -4,24 +4,24 @@
 Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
 */
 
-ZPL_DEFINE u32 zpl_adler32(void const *data, isize len);
+ZPL_DEF u32 zpl_adler32(void const *data, isize len);
 
-ZPL_DEFINE u32 zpl_crc32(void const *data, isize len);
-ZPL_DEFINE u64 zpl_crc64(void const *data, isize len);
+ZPL_DEF u32 zpl_crc32(void const *data, isize len);
+ZPL_DEF u64 zpl_crc64(void const *data, isize len);
 
-ZPL_DEFINE u32 zpl_fnv32(void const *data, isize len);
-ZPL_DEFINE u64 zpl_fnv64(void const *data, isize len);
-ZPL_DEFINE u32 zpl_fnv32a(void const *data, isize len);
-ZPL_DEFINE u64 zpl_fnv64a(void const *data, isize len);
-
-//! Default seed of 0x9747b28c
-ZPL_DEFINE u32 zpl_murmur32(void const *data, isize len);
+ZPL_DEF u32 zpl_fnv32(void const *data, isize len);
+ZPL_DEF u64 zpl_fnv64(void const *data, isize len);
+ZPL_DEF u32 zpl_fnv32a(void const *data, isize len);
+ZPL_DEF u64 zpl_fnv64a(void const *data, isize len);
 
 //! Default seed of 0x9747b28c
-ZPL_DEFINE u64 zpl_murmur64(void const *data, isize len);
+ZPL_DEF u32 zpl_murmur32(void const *data, isize len);
 
-ZPL_DEFINE u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
-ZPL_DEFINE u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
+//! Default seed of 0x9747b28c
+ZPL_DEF u64 zpl_murmur64(void const *data, isize len);
+
+ZPL_DEF u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
+ZPL_DEF u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
 
 //$$
 
@@ -36,9 +36,9 @@ u32 zpl_adler32(void const *data, isize len) {
     u32 a = 1, b = 0;
     isize i, block_len;
     u8 const *bytes = cast(u8 const *) data;
-
+    
     block_len = len % 5552;
-
+    
     while (len) {
         for (i = 0; i + 7 < block_len; i += 8) {
             a += bytes[0], b += a;
@@ -49,16 +49,16 @@ u32 zpl_adler32(void const *data, isize len) {
             a += bytes[5], b += a;
             a += bytes[6], b += a;
             a += bytes[7], b += a;
-
+            
             bytes += 8;
         }
         for (; i < block_len; i++) a += *bytes++, b += a;
-
+        
         a %= MOD_ALDER, b %= MOD_ALDER;
         len -= block_len;
         block_len = 5552;
     }
-
+    
     return (b << 16) | a;
 }
 
@@ -169,9 +169,9 @@ u32 zpl_fnv32(void const *data, isize len) {
     isize i;
     u32 h = 0x811c9dc5;
     u8 const *c = cast(u8 const *) data;
-
+    
     for (i = 0; i < len; i++) h = (h * 0x01000193) ^ c[i];
-
+    
     return h;
 }
 
@@ -179,9 +179,9 @@ u64 zpl_fnv64(void const *data, isize len) {
     isize i;
     u64 h = 0xcbf29ce484222325ull;
     u8 const *c = cast(u8 const *) data;
-
+    
     for (i = 0; i < len; i++) h = (h * 0x100000001b3ll) ^ c[i];
-
+    
     return h;
 }
 
@@ -189,9 +189,9 @@ u32 zpl_fnv32a(void const *data, isize len) {
     isize i;
     u32 h = 0x811c9dc5;
     u8 const *c = cast(u8 const *) data;
-
+    
     for (i = 0; i < len; i++) h = (h ^ c[i]) * 0x01000193;
-
+    
     return h;
 }
 
@@ -199,9 +199,9 @@ u64 zpl_fnv64a(void const *data, isize len) {
     isize i;
     u64 h = 0xcbf29ce484222325ull;
     u8 const *c = cast(u8 const *) data;
-
+    
     for (i = 0; i < len; i++) h = (h ^ c[i]) * 0x100000001b3ll;
-
+    
     return h;
 }
 
@@ -215,41 +215,41 @@ u32 zpl_murmur32_seed(void const *data, isize len, u32 seed) {
     u32 const r2 = 13;
     u32 const m = 5;
     u32 const n = 0xe6546b64;
-
+    
     isize i, nblocks = len / 4;
     u32 hash = seed, k1 = 0;
     u32 const *blocks = cast(u32 const *) data;
     u8 const *tail = cast(u8 const *)(data) + nblocks * 4;
-
+    
     for (i = 0; i < nblocks; i++) {
         u32 k = blocks[i];
         k *= c1;
         k = (k << r1) | (k >> (32 - r1));
         k *= c2;
-
+        
         hash ^= k;
         hash = ((hash << r2) | (hash >> (32 - r2))) * m + n;
     }
-
+    
     switch (len & 3) {
-    case 3: k1 ^= tail[2] << 16;
-    case 2: k1 ^= tail[1] << 8;
-    case 1:
+        case 3: k1 ^= tail[2] << 16;
+        case 2: k1 ^= tail[1] << 8;
+        case 1:
         k1 ^= tail[0];
-
+        
         k1 *= c1;
         k1 = (k1 << r1) | (k1 >> (32 - r1));
         k1 *= c2;
         hash ^= k1;
     }
-
+    
     hash ^= len;
     hash ^= (hash >> 16);
     hash *= 0x85ebca6b;
     hash ^= (hash >> 13);
     hash *= 0xc2b2ae35;
     hash ^= (hash >> 16);
-
+    
     return hash;
 }
 
@@ -257,49 +257,49 @@ u64 zpl_murmur64_seed(void const *data_, isize len, u64 seed) {
 #if defined(ZPL_ARCH_64_BIT)
     u64 const m = 0xc6a4a7935bd1e995ULL;
     i32 const r = 47;
-
+    
     u64 h = seed ^ (len * m);
-
+    
     u64 const *data = cast(u64 const *) data_;
     u8 const *data2 = cast(u8 const *) data_;
     u64 const *end = data + (len / 8);
-
+    
     while (data != end) {
         u64 k = *data++;
-
+        
         k *= m;
         k ^= k >> r;
         k *= m;
-
+        
         h ^= k;
         h *= m;
     }
-
+    
     switch (len & 7) {
-    case 7: h ^= cast(u64)(data2[6]) << 48;
-    case 6: h ^= cast(u64)(data2[5]) << 40;
-    case 5: h ^= cast(u64)(data2[4]) << 32;
-    case 4: h ^= cast(u64)(data2[3]) << 24;
-    case 3: h ^= cast(u64)(data2[2]) << 16;
-    case 2: h ^= cast(u64)(data2[1]) << 8;
-    case 1: h ^= cast(u64)(data2[0]); h *= m;
+        case 7: h ^= cast(u64)(data2[6]) << 48;
+        case 6: h ^= cast(u64)(data2[5]) << 40;
+        case 5: h ^= cast(u64)(data2[4]) << 32;
+        case 4: h ^= cast(u64)(data2[3]) << 24;
+        case 3: h ^= cast(u64)(data2[2]) << 16;
+        case 2: h ^= cast(u64)(data2[1]) << 8;
+        case 1: h ^= cast(u64)(data2[0]); h *= m;
     };
-
+    
     h ^= h >> r;
     h *= m;
     h ^= h >> r;
-
+    
     return h;
 #else
     u64 h;
     u32 const m = 0x5bd1e995;
     i32 const r = 24;
-
+    
     u32 h1 = cast(u32)(seed) ^ cast(u32)(len);
     u32 h2 = cast(u32)(seed >> 32);
-
+    
     u32 const *data = cast(u32 const *) data_;
-
+    
     while (len >= 8) {
         u32 k1, k2;
         k1 = *data++;
@@ -309,7 +309,7 @@ u64 zpl_murmur64_seed(void const *data_, isize len, u64 seed) {
         h1 *= m;
         h1 ^= k1;
         len -= 4;
-
+        
         k2 = *data++;
         k2 *= m;
         k2 ^= k2 >> r;
@@ -318,7 +318,7 @@ u64 zpl_murmur64_seed(void const *data_, isize len, u64 seed) {
         h2 ^= k2;
         len -= 4;
     }
-
+    
     if (len >= 4) {
         u32 k1 = *data++;
         k1 *= m;
@@ -328,13 +328,13 @@ u64 zpl_murmur64_seed(void const *data_, isize len, u64 seed) {
         h1 ^= k1;
         len -= 4;
     }
-
+    
     switch (len) {
-    case 3: h2 ^= (cast(u8 const *) data)[2] << 16;
-    case 2: h2 ^= (cast(u8 const *) data)[1] << 8;
-    case 1: h2 ^= (cast(u8 const *) data)[0] << 0; h2 *= m;
+        case 3: h2 ^= (cast(u8 const *) data)[2] << 16;
+        case 2: h2 ^= (cast(u8 const *) data)[1] << 8;
+        case 1: h2 ^= (cast(u8 const *) data)[0] << 0; h2 *= m;
     };
-
+    
     h1 ^= h2 >> 18;
     h1 *= m;
     h2 ^= h1 >> 22;
@@ -343,10 +343,10 @@ u64 zpl_murmur64_seed(void const *data_, isize len, u64 seed) {
     h1 *= m;
     h2 ^= h1 >> 19;
     h2 *= m;
-
+    
     h = h1;
     h = (h << 32) | h2;
-
+    
     return h;
 #endif
 }
