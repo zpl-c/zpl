@@ -1,4 +1,4 @@
-/** @file _regex.c
+/** @file regex.c
 @brief Regular expressions parser.
 
 Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.

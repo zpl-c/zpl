@@ -1,4 +1,4 @@
-/** @file _sort.c
+/** @file sort.c
 @brief Sorting and searching methods.
 
 Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.

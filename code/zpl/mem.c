@@ -1,4 +1,4 @@
-/** @file _mem.c
+/** @file mem.c
 @brief Memory manipulation and helpers.
 
  Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.

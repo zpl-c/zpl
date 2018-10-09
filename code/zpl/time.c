@@ -1,4 +1,4 @@
-/** @file _time.c
+/** @file time.c
 @brief Time helper methods.
 
  Helper methods for retrieving the current time in many forms under different precisions. It also offers a simple to use timer library.

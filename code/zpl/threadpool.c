@@ -1,4 +1,4 @@
-/** @file _threadpool.c
+/** @file threadpool.c
 @brief Job system
 
  This job system follows thread pool pattern to minimize the costs of thread initialization.

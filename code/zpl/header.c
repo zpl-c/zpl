@@ -1,4 +1,4 @@
-/** @file _header.c
+/** @file header.c
 @brief Macro helpers and symbols.
 
  This module contains many useful macros helpful for debugging as well as development itself.

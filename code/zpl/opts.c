@@ -1,4 +1,4 @@
-/** @file _opts.c
+/** @file opts.c
 @brief CLI options processor
 
  Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.

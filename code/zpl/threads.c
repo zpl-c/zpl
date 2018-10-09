@@ -1,4 +1,4 @@
-/** @file _threads.c
+/** @file threads.c
 @brief Threading methods, blocking models...
 
 This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
