@@ -474,7 +474,7 @@ table.memberdecls {
     -o-transition-duration: 0.5s;
     transition-property: background-color, box-shadow;
     transition-duration: 0.5s;
-    background-color: #242424;
+    background-color: #373a40;
 }
 
 .memberdecls td.glow, .fieldtable tr.glow {
@@ -992,7 +992,7 @@ table.fieldtable {
     height:30px;
     line-height:30px;
     color:#FFF;
-    border:solid 1px #C2CDE4;
+    border:solid 1px #242629;
     overflow:hidden;
     margin:0px;
     padding:0px;
