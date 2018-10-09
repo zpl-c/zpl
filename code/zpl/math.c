@@ -8,7 +8,7 @@ OpenGL gamedev friendly library for math.
 */
 
 
-#define zpl_vec2_t zpl_vec2
+
 typedef union zpl_vec2 {
     struct {
         f32 x, y;
@@ -16,7 +16,7 @@ typedef union zpl_vec2 {
     f32 e[2];
 } zpl_vec2;
 
-#define zpl_vec3_t zpl_vec3
+
 typedef union zpl_vec3 {
     struct {
         f32 x, y, z;
@@ -29,7 +29,7 @@ typedef union zpl_vec3 {
     f32 e[3];
 } zpl_vec3;
 
-#define zpl_vec4_t zpl_vec4
+
 typedef union zpl_vec4 {
     struct {
         f32 x, y, z, w;
@@ -45,7 +45,7 @@ typedef union zpl_vec4 {
     f32 e[4];
 } zpl_vec4;
 
-#define zpl_mat2_t zpl_mat2
+
 typedef union zpl_mat2 {
     struct {
         zpl_vec2 x, y;
@@ -54,7 +54,7 @@ typedef union zpl_mat2 {
     f32 e[4];
 } zpl_mat2;
 
-#define zpl_mat3_t zpl_mat3
+
 typedef union zpl_mat3 {
     struct {
         zpl_vec3 x, y, z;
@@ -63,7 +63,7 @@ typedef union zpl_mat3 {
     f32 e[9];
 } zpl_mat3;
 
-#define zpl_mat4_t zpl_mat4
+
 typedef union zpl_mat4 {
     struct {
         zpl_vec4 x, y, z, w;
@@ -72,7 +72,7 @@ typedef union zpl_mat4 {
     f32 e[16];
 } zpl_mat4;
 
-#define zpl_quat_t zpl_quat
+
 typedef union zpl_quat {
     struct {
         f32 x, y, z, w;
@@ -411,8 +411,8 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 //
 
 /* NOTE: To remove the need for memcpy */
-static void zpl__memcpy_4byte(void *dest, void const *src, size_t size) {
-    size_t i;
+static void zpl__memcpy_4byte(void *dest, void const *src, isize size) {
+    isize i;
     unsigned int *d, *s;
     d = (unsigned int *)dest;
     s = (unsigned int *)src;
@@ -1658,7 +1658,7 @@ f32 zpl_smoother_step(f32 a, f32 b, f32 t) {
 
 #define ZPL_VEC_LERPN(N, d, a, b, t)                                                                                   \
 \
-zpl_vec##N##_t db;                                                                                                 \
+zpl_vec##N db;                                                                                                 \
 \
 zpl_vec##N##_sub(&db, b, a);                                                                                       \
 \

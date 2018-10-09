@@ -26,6 +26,8 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+9.0.0 - New documentation format, removed deprecated code, changed styles
+
 8.14.1 - Fix string library
 8.14.0 - Added zpl_re_match_all
 8.13.0 - Update system command API
@@ -1054,7 +1056,7 @@ do {                                                                            
 //
 //
 
-#define zpl_virtual_memory_t zpl_virtual_memory
+
 typedef struct zpl_virtual_memory {
     void *data;
     isize size;
@@ -1099,7 +1101,7 @@ void *name(void *allocator_data, zplAllocationType type, isize size, isize align
 isize old_size, u64 flags)
 typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
-#define zpl_allocator_t zpl_allocator
+
 typedef struct zpl_allocator {
     zpl_allocator_proc *proc;
     void *data;
@@ -1180,7 +1182,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 //
 // Arena Allocator
 //
-#define zpl_arena_t zpl_arena
+
 typedef struct zpl_arena {
     zpl_allocator backing;
     void *physical_start;
@@ -1215,7 +1217,7 @@ ZPL_DEF void zpl_arena_check(zpl_arena *arena);
 ZPL_DEF zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
-#define zpl_temp_arena_memory_t zpl_temp_arena_memory
+
 typedef struct zpl_temp_arena_memory {
     zpl_arena *arena;
     isize original_count;
@@ -1231,7 +1233,7 @@ ZPL_DEF void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
 // Pool Allocator
 //
 
-#define zpl_pool_t zpl_pool
+
 typedef struct zpl_pool {
     zpl_allocator backing;
     void *physical_start;
@@ -1256,7 +1258,7 @@ ZPL_DEF void zpl_pool_free(zpl_pool *pool);
 ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
-#define zpl_allocation_header_ev_t zpl_allocation_header_ev
+
 typedef struct zpl_allocation_header_ev {
     isize size;
 } zpl_allocation_header_ev;
@@ -1276,7 +1278,7 @@ ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *
 // Scratch Memory Allocator - Ring Buffer Based Arena
 //
 
-#define zpl_scratch_memory_t zpl_scratch_memory
+
 typedef struct zpl_scratch_memory {
     void *physical_start;
     isize total_size;
@@ -1298,7 +1300,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc);
 // Stack Memory Allocator
 //
 
-#define zpl_stack_memory_t zpl_stack_memory
+
 typedef struct zpl_stack_memory {
     zpl_allocator backing;
     
@@ -1343,11 +1345,11 @@ This module features common threading and blocking principles. It contains threa
 // e.g. relaxed, acquire, release, acquire_release
 
 #if defined(ZPL_COMPILER_MSVC)
-#define zpl_atomic32_t zpl_atomic32
+
 typedef struct zpl_atomic32  { i32   volatile value; } zpl_atomic32;
-#define zpl_atomic64_t zpl_atomic64
+
 typedef struct zpl_atomic64  { i64   volatile value; } zpl_atomic64;
-#define zpl_atomic_ptr_t zpl_atomic_ptr
+
 typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #else
 #if defined(ZPL_ARCH_32_BIT)
@@ -1358,11 +1360,11 @@ typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #error Unknown architecture
 #endif
 
-#define zpl_atomic32_t zpl_atomic32
+
 typedef struct zpl_atomic32  { i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
-#define zpl_atomic64_t zpl_atomic64
+
 typedef struct zpl_atomic64  { i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
-#define zpl_atomic_ptr_t zpl_atomic_ptr
+
 typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 
@@ -1410,13 +1412,13 @@ ZPL_DEF void zpl_lfence      (void);
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { void *win32_handle; }     zpl_semaphore;
 #elif defined(ZPL_SYSTEM_OSX)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { semaphore_t osx_handle; } zpl_semaphore;
 #elif defined(ZPL_SYSTEM_UNIX)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
 #else
 #error
@@ -1430,7 +1432,7 @@ ZPL_DEF void zpl_semaphore_wait   (zpl_semaphore *s);
 
 
 // Mutex
-#define zpl_mutex_t zpl_mutex
+
 typedef struct zpl_mutex {
 #if defined(ZPL_SYSTEM_WINDOWS)
     CRITICAL_SECTION win32_critical_section;
@@ -1470,7 +1472,7 @@ typedef struct {
     zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
 #endif
 
-#define zpl_thread_t zpl_thread
+
 typedef struct zpl_thread {
 #if defined(ZPL_SYSTEM_WINDOWS)
     void *        win32_handle;
@@ -1500,7 +1502,7 @@ ZPL_DEF void zpl_thread_set_name        (zpl_thread *t, char const *name);
 
 // NOTE: Thread Merge Operation
 // Based on Sean Barrett's stb_sync
-#define zpl_sync_t zpl_sync
+
 typedef struct zpl_sync {
     i32 target;  // Target Number of threads
     i32 current; // Threads to hit
@@ -1522,7 +1524,7 @@ ZPL_DEF void zpl_sync_reach_and_wait(zpl_sync *s);
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;
@@ -1533,7 +1535,7 @@ typedef struct zpl_affinity {
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_OSX)
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;
@@ -1542,7 +1544,7 @@ typedef struct zpl_affinity {
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;
@@ -1814,11 +1816,11 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#define zpl_string_t zpl_string
+
 typedef char *zpl_string;
 
 // NOTE: If you only need a small string, just use a standard c string or change the size from isize to u16, etc.
-#define zpl_string_header_t zpl_string_header
+
 typedef struct zpl_string_header {
     zpl_allocator allocator;
     isize length;
@@ -1964,7 +1966,7 @@ Memory containers in various types: buffers, arrays, linked lists, ring buffers,
 // zpl_buffer_pop
 // zpl_buffer_clear
 
-#define zpl_buffer_header_t zpl_buffer_header
+
 typedef struct zpl_buffer_header {
     zpl_allocator backing;
     isize count;
@@ -1972,7 +1974,7 @@ typedef struct zpl_buffer_header {
 } zpl_buffer_header;
 
 #define zpl_buffer(Type) Type *
-#define zpl_buffer_t zpl_buffer
+
 #define zpl_buffer_make(Type, Name, allocator, cap) Type *Name; zpl_buffer_init(Name, allocator, cap)
 
 #define ZPL_BUFFER_HEADER(x) (cast(zpl_buffer_header *)(x) - 1)
@@ -2061,7 +2063,7 @@ int main(void)
 }
 #endif
 
-#define zpl_list_t zpl_list
+
 typedef struct zpl__list {
     void const *ptr;
     struct zpl__list *next, *prev;
@@ -2133,7 +2135,7 @@ void foo(void) {
 }
 #endif
 
-#define zpl_array_header_t zpl_array_header
+
 typedef struct zpl_array_header {
     char *data;
     isize count;
@@ -2142,7 +2144,7 @@ typedef struct zpl_array_header {
 } zpl_array_header;
 
 #define zpl_array(Type) Type *
-#define zpl_array_t zpl_array
+
 #define zpl_array_make(Type, Name, allocator) Type *Name; zpl_array_init(Name, allocator)
 
 #ifndef ZPL_ARRAY_GROW_FORMULA
@@ -2349,20 +2351,6 @@ ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, usize m
     return vals;                                                                                                   \
 }
 
-ZPL_RING_DECLARE(u8);
-ZPL_RING_DECLARE(char);
-ZPL_RING_DECLARE(u16);
-ZPL_RING_DECLARE(i16);
-ZPL_RING_DECLARE(u32);
-ZPL_RING_DECLARE(i32);
-ZPL_RING_DECLARE(u64);
-ZPL_RING_DECLARE(i64);
-ZPL_RING_DECLARE(f32);
-ZPL_RING_DECLARE(f64);
-ZPL_RING_DECLARE(usize);
-ZPL_RING_DECLARE(isize);
-ZPL_RING_DECLARE(uintptr);
-
 //! @}
 /** @file hashing.c
 @brief Hashing and Checksum Functions
@@ -2420,7 +2408,7 @@ ZPL_DEF u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
  @{
 */
 
-#define zpl_hash_table_find_result_t zpl_hash_table_find_result
+
 typedef struct zpl_hash_table_find_result {
     isize hash_index;
     isize entry_prev;
@@ -2599,14 +2587,14 @@ typedef enum zplFileError {
     ZPL_FILE_ERROR_UNKNOWN,
 } zplFileError;
 
-#define zpl_file_descriptor_t zpl_file_descriptor
+
 typedef union zpl_file_descriptor {
     void *p;
     intptr i;
     uintptr u;
 } zpl_file_descriptor;
 
-#define zpl_file_operations_t zpl_file_operations
+
 typedef struct zpl_file_operations zpl_file_operations;
 
 #define ZPL_FILE_OPEN_PROC(name)                                                                                       \
@@ -2640,7 +2628,7 @@ extern zpl_file_operations const zpl_default_file_operations;
 
 typedef u64 zpl_file_time;
 
-#define zpl_file_t zpl_file
+
 typedef struct zpl_file {
     zpl_file_operations ops;
     zpl_file_descriptor fd;
@@ -2651,7 +2639,7 @@ typedef struct zpl_file {
 
 #ifdef ZPL_THREADING
 
-#define zpl_async_file_t zpl_async_file
+
 typedef struct zpl_async_file {
     zpl_file handle;
     isize size;
@@ -2701,7 +2689,7 @@ ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size
 
 zplFileError zpl_file_temp(zpl_file *file);
 
-#define zpl_file_contents_t zpl_file_contents
+
 typedef struct zpl_file_contents {
     zpl_allocator allocator;
     void *data;
@@ -2806,7 +2794,7 @@ ZPL_DEF void zpl_sleep_ms(u32 ms);
 #define ZPL_TIMER_CB(name) void name(void *user_data)
 typedef ZPL_TIMER_CB(zpl_timer_cb);
 
-#define zpl_timer_t zpl_timer
+
 
 //! Timer data structure
 typedef struct zpl_timer {
@@ -2901,7 +2889,7 @@ ZPL_DEF void zpl_event_trigger(zpl_event_pool *pool, u64 slot, zpl_event_data ev
  @{
  */
 
-#define zpl_random_t zpl_random
+
 typedef struct zpl_random {
     u32 offsets[8];
     u32 value;
@@ -3008,7 +2996,7 @@ typedef enum zpl_json_delim_style {
     ZPL_JSON_DELIM_STYLE_NEWLINE,
 } zpl_json_delim_style;
 
-#define zpl_json_object_t zpl_json_object
+#define zpl_json_object zpl_json_object
 
 //! JSON object definition.
 typedef struct zpl_json_object {
@@ -3318,7 +3306,7 @@ OpenGL gamedev friendly library for math.
 */
 
 
-#define zpl_vec2_t zpl_vec2
+
 typedef union zpl_vec2 {
     struct {
         f32 x, y;
@@ -3326,7 +3314,7 @@ typedef union zpl_vec2 {
     f32 e[2];
 } zpl_vec2;
 
-#define zpl_vec3_t zpl_vec3
+
 typedef union zpl_vec3 {
     struct {
         f32 x, y, z;
@@ -3339,7 +3327,7 @@ typedef union zpl_vec3 {
     f32 e[3];
 } zpl_vec3;
 
-#define zpl_vec4_t zpl_vec4
+
 typedef union zpl_vec4 {
     struct {
         f32 x, y, z, w;
@@ -3355,7 +3343,7 @@ typedef union zpl_vec4 {
     f32 e[4];
 } zpl_vec4;
 
-#define zpl_mat2_t zpl_mat2
+
 typedef union zpl_mat2 {
     struct {
         zpl_vec2 x, y;
@@ -3364,7 +3352,7 @@ typedef union zpl_mat2 {
     f32 e[4];
 } zpl_mat2;
 
-#define zpl_mat3_t zpl_mat3
+
 typedef union zpl_mat3 {
     struct {
         zpl_vec3 x, y, z;
@@ -3373,7 +3361,7 @@ typedef union zpl_mat3 {
     f32 e[9];
 } zpl_mat3;
 
-#define zpl_mat4_t zpl_mat4
+
 typedef union zpl_mat4 {
     struct {
         zpl_vec4 x, y, z, w;
@@ -3382,7 +3370,7 @@ typedef union zpl_mat4 {
     f32 e[16];
 } zpl_mat4;
 
-#define zpl_quat_t zpl_quat
+
 typedef union zpl_quat {
     struct {
         f32 x, y, z, w;
@@ -7241,7 +7229,7 @@ zpl_global u8 const zpl__utf8_first[256] = {
     0x34, 0x04, 0x04, 0x04, 0x44, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, // 0xF0-0xFF
 };
 
-#define zpl_utf8_accept_range_t zpl_utf8_accept_range
+
 typedef struct zpl_utf8_accept_range {
     u8 lo, hi;
 } zpl_utf8_accept_range;
@@ -8119,25 +8107,6 @@ b32 zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_captu
 }
 
 
-
-////////////////////////////////////////////////////////////////
-//
-// zpl_ring
-//
-
-ZPL_RING_DEFINE(u8);
-ZPL_RING_DEFINE(char);
-ZPL_RING_DEFINE(u16);
-ZPL_RING_DEFINE(i16);
-ZPL_RING_DEFINE(u32);
-ZPL_RING_DEFINE(i32);
-ZPL_RING_DEFINE(u64);
-ZPL_RING_DEFINE(i64);
-ZPL_RING_DEFINE(f32);
-ZPL_RING_DEFINE(f64);
-ZPL_RING_DEFINE(usize);
-ZPL_RING_DEFINE(isize);
-ZPL_RING_DEFINE(uintptr);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -10432,7 +10401,7 @@ b32 zpl__json_is_control_char(char c);
 b32 zpl__json_is_assign_char(char c);
 b32 zpl__json_is_delim_char(char c);
 
-void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator_t a, b32 handle_comments,
+void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator a, b32 handle_comments,
                     u8 *err_code) {
     
     if (!root || !source)
@@ -10527,7 +10496,7 @@ void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_al
 #define zpl___ind(x)                                                                                                   \
 for (int i = 0; i < x; ++i) zpl_fprintf(f, " ");
 
-void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last);
+void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last);
 
 void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
     if (!o)
@@ -10562,8 +10531,8 @@ void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
     }
 }
 
-void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last) {
-    zpl_json_object_t *node = o;
+void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last) {
+    zpl_json_object *node = o;
     indent += 4;
     
     if (!is_inline) {
@@ -10691,7 +10660,7 @@ void zpl_json_free(zpl_json_object *obj) {
     }
 }
 
-char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     
@@ -10722,7 +10691,7 @@ char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a,
     return p;
 }
 
-char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     char *b = base;
@@ -10909,7 +10878,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
     return p;
 }
 
-char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     char *b = base;
@@ -11580,8 +11549,8 @@ b32 zpl_jobs_process(zpl_thread_pool *pool) {
 //
 
 /* NOTE: To remove the need for memcpy */
-static void zpl__memcpy_4byte(void *dest, void const *src, size_t size) {
-    size_t i;
+static void zpl__memcpy_4byte(void *dest, void const *src, isize size) {
+    isize i;
     unsigned int *d, *s;
     d = (unsigned int *)dest;
     s = (unsigned int *)src;
@@ -12827,7 +12796,7 @@ f32 zpl_smoother_step(f32 a, f32 b, f32 t) {
 
 #define ZPL_VEC_LERPN(N, d, a, b, t)                                                                                   \
 \
-zpl_vec##N##_t db;                                                                                                 \
+zpl_vec##N db;                                                                                                 \
 \
 zpl_vec##N##_sub(&db, b, a);                                                                                       \
 \

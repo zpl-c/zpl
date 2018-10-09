@@ -4,16 +4,16 @@
 
 int main()
 {
-    zpl_string_t files;
+    zpl_string files;
     files = zpl_path_dirlist(zpl_heap(), "../misc", true);
-
+    
     char *p=strtok(files, "\n");
     while (p) {
         printf("%s\n", p);
         p=strtok(NULL, "\n");
     }
-
+    
     zpl_string_free(files);
-
+    
     return 0;
 }

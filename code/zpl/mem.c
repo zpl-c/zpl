@@ -101,7 +101,7 @@ do {                                                                            
 //
 //
 
-#define zpl_virtual_memory_t zpl_virtual_memory
+
 typedef struct zpl_virtual_memory {
     void *data;
     isize size;
@@ -146,7 +146,7 @@ void *name(void *allocator_data, zplAllocationType type, isize size, isize align
 isize old_size, u64 flags)
 typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
-#define zpl_allocator_t zpl_allocator
+
 typedef struct zpl_allocator {
     zpl_allocator_proc *proc;
     void *data;
@@ -227,7 +227,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 //
 // Arena Allocator
 //
-#define zpl_arena_t zpl_arena
+
 typedef struct zpl_arena {
     zpl_allocator backing;
     void *physical_start;
@@ -262,7 +262,7 @@ ZPL_DEF void zpl_arena_check(zpl_arena *arena);
 ZPL_DEF zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
-#define zpl_temp_arena_memory_t zpl_temp_arena_memory
+
 typedef struct zpl_temp_arena_memory {
     zpl_arena *arena;
     isize original_count;
@@ -278,7 +278,7 @@ ZPL_DEF void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
 // Pool Allocator
 //
 
-#define zpl_pool_t zpl_pool
+
 typedef struct zpl_pool {
     zpl_allocator backing;
     void *physical_start;
@@ -303,7 +303,7 @@ ZPL_DEF void zpl_pool_free(zpl_pool *pool);
 ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
-#define zpl_allocation_header_ev_t zpl_allocation_header_ev
+
 typedef struct zpl_allocation_header_ev {
     isize size;
 } zpl_allocation_header_ev;
@@ -323,7 +323,7 @@ ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *
 // Scratch Memory Allocator - Ring Buffer Based Arena
 //
 
-#define zpl_scratch_memory_t zpl_scratch_memory
+
 typedef struct zpl_scratch_memory {
     void *physical_start;
     isize total_size;
@@ -345,7 +345,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc);
 // Stack Memory Allocator
 //
 
-#define zpl_stack_memory_t zpl_stack_memory
+
 typedef struct zpl_stack_memory {
     zpl_allocator backing;
     

@@ -37,14 +37,14 @@ typedef enum zplFileError {
     ZPL_FILE_ERROR_UNKNOWN,
 } zplFileError;
 
-#define zpl_file_descriptor_t zpl_file_descriptor
+
 typedef union zpl_file_descriptor {
     void *p;
     intptr i;
     uintptr u;
 } zpl_file_descriptor;
 
-#define zpl_file_operations_t zpl_file_operations
+
 typedef struct zpl_file_operations zpl_file_operations;
 
 #define ZPL_FILE_OPEN_PROC(name)                                                                                       \
@@ -78,7 +78,7 @@ extern zpl_file_operations const zpl_default_file_operations;
 
 typedef u64 zpl_file_time;
 
-#define zpl_file_t zpl_file
+
 typedef struct zpl_file {
     zpl_file_operations ops;
     zpl_file_descriptor fd;
@@ -89,7 +89,7 @@ typedef struct zpl_file {
 
 #ifdef ZPL_THREADING
 
-#define zpl_async_file_t zpl_async_file
+
 typedef struct zpl_async_file {
     zpl_file handle;
     isize size;
@@ -139,7 +139,7 @@ ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size
 
 zplFileError zpl_file_temp(zpl_file *file);
 
-#define zpl_file_contents_t zpl_file_contents
+
 typedef struct zpl_file_contents {
     zpl_allocator allocator;
     void *data;

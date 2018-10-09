@@ -7,7 +7,7 @@
  @{
  */
 
-#define zpl_random_t zpl_random
+
 typedef struct zpl_random {
     u32 offsets[8];
     u32 value;

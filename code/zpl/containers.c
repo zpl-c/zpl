@@ -23,7 +23,7 @@ Memory containers in various types: buffers, arrays, linked lists, ring buffers,
 // zpl_buffer_pop
 // zpl_buffer_clear
 
-#define zpl_buffer_header_t zpl_buffer_header
+
 typedef struct zpl_buffer_header {
     zpl_allocator backing;
     isize count;
@@ -31,7 +31,7 @@ typedef struct zpl_buffer_header {
 } zpl_buffer_header;
 
 #define zpl_buffer(Type) Type *
-#define zpl_buffer_t zpl_buffer
+
 #define zpl_buffer_make(Type, Name, allocator, cap) Type *Name; zpl_buffer_init(Name, allocator, cap)
 
 #define ZPL_BUFFER_HEADER(x) (cast(zpl_buffer_header *)(x) - 1)
@@ -120,7 +120,7 @@ int main(void)
 }
 #endif
 
-#define zpl_list_t zpl_list
+
 typedef struct zpl__list {
     void const *ptr;
     struct zpl__list *next, *prev;
@@ -192,7 +192,7 @@ void foo(void) {
 }
 #endif
 
-#define zpl_array_header_t zpl_array_header
+
 typedef struct zpl_array_header {
     char *data;
     isize count;
@@ -201,7 +201,7 @@ typedef struct zpl_array_header {
 } zpl_array_header;
 
 #define zpl_array(Type) Type *
-#define zpl_array_t zpl_array
+
 #define zpl_array_make(Type, Name, allocator) Type *Name; zpl_array_init(Name, allocator)
 
 #ifndef ZPL_ARRAY_GROW_FORMULA
@@ -408,41 +408,8 @@ ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, usize m
     return vals;                                                                                                   \
 }
 
-ZPL_RING_DECLARE(u8);
-ZPL_RING_DECLARE(char);
-ZPL_RING_DECLARE(u16);
-ZPL_RING_DECLARE(i16);
-ZPL_RING_DECLARE(u32);
-ZPL_RING_DECLARE(i32);
-ZPL_RING_DECLARE(u64);
-ZPL_RING_DECLARE(i64);
-ZPL_RING_DECLARE(f32);
-ZPL_RING_DECLARE(f64);
-ZPL_RING_DECLARE(usize);
-ZPL_RING_DECLARE(isize);
-ZPL_RING_DECLARE(uintptr);
-
 //! @}
 //$$
-
-////////////////////////////////////////////////////////////////
-//
-// zpl_ring
-//
-
-ZPL_RING_DEFINE(u8);
-ZPL_RING_DEFINE(char);
-ZPL_RING_DEFINE(u16);
-ZPL_RING_DEFINE(i16);
-ZPL_RING_DEFINE(u32);
-ZPL_RING_DEFINE(i32);
-ZPL_RING_DEFINE(u64);
-ZPL_RING_DEFINE(i64);
-ZPL_RING_DEFINE(f32);
-ZPL_RING_DEFINE(f64);
-ZPL_RING_DEFINE(usize);
-ZPL_RING_DEFINE(isize);
-ZPL_RING_DEFINE(uintptr);
 
 ////////////////////////////////////////////////////////////////
 //

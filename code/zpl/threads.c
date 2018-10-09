@@ -14,11 +14,11 @@ This module features common threading and blocking principles. It contains threa
 // e.g. relaxed, acquire, release, acquire_release
 
 #if defined(ZPL_COMPILER_MSVC)
-#define zpl_atomic32_t zpl_atomic32
+
 typedef struct zpl_atomic32  { i32   volatile value; } zpl_atomic32;
-#define zpl_atomic64_t zpl_atomic64
+
 typedef struct zpl_atomic64  { i64   volatile value; } zpl_atomic64;
-#define zpl_atomic_ptr_t zpl_atomic_ptr
+
 typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #else
 #if defined(ZPL_ARCH_32_BIT)
@@ -29,11 +29,11 @@ typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #error Unknown architecture
 #endif
 
-#define zpl_atomic32_t zpl_atomic32
+
 typedef struct zpl_atomic32  { i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
-#define zpl_atomic64_t zpl_atomic64
+
 typedef struct zpl_atomic64  { i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
-#define zpl_atomic_ptr_t zpl_atomic_ptr
+
 typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 
@@ -81,13 +81,13 @@ ZPL_DEF void zpl_lfence      (void);
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { void *win32_handle; }     zpl_semaphore;
 #elif defined(ZPL_SYSTEM_OSX)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { semaphore_t osx_handle; } zpl_semaphore;
 #elif defined(ZPL_SYSTEM_UNIX)
-#define zpl_semaphore_t zpl_semaphore
+
 typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
 #else
 #error
@@ -101,7 +101,7 @@ ZPL_DEF void zpl_semaphore_wait   (zpl_semaphore *s);
 
 
 // Mutex
-#define zpl_mutex_t zpl_mutex
+
 typedef struct zpl_mutex {
 #if defined(ZPL_SYSTEM_WINDOWS)
     CRITICAL_SECTION win32_critical_section;
@@ -141,7 +141,7 @@ typedef struct {
     zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
 #endif
 
-#define zpl_thread_t zpl_thread
+
 typedef struct zpl_thread {
 #if defined(ZPL_SYSTEM_WINDOWS)
     void *        win32_handle;
@@ -171,7 +171,7 @@ ZPL_DEF void zpl_thread_set_name        (zpl_thread *t, char const *name);
 
 // NOTE: Thread Merge Operation
 // Based on Sean Barrett's stb_sync
-#define zpl_sync_t zpl_sync
+
 typedef struct zpl_sync {
     i32 target;  // Target Number of threads
     i32 current; // Threads to hit
@@ -193,7 +193,7 @@ ZPL_DEF void zpl_sync_reach_and_wait(zpl_sync *s);
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;
@@ -204,7 +204,7 @@ typedef struct zpl_affinity {
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_OSX)
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;
@@ -213,7 +213,7 @@ typedef struct zpl_affinity {
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
-#define zpl_affinity_t zpl_affinity
+
 typedef struct zpl_affinity {
     b32   is_accurate;
     isize core_count;

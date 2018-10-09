@@ -73,7 +73,7 @@ typedef enum zpl_json_delim_style {
     ZPL_JSON_DELIM_STYLE_NEWLINE,
 } zpl_json_delim_style;
 
-#define zpl_json_object_t zpl_json_object
+#define zpl_json_object zpl_json_object
 
 //! JSON object definition.
 typedef struct zpl_json_object {
@@ -192,7 +192,7 @@ b32 zpl__json_is_control_char(char c);
 b32 zpl__json_is_assign_char(char c);
 b32 zpl__json_is_delim_char(char c);
 
-void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator_t a, b32 handle_comments,
+void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_allocator a, b32 handle_comments,
                     u8 *err_code) {
     
     if (!root || !source)
@@ -287,7 +287,7 @@ void zpl_json_parse(zpl_json_object *root, usize len, char const *source, zpl_al
 #define zpl___ind(x)                                                                                                   \
 for (int i = 0; i < x; ++i) zpl_fprintf(f, " ");
 
-void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last);
+void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last);
 
 void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
     if (!o)
@@ -322,8 +322,8 @@ void zpl_json_write(zpl_file *f, zpl_json_object *o, isize indent) {
     }
 }
 
-void zpl__json_write_value(zpl_file *f, zpl_json_object_t *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last) {
-    zpl_json_object_t *node = o;
+void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, isize indent, b32 is_inline, b32 is_last) {
+    zpl_json_object *node = o;
     indent += 4;
     
     if (!is_inline) {
@@ -451,7 +451,7 @@ void zpl_json_free(zpl_json_object *obj) {
     }
 }
 
-char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     
@@ -482,7 +482,7 @@ char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator_t a,
     return p;
 }
 
-char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     char *b = base;
@@ -669,7 +669,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator_t a,
     return p;
 }
 
-char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator_t a, u8 *err_code) {
+char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
     char *b = base;

@@ -1,7 +1,7 @@
 #define ZPL_IMPLEMENTATION
 #include <zpl.h>
 
-void easy_print(zpl_buffer_t(i64) nums, isize cnt) {
+void easy_print(i64 *nums, isize cnt) {
     zpl_printf("Numbers:\n");
     for (isize i = 0; i < cnt; ++i) {
         zpl_when (&nums[i], i64*, number) {
@@ -13,7 +13,7 @@ void easy_print(zpl_buffer_t(i64) nums, isize cnt) {
 
 int main(void) {
     
-    zpl_random_t rng = {0};
+    zpl_random rng = {0};
     zpl_random_init(&rng);
     
     // NOTE(ZaKlaus): Initialize our buffer

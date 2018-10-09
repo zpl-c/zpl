@@ -15,7 +15,7 @@
 
 // NOTE(ZaKlaus): Declare user structure
 typedef struct user {
-    zpl_string_t name;
+    zpl_string name;
     i64          score;
 } user;
 
@@ -28,7 +28,7 @@ ZPL_TABLE_DEFINE(userbl, tbl_user_, user);
 
 int
 main(void) {
-   
+    
     // NOTE(ZaKlaus): Create new hash table
     userbl users;
     tbl_user_init(&users, zpl_heap_allocator());
@@ -57,7 +57,7 @@ main(void) {
     
     // NOTE(ZaKlaus): Make sure the user is identical to the first user
     ZPL_ASSERT(user3.score == user1.score);
-
+    
     // NOTE(ZaKlaus): Release resources
     zpl_string_free(user1.name);
     zpl_string_free(user2.name);

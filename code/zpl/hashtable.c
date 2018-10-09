@@ -25,7 +25,7 @@
  @{
 */
 
-#define zpl_hash_table_find_result_t zpl_hash_table_find_result
+
 typedef struct zpl_hash_table_find_result {
     isize hash_index;
     isize entry_prev;

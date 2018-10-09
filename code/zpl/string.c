@@ -182,11 +182,11 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#define zpl_string_t zpl_string
+
 typedef char *zpl_string;
 
 // NOTE: If you only need a small string, just use a standard c string or change the size from isize to u16, etc.
-#define zpl_string_header_t zpl_string_header
+
 typedef struct zpl_string_header {
     zpl_allocator allocator;
     isize length;
@@ -1073,7 +1073,7 @@ zpl_global u8 const zpl__utf8_first[256] = {
     0x34, 0x04, 0x04, 0x04, 0x44, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, 0xf1, // 0xF0-0xFF
 };
 
-#define zpl_utf8_accept_range_t zpl_utf8_accept_range
+
 typedef struct zpl_utf8_accept_range {
     u8 lo, hi;
 } zpl_utf8_accept_range;

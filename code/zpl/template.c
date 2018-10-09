@@ -26,6 +26,8 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+9.0.0 - New documentation format, removed deprecated code, changed styles
+
 8.14.1 - Fix string library
 8.14.0 - Added zpl_re_match_all
 8.13.0 - Update system command API
