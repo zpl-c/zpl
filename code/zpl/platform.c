@@ -22,7 +22,7 @@
 @n Linux Support - None
 @n Other OS Support - None
 @n
-@n Ported from https://github.com/gingerBill/zpl/
+@n Ported from https://github.com/gingerBill/gb/
 
 @{
 */
