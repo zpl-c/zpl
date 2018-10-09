@@ -1,3 +1,9 @@
+/** @file _header.c
+@brief Macro helpers and symbols.
+
+ This module contains many useful macros helpful for debugging as well as development itself.
+ */
+
 #if defined(__cplusplus)
 #define ZPL_EXTERN extern "C"
 #else
@@ -13,11 +19,11 @@
 #endif
 
 #ifndef ZPL_DEF
-    #ifdef ZPL_STATIC
-        #define ZPL_DEF static
-    #else
-        #define ZPL_DEF extern
-    #endif
+#ifdef ZPL_STATIC
+#define ZPL_DEF static
+#else
+#define ZPL_DEF extern
+#endif
 #endif
 
 #ifdef ZPL_IMPL
@@ -29,14 +35,14 @@
 #endif
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
-    defined(__ppc64__) || defined(__aarch64__)
-    #ifndef ZPL_ARCH_64_BIT
-        #define ZPL_ARCH_64_BIT 1
-    #endif
+defined(__ppc64__) || defined(__aarch64__)
+#ifndef ZPL_ARCH_64_BIT
+#define ZPL_ARCH_64_BIT 1
+#endif
 #else
-    #ifndef ZPL_ARCH_32_BIT
-        #define ZPL_ARCH_32_BIT 1
-    #endif
+#ifndef ZPL_ARCH_32_BIT
+#define ZPL_ARCH_32_BIT 1
+#endif
 #endif
 
 #ifndef ZPL_ENDIAN_ORDER
@@ -46,51 +52,51 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-    #ifndef ZPL_SYSTEM_WINDOWS
-        #define ZPL_SYSTEM_WINDOWS 1
-    #endif
+#ifndef ZPL_SYSTEM_WINDOWS
+#define ZPL_SYSTEM_WINDOWS 1
+#endif
 #elif defined(__APPLE__) && defined(__MACH__)
-    #ifndef ZPL_SYSTEM_OSX
-        #define ZPL_SYSTEM_OSX 1
-    #endif
-    #ifndef ZPL_SYSTEM_MACOS
-        #define ZPL_SYSTEM_MACOS 1
-    #endif
-    #include <TargetConditionals.h>
-    #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
-        #ifndef ZPL_SYSTEM_IOS
-            #define ZPL_SYSTEM_IOS 1
-        #endif
-    #endif
+#ifndef ZPL_SYSTEM_OSX
+#define ZPL_SYSTEM_OSX 1
+#endif
+#ifndef ZPL_SYSTEM_MACOS
+#define ZPL_SYSTEM_MACOS 1
+#endif
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+#ifndef ZPL_SYSTEM_IOS
+#define ZPL_SYSTEM_IOS 1
+#endif
+#endif
 #elif defined(__unix__)
-    #ifndef ZPL_SYSTEM_UNIX
-    #define ZPL_SYSTEM_UNIX 1
-    #endif
+#ifndef ZPL_SYSTEM_UNIX
+#define ZPL_SYSTEM_UNIX 1
+#endif
 
-    #if defined(ANDROID) || defined(__ANDROID__)
-        #ifndef ZPL_SYSTEM_ANDROID
-            #define ZPL_SYSTEM_ANDROID 1
-        #endif
-        #ifndef ZPL_SYSTEM_LINUX
-            #define ZPL_SYSTEM_LINUX 1
-        #endif
-    #elif defined(__linux__)
-        #ifndef ZPL_SYSTEM_LINUX
-            #define ZPL_SYSTEM_LINUX 1
-        #endif
-    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-        #ifndef ZPL_SYSTEM_FREEBSD
-            #define ZPL_SYSTEM_FREEBSD 1
-        #endif
-    #elif defined(__EMSCRIPTEN__)
-        #ifndef ZPL_SYSTEM_EMSCRIPTEN
-            #define ZPL_SYSTEM_EMSCRIPTEN 1
-        #endif
-    #else
-        #error This UNIX operating system is not supported
-    #endif
+#if defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
+#endif
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
+#elif defined(__linux__)
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#ifndef ZPL_SYSTEM_FREEBSD
+#define ZPL_SYSTEM_FREEBSD 1
+#endif
+#elif defined(__EMSCRIPTEN__)
+#ifndef ZPL_SYSTEM_EMSCRIPTEN
+#define ZPL_SYSTEM_EMSCRIPTEN 1
+#endif
 #else
-    #error This operating system is not supported
+#error This UNIX operating system is not supported
+#endif
+#else
+#error This operating system is not supported
 #endif
 
 
@@ -140,9 +146,9 @@
 #ifndef ZPL_THREADING
 #define ZPL_THREADING 1
 #else
-    #if ZPL_THREADING == 0 || defined(ZPL_NO_THREADING)
-        #undef ZPL_THREADING
-    #endif
+#if ZPL_THREADING == 0 || defined(ZPL_NO_THREADING)
+#undef ZPL_THREADING
+#endif
 #endif
 #endif
 
@@ -184,8 +190,8 @@
 #include <stdio.h>
 
 #define ZPL_WINMAIN( )                                                                                                 \
-    int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,                 \
-                         _In_ int nCmdShow)
+int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,                 \
+_In_ int nCmdShow)
 
 #if !defined(ZPL_NO_WINDOWS_H)
 #define NOMINMAX 1
@@ -536,10 +542,10 @@ typedef zpl_b8 bool;
 #define zpl_align_of(Type) (isize)alignof(Type)
 #else
 extern "C++" {
-template <typename T> struct zpl_alignment_trick {
-    char c;
-    T member;
-};
+    template <typename T> struct zpl_alignment_trick {
+        char c;
+        T member;
+    };
 #define zpl_align_of(Type) zpl_offset_of(zpl_alignment_trick<Type>, member)
 }
 #endif
@@ -547,22 +553,22 @@ template <typename T> struct zpl_alignment_trick {
 #else
 #ifndef zpl_align_of
 #define zpl_align_of(Type)                                                                                             \
-    zpl_offset_of(                                                                                                     \
-        struct {                                                                                                       \
-            char c;                                                                                                    \
-            Type member;                                                                                               \
-        },                                                                                                             \
-        member)
+zpl_offset_of(                                                                                                     \
+struct {                                                                                                       \
+    char c;                                                                                                    \
+    Type member;                                                                                               \
+},                                                                                                             \
+member)
 #endif
 #endif
 
 #ifndef zpl_swap
 #define zpl_swap(Type, a, b)                                                                                           \
-    do {                                                                                                               \
-        Type tmp = (a);                                                                                                \
-        (a) = (b);                                                                                                     \
-        (b) = tmp;                                                                                                     \
-    } while (0)
+do {                                                                                                               \
+    Type tmp = (a);                                                                                                \
+    (a) = (b);                                                                                                     \
+    (b) = tmp;                                                                                                     \
+} while (0)
 #endif
 
 #ifndef zpl_global
@@ -643,19 +649,19 @@ template <typename T> struct zpl_alignment_trick {
 
 #ifndef zpl_when
 #define zpl_when(init, type, name)                                                                                     \
-    type name = init;                                                                                                  \
-    if (name)
+type name = init;                                                                                                  \
+if (name)
 #endif
 
 /* NOTE: Very useful bit setting */
 #ifndef ZPL_MASK_SET
 #define ZPL_MASK_SET(var, set, mask)                                                                                   \
-    do {                                                                                                               \
-        if (set)                                                                                                       \
-            (var) |= (mask);                                                                                           \
-        else                                                                                                           \
-            (var) &= ~(mask);                                                                                          \
-    } while (0)
+do {                                                                                                               \
+    if (set)                                                                                                       \
+    (var) |= (mask);                                                                                           \
+    else                                                                                                           \
+    (var) &= ~(mask);                                                                                          \
+} while (0)
 #endif
 
 // NOTE: Some compilers support applying printf-style warnings to user functions.
@@ -685,12 +691,12 @@ template <typename T> struct zpl_alignment_trick {
 
 #ifndef ZPL_ASSERT_MSG
 #define ZPL_ASSERT_MSG(cond, msg, ...)                                                                                 \
-    do {                                                                                                               \
-        if (!(cond)) {                                                                                                 \
-            zpl_assert_handler(#cond, __FILE__, cast(zpl_i64) __LINE__, msg, ##__VA_ARGS__);                               \
-            ZPL_DEBUG_TRAP( );                                                                                         \
-        }                                                                                                              \
-    } while (0)
+do {                                                                                                               \
+    if (!(cond)) {                                                                                                 \
+        zpl_assert_handler(#cond, __FILE__, cast(zpl_i64) __LINE__, msg, ##__VA_ARGS__);                               \
+        ZPL_DEBUG_TRAP( );                                                                                         \
+    }                                                                                                              \
+} while (0)
 #endif
 
 #ifndef ZPL_ASSERT
@@ -725,6 +731,6 @@ void zpl_assert_handler(char const *condition, char const *file, i32 line, char 
 
 i32 zpl_assert_crash(char const *condition) {
     ZPL_PANIC(condition);
-
+    
     return 0;
 }

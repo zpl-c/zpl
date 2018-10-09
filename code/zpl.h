@@ -230,7 +230,13 @@ Version History:
 extern "C" {
 #endif
     
-    #if defined(__cplusplus)
+    /** @file _header.c
+@brief Macro helpers and symbols.
+
+ This module contains many useful macros helpful for debugging as well as development itself.
+ */
+
+#if defined(__cplusplus)
 #define ZPL_EXTERN extern "C"
 #else
 #define ZPL_EXTERN extern
@@ -245,11 +251,11 @@ extern "C" {
 #endif
 
 #ifndef ZPL_DEF
-    #ifdef ZPL_STATIC
-        #define ZPL_DEF static
-    #else
-        #define ZPL_DEF extern
-    #endif
+#ifdef ZPL_STATIC
+#define ZPL_DEF static
+#else
+#define ZPL_DEF extern
+#endif
 #endif
 
 #ifdef ZPL_IMPL
@@ -261,14 +267,14 @@ extern "C" {
 #endif
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
-    defined(__ppc64__) || defined(__aarch64__)
-    #ifndef ZPL_ARCH_64_BIT
-        #define ZPL_ARCH_64_BIT 1
-    #endif
+defined(__ppc64__) || defined(__aarch64__)
+#ifndef ZPL_ARCH_64_BIT
+#define ZPL_ARCH_64_BIT 1
+#endif
 #else
-    #ifndef ZPL_ARCH_32_BIT
-        #define ZPL_ARCH_32_BIT 1
-    #endif
+#ifndef ZPL_ARCH_32_BIT
+#define ZPL_ARCH_32_BIT 1
+#endif
 #endif
 
 #ifndef ZPL_ENDIAN_ORDER
@@ -278,51 +284,51 @@ extern "C" {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-    #ifndef ZPL_SYSTEM_WINDOWS
-        #define ZPL_SYSTEM_WINDOWS 1
-    #endif
+#ifndef ZPL_SYSTEM_WINDOWS
+#define ZPL_SYSTEM_WINDOWS 1
+#endif
 #elif defined(__APPLE__) && defined(__MACH__)
-    #ifndef ZPL_SYSTEM_OSX
-        #define ZPL_SYSTEM_OSX 1
-    #endif
-    #ifndef ZPL_SYSTEM_MACOS
-        #define ZPL_SYSTEM_MACOS 1
-    #endif
-    #include <TargetConditionals.h>
-    #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
-        #ifndef ZPL_SYSTEM_IOS
-            #define ZPL_SYSTEM_IOS 1
-        #endif
-    #endif
+#ifndef ZPL_SYSTEM_OSX
+#define ZPL_SYSTEM_OSX 1
+#endif
+#ifndef ZPL_SYSTEM_MACOS
+#define ZPL_SYSTEM_MACOS 1
+#endif
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+#ifndef ZPL_SYSTEM_IOS
+#define ZPL_SYSTEM_IOS 1
+#endif
+#endif
 #elif defined(__unix__)
-    #ifndef ZPL_SYSTEM_UNIX
-    #define ZPL_SYSTEM_UNIX 1
-    #endif
+#ifndef ZPL_SYSTEM_UNIX
+#define ZPL_SYSTEM_UNIX 1
+#endif
 
-    #if defined(ANDROID) || defined(__ANDROID__)
-        #ifndef ZPL_SYSTEM_ANDROID
-            #define ZPL_SYSTEM_ANDROID 1
-        #endif
-        #ifndef ZPL_SYSTEM_LINUX
-            #define ZPL_SYSTEM_LINUX 1
-        #endif
-    #elif defined(__linux__)
-        #ifndef ZPL_SYSTEM_LINUX
-            #define ZPL_SYSTEM_LINUX 1
-        #endif
-    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-        #ifndef ZPL_SYSTEM_FREEBSD
-            #define ZPL_SYSTEM_FREEBSD 1
-        #endif
-    #elif defined(__EMSCRIPTEN__)
-        #ifndef ZPL_SYSTEM_EMSCRIPTEN
-            #define ZPL_SYSTEM_EMSCRIPTEN 1
-        #endif
-    #else
-        #error This UNIX operating system is not supported
-    #endif
+#if defined(ANDROID) || defined(__ANDROID__)
+#ifndef ZPL_SYSTEM_ANDROID
+#define ZPL_SYSTEM_ANDROID 1
+#endif
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
+#elif defined(__linux__)
+#ifndef ZPL_SYSTEM_LINUX
+#define ZPL_SYSTEM_LINUX 1
+#endif
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#ifndef ZPL_SYSTEM_FREEBSD
+#define ZPL_SYSTEM_FREEBSD 1
+#endif
+#elif defined(__EMSCRIPTEN__)
+#ifndef ZPL_SYSTEM_EMSCRIPTEN
+#define ZPL_SYSTEM_EMSCRIPTEN 1
+#endif
 #else
-    #error This operating system is not supported
+#error This UNIX operating system is not supported
+#endif
+#else
+#error This operating system is not supported
 #endif
 
 
@@ -372,9 +378,9 @@ extern "C" {
 #ifndef ZPL_THREADING
 #define ZPL_THREADING 1
 #else
-    #if ZPL_THREADING == 0 || defined(ZPL_NO_THREADING)
-        #undef ZPL_THREADING
-    #endif
+#if ZPL_THREADING == 0 || defined(ZPL_NO_THREADING)
+#undef ZPL_THREADING
+#endif
 #endif
 #endif
 
@@ -416,8 +422,8 @@ extern "C" {
 #include <stdio.h>
 
 #define ZPL_WINMAIN( )                                                                                                 \
-    int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,                 \
-                         _In_ int nCmdShow)
+int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,                 \
+_In_ int nCmdShow)
 
 #if !defined(ZPL_NO_WINDOWS_H)
 #define NOMINMAX 1
@@ -768,10 +774,10 @@ typedef zpl_b8 bool;
 #define zpl_align_of(Type) (isize)alignof(Type)
 #else
 extern "C++" {
-template <typename T> struct zpl_alignment_trick {
-    char c;
-    T member;
-};
+    template <typename T> struct zpl_alignment_trick {
+        char c;
+        T member;
+    };
 #define zpl_align_of(Type) zpl_offset_of(zpl_alignment_trick<Type>, member)
 }
 #endif
@@ -779,22 +785,22 @@ template <typename T> struct zpl_alignment_trick {
 #else
 #ifndef zpl_align_of
 #define zpl_align_of(Type)                                                                                             \
-    zpl_offset_of(                                                                                                     \
-        struct {                                                                                                       \
-            char c;                                                                                                    \
-            Type member;                                                                                               \
-        },                                                                                                             \
-        member)
+zpl_offset_of(                                                                                                     \
+struct {                                                                                                       \
+    char c;                                                                                                    \
+    Type member;                                                                                               \
+},                                                                                                             \
+member)
 #endif
 #endif
 
 #ifndef zpl_swap
 #define zpl_swap(Type, a, b)                                                                                           \
-    do {                                                                                                               \
-        Type tmp = (a);                                                                                                \
-        (a) = (b);                                                                                                     \
-        (b) = tmp;                                                                                                     \
-    } while (0)
+do {                                                                                                               \
+    Type tmp = (a);                                                                                                \
+    (a) = (b);                                                                                                     \
+    (b) = tmp;                                                                                                     \
+} while (0)
 #endif
 
 #ifndef zpl_global
@@ -875,19 +881,19 @@ template <typename T> struct zpl_alignment_trick {
 
 #ifndef zpl_when
 #define zpl_when(init, type, name)                                                                                     \
-    type name = init;                                                                                                  \
-    if (name)
+type name = init;                                                                                                  \
+if (name)
 #endif
 
 /* NOTE: Very useful bit setting */
 #ifndef ZPL_MASK_SET
 #define ZPL_MASK_SET(var, set, mask)                                                                                   \
-    do {                                                                                                               \
-        if (set)                                                                                                       \
-            (var) |= (mask);                                                                                           \
-        else                                                                                                           \
-            (var) &= ~(mask);                                                                                          \
-    } while (0)
+do {                                                                                                               \
+    if (set)                                                                                                       \
+    (var) |= (mask);                                                                                           \
+    else                                                                                                           \
+    (var) &= ~(mask);                                                                                          \
+} while (0)
 #endif
 
 // NOTE: Some compilers support applying printf-style warnings to user functions.
@@ -917,12 +923,12 @@ template <typename T> struct zpl_alignment_trick {
 
 #ifndef ZPL_ASSERT_MSG
 #define ZPL_ASSERT_MSG(cond, msg, ...)                                                                                 \
-    do {                                                                                                               \
-        if (!(cond)) {                                                                                                 \
-            zpl_assert_handler(#cond, __FILE__, cast(zpl_i64) __LINE__, msg, ##__VA_ARGS__);                               \
-            ZPL_DEBUG_TRAP( );                                                                                         \
-        }                                                                                                              \
-    } while (0)
+do {                                                                                                               \
+    if (!(cond)) {                                                                                                 \
+        zpl_assert_handler(#cond, __FILE__, cast(zpl_i64) __LINE__, msg, ##__VA_ARGS__);                               \
+        ZPL_DEBUG_TRAP( );                                                                                         \
+    }                                                                                                              \
+} while (0)
 #endif
 
 #ifndef ZPL_ASSERT
@@ -941,30 +947,31 @@ template <typename T> struct zpl_alignment_trick {
 ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
 ZPL_DEF i32 zpl_assert_crash(char const *condition);
 
-////////////////////////////////////////////////////////////////
-//
-// Memory
-//
-//
+/** @file _mem.c
+@brief Memory manipulation and helpers.
 
-/**
- * a normal member taking two arguments and returning an integer value.
- * @param a an integer argument.
- * @param s a constant character pointer.
- * @see Javadoc_Test()
- * @see ~Javadoc_Test()
- * @see testMeToo()
- * @see publicVar()
- * @return The test results
+ Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
  */
+
+//! Checks if value is power of 2.
 ZPL_DEF b32 zpl_is_power_of_two(isize x);
 
+//! Aligns address to specified alignment.
 ZPL_DEF void *zpl_align_forward(void *ptr, isize alignment);
 
+//! Moves pointer forward by bytes.
 ZPL_DEF void *zpl_pointer_add(void *ptr, isize bytes);
+
+//! Moves pointer backward by bytes.
 ZPL_DEF void *zpl_pointer_sub(void *ptr, isize bytes);
+
+//! Moves pointer forward by bytes.
 ZPL_DEF void const *zpl_pointer_add_const(void const *ptr, isize bytes);
+
+//! Moves pointer backward by bytes.
 ZPL_DEF void const *zpl_pointer_sub_const(void const *ptr, isize bytes);
+
+//! Calculates difference between two addresses.
 ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
 
 #define zpl_ptr_add zpl_pointer_add
@@ -973,24 +980,48 @@ ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
 #define zpl_ptr_sub_const zpl_pointer_sub_const
 #define zpl_ptr_diff zpl_pointer_diff
 
+//! Clears up memory at location by specified size.
+
+//! @param ptr Memory location to clear up.
+//! @param size The size to clear up with.
 ZPL_DEF void zpl_zero_size(void *ptr, isize size);
+
 #ifndef zpl_zero_item
+//! Clears up an item.
 #define zpl_zero_item(t) zpl_zero_size((t), zpl_size_of(*(t))) // NOTE: Pass pointer of struct
+
+//! Clears up an array.
 #define zpl_zero_array(a, count) zpl_zero_size((a), zpl_size_of(*(a)) * count)
 #endif
 
+//! Copy non-overlapping memory from source to destination.
 ZPL_DEF void *zpl_memcopy(void *dest, void const *source, isize size);
+
+//! Copy memory from source to destination.
 ZPL_DEF void *zpl_memmove(void *dest, void const *source, isize size);
+
+//! Set constant value at memory location with specified size.
 ZPL_DEF void *zpl_memset(void *data, u8 byte_value, isize size);
+
+//! Compare two memory locations with specified size.
 ZPL_DEF i32 zpl_memcompare(void const *s1, void const *s2, isize size);
+
+//! Swap memory contents between 2 locations with size.
 ZPL_DEF void zpl_memswap(void *i, void *j, isize size);
+
+//! Search for a constant value within the size limit at memory location.
 ZPL_DEF void const *zpl_memchr(void const *data, u8 byte_value, isize size);
+
+//! Search for a constant value within the size limit at memory location in backwards.
 ZPL_DEF void const *zpl_memrchr(void const *data, u8 byte_value, isize size);
 
 #ifndef zpl_memcopy_array
+
+//! Copy non-overlapping array.
 #define zpl_memcopy_array(dst, src, count) zpl_memcopy((dst), (src), zpl_size_of(*(dst)) * (count))
 #endif
 
+//! Copy an array.
 #ifndef zpl_memmove_array
 #define zpl_memmove_array(dst, src, count) zpl_memmove((dst), (src), zpl_size_of(*(dst)) * (count))
 #endif
@@ -1022,11 +1053,24 @@ typedef struct zpl_virtual_memory {
     isize size;
 } zpl_virtual_memory;
 
+//! Initialize virtual memory from existing data.
 ZPL_DEF zpl_virtual_memory zpl_vm(void *data, isize size);
+
+//! Allocate virtual memory at address with size.
+
+//! @param addr The starting address of the region to allocate. If NULL, it lets operating system to decide where to allocate it.
 ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, isize size);
+
+//! Release the virtual memory.
 ZPL_DEF b32 zpl_vm_free(zpl_virtual_memory vm);
+
+//! Trim virtual memory.
 ZPL_DEF zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size, isize size);
+
+//! Purge virtual memory.
 ZPL_DEF b32 zpl_vm_purge(zpl_virtual_memory vm);
+
+//! Retrieve VM's page size and alignment.
 ZPL_DEF isize zpl_virtual_memory_page_size(isize *alignment_out);
 
 ////////////////////////////////////////////////////////////////
@@ -1066,32 +1110,63 @@ typedef enum zplAllocatorFlag {
 #define ZPL_DEFAULT_ALLOCATOR_FLAGS (ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
 #endif
 
+//! Allocate memory with specified alignment.
 ZPL_DEF void *zpl_alloc_align(zpl_allocator a, isize size, isize alignment);
+
+//! Allocate memory with default alignment.
 ZPL_DEF void *zpl_alloc(zpl_allocator a, isize size);
+
+//! Free allocated memory.
 ZPL_DEF void zpl_free(zpl_allocator a, void *ptr);
+
+//! Free all memory allocated by an allocator.
 ZPL_DEF void zpl_free_all(zpl_allocator a);
+
+//! Resize an allocated memory.
 ZPL_DEF void *zpl_resize(zpl_allocator a, void *ptr, isize old_size, isize new_size);
+
+//! Resize an allocated memory with specified alignment.
 ZPL_DEF void *zpl_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
 
+//! Allocate memory and copy data into it.
 ZPL_DEF void *zpl_alloc_copy(zpl_allocator a, void const *src, isize size);
+
+//! Allocate memory with specified alignment and copy data into it.
 ZPL_DEF void *zpl_alloc_copy_align(zpl_allocator a, void const *src, isize size, isize alignment);
+
+//! Allocate memory for null-terminated C-String.
 ZPL_DEF char *zpl_alloc_str(zpl_allocator a, char const *str);
+
+//! Allocate memory for C-String with specified size.
 ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, isize len);
 
 #ifndef zpl_alloc_item
+
+//! Allocate memory for an item.
 #define zpl_alloc_item(allocator_, Type) (Type *)zpl_alloc(allocator_, zpl_size_of(Type))
+
+//! Allocate memory for an array of items.
 #define zpl_alloc_array(allocator_, Type, count) (Type *)zpl_alloc(allocator_, zpl_size_of(Type) * (count))
 #endif
 
-// NOTE: Use this if you don't need a "fancy" resize allocation
+//! Allocate/Resize memory using default options.
+
+//! Use this if you don't need a "fancy" resize allocation
 ZPL_DEF void *zpl_default_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
 
+//! The heap allocator backed by operating system's memory manager.
 ZPL_DEF zpl_allocator zpl_heap_allocator(void);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 
 #ifndef zpl_malloc
+
+//! Helper to allocate memory using heap allocator.
 #define zpl_malloc(sz) zpl_alloc(zpl_heap_allocator( ), sz)
+
+//! Helper to free memory allocated by heap allocator.
 #define zpl_mfree(ptr) zpl_free(zpl_heap_allocator( ), ptr)
+
+//! Alias to heap allocator.
 #define zpl_heap zpl_heap_allocator
 #endif
 
@@ -1107,16 +1182,29 @@ typedef struct zpl_arena {
     isize temp_count;
 } zpl_arena;
 
+//! Initialize memory arena from existing memory region.
 ZPL_DEF void zpl_arena_init_from_memory(zpl_arena *arena, void *start, isize size);
+
+//! Initialize memory arena using existing memory allocator.
 ZPL_DEF void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, isize size);
+
+//! Initialize memory arena within an existing parent memory arena.
 ZPL_DEF void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, isize size);
+
+//! Release the memory used by memory arena.
 ZPL_DEF void zpl_arena_free(zpl_arena *arena);
 
+
+//! Retrieve memory arena's aligned allocation address.
 ZPL_DEF isize zpl_arena_alignment_of(zpl_arena *arena, isize alignment);
+
+//! Retrieve memory arena's remaining size.
 ZPL_DEF isize zpl_arena_size_remaining(zpl_arena *arena, isize alignment);
+
+//! Check whether memory arena has any temporary snapshots.
 ZPL_DEF void zpl_arena_check(zpl_arena *arena);
 
-// Allocation Types: alloc, free_all, resize
+//! Allocation Types: alloc, free_all, resize
 ZPL_DEF zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
@@ -1126,7 +1214,10 @@ typedef struct zpl_temp_arena_memory {
     isize original_count;
 } zpl_temp_arena_memory;
 
+//! Capture a snapshot of used memory in a memory arena.
 ZPL_DEF zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena);
+
+//! Reset memory arena's usage by a captured snapshot.
 ZPL_DEF void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
 
 //
@@ -1143,12 +1234,18 @@ typedef struct zpl_pool {
     isize total_size;
 } zpl_pool;
 
+
+//! Initialize pool allocator.
 ZPL_DEF void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size);
+
+//! Initialize pool allocator with specific block alignment.
 ZPL_DEF void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size,
                                  isize block_align);
+
+//! Release the resources used by pool allocator.
 ZPL_DEF void zpl_pool_free(zpl_pool *pool);
 
-// Allocation Types: alloc, free
+//! Allocation Types: alloc, free
 ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
@@ -1180,10 +1277,13 @@ typedef struct zpl_scratch_memory {
     void *free_point;
 } zpl_scratch_memory;
 
+//! Initialize ring buffer arena.
 ZPL_DEF void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, isize size);
+
+//! Check whether ring buffer arena is in use.
 ZPL_DEF b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr);
 
-// Allocation Types: alloc, free, free_all, resize
+//! Allocation Types: alloc, free, free_all, resize
 ZPL_DEF zpl_allocator zpl_scratch_allocator(zpl_scratch_memory *s);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc);
 
@@ -1200,17 +1300,30 @@ typedef struct zpl_stack_memory {
     usize allocated;
 } zpl_stack_memory;
 
+//! Initialize stack allocator from existing memory.
 ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, isize size);
+
+//! Initialize stack allocator using existing memory allocator.
 ZPL_DEF void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, isize size);
+
+//! Check whether stack allocator is in use.
 ZPL_DEF b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
+
+//! Release the resources used by stack allocator.
 ZPL_DEF void zpl_stack_memory_free(zpl_stack_memory *s);
 
-// Allocation Types: alloc, free, free_all, resize
+//! Allocation Types: alloc, free, free_all
 ZPL_DEF zpl_allocator zpl_stack_allocator(zpl_stack_memory *s);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 
 // TODO: Fixed heap allocator
 // TODO: General heap allocator. Maybe a TCMalloc like clone?
+
+/** @file _threads.c
+@brief Threading methods, blocking models...
+
+This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
+*/
 
 #ifdef ZPL_THREADING
 // Atomics
@@ -1353,12 +1466,12 @@ typedef struct zpl_thread {
 #else
     pthread_t     posix_handle;
 #endif
-
+    
     zpl_thread_proc *proc;
     void *           user_data;
     isize            user_index;
     isize            return_value;
-
+    
     zpl_semaphore    semaphore;
     isize            stack_size;
     b32              is_running;
@@ -1381,7 +1494,7 @@ typedef struct zpl_sync {
     i32 target;  // Target Number of threads
     i32 current; // Threads to hit
     i32 waiting; // Threads waiting
-
+    
     zpl_mutex start;
     zpl_mutex mutex;
     zpl_semaphore release;
@@ -1405,7 +1518,7 @@ typedef struct zpl_affinity {
     isize thread_count;
 #define zpl_WIN32_MAXHREADS (8 * zpl_size_of(usize))
     usize core_masks[zpl_WIN32_MAXHREADS];
-
+    
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_OSX)
@@ -1436,11 +1549,11 @@ ZPL_DEF isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core);
 
 #endif // ZPL_THREADING
 
-////////////////////////////////////////////////////////////////
-//
-// Sort & Search
-//
-//
+/** @file _sort.c
+@brief Sorting and searching methods.
+
+Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
+*/
 
 #define ZPL_COMPARE_PROC(name) int name(void const *a, void const *b)
 typedef ZPL_COMPARE_PROC(zpl_compare_proc);
@@ -1463,8 +1576,13 @@ ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f64_cmp(isize offset));
 ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_char_cmp(isize offset));
 
 // TODO: Better sorting algorithms
-// NOTE: Uses quick sort for large arrays but insertion sort for small
+
+//! Sorts an array.
+
+//! Uses quick sort for large arrays but insertion sort for small ones.
 #define zpl_sort_array(array, count, compare_proc) zpl_sort(array, count, zpl_size_of(*(array)), compare_proc)
+
+//! Perform sorting operation on a memory location with a specified item count and size.
 ZPL_DEF void zpl_sort(void *base, isize count, isize size, zpl_compare_proc compare_proc);
 
 // NOTE: the count of temp == count of items
@@ -1476,16 +1594,24 @@ ZPL_DEF ZPL_RADIX_SORT_PROC(u16);
 ZPL_DEF ZPL_RADIX_SORT_PROC(u32);
 ZPL_DEF ZPL_RADIX_SORT_PROC(u64);
 
-// NOTE: Returns index or -1 if not found
+//! Performs binary search on an array.
+
+//! Returns index or -1 if not found
 #define zpl_binary_search_array(array, count, key, compare_proc)                                                       \
-    zpl_binary_search(array, count, zpl_size_of(*(array)), key, compare_proc)
+zpl_binary_search(array, count, zpl_size_of(*(array)), key, compare_proc)
+
+//! Performs binary search on a memory location with specified item count and size.
 ZPL_DEF isize zpl_binary_search(void const *base, isize count, isize size, void const *key,
                                 zpl_compare_proc compare_proc);
 
 #define zpl_shuffle_array(array, count) zpl_shuffle(array, count, zpl_size_of(*(array)))
+
+//! Shuffles a memory.
 ZPL_DEF void zpl_shuffle(void *base, isize count, isize size);
 
 #define zpl_reverse_array(array, count) zpl_reverse(array, count, zpl_size_of(*(array)))
+
+//! Reverses memory's contents
 ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
 
 ////////////////////////////////////////////////////////////////
@@ -1701,45 +1827,43 @@ ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
 ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...);
 
 
-////////////////////////////////////////////////////////////////
-//
-// Regex
-//
-// Based on https://github.com/gingerBill/gb/blob/master/gb_regex.h
-//
-/* 
+/** @file _regex.c
+@brief Regular expressions parser.
+
+Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
+
 Supported Matching:
-    ^       - Beginning of string
-    $       - End of string
-    .       - Match one (anything)
-    |       - Branch (or)
-    ()      - Capturing group
-    []      - Any character included in set
-    [^]     - Any character excluded from set
-    +       - One or more  (greedy)
-    +?      - One or more  (non-greedy)
-    *       - Zero or more (greedy)
-    *?      - Zero or more (non-greedy)
-    ?       - Zero or once
-    \XX     - Hex decimal digit (must be 2 digits)
-    \meta   - Meta character
-    \s      - Whitespace
-    \S      - Not whitespace
-    \d      - Digit
-    \D      - Not digit
-    \a      - Alphabetic character
-    \l      - Lower case letter
-    \u      - Upper case letter
-    \w      - Word
-    \W      - Not word
-    \x      - Hex Digit
-    \p      - Printable ASCII character
-    --Whitespace--
-    \t      - Tab
-    \n      - New line
-    \r      - Return carriage
-    \v      - Vertical Tab
-    \f      - Form feed
+    @n ^       - Beginning of string
+    @n $       - End of string
+    @n .       - Match one (anything)
+    @n |       - Branch (or)
+    @n ()      - Capturing group
+    @n []      - Any character included in set
+    @n [^]     - Any character excluded from set
+    @n +       - One or more  (greedy)
+    @n +?      - One or more  (non-greedy)
+    @n *       - Zero or more (greedy)
+    @n *?      - Zero or more (non-greedy)
+    @n ?       - Zero or once
+    @n \XX     - Hex decimal digit (must be 2 digits)
+    @n \meta   - Meta character
+    @n \s      - Whitespace
+    @n \S      - Not whitespace
+    @n \d      - Digit
+    @n \D      - Not digit
+    @n \a      - Alphabetic character
+    @n \l      - Lower case letter
+    @n \u      - Upper case letter
+    @n \w      - Word
+    @n \W      - Not word
+    @n \x      - Hex Digit
+    @n \p      - Printable ASCII character
+    @n --Whitespace--
+    @n \t      - Tab
+    @n \n      - New line
+    @n \r      - Return carriage
+    @n \v      - Vertical Tab
+    @n \f      - Form feed
 */
 
 typedef struct zpl_re {
@@ -1766,11 +1890,22 @@ typedef enum zplreError {
     ZPL_RE_ERROR_INTERNAL_FAILURE,
 } zplreError;
 
+//! Compile regex pattern.
 ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, isize pattern_len);
+
+//! Compile regex pattern using a buffer.
 ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len);
+
+//! Destroy regex object.
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
+
+//! Retrieve number of retrievable captures.
 ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
+
+//! Match input string and output captures of the occurence.
 ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
+
+//! Match all occurences in an input string and output them into captures.
 ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
@@ -2580,15 +2715,22 @@ ZPL_DEF zpl_dll_handle zpl_dll_load(char const *filepath);
 ZPL_DEF void zpl_dll_unload(zpl_dll_handle dll);
 ZPL_DEF zpl_dll_proc zpl_dll_proc_address(zpl_dll_handle dll, char const *proc_name);
 
-////////////////////////////////////////////////////////////////
-//
-// Time
-//
-//
+/** @file _time.c
+@brief Time helper methods.
 
+ Helper methods for retrieving the current time in many forms under different precisions. It also offers a simple to use timer library.
+ */
+
+//! Return CPU timestamp.
 ZPL_DEF u64 zpl_rdtsc(void);
-ZPL_DEF f64 zpl_time_now(void);     // NOTE: This is only for relative time e.g. game loops
-ZPL_DEF f64 zpl_utc_time_now(void); // NOTE: Number of microseconds since 1601-01-01 UTC
+
+//! Return relative time since the application start.
+ZPL_DEF f64 zpl_time_now(void);
+
+//! Return time since 1601-01-01 UTC.
+ZPL_DEF f64 zpl_utc_time_now(void);
+
+//! Sleep for specified number of milliseconds.
 ZPL_DEF void zpl_sleep_ms(u32 ms);
 
 ////////////////////////////////////////////////////////////////
@@ -2613,13 +2755,31 @@ typedef struct zpl_timer {
 
 typedef zpl_array(zpl_timer) zpl_timer_pool;
 
+//! Initialize timer pool.
 #define zpl_timer_init(pool, allocator) zpl_array_init(pool, allocator)
+
+//! Add new timer to pool and return it.
 ZPL_DEF zpl_timer *zpl_timer_add(zpl_timer_pool pool);
+
+//! Perform timer pool update.
+
+//! Traverse over all timers and update them accordingly. Should be called by Main Thread in a tight loop.
 ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
 
+//! Set up timer.
+
+//! Set up timer with specific options.
+//! @param timer
+//! @param duration How long/often to fire a timer.
+//! @param count How many times we fire a timer. Use -1 for infinity.
+//! @param callback A method to execute once a timer triggers.
 ZPL_DEF void zpl_timer_set(zpl_timer *timer, f64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count,
                            zpl_timer_cb *callback);
+
+//! Start timer with specified delay.
 ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
+
+//! Stop timer and prevent it from triggering.
 ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 
 //////////////////////////////////////////////////////
@@ -2990,13 +3150,13 @@ ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 //! Checks whether all positionals have been passed in.
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
-///////////////////////////////////////////////////////////////
-//
-// Thread Pool
-//
-// This job system follows thread pool pattern to minimize the costs of thread initialization.
-// It reuses fixed number of threads to process variable number of jobs.
-//
+/** @file _threadpool.c
+@brief Job system
+
+ This job system follows thread pool pattern to minimize the costs of thread initialization.
+ It reuses fixed number of threads to process variable number of jobs.
+ */
+
 
 #ifdef ZPL_THREADING
 #define ZPL_JOBS_PROC(name) void name(void *data)
@@ -3014,7 +3174,7 @@ typedef enum {
 typedef struct {
     zpl_jobs_proc *proc;
     void *data;
-
+    
     i32 priority;
 } zpl_thread_job;
 
@@ -3036,10 +3196,19 @@ typedef struct {
     zpl_array(u32) available;
 } zpl_thread_pool;
 
+//! Initialize thread pool with specified amount of fixed threads.
 ZPL_DEF void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads);
+
+//! Release the resources use by thread pool.
 ZPL_DEF void zpl_jobs_free(zpl_thread_pool *pool);
+
+//! Enqueue a job with specified data.
 ZPL_DEF void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
+
+//! Enqueue a job with specific priority with specified data.
 ZPL_DEF void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, i32 priority);
+
+//! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
 ZPL_DEF b32 zpl_jobs_process(zpl_thread_pool *pool);
 #endif
 
@@ -3868,7 +4037,7 @@ void zpl_assert_handler(char const *condition, char const *file, i32 line, char 
 
 i32 zpl_assert_crash(char const *condition) {
     ZPL_PANIC(condition);
-
+    
     return 0;
 }
 
@@ -4953,7 +5122,7 @@ zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
         mov esi, a;
         mov ebx, dword ptr value;
         mov ecx, dword ptr value[4];
-    retry:
+        retry:
         cmpxchg8b [esi];
         jne retry;
     }
@@ -5040,10 +5209,10 @@ zpl_inline void zpl_atomic32_store(zpl_atomic32 volatile *a, i32 value) { a->val
 zpl_inline i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, i32 expected, i32 desired) {
     i32 original;
     __asm__ volatile(
-                        "lock; cmpxchgl %2, %1"
-                        : "=a"(original), "+m"(a->value)
-                        : "q"(desired), "0"(expected)
-                        );
+        "lock; cmpxchgl %2, %1"
+        : "=a"(original), "+m"(a->value)
+        : "q"(desired), "0"(expected)
+        );
     return original;
 }
 
@@ -5051,20 +5220,20 @@ zpl_inline i32 zpl_atomic32_exchange(zpl_atomic32 volatile *a, i32 desired) {
     // NOTE: No lock prefix is necessary for xchgl
     i32 original;
     __asm__ volatile(
-                        "xchgl %0, %1"
-                        : "=r"(original), "+m"(a->value)
-                        : "0"(desired)
-                        );
+        "xchgl %0, %1"
+        : "=r"(original), "+m"(a->value)
+        : "0"(desired)
+        );
     return original;
 }
 
 zpl_inline i32 zpl_atomic32_fetch_add(zpl_atomic32 volatile *a, i32 operand) {
     i32 original;
     __asm__ volatile(
-                        "lock; xaddl %0, %1"
-                        : "=r"(original), "+m"(a->value)
-                        : "0"(operand)
-                        );
+        "lock; xaddl %0, %1"
+        : "=r"(original), "+m"(a->value)
+        : "0"(operand)
+        );
     return original;
 }
 
@@ -5072,14 +5241,14 @@ zpl_inline i32 zpl_atomic32_fetch_and(zpl_atomic32 volatile *a, i32 operand) {
     i32 original;
     i32 tmp;
     __asm__ volatile(
-                        "1:     movl    %1, %0\n"
-                        "       movl    %0, %2\n"
-                        "       andl    %3, %2\n"
-                        "       lock; cmpxchgl %2, %1\n"
-                        "       jne     1b"
-                        : "=&a"(original), "+m"(a->value), "=&r"(tmp)
-                        : "r"(operand)
-                        );
+        "1:     movl    %1, %0\n"
+        "       movl    %0, %2\n"
+        "       andl    %3, %2\n"
+        "       lock; cmpxchgl %2, %1\n"
+        "       jne     1b"
+        : "=&a"(original), "+m"(a->value), "=&r"(tmp)
+        : "r"(operand)
+        );
     return original;
 }
 
@@ -5087,14 +5256,14 @@ zpl_inline i32 zpl_atomic32_fetch_or(zpl_atomic32 volatile *a, i32 operand) {
     i32 original;
     i32 temp;
     __asm__ volatile(
-                        "1:     movl    %1, %0\n"
-                        "       movl    %0, %2\n"
-                        "       orl     %3, %2\n"
-                        "       lock; cmpxchgl %2, %1\n"
-                        "       jne     1b"
-                        : "=&a"(original), "+m"(a->value), "=&r"(temp)
-                        : "r"(operand)
-                        );
+        "1:     movl    %1, %0\n"
+        "       movl    %0, %2\n"
+        "       orl     %3, %2\n"
+        "       lock; cmpxchgl %2, %1\n"
+        "       jne     1b"
+        : "=&a"(original), "+m"(a->value), "=&r"(temp)
+        : "r"(operand)
+        );
     return original;
 }
 
@@ -5105,12 +5274,12 @@ zpl_inline i64 zpl_atomic64_load(zpl_atomic64 const volatile *a) {
 #else
     i64 original;
     __asm__ volatile(
-                        "movl %%ebx, %%eax\n"
-                        "movl %%ecx, %%edx\n"
-                        "lock; cmpxchg8b %1"
-                        : "=&A"(original)
-                        : "m"(a->value)
-                        );
+        "movl %%ebx, %%eax\n"
+        "movl %%ecx, %%edx\n"
+        "lock; cmpxchg8b %1"
+        : "=&A"(original)
+        : "m"(a->value)
+        );
     return original;
 #endif
 }
@@ -5121,11 +5290,11 @@ zpl_inline void zpl_atomic64_store(zpl_atomic64 volatile *a, i64 value) {
 #else
     i64 expected = a->value;
     __asm__ volatile(
-                        "1:    cmpxchg8b %0\n"
-                        "      jne 1b"
-                        : "=m"(a->value)
-                        : "b"((i32)value), "c"((i32)(value >> 32)), "A"(expected)
-                        );
+        "1:    cmpxchg8b %0\n"
+        "      jne 1b"
+        : "=m"(a->value)
+        : "b"((i32)value), "c"((i32)(value >> 32)), "A"(expected)
+        );
 #endif
 }
 
@@ -5133,18 +5302,18 @@ zpl_inline i64 zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, i64 expec
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile(
-                        "lock; cmpxchgq %2, %1"
-                        : "=a"(original), "+m"(a->value)
-                        : "q"(desired), "0"(expected)
-                        );
+        "lock; cmpxchgq %2, %1"
+        : "=a"(original), "+m"(a->value)
+        : "q"(desired), "0"(expected)
+        );
     return original;
 #else
     i64 original;
     __asm__ volatile(
-                        "lock; cmpxchg8b %1"
-                        : "=A"(original), "+m"(a->value)
-                        : "b"((i32)desired), "c"((i32)(desired >> 32)), "0"(expected)
-                        );
+        "lock; cmpxchg8b %1"
+        : "=A"(original), "+m"(a->value)
+        : "b"((i32)desired), "c"((i32)(desired >> 32)), "0"(expected)
+        );
     return original;
 #endif
 }
@@ -5153,10 +5322,10 @@ zpl_inline i64 zpl_atomic64_exchange(zpl_atomic64 volatile *a, i64 desired) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile(
-                        "xchgq %0, %1"
-                        : "=r"(original), "+m"(a->value)
-                        : "0"(desired)
-                        );
+        "xchgq %0, %1"
+        : "=r"(original), "+m"(a->value)
+        : "0"(desired)
+        );
     return original;
 #else
     i64 original = a->value;
@@ -5173,10 +5342,10 @@ zpl_inline i64 zpl_atomic64_fetch_add(zpl_atomic64 volatile *a, i64 operand) {
 #if defined(ZPL_ARCH_64_BIT)
     i64 original;
     __asm__ volatile(
-                        "lock; xaddq %0, %1"
-                        : "=r"(original), "+m"(a->value)
-                        : "0"(operand)
-                        );
+        "lock; xaddq %0, %1"
+        : "=r"(original), "+m"(a->value)
+        : "0"(operand)
+        );
     return original;
 #else
     for (;;) {
@@ -5192,14 +5361,14 @@ zpl_inline i64 zpl_atomic64_fetch_and(zpl_atomic64 volatile *a, i64 operand) {
     i64 original;
     i64 tmp;
     __asm__ volatile(
-                        "1:     movq    %1, %0\n"
-                        "       movq    %0, %2\n"
-                        "       andq    %3, %2\n"
-                        "       lock; cmpxchgq %2, %1\n"
-                        "       jne     1b"
-                        : "=&a"(original), "+m"(a->value), "=&r"(tmp)
-                        : "r"(operand)
-                        );
+        "1:     movq    %1, %0\n"
+        "       movq    %0, %2\n"
+        "       andq    %3, %2\n"
+        "       lock; cmpxchgq %2, %1\n"
+        "       jne     1b"
+        : "=&a"(original), "+m"(a->value), "=&r"(tmp)
+        : "r"(operand)
+        );
     return original;
 #else
     for (;;) {
@@ -5215,14 +5384,14 @@ zpl_inline i64 zpl_atomic64_fetch_or(zpl_atomic64 volatile *a, i64 operand) {
     i64 original;
     i64 temp;
     __asm__ volatile(
-                        "1:     movq    %1, %0\n"
-                        "       movq    %0, %2\n"
-                        "       orq     %3, %2\n"
-                        "       lock; cmpxchgq %2, %1\n"
-                        "       jne     1b"
-                        : "=&a"(original), "+m"(a->value), "=&r"(temp)
-                        : "r"(operand)
-                        );
+        "1:     movq    %1, %0\n"
+        "       movq    %0, %2\n"
+        "       orq     %3, %2\n"
+        "       lock; cmpxchgq %2, %1\n"
+        "       jne     1b"
+        : "=&a"(original), "+m"(a->value), "=&r"(temp)
+        : "r"(operand)
+        );
     return original;
 #else
     for (;;) {
@@ -5471,12 +5640,12 @@ zpl_inline void zpl_mutex_unlock(zpl_mutex *m) {
 
 ZPL_THREAD_PROC(zpl__async_handler) {
     zpl_async_ctl *ctl = cast(zpl_async_ctl *)thread->user_data;
-
+    
     ctl->work(ctl->data);
     ctl->cb(ctl->data);
-
+    
     zpl_mfree(ctl);
-
+    
     return true;
 }
 
@@ -5527,7 +5696,7 @@ zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc
     t->proc = proc;
     t->user_data = user_data;
     t->stack_size = stack_size;
-
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     t->win32_handle = CreateThread(NULL, stack_size, zpl__thread_proc, t, 0, NULL);
     ZPL_ASSERT_MSG(t->win32_handle != NULL, "CreateThread: GetLastError");
@@ -5542,14 +5711,14 @@ zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc
         pthread_attr_destroy(&attr);
     }
 #endif
-
+    
     t->is_running = true;
     zpl_semaphore_wait(&t->semaphore);
 }
 
 zpl_inline void zpl_thread_join(zpl_thread *t) {
     if (!t->is_running) return;
-
+    
 #if defined(ZPL_SYSTEM_WINDOWS)
     WaitForSingleObject(t->win32_handle, INFINITE);
     CloseHandle(t->win32_handle);
@@ -5573,7 +5742,7 @@ zpl_inline u32 zpl_thread_current_id(void) {
 #else
     thread_id = GetCurrentThreadId();
 #endif
-
+    
 #elif defined(ZPL_SYSTEM_OSX) && defined(ZPL_ARCH_64_BIT)
     thread_id = pthread_mach_thread_np(pthread_self());
 #elif defined(ZPL_ARCH_32_BIT) && defined(ZPL_CPU_X86)
@@ -5583,7 +5752,7 @@ zpl_inline u32 zpl_thread_current_id(void) {
 #else
 #error Unsupported architecture for zpl_thread_current_id()
 #endif
-
+    
     return thread_id;
 }
 
@@ -5604,12 +5773,12 @@ void zpl_thread_set_name(zpl_thread *t, char const *name) {
     tn.name  = name;
     tn.id    = GetThreadId(cast(HANDLE)t->win32_handle);
     tn.flags = 0;
-
+    
     __try {
         RaiseException(0x406d1388, 0, zpl_size_of(tn)/4, cast(ULONG_PTR *)&tn);
     } __except(1 /*EXCEPTION_EXECUTE_HANDLER*/) {
     }
-
+    
 #elif defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_MSVC)
     zpl_unused(t);
     zpl_unused(name);
@@ -5637,7 +5806,7 @@ void zpl_sync_destroy(zpl_sync *s) {
     if (s->waiting) {
         ZPL_PANIC("Cannot destroy while threads are waiting!");
     }
-
+    
     zpl_mutex_destroy(&s->mutex);
     zpl_mutex_destroy(&s->start);
     zpl_semaphore_destroy(&s->release);
@@ -5645,7 +5814,7 @@ void zpl_sync_destroy(zpl_sync *s) {
 
 void zpl_sync_set_target(zpl_sync *s, i32 count) {
     zpl_mutex_lock(&s->start);
-
+    
     zpl_mutex_lock(&s->mutex);
     ZPL_ASSERT(s->target == 0);
     s->target = count;
@@ -5684,9 +5853,9 @@ void zpl_sync_reach_and_wait(zpl_sync *s) {
     } else {
         s->waiting++;                   // NOTE: Waiting, so one more waiter
         zpl_mutex_unlock(&s->mutex);     // NOTE: Release the mutex to other threads
-
+        
         zpl_semaphore_wait(&s->release); // NOTE: Wait for merge completion
-
+        
         zpl_mutex_lock(&s->mutex);       // NOTE: On merge completion, lock mutex
         s->waiting--;                   // NOTE: Done waiting
         zpl_sync_release(s);             // NOTE: Restart the next waiter
@@ -5704,23 +5873,23 @@ void zpl_affinity_init(zpl_affinity *a) {
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION *start_processor_info = NULL;
     DWORD length = 0;
     b32 result  = GetLogicalProcessorInformation(NULL, &length);
-
+    
     zpl_zero_item(a);
-
+    
     if (!result && GetLastError() == 122l /*ERROR_INSUFFICIENT_BUFFER*/ && length > 0) {
         start_processor_info = cast(SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)zpl_alloc(zpl_heap_allocator(), length);
         result = GetLogicalProcessorInformation(start_processor_info, &length);
         if (result) {
             SYSTEM_LOGICAL_PROCESSOR_INFORMATION *end_processor_info, *processor_info;
-
+            
             a->is_accurate  = true;
             a->core_count   = 0;
             a->thread_count = 0;
             end_processor_info = cast(SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)zpl_pointer_add(start_processor_info, length);
-
+            
             for (processor_info = start_processor_info;
-                    processor_info < end_processor_info;
-                    processor_info++) {
+                 processor_info < end_processor_info;
+                 processor_info++) {
                 if (processor_info->Relationship == RelationProcessorCore) {
                     isize thread = zpl_count_set_bits(processor_info->ProcessorMask);
                     if (thread == 0) {
@@ -5729,17 +5898,17 @@ void zpl_affinity_init(zpl_affinity *a) {
                         a->is_accurate = false;
                     } else {
                         ZPL_ASSERT(a->core_count <= a->thread_count &&
-                                    a->thread_count < zpl_WIN32_MAXHREADS);
+                                   a->thread_count < zpl_WIN32_MAXHREADS);
                         a->core_masks[a->core_count++] = processor_info->ProcessorMask;
                         a->thread_count += thread;
                     }
                 }
             }
         }
-
+        
         zpl_free(zpl_heap_allocator(), start_processor_info);
     }
-
+    
     ZPL_ASSERT(a->core_count <= a->thread_count);
     if (a->thread_count == 0) {
         a->is_accurate   = false;
@@ -5747,7 +5916,7 @@ void zpl_affinity_init(zpl_affinity *a) {
         a->thread_count  = 1;
         a->core_masks[0] = 1;
     }
-
+    
 }
 void zpl_affinity_destroy(zpl_affinity *a) {
     zpl_unused(a);
@@ -5757,7 +5926,7 @@ void zpl_affinity_destroy(zpl_affinity *a) {
 b32 zpl_affinity_set(zpl_affinity *a, isize core, isize thread) {
     usize available_mask, check_mask = 1;
     ZPL_ASSERT(thread < zpl_affinity_thread_count_for_core(a, core));
-
+    
     available_mask = a->core_masks[core];
     for (;;) {
         if ((available_mask & check_mask) != 0) {
@@ -5778,12 +5947,12 @@ isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core) {
 #elif defined(ZPL_SYSTEM_OSX)
 void zpl_affinity_init(zpl_affinity *a) {
     usize count, count_size = zpl_size_of(count);
-
+    
     a->is_accurate      = false;
     a->thread_count     = 1;
     a->core_count       = 1;
     a->threads_per_core = 1;
-
+    
     if (sysctlbyname("hw.logicalcpu", &count, &count_size, NULL, 0) == 0) {
         if (count > 0) {
             a->thread_count = count;
@@ -5800,7 +5969,7 @@ void zpl_affinity_init(zpl_affinity *a) {
             }
         }
     }
-
+    
 }
 
 void zpl_affinity_destroy(zpl_affinity *a) {
@@ -5812,10 +5981,10 @@ b32 zpl_affinity_set(zpl_affinity *a, isize core, isize thread_index) {
     thread_t thread;
     thread_affinity_policy_data_t info;
     kern_return_t result;
-
+    
     ZPL_ASSERT(core < a->core_count);
     ZPL_ASSERT(thread_index < a->threads_per_core);
-
+    
     index = core * a->threads_per_core + thread_index;
     thread = mach_thread_self();
     info.affinity_tag = cast(integer_t)index;
@@ -5836,17 +6005,17 @@ isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core) {
 void zpl_affinity_init(zpl_affinity *a) {
     b32   accurate = true;
     isize threads = 0;
-
+    
     a->thread_count     = 1;
     a->core_count       = sysconf(_SC_NPROCESSORS_ONLN);
     a->threads_per_core = 1;
-
-
+    
+    
     if(a->core_count <= 0) {
         a->core_count = 1;
         accurate = false;
     }
-
+    
     // Parsing /proc/cpuinfo to get the number of threads per core.
     // NOTE(zangent): This calls the CPU's threads "cores", although the wording
     // is kind of weird. This should be right, though.
@@ -5856,7 +6025,7 @@ void zpl_affinity_init(zpl_affinity *a) {
             // The 'temporary char'. Everything goes into this char,
             // so that we can check against EOF at the end of this loop.
             char c;
-
+            
 #define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
             if (AF__CHECK('c') && AF__CHECK('p') && AF__CHECK('u') && AF__CHECK(' ') &&
                 AF__CHECK('c') && AF__CHECK('o') && AF__CHECK('r') && AF__CHECK('e') && AF__CHECK('s')) {
@@ -5882,19 +6051,19 @@ void zpl_affinity_init(zpl_affinity *a) {
             }
 #undef AF__CHECK
         }
-
+        
         fclose(cpu_info);
     }
-
+    
     if (threads == 0) {
         threads  = 1;
         accurate = false;
     }
-
+    
     a->threads_per_core = threads;
     a->thread_count = a->threads_per_core * a->core_count;
     a->is_accurate = accurate;
-
+    
 }
 
 void zpl_affinity_destroy(zpl_affinity *a) {
@@ -5930,16 +6099,16 @@ isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core) {
 // TODO: Should I make all the macros local?
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
-    zpl_global isize zpl__##Type##_cmp_offset;                                                                         \
-    ZPL_COMPARE_PROC(zpl__##Type##_cmp) {                                                                              \
-        Type const p = *cast(Type const *) zpl_pointer_add_const(a, zpl__##Type##_cmp_offset);                         \
-        Type const q = *cast(Type const *) zpl_pointer_add_const(b, zpl__##Type##_cmp_offset);                         \
-        return p < q ? -1 : p > q;                                                                                     \
-    }                                                                                                                  \
-    ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(isize offset)) {                                                             \
-        zpl__##Type##_cmp_offset = offset;                                                                             \
-        return &zpl__##Type##_cmp;                                                                                     \
-    }
+zpl_global isize zpl__##Type##_cmp_offset;                                                                         \
+ZPL_COMPARE_PROC(zpl__##Type##_cmp) {                                                                              \
+    Type const p = *cast(Type const *) zpl_pointer_add_const(a, zpl__##Type##_cmp_offset);                         \
+    Type const q = *cast(Type const *) zpl_pointer_add_const(b, zpl__##Type##_cmp_offset);                         \
+    return p < q ? -1 : p > q;                                                                                     \
+}                                                                                                                  \
+ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(isize offset)) {                                                             \
+    zpl__##Type##_cmp_offset = offset;                                                                             \
+    return &zpl__##Type##_cmp;                                                                                     \
+}
 
 ZPL__COMPARE_PROC(u8);
 ZPL__COMPARE_PROC(i16);
@@ -5969,40 +6138,40 @@ ZPL_COMPARE_PROC_PTR(zpl_str_cmp(isize offset)) {
 #define zpl__SORT_INSERT_SORT_TRESHOLD 8
 
 #define ZPL__SORT_PUSH(_base, _limit)                                                                                  \
-    do {                                                                                                               \
-        stack_ptr[0] = (_base);                                                                                        \
-        stack_ptr[1] = (_limit);                                                                                       \
-        stack_ptr += 2;                                                                                                \
-    } while (0)
+do {                                                                                                               \
+    stack_ptr[0] = (_base);                                                                                        \
+    stack_ptr[1] = (_limit);                                                                                       \
+    stack_ptr += 2;                                                                                                \
+} while (0)
 
 #define ZPL__SORT_POP(_base, _limit)                                                                                   \
-    do {                                                                                                               \
-        stack_ptr -= 2;                                                                                                \
-        (_base) = stack_ptr[0];                                                                                        \
-        (_limit) = stack_ptr[1];                                                                                       \
-    } while (0)
+do {                                                                                                               \
+    stack_ptr -= 2;                                                                                                \
+    (_base) = stack_ptr[0];                                                                                        \
+    (_limit) = stack_ptr[1];                                                                                       \
+} while (0)
 
 void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
     u8 *i, *j;
     u8 *base = cast(u8 *) base_;
     u8 *limit = base + count * size;
     isize threshold = zpl__SORT_INSERT_SORT_TRESHOLD * size;
-
+    
     // NOTE: Prepare the stack
     u8 *stack[ZPL__SORT_STACK_SIZE] = { 0 };
     u8 **stack_ptr = stack;
-
+    
     for (;;) {
         if ((limit - base) > threshold) {
             // NOTE: Quick sort
             i = base + size;
             j = limit - size;
-
+            
             zpl_memswap(((limit - base) / size / 2) * size + base, base, size);
             if (cmp(i, j) > 0) zpl_memswap(i, j, size);
             if (cmp(base, j) > 0) zpl_memswap(base, j, size);
             if (cmp(i, base) > 0) zpl_memswap(i, base, size);
-
+            
             for (;;) {
                 do
                     i += size;
@@ -6013,9 +6182,9 @@ void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
                 if (i > j) break;
                 zpl_memswap(i, j, size);
             }
-
+            
             zpl_memswap(base, j, size);
-
+            
             if (j - base > limit - i) {
                 ZPL__SORT_PUSH(base, j);
                 base = i;
@@ -6031,7 +6200,7 @@ void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
                     if (j == base) break;
                 }
             }
-
+            
             if (stack_ptr == stack) break; // NOTE: Sorting is done!
             ZPL__SORT_POP(base, limit);
         }
@@ -6042,34 +6211,34 @@ void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
 #undef ZPL__SORT_POP
 
 #define ZPL_RADIX_SORT_PROC_GEN(Type)                                                                                  \
-    ZPL_RADIX_SORT_PROC(Type) {                                                                                        \
-        Type *source = items;                                                                                          \
-        Type *dest = temp;                                                                                             \
-        isize byte_index, i, byte_max = 8 * zpl_size_of(Type);                                                         \
-        for (byte_index = 0; byte_index < byte_max; byte_index += 8) {                                                 \
-            isize offsets[256] = { 0 };                                                                                \
-            isize total = 0;                                                                                           \
-            /* NOTE: First pass - count how many of each key */                                                        \
-            for (i = 0; i < count; i++) {                                                                              \
-                Type radix_value = source[i];                                                                          \
-                Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
-                offsets[radix_piece]++;                                                                                \
-            }                                                                                                          \
-            /* NOTE: Change counts to offsets */                                                                       \
-            for (i = 0; i < zpl_count_of(offsets); i++) {                                                              \
-                isize skcount = offsets[i];                                                                            \
-                offsets[i] = total;                                                                                    \
-                total += skcount;                                                                                      \
-            }                                                                                                          \
-            /* NOTE: Second pass - place elements into the right location */                                           \
-            for (i = 0; i < count; i++) {                                                                              \
-                Type radix_value = source[i];                                                                          \
-                Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
-                dest[offsets[radix_piece]++] = source[i];                                                              \
-            }                                                                                                          \
-            zpl_swap(Type *, source, dest);                                                                            \
-        }                                                                                                              \
-    }
+ZPL_RADIX_SORT_PROC(Type) {                                                                                        \
+    Type *source = items;                                                                                          \
+    Type *dest = temp;                                                                                             \
+    isize byte_index, i, byte_max = 8 * zpl_size_of(Type);                                                         \
+    for (byte_index = 0; byte_index < byte_max; byte_index += 8) {                                                 \
+        isize offsets[256] = { 0 };                                                                                \
+        isize total = 0;                                                                                           \
+        /* NOTE: First pass - count how many of each key */                                                        \
+        for (i = 0; i < count; i++) {                                                                              \
+            Type radix_value = source[i];                                                                          \
+            Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
+            offsets[radix_piece]++;                                                                                \
+        }                                                                                                          \
+        /* NOTE: Change counts to offsets */                                                                       \
+        for (i = 0; i < zpl_count_of(offsets); i++) {                                                              \
+            isize skcount = offsets[i];                                                                            \
+            offsets[i] = total;                                                                                    \
+            total += skcount;                                                                                      \
+        }                                                                                                          \
+        /* NOTE: Second pass - place elements into the right location */                                           \
+        for (i = 0; i < count; i++) {                                                                              \
+            Type radix_value = source[i];                                                                          \
+            Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
+            dest[offsets[radix_piece]++] = source[i];                                                              \
+        }                                                                                                          \
+        zpl_swap(Type *, source, dest);                                                                            \
+    }                                                                                                              \
+}
 
 ZPL_RADIX_SORT_PROC_GEN(u8);
 ZPL_RADIX_SORT_PROC_GEN(u16);
@@ -6080,7 +6249,7 @@ zpl_inline isize zpl_binary_search(void const *base, isize count, isize size, vo
                                    zpl_compare_proc compare_proc) {
     isize start = 0;
     isize end = count;
-
+    
     while (start < end) {
         isize mid = start + (end - start) / 2;
         isize result = compare_proc(key, cast(u8 *) base + mid * size);
@@ -6091,7 +6260,7 @@ zpl_inline isize zpl_binary_search(void const *base, isize count, isize size, vo
         else
             return mid;
     }
-
+    
     return -1;
 }
 
@@ -6100,7 +6269,7 @@ void zpl_shuffle(void *base, isize count, isize size) {
     isize i, j;
     zpl_random random;
     zpl_random_init(&random);
-
+    
     a = cast(u8 *) base + (count - 1) * size;
     for (i = count; i > 1; i--) {
         j = zpl_random_gen_isize(&random) % i;
@@ -9621,7 +9790,7 @@ zpl_inline u64 zpl_rdtsc(void) {
     result = upper;
     result = result << 32;
     result = result | lower;
-
+    
     return result;
 }
 #elif defined(ZPL_CPU_ARM)
@@ -9636,7 +9805,7 @@ zpl_inline u64 zpl_rdtsc(void) {
     uint32_t pmccntr;
     uint32_t pmuseren;
     uint32_t pmcntenset;
-
+    
     // Read the user mode perf monitor counter access permissions.
     asm volatile("mrc p15, 0, %0, c9, c14, 0" : "=r"(pmuseren));
     if (pmuseren & 1) { // Allows reading perfmon counters for user mode code.
@@ -9666,9 +9835,9 @@ zpl_inline f64 zpl_time_now(void) {
         ZPL_ASSERT(win32_perf_count_freq.QuadPart != 0);
         QueryPerformanceCounter(&win32_perf_counter);
     }
-
+    
     QueryPerformanceCounter(&counter);
-
+    
     result = (counter.QuadPart - win32_perf_counter.QuadPart) / cast(f64)(win32_perf_count_freq.QuadPart);
     return result;
 }
@@ -9676,11 +9845,11 @@ zpl_inline f64 zpl_time_now(void) {
 zpl_inline f64 zpl_utc_time_now(void) {
     FILETIME ft;
     ULARGE_INTEGER li;
-
+    
     GetSystemTimeAsFileTime(&ft);
     li.LowPart = ft.dwLowDateTime;
     li.HighPart = ft.dwHighDateTime;
-
+    
     return li.QuadPart / 10 / 10e5;
 }
 
@@ -9692,7 +9861,7 @@ zpl_inline void zpl_sleep_ms(u32 ms) { Sleep(ms); }
 f64 zpl__unix_getime(void) {
     struct timespec t;
     f64 result;
-
+    
     clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
     result = t.tv_sec + 1.0e-9 * t.tv_nsec;
     return result;
@@ -9702,10 +9871,10 @@ f64 zpl__unix_getime(void) {
 zpl_inline f64 zpl_time_now(void) {
 #if defined(ZPL_SYSTEM_OSX)
     f64 result;
-
+    
     zpl_local_persist f64 timebase = 0.0;
     zpl_local_persist u64 timestart = 0;
-
+    
     if (!timestart) {
         mach_timebase_info_data_t tb = { 0 };
         mach_timebase_info(&tb);
@@ -9713,17 +9882,17 @@ zpl_inline f64 zpl_time_now(void) {
         timebase /= tb.denom;
         timestart = mach_absolute_time( );
     }
-
+    
     // NOTE: mach_absolute_time() returns things in nanoseconds
     result = 1.0e-9 * (mach_absolute_time( ) - timestart) * timebase;
     return result;
 #else
     zpl_local_persist f64 unix_timestart = 0.0;
-
+    
     if (!unix_timestart) { unix_timestart = zpl__unix_getime( ); }
-
+    
     f64 now = zpl__unix_getime( );
-
+    
     return (now - unix_timestart);
 #endif
 }
@@ -9760,7 +9929,7 @@ zpl_inline void zpl_sleep_ms(u32 ms) {
 
 zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
-
+    
     zpl_timer t = { 0 };
     zpl_array_append(pool, t);
     return pool + (zpl_array_count(pool) - 1);
@@ -9768,7 +9937,7 @@ zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
 
 zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb *cb) {
     ZPL_ASSERT(t);
-
+    
     t->duration = duration;
     t->remaining_calls = t->initial_calls = count;
     t->callback = cb;
@@ -9777,7 +9946,7 @@ zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_c
 
 zpl_inline void zpl_timer_start(zpl_timer *t, f64 delay_start) {
     ZPL_ASSERT(t && !t->enabled);
-
+    
     t->enabled = true;
     t->remaining_calls = t->initial_calls;
     t->next_call_ts = zpl_time_now( ) + delay_start;
@@ -9785,29 +9954,29 @@ zpl_inline void zpl_timer_start(zpl_timer *t, f64 delay_start) {
 
 zpl_inline void zpl_timer_stop(zpl_timer *t) {
     ZPL_ASSERT(t && t->enabled);
-
+    
     t->enabled = false;
 }
 
 zpl_inline void zpl_timer_update(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
-
+    
     f64 now = zpl_time_now( );
-
+    
     for (isize i = 0; i < zpl_array_count(pool); ++i) {
         zpl_timer *t = pool + i;
-
+        
         if (t->enabled) {
             if (t->remaining_calls > 0 || t->initial_calls == -1) {
                 if (t->next_call_ts <= now) {
                     if (t->initial_calls != -1) { --t->remaining_calls; }
-
+                    
                     if (t->remaining_calls == 0) {
                         t->enabled = false;
                     } else {
                         t->next_call_ts = now + t->duration;
                     }
-
+                    
                     t->callback(t->user_data);
                 }
             }
@@ -11149,33 +11318,33 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 ZPL_THREAD_PROC(zpl__jobs_entry) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
-
+    
     for (;;) {
         u32 status = zpl_atomic32_load(&tw->status);
-
+        
         switch (status) {
-        case ZPL_JOBS_STATUS_READY: {
-            zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_BUSY);
-
-            zpl_mutex_lock(&pool->access);
-            zpl_thread_job *job = pool->jobs + tw->jobid;
-            zpl_mutex_unlock(&pool->access);
-
-            job->proc(job->data);
-
-            zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
-        } break;
-
-        case ZPL_JOBS_STATUS_WAITING: {
-            zpl_yield( );
-        } break;
-
-        case ZPL_JOBS_STATUS_TERM: {
-            return 0;
-        } break;
+            case ZPL_JOBS_STATUS_READY: {
+                zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_BUSY);
+                
+                zpl_mutex_lock(&pool->access);
+                zpl_thread_job *job = pool->jobs + tw->jobid;
+                zpl_mutex_unlock(&pool->access);
+                
+                job->proc(job->data);
+                
+                zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
+            } break;
+            
+            case ZPL_JOBS_STATUS_WAITING: {
+                zpl_yield( );
+            } break;
+            
+            case ZPL_JOBS_STATUS_TERM: {
+                return 0;
+            } break;
         }
     }
-
+    
     return 0;
 }
 
@@ -11183,24 +11352,24 @@ void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads) {
     zpl_thread_pool pool_ = { 0 };
     *pool = pool_;
     zpl_mutex_init(&pool->access);
-
+    
     pool->alloc = a;
     pool->max_threads = max_threads;
-
+    
     // NOTE: Spawn a new job slot when number of available slots is below 25%
     // compared to the total number of slots.
     pool->job_spawn_treshold = 0.25;
-
+    
     zpl_buffer_init(pool->workers, a, max_threads);
     zpl_array_init(pool->jobs, a);
     zpl_array_init(pool->queue, a);
     zpl_array_init(pool->available, a);
-
+    
     for (usize i = 0; i < max_threads; ++i) {
         zpl_thread_worker worker_ = { 0 };
         zpl_thread_worker *tw = pool->workers + i;
         *tw = worker_;
-
+        
         zpl_thread_init(&tw->thread);
         zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
         tw->pool = pool;
@@ -11212,11 +11381,11 @@ void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, u32 max_threads) {
 void zpl_jobs_free(zpl_thread_pool *pool) {
     for (usize i = 0; i < pool->max_threads; ++i) {
         zpl_thread_worker *tw = pool->workers + i;
-
+        
         zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_TERM);
         zpl_thread_destroy(&tw->thread);
     }
-
+    
     zpl_buffer_free(pool->workers, pool->alloc);
     zpl_array_free(pool->jobs);
     zpl_array_free(pool->queue);
@@ -11226,17 +11395,17 @@ void zpl_jobs_free(zpl_thread_pool *pool) {
 void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, i32 priority) {
     ZPL_ASSERT_NOT_NULL(proc);
     f32 treshold = 0.0f;
-
+    
     if (zpl_array_count(pool->queue) > 0) {
         treshold = (zpl_array_count(pool->available) / (f32)zpl_array_count(pool->jobs));
     }
-
+    
     if (treshold <= pool->job_spawn_treshold) {
         zpl_thread_job job = { 0 };
         job.proc = proc;
         job.data = data;
         job.priority = priority;
-
+        
         zpl_array_append(pool->jobs, job);
         u32 jobid = (u32)zpl_array_count(pool->jobs) - 1;
         zpl_array_append(pool->queue, jobid);
@@ -11244,11 +11413,11 @@ void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, v
         u32 jobid = zpl_array_back(pool->available);
         zpl_thread_job *jp = pool->jobs + jobid;
         zpl_array_pop(pool->available);
-
+        
         jp->proc = proc;
         jp->data = data;
         jp->priority = priority;
-
+        
         zpl_array_append(pool->queue, jobid);
     }
 }
@@ -11274,24 +11443,24 @@ b32 zpl_jobs_process(zpl_thread_pool *pool) {
     if (zpl_array_count(pool->queue)) {
         zpl_sort_array(pool->queue, zpl_array_count(pool->queue), zpl__jobs_cmp(pool));
     }
-
+    
     // NOTE: Process the jobs
     for (usize i = 0; i < pool->max_threads; ++i) {
         zpl_thread_worker *tw = pool->workers + i;
         if (zpl_array_count(pool->queue) == 0) return false;
-
+        
         u32 status = zpl_atomic32_load(&tw->status);
-
+        
         if (status == ZPL_JOBS_STATUS_WAITING) {
             if (tw->jobid != ZPL_INVALID_JOB) { zpl_array_append(pool->available, tw->jobid); }
-
+            
             u32 jobid = *pool->queue;
             zpl_array_remove_at(pool->queue, 0);
             tw->jobid = jobid;
             zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
         }
     }
-
+    
     return true;
 }
 

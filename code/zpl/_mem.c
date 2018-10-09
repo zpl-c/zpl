@@ -1,27 +1,28 @@
-////////////////////////////////////////////////////////////////
-//
-// Memory
-//
-//
+/** @file _mem.c
+@brief Memory manipulation and helpers.
 
-/**
- * a normal member taking two arguments and returning an integer value.
- * @param a an integer argument.
- * @param s a constant character pointer.
- * @see Javadoc_Test()
- * @see ~Javadoc_Test()
- * @see testMeToo()
- * @see publicVar()
- * @return The test results
+ Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
  */
+
+//! Checks if value is power of 2.
 ZPL_DEF b32 zpl_is_power_of_two(isize x);
 
+//! Aligns address to specified alignment.
 ZPL_DEF void *zpl_align_forward(void *ptr, isize alignment);
 
+//! Moves pointer forward by bytes.
 ZPL_DEF void *zpl_pointer_add(void *ptr, isize bytes);
+
+//! Moves pointer backward by bytes.
 ZPL_DEF void *zpl_pointer_sub(void *ptr, isize bytes);
+
+//! Moves pointer forward by bytes.
 ZPL_DEF void const *zpl_pointer_add_const(void const *ptr, isize bytes);
+
+//! Moves pointer backward by bytes.
 ZPL_DEF void const *zpl_pointer_sub_const(void const *ptr, isize bytes);
+
+//! Calculates difference between two addresses.
 ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
 
 #define zpl_ptr_add zpl_pointer_add
@@ -30,24 +31,48 @@ ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
 #define zpl_ptr_sub_const zpl_pointer_sub_const
 #define zpl_ptr_diff zpl_pointer_diff
 
+//! Clears up memory at location by specified size.
+
+//! @param ptr Memory location to clear up.
+//! @param size The size to clear up with.
 ZPL_DEF void zpl_zero_size(void *ptr, isize size);
+
 #ifndef zpl_zero_item
+//! Clears up an item.
 #define zpl_zero_item(t) zpl_zero_size((t), zpl_size_of(*(t))) // NOTE: Pass pointer of struct
+
+//! Clears up an array.
 #define zpl_zero_array(a, count) zpl_zero_size((a), zpl_size_of(*(a)) * count)
 #endif
 
+//! Copy non-overlapping memory from source to destination.
 ZPL_DEF void *zpl_memcopy(void *dest, void const *source, isize size);
+
+//! Copy memory from source to destination.
 ZPL_DEF void *zpl_memmove(void *dest, void const *source, isize size);
+
+//! Set constant value at memory location with specified size.
 ZPL_DEF void *zpl_memset(void *data, u8 byte_value, isize size);
+
+//! Compare two memory locations with specified size.
 ZPL_DEF i32 zpl_memcompare(void const *s1, void const *s2, isize size);
+
+//! Swap memory contents between 2 locations with size.
 ZPL_DEF void zpl_memswap(void *i, void *j, isize size);
+
+//! Search for a constant value within the size limit at memory location.
 ZPL_DEF void const *zpl_memchr(void const *data, u8 byte_value, isize size);
+
+//! Search for a constant value within the size limit at memory location in backwards.
 ZPL_DEF void const *zpl_memrchr(void const *data, u8 byte_value, isize size);
 
 #ifndef zpl_memcopy_array
+
+//! Copy non-overlapping array.
 #define zpl_memcopy_array(dst, src, count) zpl_memcopy((dst), (src), zpl_size_of(*(dst)) * (count))
 #endif
 
+//! Copy an array.
 #ifndef zpl_memmove_array
 #define zpl_memmove_array(dst, src, count) zpl_memmove((dst), (src), zpl_size_of(*(dst)) * (count))
 #endif
@@ -79,11 +104,24 @@ typedef struct zpl_virtual_memory {
     isize size;
 } zpl_virtual_memory;
 
+//! Initialize virtual memory from existing data.
 ZPL_DEF zpl_virtual_memory zpl_vm(void *data, isize size);
+
+//! Allocate virtual memory at address with size.
+
+//! @param addr The starting address of the region to allocate. If NULL, it lets operating system to decide where to allocate it.
 ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, isize size);
+
+//! Release the virtual memory.
 ZPL_DEF b32 zpl_vm_free(zpl_virtual_memory vm);
+
+//! Trim virtual memory.
 ZPL_DEF zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size, isize size);
+
+//! Purge virtual memory.
 ZPL_DEF b32 zpl_vm_purge(zpl_virtual_memory vm);
+
+//! Retrieve VM's page size and alignment.
 ZPL_DEF isize zpl_virtual_memory_page_size(isize *alignment_out);
 
 ////////////////////////////////////////////////////////////////
@@ -123,32 +161,63 @@ typedef enum zplAllocatorFlag {
 #define ZPL_DEFAULT_ALLOCATOR_FLAGS (ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO)
 #endif
 
+//! Allocate memory with specified alignment.
 ZPL_DEF void *zpl_alloc_align(zpl_allocator a, isize size, isize alignment);
+
+//! Allocate memory with default alignment.
 ZPL_DEF void *zpl_alloc(zpl_allocator a, isize size);
+
+//! Free allocated memory.
 ZPL_DEF void zpl_free(zpl_allocator a, void *ptr);
+
+//! Free all memory allocated by an allocator.
 ZPL_DEF void zpl_free_all(zpl_allocator a);
+
+//! Resize an allocated memory.
 ZPL_DEF void *zpl_resize(zpl_allocator a, void *ptr, isize old_size, isize new_size);
+
+//! Resize an allocated memory with specified alignment.
 ZPL_DEF void *zpl_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
 
+//! Allocate memory and copy data into it.
 ZPL_DEF void *zpl_alloc_copy(zpl_allocator a, void const *src, isize size);
+
+//! Allocate memory with specified alignment and copy data into it.
 ZPL_DEF void *zpl_alloc_copy_align(zpl_allocator a, void const *src, isize size, isize alignment);
+
+//! Allocate memory for null-terminated C-String.
 ZPL_DEF char *zpl_alloc_str(zpl_allocator a, char const *str);
+
+//! Allocate memory for C-String with specified size.
 ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, isize len);
 
 #ifndef zpl_alloc_item
+
+//! Allocate memory for an item.
 #define zpl_alloc_item(allocator_, Type) (Type *)zpl_alloc(allocator_, zpl_size_of(Type))
+
+//! Allocate memory for an array of items.
 #define zpl_alloc_array(allocator_, Type, count) (Type *)zpl_alloc(allocator_, zpl_size_of(Type) * (count))
 #endif
 
-// NOTE: Use this if you don't need a "fancy" resize allocation
+//! Allocate/Resize memory using default options.
+
+//! Use this if you don't need a "fancy" resize allocation
 ZPL_DEF void *zpl_default_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
 
+//! The heap allocator backed by operating system's memory manager.
 ZPL_DEF zpl_allocator zpl_heap_allocator(void);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 
 #ifndef zpl_malloc
+
+//! Helper to allocate memory using heap allocator.
 #define zpl_malloc(sz) zpl_alloc(zpl_heap_allocator( ), sz)
+
+//! Helper to free memory allocated by heap allocator.
 #define zpl_mfree(ptr) zpl_free(zpl_heap_allocator( ), ptr)
+
+//! Alias to heap allocator.
 #define zpl_heap zpl_heap_allocator
 #endif
 
@@ -164,16 +233,29 @@ typedef struct zpl_arena {
     isize temp_count;
 } zpl_arena;
 
+//! Initialize memory arena from existing memory region.
 ZPL_DEF void zpl_arena_init_from_memory(zpl_arena *arena, void *start, isize size);
+
+//! Initialize memory arena using existing memory allocator.
 ZPL_DEF void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, isize size);
+
+//! Initialize memory arena within an existing parent memory arena.
 ZPL_DEF void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, isize size);
+
+//! Release the memory used by memory arena.
 ZPL_DEF void zpl_arena_free(zpl_arena *arena);
 
+
+//! Retrieve memory arena's aligned allocation address.
 ZPL_DEF isize zpl_arena_alignment_of(zpl_arena *arena, isize alignment);
+
+//! Retrieve memory arena's remaining size.
 ZPL_DEF isize zpl_arena_size_remaining(zpl_arena *arena, isize alignment);
+
+//! Check whether memory arena has any temporary snapshots.
 ZPL_DEF void zpl_arena_check(zpl_arena *arena);
 
-// Allocation Types: alloc, free_all, resize
+//! Allocation Types: alloc, free_all, resize
 ZPL_DEF zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
@@ -183,7 +265,10 @@ typedef struct zpl_temp_arena_memory {
     isize original_count;
 } zpl_temp_arena_memory;
 
+//! Capture a snapshot of used memory in a memory arena.
 ZPL_DEF zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena);
+
+//! Reset memory arena's usage by a captured snapshot.
 ZPL_DEF void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
 
 //
@@ -200,12 +285,18 @@ typedef struct zpl_pool {
     isize total_size;
 } zpl_pool;
 
+
+//! Initialize pool allocator.
 ZPL_DEF void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size);
+
+//! Initialize pool allocator with specific block alignment.
 ZPL_DEF void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size,
                                  isize block_align);
+
+//! Release the resources used by pool allocator.
 ZPL_DEF void zpl_pool_free(zpl_pool *pool);
 
-// Allocation Types: alloc, free
+//! Allocation Types: alloc, free
 ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
@@ -237,10 +328,13 @@ typedef struct zpl_scratch_memory {
     void *free_point;
 } zpl_scratch_memory;
 
+//! Initialize ring buffer arena.
 ZPL_DEF void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, isize size);
+
+//! Check whether ring buffer arena is in use.
 ZPL_DEF b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr);
 
-// Allocation Types: alloc, free, free_all, resize
+//! Allocation Types: alloc, free, free_all, resize
 ZPL_DEF zpl_allocator zpl_scratch_allocator(zpl_scratch_memory *s);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc);
 
@@ -257,12 +351,19 @@ typedef struct zpl_stack_memory {
     usize allocated;
 } zpl_stack_memory;
 
+//! Initialize stack allocator from existing memory.
 ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, isize size);
+
+//! Initialize stack allocator using existing memory allocator.
 ZPL_DEF void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, isize size);
+
+//! Check whether stack allocator is in use.
 ZPL_DEF b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
+
+//! Release the resources used by stack allocator.
 ZPL_DEF void zpl_stack_memory_free(zpl_stack_memory *s);
 
-// Allocation Types: alloc, free, free_all, resize
+//! Allocation Types: alloc, free, free_all
 ZPL_DEF zpl_allocator zpl_stack_allocator(zpl_stack_memory *s);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 

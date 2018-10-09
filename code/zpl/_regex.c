@@ -1,42 +1,40 @@
-////////////////////////////////////////////////////////////////
-//
-// Regex
-//
-// Based on https://github.com/gingerBill/gb/blob/master/gb_regex.h
-//
-/* 
+/** @file _regex.c
+@brief Regular expressions parser.
+
+Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
+
 Supported Matching:
-    ^       - Beginning of string
-    $       - End of string
-    .       - Match one (anything)
-    |       - Branch (or)
-    ()      - Capturing group
-    []      - Any character included in set
-    [^]     - Any character excluded from set
-    +       - One or more  (greedy)
-    +?      - One or more  (non-greedy)
-    *       - Zero or more (greedy)
-    *?      - Zero or more (non-greedy)
-    ?       - Zero or once
-    \XX     - Hex decimal digit (must be 2 digits)
-    \meta   - Meta character
-    \s      - Whitespace
-    \S      - Not whitespace
-    \d      - Digit
-    \D      - Not digit
-    \a      - Alphabetic character
-    \l      - Lower case letter
-    \u      - Upper case letter
-    \w      - Word
-    \W      - Not word
-    \x      - Hex Digit
-    \p      - Printable ASCII character
-    --Whitespace--
-    \t      - Tab
-    \n      - New line
-    \r      - Return carriage
-    \v      - Vertical Tab
-    \f      - Form feed
+    @n ^       - Beginning of string
+    @n $       - End of string
+    @n .       - Match one (anything)
+    @n |       - Branch (or)
+    @n ()      - Capturing group
+    @n []      - Any character included in set
+    @n [^]     - Any character excluded from set
+    @n +       - One or more  (greedy)
+    @n +?      - One or more  (non-greedy)
+    @n *       - Zero or more (greedy)
+    @n *?      - Zero or more (non-greedy)
+    @n ?       - Zero or once
+    @n \XX     - Hex decimal digit (must be 2 digits)
+    @n \meta   - Meta character
+    @n \s      - Whitespace
+    @n \S      - Not whitespace
+    @n \d      - Digit
+    @n \D      - Not digit
+    @n \a      - Alphabetic character
+    @n \l      - Lower case letter
+    @n \u      - Upper case letter
+    @n \w      - Word
+    @n \W      - Not word
+    @n \x      - Hex Digit
+    @n \p      - Printable ASCII character
+    @n --Whitespace--
+    @n \t      - Tab
+    @n \n      - New line
+    @n \r      - Return carriage
+    @n \v      - Vertical Tab
+    @n \f      - Form feed
 */
 
 typedef struct zpl_re {
@@ -63,11 +61,22 @@ typedef enum zplreError {
     ZPL_RE_ERROR_INTERNAL_FAILURE,
 } zplreError;
 
+//! Compile regex pattern.
 ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, isize pattern_len);
+
+//! Compile regex pattern using a buffer.
 ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len);
+
+//! Destroy regex object.
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
+
+//! Retrieve number of retrievable captures.
 ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
+
+//! Match input string and output captures of the occurence.
 ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
+
+//! Match all occurences in an input string and output them into captures.
 ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
