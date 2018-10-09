@@ -30,7 +30,7 @@ typedef ZPL_EVENT(zpl_event_cb);
 
 #define ZPL_EVENT_CAST(Type, name) Type * name = cast(Type *)evt
 
-typedef zpl_array(zpl_event_cb*) zpl_event_block;
+typedef zpl_event_cb** zpl_event_block; ///< zpl_array
 
 ZPL_TABLE_DECLARE(static, zpl_event_pool, zpl_event_pool_, zpl_event_block);
 

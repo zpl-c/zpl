@@ -2807,6 +2807,8 @@ ZPL_DEF void zpl_sleep_ms(u32 ms);
 typedef ZPL_TIMER_CB(zpl_timer_cb);
 
 #define zpl_timer_t zpl_timer
+
+//! Timer data structure
 typedef struct zpl_timer {
     zpl_timer_cb *callback;
     b32 enabled;
@@ -2879,7 +2881,7 @@ typedef ZPL_EVENT(zpl_event_cb);
 
 #define ZPL_EVENT_CAST(Type, name) Type * name = cast(Type *)evt
 
-typedef zpl_array(zpl_event_cb*) zpl_event_block;
+typedef zpl_event_cb** zpl_event_block; ///< zpl_array
 
 ZPL_TABLE_DECLARE(static, zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
@@ -2947,8 +2949,8 @@ Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON
 #define ZPL_JSON_ASSERT
 #endif
 
-//! JSON object types.
-typedef enum zpljType {
+//! JSON object types
+typedef enum zpl_json_type {
     ZPL_JSON_TYPE_OBJECT,
     ZPL_JSON_TYPE_STRING,
     ZPL_JSON_TYPE_MULTISTRING,
@@ -2956,9 +2958,10 @@ typedef enum zpljType {
     ZPL_JSON_TYPE_INTEGER,
     ZPL_JSON_TYPE_REAL,
     ZPL_JSON_TYPE_CONSTANT
-} zpljType;
+} zpl_json_type;
 
-typedef enum zpljProps {
+//! Field value properties
+typedef enum zpl_json_props {
     ZPL_JSON_PROPS_NONE = 0,
     ZPL_JSON_PROPS_NAN = 1,
     ZPL_JSON_PROPS_NAN_NEG = 2,
@@ -2966,39 +2969,44 @@ typedef enum zpljProps {
     ZPL_JSON_PROPS_INFINITY_NEG = 4,
     ZPL_JSON_PROPS_IS_EXP = 5,
     ZPL_JSON_PROPS_IS_HEX = 6,
-} zpljProps;
+} zpl_json_props;
 
-typedef enum zpljConst {
+//! Value constants
+typedef enum zpl_json_const {
     ZPL_JSON_CONST_NULL,
     ZPL_JSON_CONST_FALSE,
     ZPL_JSON_CONST_TRUE,
-} zpljConst;
+} zpl_json_const;
 
 // TODO(ZaKlaus): Error handling
-typedef enum zpljError {
+//! Parser error types
+typedef enum zpl_json_error {
     ZPL_JSON_ERROR_NONE,
     ZPL_JSON_ERROR_INVALID_NAME,
     ZPL_JSON_ERROR_INVALID_VALUE,
     ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL,
-} zpljError;
+} zpl_json_error;
 
-typedef enum zpljNameStyle {
+//! Field name decoration style
+typedef enum zpl_json_naming_style {
     ZPL_JSON_NAME_STYLE_DOUBLE_QUOTE,
     ZPL_JSON_NAME_STYLE_SINGLE_QUOTE,
     ZPL_JSON_NAME_STYLE_NO_QUOTES,
-} zpljNameStyle;
+} zpl_json_naming_style;
 
-typedef enum zpljAssignStyle {
+//! Field value assign style
+typedef enum zpl_json_assign_style {
     ZPL_JSON_ASSIGN_STYLE_COLON,
     ZPL_JSON_ASSIGN_STYLE_EQUALS,
     ZPL_JSON_ASSIGN_STYLE_LINE,
-} zpljAssignStyle;
+} zpl_json_assign_style;
 
-typedef enum zpljDelimStyle {
+//! Field delimiter style
+typedef enum zpl_json_delim_style {
     ZPL_JSON_DELIM_STYLE_COMMA,
     ZPL_JSON_DELIM_STYLE_LINE,
     ZPL_JSON_DELIM_STYLE_NEWLINE,
-} zpljDelimStyle;
+} zpl_json_delim_style;
 
 #define zpl_json_object_t zpl_json_object
 
@@ -3015,9 +3023,10 @@ typedef struct zpl_json_object {
     u8 delim_line_width;
     
     union {
-        zpl_array(struct zpl_json_object) nodes;
+        struct zpl_json_object *nodes;  ///< zpl_array
         i64 integer;
         char *string;
+        
         struct {
             f64 real;
             i32 base;
@@ -3075,8 +3084,8 @@ ZPL_DEF isize zpl_json_find(zpl_json_object *obj, char const *name, b32 deep_sea
 //! @param obj JSON node to initialize.
 //! @param backing Memory allocator to use (ex. zpl_heap())
 //! @param name JSON node's name.
-//! @param type JSON node's type. (See zpljType)
-//! @see zpljType
+//! @param type JSON node's type. (See zpl_json_type)
+//! @see zpl_json_type
 ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char const *name, u8 type);
 
 //! Adds object into JSON document at a specific index.
@@ -3084,16 +3093,16 @@ ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, cha
 //! Initializes and adds a JSON object into a JSON document at a specific index.
 //! @param index Index to store at.
 //! @param name JSON node's name.
-//! @param type JSON node's type. (See zpljType)
-//! @see zpljType
+//! @param type JSON node's type. (See zpl_json_type)
+//! @see zpl_json_type
 ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, isize index, char const *name, u8 type);
 
 //! Appends object into JSON document.
 
 //! Initializes and appends a JSON object into a JSON document.
 //! @param name JSON node's name.
-//! @param type JSON node's type. (See zpljType)
-//! @see zpljType
+//! @param type JSON node's type. (See zpl_json_type)
+//! @see zpl_json_type
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, u8 type);
 
 ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, u8 *err_code);
@@ -3127,6 +3136,7 @@ typedef struct {
     u8 type;
     b32 met, pos;
     
+    //! values
     union {
         zpl_string text;
         i64 integer;
@@ -3148,9 +3158,9 @@ typedef struct {
 
 typedef struct {
     zpl_allocator alloc;
-    zpl_array(zpl_opts_entry) entries;
-    zpl_array(zpl_opts_err) errors;
-    zpl_array(zpl_opts_entry *) positioned;
+    zpl_opts_entry *entries; ///< zpl_array
+    zpl_opts_err *errors; ///< zpl_array
+    zpl_opts_entry **positioned; ///< zpl_array
     char const *appname;
 } zpl_opts;
 
@@ -3275,10 +3285,10 @@ typedef struct {
     u32 max_threads;
     f32 job_spawn_treshold;
     zpl_mutex access;
-    zpl_buffer(zpl_thread_worker) workers;
-    zpl_array(zpl_thread_job) jobs;
-    zpl_array(u32) queue;
-    zpl_array(u32) available;
+    zpl_thread_worker *workers; ///< zpl_buffer
+    zpl_thread_job *jobs; ///< zpl_array
+    u32 *queue; ///< zpl_array
+    u32 *available; ///< zpl_array
 } zpl_thread_pool;
 
 //! Initialize thread pool with specified amount of fixed threads.

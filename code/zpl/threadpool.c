@@ -41,10 +41,10 @@ typedef struct {
     u32 max_threads;
     f32 job_spawn_treshold;
     zpl_mutex access;
-    zpl_buffer(zpl_thread_worker) workers;
-    zpl_array(zpl_thread_job) jobs;
-    zpl_array(u32) queue;
-    zpl_array(u32) available;
+    zpl_thread_worker *workers; ///< zpl_buffer
+    zpl_thread_job *jobs; ///< zpl_array
+    u32 *queue; ///< zpl_array
+    u32 *available; ///< zpl_array
 } zpl_thread_pool;
 
 //! Initialize thread pool with specified amount of fixed threads.

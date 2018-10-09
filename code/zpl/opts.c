@@ -19,6 +19,7 @@ typedef struct {
     u8 type;
     b32 met, pos;
     
+    //! values
     union {
         zpl_string text;
         i64 integer;
@@ -40,9 +41,9 @@ typedef struct {
 
 typedef struct {
     zpl_allocator alloc;
-    zpl_array(zpl_opts_entry) entries;
-    zpl_array(zpl_opts_err) errors;
-    zpl_array(zpl_opts_entry *) positioned;
+    zpl_opts_entry *entries; ///< zpl_array
+    zpl_opts_err *errors; ///< zpl_array
+    zpl_opts_entry **positioned; ///< zpl_array
     char const *appname;
 } zpl_opts;
 

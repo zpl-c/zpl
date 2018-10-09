@@ -23,6 +23,8 @@ ZPL_DEF void zpl_sleep_ms(u32 ms);
 typedef ZPL_TIMER_CB(zpl_timer_cb);
 
 #define zpl_timer_t zpl_timer
+
+//! Timer data structure
 typedef struct zpl_timer {
     zpl_timer_cb *callback;
     b32 enabled;
