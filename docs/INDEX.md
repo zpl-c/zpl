@@ -40,13 +40,15 @@ These are modules that work either as a standalone library or didn't fit into th
 This repository also contains third-party libraries which were either included or modified to be used by some of these ZPL external modules.
 
 ## Documentation
-Documentation is available in its generated form at [zpl.readthedocs.io](https://zpl.rtfd.io/).
+Documentation is available in its generated form at [zpl.madaraszd.net](https://zpl.madaraszd.net/).
 
-You can see all modules by accessing the left panel's **Modules** link by accessing **Files** > **File List** to see all files instead.
+You can see all modules by accessing the **Modules** link.
 
 Note that the documentation is still work in progress and will be tweaked further.
 
-You can build the documentation using Doxygen 1.8.11 or later. We use Sphinx to build ReadTheDocs.io friendly documentation, which uses Doxygen to generate it.
+You can build the documentation using Doxygen 1.8.11 or later. We use modified version of [m.css](http://mcss.mosra.cz/doxygen/) to generate styled documentation. It uses Python3 with dependencies: `jinja2, Pygments` to generate files. You can use `docs.bat` to build offline documentation.
+
+m.css is available as submodule, so make sure you clone this repo recursively to obtain it.
 
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
