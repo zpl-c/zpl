@@ -118,19 +118,18 @@ ZPL_DEF void zpl_mutex_unlock  (zpl_mutex *m);
 
 struct zpl_thread;
 
-#define ZPL_THREAD_PROC(name) isize name(struct zpl_thread *thread)
-typedef ZPL_THREAD_PROC(zpl_thread_proc);
+typedef isize (*zpl_thread_proc)(struct zpl_thread *thread);
 
-ZPL_THREAD_PROC(zpl__async_handler);
+isize zpl__async_handler(struct zpl_thread *thread);
 
 // TODO(ZaKlaus): @fixme
 #ifndef zpl_async
-#define ZPL_ASYNC_CB(name) void name(void *data)
-typedef ZPL_ASYNC_CB(zpl_async_cb);
+typedef void (*zpl_async_cb)(void *data);
+
 typedef struct {
     void *data;
-    zpl_async_cb *work;
-    zpl_async_cb *cb;
+    zpl_async_cb work;
+    zpl_async_cb cb;
 } zpl_async_ctl;
 #define zpl_async(data, work, cb) do {                            \
     zpl_thread td = {0};                                          \
@@ -149,7 +148,7 @@ typedef struct zpl_thread {
     pthread_t     posix_handle;
 #endif
     
-    zpl_thread_proc *proc;
+    zpl_thread_proc  proc;
     void *           user_data;
     isize            user_index;
     isize            return_value;
@@ -161,8 +160,8 @@ typedef struct zpl_thread {
 
 ZPL_DEF void zpl_thread_init            (zpl_thread *t);
 ZPL_DEF void zpl_thread_destroy         (zpl_thread *t);
-ZPL_DEF void zpl_thread_start           (zpl_thread *t, zpl_thread_proc *proc, void *data);
-ZPL_DEF void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc, void *data, isize stack_size);
+ZPL_DEF void zpl_thread_start           (zpl_thread *t, zpl_thread_proc proc, void *data);
+ZPL_DEF void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *data, isize stack_size);
 ZPL_DEF void zpl_thread_join            (zpl_thread *t);
 ZPL_DEF b32  zpl_thread_is_running      (zpl_thread const *t);
 ZPL_DEF u32  zpl_thread_current_id      (void);
@@ -808,7 +807,7 @@ zpl_inline void zpl_mutex_unlock(zpl_mutex *m) {
 
 
 
-ZPL_THREAD_PROC(zpl__async_handler) {
+isize zpl__async_handler(struct zpl_thread *thread) {
     zpl_async_ctl *ctl = cast(zpl_async_ctl *)thread->user_data;
     
     ctl->work(ctl->data);
@@ -858,9 +857,9 @@ zpl_inline void *          zpl__thread_proc(void *arg) {
 }
 #endif
 
-zpl_inline void zpl_thread_start(zpl_thread *t, zpl_thread_proc *proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
+zpl_inline void zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
 
-zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc, void *user_data, isize stack_size) {
+zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, isize stack_size) {
     ZPL_ASSERT(!t->is_running);
     ZPL_ASSERT(proc != NULL);
     t->proc = proc;

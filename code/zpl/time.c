@@ -19,14 +19,11 @@ ZPL_DEF f64 zpl_utc_time_now(void);
 //! Sleep for specified number of milliseconds.
 ZPL_DEF void zpl_sleep_ms(u32 ms);
 
-#define ZPL_TIMER_CB(name) void name(void *user_data)
-typedef ZPL_TIMER_CB(zpl_timer_cb);
-
-
+typedef void (*zpl_timer_cb)(void *data);
 
 //! Timer data structure
 typedef struct zpl_timer {
-    zpl_timer_cb *callback;
+    zpl_timer_cb callback;
     b32 enabled;
     i32 remaining_calls;
     i32 initial_calls;
@@ -56,7 +53,7 @@ ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
 //! @param count How many times we fire a timer. Use -1 for infinity.
 //! @param callback A method to execute once a timer triggers.
 ZPL_DEF void zpl_timer_set(zpl_timer *timer, f64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count,
-                           zpl_timer_cb *callback);
+                           zpl_timer_cb callback);
 
 //! Start timer with specified delay.
 ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
@@ -246,7 +243,7 @@ zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     return pool + (zpl_array_count(pool) - 1);
 }
 
-zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb *cb) {
+zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb cb) {
     ZPL_ASSERT(t);
     
     t->duration = duration;

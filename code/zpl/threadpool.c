@@ -10,8 +10,8 @@
 
 
 #ifdef ZPL_THREADING
-#define ZPL_JOBS_PROC(name) void name(void *data)
-typedef ZPL_JOBS_PROC(zpl_jobs_proc);
+
+typedef void (*zpl_jobs_proc)(void *data);
 
 #define ZPL_INVALID_JOB U32_MAX
 
@@ -23,7 +23,7 @@ typedef enum {
 } zpl_jobs_status;
 
 typedef struct {
-    zpl_jobs_proc *proc;
+    zpl_jobs_proc proc;
     void *data;
     
     i32 priority;
@@ -73,7 +73,7 @@ ZPL_DEF b32 zpl_jobs_process(zpl_thread_pool *pool);
 
 #ifdef ZPL_THREADING
 
-ZPL_THREAD_PROC(zpl__jobs_entry) {
+isize zpl__jobs_entry(struct zpl_thread *thread) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
     

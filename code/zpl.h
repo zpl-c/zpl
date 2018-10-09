@@ -1449,19 +1449,18 @@ ZPL_DEF void zpl_mutex_unlock  (zpl_mutex *m);
 
 struct zpl_thread;
 
-#define ZPL_THREAD_PROC(name) isize name(struct zpl_thread *thread)
-typedef ZPL_THREAD_PROC(zpl_thread_proc);
+typedef isize (*zpl_thread_proc)(struct zpl_thread *thread);
 
-ZPL_THREAD_PROC(zpl__async_handler);
+isize zpl__async_handler(struct zpl_thread *thread);
 
 // TODO(ZaKlaus): @fixme
 #ifndef zpl_async
-#define ZPL_ASYNC_CB(name) void name(void *data)
-typedef ZPL_ASYNC_CB(zpl_async_cb);
+typedef void (*zpl_async_cb)(void *data);
+
 typedef struct {
     void *data;
-    zpl_async_cb *work;
-    zpl_async_cb *cb;
+    zpl_async_cb work;
+    zpl_async_cb cb;
 } zpl_async_ctl;
 #define zpl_async(data, work, cb) do {                            \
     zpl_thread td = {0};                                          \
@@ -1480,7 +1479,7 @@ typedef struct zpl_thread {
     pthread_t     posix_handle;
 #endif
     
-    zpl_thread_proc *proc;
+    zpl_thread_proc  proc;
     void *           user_data;
     isize            user_index;
     isize            return_value;
@@ -1492,8 +1491,8 @@ typedef struct zpl_thread {
 
 ZPL_DEF void zpl_thread_init            (zpl_thread *t);
 ZPL_DEF void zpl_thread_destroy         (zpl_thread *t);
-ZPL_DEF void zpl_thread_start           (zpl_thread *t, zpl_thread_proc *proc, void *data);
-ZPL_DEF void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc, void *data, isize stack_size);
+ZPL_DEF void zpl_thread_start           (zpl_thread *t, zpl_thread_proc proc, void *data);
+ZPL_DEF void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *data, isize stack_size);
 ZPL_DEF void zpl_thread_join            (zpl_thread *t);
 ZPL_DEF b32  zpl_thread_is_running      (zpl_thread const *t);
 ZPL_DEF u32  zpl_thread_current_id      (void);
@@ -2646,8 +2645,7 @@ typedef struct zpl_async_file {
     void *data;
 } zpl_async_file;
 
-#define ZPL_ASYNC_FILE_CB(name) void name(zpl_async_file *file)
-typedef ZPL_ASYNC_FILE_CB(zpl_async_file_cb);
+typedef void (*zpl_async_file_cb)(zpl_async_file *file);
 
 #endif // ZPL_THREADING
 
@@ -2683,8 +2681,8 @@ ZPL_DEF zplFileError zpl_file_truncate(zpl_file *file, i64 size);
 ZPL_DEF b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since lasted checked
 
 #ifdef ZPL_THREADING
-ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc);
-ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb *proc);
+ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
+ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb proc);
 #endif
 
 zplFileError zpl_file_temp(zpl_file *file);
@@ -2791,14 +2789,11 @@ ZPL_DEF f64 zpl_utc_time_now(void);
 //! Sleep for specified number of milliseconds.
 ZPL_DEF void zpl_sleep_ms(u32 ms);
 
-#define ZPL_TIMER_CB(name) void name(void *user_data)
-typedef ZPL_TIMER_CB(zpl_timer_cb);
-
-
+typedef void (*zpl_timer_cb)(void *data);
 
 //! Timer data structure
 typedef struct zpl_timer {
-    zpl_timer_cb *callback;
+    zpl_timer_cb callback;
     b32 enabled;
     i32 remaining_calls;
     i32 initial_calls;
@@ -2828,7 +2823,7 @@ ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
 //! @param count How many times we fire a timer. Use -1 for infinity.
 //! @param callback A method to execute once a timer triggers.
 ZPL_DEF void zpl_timer_set(zpl_timer *timer, f64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count,
-                           zpl_timer_cb *callback);
+                           zpl_timer_cb callback);
 
 //! Start timer with specified delay.
 ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
@@ -2864,12 +2859,11 @@ ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 
 typedef void *zpl_event_data;
 
-#define ZPL_EVENT(name) void name(zpl_event_data evt)
-typedef ZPL_EVENT(zpl_event_cb);
+typedef void (*zpl_event_cb)(zpl_event_data evt);
 
 #define ZPL_EVENT_CAST(Type, name) Type * name = cast(Type *)evt
 
-typedef zpl_event_cb** zpl_event_block; ///< zpl_array
+typedef zpl_event_cb* zpl_event_block; ///< zpl_array
 
 ZPL_TABLE_DECLARE(static, zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
@@ -3242,8 +3236,8 @@ ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 
 #ifdef ZPL_THREADING
-#define ZPL_JOBS_PROC(name) void name(void *data)
-typedef ZPL_JOBS_PROC(zpl_jobs_proc);
+
+typedef void (*zpl_jobs_proc)(void *data);
 
 #define ZPL_INVALID_JOB U32_MAX
 
@@ -3255,7 +3249,7 @@ typedef enum {
 } zpl_jobs_status;
 
 typedef struct {
-    zpl_jobs_proc *proc;
+    zpl_jobs_proc proc;
     void *data;
     
     i32 priority;
@@ -5733,7 +5727,7 @@ zpl_inline void zpl_mutex_unlock(zpl_mutex *m) {
 
 
 
-ZPL_THREAD_PROC(zpl__async_handler) {
+isize zpl__async_handler(struct zpl_thread *thread) {
     zpl_async_ctl *ctl = cast(zpl_async_ctl *)thread->user_data;
     
     ctl->work(ctl->data);
@@ -5783,9 +5777,9 @@ zpl_inline void *          zpl__thread_proc(void *arg) {
 }
 #endif
 
-zpl_inline void zpl_thread_start(zpl_thread *t, zpl_thread_proc *proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
+zpl_inline void zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
 
-zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc *proc, void *user_data, isize stack_size) {
+zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, isize stack_size) {
     ZPL_ASSERT(!t->is_running);
     ZPL_ASSERT(proc != NULL);
     t->proc = proc;
@@ -8830,12 +8824,12 @@ zpl_inline b32 zpl_file_has_changed(zpl_file *f) {
 
 typedef struct {
     zpl_async_file *f;
-    zpl_async_file_cb *proc;
+    zpl_async_file_cb proc;
     void *data;
     isize data_size;
 } zpl__async_file_ctl;
 
-ZPL_THREAD_PROC(zpl__async_file_read_proc) {
+isize zpl__async_file_read_proc(struct zpl_thread *thread) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
     
     zpl_async_file *f = afops->f;
@@ -8855,7 +8849,7 @@ ZPL_THREAD_PROC(zpl__async_file_read_proc) {
     return 0;
 }
 
-ZPL_THREAD_PROC(zpl__async_file_write_proc) {
+isize zpl__async_file_write_proc(struct zpl_thread *thread) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
     
     zpl_async_file *f = afops->f;
@@ -8875,7 +8869,7 @@ ZPL_THREAD_PROC(zpl__async_file_write_proc) {
     return 0;
 }
 
-void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
+void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc) {
     ZPL_ASSERT(file && proc);
     
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
@@ -8897,7 +8891,7 @@ void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
     zpl_thread_start(&td, zpl__async_file_read_proc, cast(void *) afops);
 }
 
-void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb *proc) {
+void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb proc) {
     ZPL_ASSERT(file && proc && buffer);
     
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
@@ -10011,7 +10005,7 @@ zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     return pool + (zpl_array_count(pool) - 1);
 }
 
-zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb *cb) {
+zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb cb) {
     ZPL_ASSERT(t);
     
     t->duration = duration;
@@ -11391,7 +11385,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
 #ifdef ZPL_THREADING
 
-ZPL_THREAD_PROC(zpl__jobs_entry) {
+isize zpl__jobs_entry(struct zpl_thread *thread) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
     

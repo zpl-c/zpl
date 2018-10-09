@@ -96,8 +96,7 @@ typedef struct zpl_async_file {
     void *data;
 } zpl_async_file;
 
-#define ZPL_ASYNC_FILE_CB(name) void name(zpl_async_file *file)
-typedef ZPL_ASYNC_FILE_CB(zpl_async_file_cb);
+typedef void (*zpl_async_file_cb)(zpl_async_file *file);
 
 #endif // ZPL_THREADING
 
@@ -133,8 +132,8 @@ ZPL_DEF zplFileError zpl_file_truncate(zpl_file *file, i64 size);
 ZPL_DEF b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since lasted checked
 
 #ifdef ZPL_THREADING
-ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc);
-ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb *proc);
+ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
+ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb proc);
 #endif
 
 zplFileError zpl_file_temp(zpl_file *file);
@@ -514,12 +513,12 @@ zpl_inline b32 zpl_file_has_changed(zpl_file *f) {
 
 typedef struct {
     zpl_async_file *f;
-    zpl_async_file_cb *proc;
+    zpl_async_file_cb proc;
     void *data;
     isize data_size;
 } zpl__async_file_ctl;
 
-ZPL_THREAD_PROC(zpl__async_file_read_proc) {
+isize zpl__async_file_read_proc(struct zpl_thread *thread) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
     
     zpl_async_file *f = afops->f;
@@ -539,7 +538,7 @@ ZPL_THREAD_PROC(zpl__async_file_read_proc) {
     return 0;
 }
 
-ZPL_THREAD_PROC(zpl__async_file_write_proc) {
+isize zpl__async_file_write_proc(struct zpl_thread *thread) {
     zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
     
     zpl_async_file *f = afops->f;
@@ -559,7 +558,7 @@ ZPL_THREAD_PROC(zpl__async_file_write_proc) {
     return 0;
 }
 
-void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
+void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc) {
     ZPL_ASSERT(file && proc);
     
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
@@ -581,7 +580,7 @@ void zpl_async_file_read(zpl_file *file, zpl_async_file_cb *proc) {
     zpl_thread_start(&td, zpl__async_file_read_proc, cast(void *) afops);
 }
 
-void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb *proc) {
+void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb proc) {
     ZPL_ASSERT(file && proc && buffer);
     
     zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));

@@ -1,13 +1,13 @@
 #define ZPL_IMPLEMENTATION
 #include <zpl.h>
 
-ZPL_ASYNC_FILE_CB(test_read_finished) {
+void test_read_finished(zpl_async_file *file) {
     zpl_file_close(&file->handle);
     zpl_sleep_ms(1000);
     zpl_printf("Size: %d\n", cast(int)file->size);
 }
 
-ZPL_ASYNC_FILE_CB(test_write_finished) {
+void test_write_finished(zpl_async_file *file) {
     zpl_file_close(&file->handle);
     zpl_sleep_ms(1000);
     zpl_printf("Size: %d\n", cast(int)file->size);

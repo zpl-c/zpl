@@ -3,7 +3,7 @@
 
 zpl_global u8 counter = 0;
 
-ZPL_TIMER_CB(test1_cb) {
+void test1_cb(void *user_data) {
     zpl_printf("Hello, Sailor!\n");
     
     if (counter == 10) {
@@ -11,7 +11,7 @@ ZPL_TIMER_CB(test1_cb) {
     }
 }
 
-ZPL_TIMER_CB(test2_cb) {
+void test2_cb(void *user_data) {
     zpl_printf("This has been called %d/10 times!\n", ++counter);
 }
 
