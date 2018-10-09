@@ -230,7 +230,7 @@ Version History:
 extern "C" {
 #endif
     
-    /** @file _header.c
+    /** @file header.c
 @brief Macro helpers and symbols.
 
  This module contains many useful macros helpful for debugging as well as development itself.
@@ -947,7 +947,7 @@ do {                                                                            
 ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
 ZPL_DEF i32 zpl_assert_crash(char const *condition);
 
-/** @file _mem.c
+/** @file mem.c
 @brief Memory manipulation and helpers.
 
  Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
@@ -1319,7 +1319,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 // TODO: Fixed heap allocator
 // TODO: General heap allocator. Maybe a TCMalloc like clone?
 
-/** @file _threads.c
+/** @file threads.c
 @brief Threading methods, blocking models...
 
 This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
@@ -1549,7 +1549,7 @@ ZPL_DEF isize zpl_affinity_thread_count_for_core(zpl_affinity *a, isize core);
 
 #endif // ZPL_THREADING
 
-/** @file _sort.c
+/** @file sort.c
 @brief Sorting and searching methods.
 
 Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
@@ -1827,7 +1827,7 @@ ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
 ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...);
 
 
-/** @file _regex.c
+/** @file regex.c
 @brief Regular expressions parser.
 
 Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
@@ -2324,45 +2324,47 @@ ZPL_RING_DECLARE(usize);
 ZPL_RING_DECLARE(isize);
 ZPL_RING_DECLARE(uintptr);
 
-////////////////////////////////////////////////////////////////
-//
-// Hashing and Checksum Functions
-//
-//
+/** @file hashing.c
+@brief Hashing and Checksum Functions
 
-ZPL_EXTERN u32 zpl_adler32(void const *data, isize len);
+Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
+*/
 
-ZPL_EXTERN u32 zpl_crc32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_crc64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_adler32(void const *data, isize len);
 
-ZPL_EXTERN u32 zpl_fnv32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_fnv64(void const *data, isize len);
-ZPL_EXTERN u32 zpl_fnv32a(void const *data, isize len);
-ZPL_EXTERN u64 zpl_fnv64a(void const *data, isize len);
+ZPL_DEFINE u32 zpl_crc32(void const *data, isize len);
+ZPL_DEFINE u64 zpl_crc64(void const *data, isize len);
 
-// NOTE: Default seed of 0x9747b28c
-// NOTE: I prefer using murmur64 for most hashes
-ZPL_EXTERN u32 zpl_murmur32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_murmur64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_fnv32(void const *data, isize len);
+ZPL_DEFINE u64 zpl_fnv64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_fnv32a(void const *data, isize len);
+ZPL_DEFINE u64 zpl_fnv64a(void const *data, isize len);
 
-ZPL_EXTERN u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
-ZPL_EXTERN u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
+//! Default seed of 0x9747b28c
+ZPL_DEFINE u32 zpl_murmur32(void const *data, isize len);
 
-////////////////////////////////////////////////////////////////
-//
-// Instantiated Hash Table
-//
-// This is an attempt to implement a templated hash table
-// NOTE: The key is always a u64 for simplicity and you will _probably_ _never_ need anything bigger.
-//
-// Hash table type and function declaration, call: ZPL_TABLE_DECLARE(PREFIX, NAME, N, VALUE)
-// Hash table function definitions, call: ZPL_TABLE_DEFINE(NAME, N, VALUE)
-//
-//     PREFIX  - a prefix for function prototypes e.g. extern, static, etc.
-//     NAME    - Name of the Hash Table
-//     FUNC    - the name will prefix function names
-//     VALUE   - the type of the value to be stored
-//
+//! Default seed of 0x9747b28c
+ZPL_DEFINE u64 zpl_murmur64(void const *data, isize len);
+
+ZPL_DEFINE u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
+ZPL_DEFINE u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
+
+/** @file hashtable.c
+@brief Instantiated hash table
+
+@n
+@n This is an attempt to implement a templated hash table
+@n NOTE: The key is always a u64 for simplicity and you will _probably_ _never_ need anything bigger.
+@n
+@n Hash table type and function declaration, call: ZPL_TABLE_DECLARE(PREFIX, NAME, N, VALUE)
+@n Hash table function definitions, call: ZPL_TABLE_DEFINE(NAME, N, VALUE)
+@n
+@n     PREFIX  - a prefix for function prototypes e.g. extern, static, etc.
+@n     NAME    - Name of the Hash Table
+@n     FUNC    - the name will prefix function names
+@n     VALUE   - the type of the value to be stored
+@n
+*/
 
 #define zpl_hash_table_find_result_t zpl_hash_table_find_result
 typedef struct zpl_hash_table_find_result {
@@ -2715,7 +2717,7 @@ ZPL_DEF zpl_dll_handle zpl_dll_load(char const *filepath);
 ZPL_DEF void zpl_dll_unload(zpl_dll_handle dll);
 ZPL_DEF zpl_dll_proc zpl_dll_proc_address(zpl_dll_handle dll, char const *proc_name);
 
-/** @file _time.c
+/** @file time.c
 @brief Time helper methods.
 
  Helper methods for retrieving the current time in many forms under different precisions. It also offers a simple to use timer library.
@@ -2856,7 +2858,7 @@ ZPL_DEF isize zpl_count_set_bits(u64 mask);
 ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
 ZPL_DEF zpl_string zpl_system_command_str(char const *command, zpl_allocator backing);
 
-/** @file _json.c
+/** @file json.c
 @brief JSON5 Parser/Writer
 
 Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
@@ -3028,7 +3030,7 @@ ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_alloca
 ZPL_DEF char *zpl__json_skip(char *str, char c);
 ZPL_DEF b32 zpl__json_validate_name(char *str, char *err);
 
-/** @file _opts.c
+/** @file opts.c
 @brief CLI options processor
 
  Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
@@ -3150,7 +3152,7 @@ ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 //! Checks whether all positionals have been passed in.
 ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
-/** @file _threadpool.c
+/** @file threadpool.c
 @brief Job system
 
  This job system follows thread pool pattern to minimize the costs of thread initialization.

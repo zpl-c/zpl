@@ -1,18 +1,19 @@
-////////////////////////////////////////////////////////////////
-//
-// Instantiated Hash Table
-//
-// This is an attempt to implement a templated hash table
-// NOTE: The key is always a u64 for simplicity and you will _probably_ _never_ need anything bigger.
-//
-// Hash table type and function declaration, call: ZPL_TABLE_DECLARE(PREFIX, NAME, N, VALUE)
-// Hash table function definitions, call: ZPL_TABLE_DEFINE(NAME, N, VALUE)
-//
-//     PREFIX  - a prefix for function prototypes e.g. extern, static, etc.
-//     NAME    - Name of the Hash Table
-//     FUNC    - the name will prefix function names
-//     VALUE   - the type of the value to be stored
-//
+/** @file hashtable.c
+@brief Instantiated hash table
+
+@n
+@n This is an attempt to implement a templated hash table
+@n NOTE: The key is always a u64 for simplicity and you will _probably_ _never_ need anything bigger.
+@n
+@n Hash table type and function declaration, call: ZPL_TABLE_DECLARE(PREFIX, NAME, N, VALUE)
+@n Hash table function definitions, call: ZPL_TABLE_DEFINE(NAME, N, VALUE)
+@n
+@n     PREFIX  - a prefix for function prototypes e.g. extern, static, etc.
+@n     NAME    - Name of the Hash Table
+@n     FUNC    - the name will prefix function names
+@n     VALUE   - the type of the value to be stored
+@n
+*/
 
 #define zpl_hash_table_find_result_t zpl_hash_table_find_result
 typedef struct zpl_hash_table_find_result {

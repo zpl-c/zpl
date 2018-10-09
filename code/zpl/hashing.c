@@ -1,26 +1,27 @@
-////////////////////////////////////////////////////////////////
-//
-// Hashing and Checksum Functions
-//
-//
+/** @file hashing.c
+@brief Hashing and Checksum Functions
 
-ZPL_EXTERN u32 zpl_adler32(void const *data, isize len);
+Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
+*/
 
-ZPL_EXTERN u32 zpl_crc32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_crc64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_adler32(void const *data, isize len);
 
-ZPL_EXTERN u32 zpl_fnv32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_fnv64(void const *data, isize len);
-ZPL_EXTERN u32 zpl_fnv32a(void const *data, isize len);
-ZPL_EXTERN u64 zpl_fnv64a(void const *data, isize len);
+ZPL_DEFINE u32 zpl_crc32(void const *data, isize len);
+ZPL_DEFINE u64 zpl_crc64(void const *data, isize len);
 
-// NOTE: Default seed of 0x9747b28c
-// NOTE: I prefer using murmur64 for most hashes
-ZPL_EXTERN u32 zpl_murmur32(void const *data, isize len);
-ZPL_EXTERN u64 zpl_murmur64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_fnv32(void const *data, isize len);
+ZPL_DEFINE u64 zpl_fnv64(void const *data, isize len);
+ZPL_DEFINE u32 zpl_fnv32a(void const *data, isize len);
+ZPL_DEFINE u64 zpl_fnv64a(void const *data, isize len);
 
-ZPL_EXTERN u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
-ZPL_EXTERN u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
+//! Default seed of 0x9747b28c
+ZPL_DEFINE u32 zpl_murmur32(void const *data, isize len);
+
+//! Default seed of 0x9747b28c
+ZPL_DEFINE u64 zpl_murmur64(void const *data, isize len);
+
+ZPL_DEFINE u32 zpl_murmur32_seed(void const *data, isize len, u32 seed);
+ZPL_DEFINE u64 zpl_murmur64_seed(void const *data, isize len, u64 seed);
 
 //$$
 
