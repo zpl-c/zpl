@@ -566,7 +566,7 @@ table.memberdecls {
 
 .memitem {
 	padding: 0;
-	/*! margin-bottom: 10px; */
+	margin-bottom: 10px;
 	margin-right: 5px;
         /*! -webkit-transition: box-shadow 0.5s linear; */
         /*! -moz-transition: box-shadow 0.5s linear; */
@@ -926,8 +926,8 @@ table.fieldtable {
 
 .fieldtable td.fieldtype, .fieldtable td.fieldname {
         white-space: nowrap;
-        border-right: 1px solid #A8B8D9;
-        border-bottom: 1px solid #A8B8D9;
+        border-right: 1px solid #5F5F5F;
+        border-bottom: 1px solid #5F5F5F;
         vertical-align: top;
 }
 
@@ -936,7 +936,7 @@ table.fieldtable {
 }
 
 .fieldtable td.fielddoc {
-        border-bottom: 1px solid #A8B8D9;
+        border-bottom: 1px solid #5F5F5F;
         /*width: 100%;*/
 }
 
@@ -955,7 +955,7 @@ table.fieldtable {
 .fieldtable th {
         /*! background-image:url('nav_f.png'); */
         /*! background-repeat:repeat-x; */
-        background-color: #F0702A;
+        background-color: #1B1B1B;
         font-size: 90%;
         color: #fff;
         padding-bottom: 4px;
