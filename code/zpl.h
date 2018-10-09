@@ -2807,7 +2807,7 @@ typedef struct zpl_timer {
     void *user_data;
 } zpl_timer;
 
-typedef zpl_array(zpl_timer) zpl_timer_pool;
+typedef zpl_timer *zpl_timer_pool; ///< zpl_array
 
 //! Initialize timer pool.
 #define zpl_timer_init(pool, allocator) zpl_array_init(pool, allocator)
