@@ -4096,7 +4096,6 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#pragma GCC diagnostic ignored "-Wstatic-in-inline"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
@@ -11163,6 +11162,14 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
 }
 
 void zpl_opts_free(zpl_opts *opts) {
+    
+    for (i32 i = 0; i < zpl_array_count(opts->entries); ++i) {
+        zpl_opts_entry *e = opts->entries + i;
+        if (e->type == ZPL_OPTS_STRING) { 
+            zpl_string_free(e->text);
+        }
+    }
+
     zpl_array_free(opts->entries);
     zpl_array_free(opts->positioned);
     zpl_array_free(opts->errors);
