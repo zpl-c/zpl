@@ -432,10 +432,10 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 _In_ int nCmdShow)
 
 #if !defined(ZPL_NO_WINDOWS_H)
-#define NOMINMAX 1
-#define WIN32_LEAN_AND_MEAN 1
-#define WIN32_MEAN_AND_LEAN 1
-#define VC_EXTRALEAN 1
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#define WIN32_MEAN_AND_LEAN
+#define VC_EXTRALEAN
 #include <windows.h>
 #undef NOMINMAX
 #undef WIN32_LEAN_AND_MEAN

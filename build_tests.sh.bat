@@ -1,5 +1,5 @@
 #/bin/bash 2>nul || goto :windows
-./generate.sh
+./generate.sh.bat
 for f in test/*.c
 do
     echo Building ${f##*/}
@@ -9,8 +9,8 @@ exit
 
 :windows
 @echo off
-./generate.sh
+call ./generate.sh.bat
 for %%f in (test\*.c) do (
     echo %%~f
-	call build.bat ..\..\%%~f /Od "user32.lib winmm.lib kernel32.lib" "/I..\..\code"
+    call build.bat ..\..\%%~f /Od "user32.lib winmm.lib kernel32.lib" "/I..\..\code"
 )
