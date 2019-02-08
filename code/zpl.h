@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+9.1.0 - get_env rework and fixes
 9.0.3 - Small fixes and removals
 9.0.0 - New documentation format, removed deprecated code, changed styles
 
@@ -404,12 +405,6 @@ defined(__ppc64__) || defined(__aarch64__)
 // Headers
 //
 //
-
-#if defined(_WIN32) && !defined(__MINGW32__)
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#endif
 
 #if defined(ZPL_SYSTEM_UNIX)
 #ifndef _GNU_SOURCE
