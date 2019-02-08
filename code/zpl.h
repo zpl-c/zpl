@@ -2920,6 +2920,11 @@ ZPL_DEF zpl_string zpl_system_command_str(const char *command, zpl_allocator bac
 @defgroup json JSON5 parser/writer
 
 Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
+
+We can parse JSON5 files in two different modes:
+    @n 1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.
+    @n 2) Slower way (useful for config files), which handles comments perfectly but **might** have performance impact
+        on bigger JSON files. (+50MiB)
 @{
 */
 
@@ -3020,13 +3025,6 @@ typedef struct zpl_json_object {
         u8 constant;
     };
 } zpl_json_object;
-
-/*
-    We can parse JSON5 files in two different modes:
-    1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.
-    2) Slower way (useful for config files), which handles comments perfectly but **might** have performance impact
-        on bigger JSON files. (+50MiB)
-*/
 
 //! Parses JSON5/HJSON text.
 
