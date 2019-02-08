@@ -2902,9 +2902,13 @@ ZPL_DEF f64 zpl_random_range_f64(zpl_random *r, f64 lower_inc, f64 higher_inc);
 
 ZPL_DEF void zpl_exit(u32 code);
 ZPL_DEF void zpl_yield(void);
-ZPL_DEF char const *zpl_get_env(char const *name);
-ZPL_DEF void zpl_set_env(char const *name, char const *value);
-ZPL_DEF void zpl_unset_env(char const *name);
+
+//! Returns allocated buffer
+ZPL_DEF const char *zpl_get_env(const char *name);
+ZPL_DEF const char *zpl_get_env_buf(const char *name);
+ZPL_DEF zpl_string zpl_get_env_str(const char *name);
+ZPL_DEF void zpl_set_env(const char *name, const char *value);
+ZPL_DEF void zpl_unset_env(const char *name);
 
 ZPL_DEF u16 zpl_endian_swap16(u16 i);
 ZPL_DEF u32 zpl_endian_swap32(u32 i);
@@ -2912,8 +2916,8 @@ ZPL_DEF u64 zpl_endian_swap64(u64 i);
 
 ZPL_DEF isize zpl_count_set_bits(u64 mask);
 
-ZPL_DEF u32 zpl_system_command(char const *command, usize buffer_len, char *buffer);
-ZPL_DEF zpl_string zpl_system_command_str(char const *command, zpl_allocator backing);
+ZPL_DEF u32 zpl_system_command(const char *command, usize buffer_len, char *buffer);
+ZPL_DEF zpl_string zpl_system_command_str(const char *command, zpl_allocator backing);
 
 //! @}
 /** @file json.c
@@ -9009,7 +9013,17 @@ zplFileError zpl_file_temp(zpl_file *file) {
     ZPL_PANIC("zpl_file_temp is not supported for emscripten");
 #else
     zpl_zero_item(file);
-    FILE *fd = tmpfile( );
+    FILE *fd = NULL;
+    
+#if ZPL_SYSTEM_WINDOWS
+    errno_t errcode = tmpfile_s(&fd);
+
+    if (errcode != 0) {
+        fd = NULL;
+    }
+#else
+    fd = tmpfile();
+#endif
     
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
     
@@ -10266,26 +10280,73 @@ zpl_inline void zpl_yield(void) {
 #endif
 }
 
-#include <stdlib.h>
+zpl_inline const char *zpl_get_env(const char *name) {
+    char *buffer = NULL;
+#ifdef ZPL_SYSTEM_WINDOWS
+    const char *ptr = zpl_get_env_buf(name);
 
-zpl_inline char const *zpl_get_env(char const *name) {
-    return getenv(name);
-    
-    // TODO: Use GetEnvironmentVariable on Windows?
+    if (ptr == NULL) {
+        return NULL;
+    }
+
+    isize ptr_size = zpl_strlen(ptr);
+    buffer = (char *)zpl_malloc(ptr_size * sizeof(char)+1);
+    zpl_memcopy((char *)buffer, ptr, ptr_size+1);
+#else
+    isize req_size = 0;
+    getenv_s(&req_size, NULL, 0, name);
+
+    if (req_size == 0) {
+        return NULL;
+    }
+
+    buffer = zpl_malloc(req_size * sizeof(char)+1);
+    getenv_s(&req_size, buffer, req_size, name);
+#endif
+    return buffer;
 }
 
-zpl_inline void zpl_set_env(char const *name, char const *value) {
+zpl_inline const char *zpl_get_env_buf(const char *name) {
+    zpl_local_persist char buffer[32767] = {0};
+#ifdef ZPL_SYSTEM_WINDOWS
+    if (!GetEnvironmentVariable(name, buffer, 32767)) {
+        return NULL;
+    }
+#else
+    isize req_size = 0;
+    isize buffer_length = 0;
+
+    getenv_s(&req_size, NULL, 0, name);
+    if (req_size == 0) {
+        return NULL;
+    }
+
+    getenv_s(&req_size, buffer, req_size, name);
+#endif
+    return (const char *)buffer;
+}
+
+zpl_inline zpl_string zpl_get_env_str(const char *name) {
+    const char *buf = zpl_get_env_buf(name);
+
+    if (buf == NULL) {
+        return NULL;
+    }
+
+    zpl_string str = zpl_string_make(zpl_heap(), buf);
+    return str;
+}
+
+zpl_inline void zpl_set_env(const char *name, const char *value) {
 #if defined(ZPL_SYSTEM_WINDOWS)
-    // TODO: Should this be a Wide version?
     SetEnvironmentVariableA(name, value);
 #else
     setenv(name, value, 1);
 #endif
 }
 
-zpl_inline void zpl_unset_env(char const *name) {
+zpl_inline void zpl_unset_env(const char *name) {
 #if defined(ZPL_SYSTEM_WINDOWS)
-    // TODO: Should this be a Wide version?
     SetEnvironmentVariableA(name, NULL);
 #else
     unsetenv(name);
@@ -10323,7 +10384,7 @@ zpl_inline isize zpl_count_set_bits(u64 mask) {
 extern char **environ;
 #endif
 
-zpl_inline u32 zpl_system_command(char const *command, usize buffer_len, char *buffer) {
+zpl_inline u32 zpl_system_command(const char *command, usize buffer_len, char *buffer) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else
@@ -10351,7 +10412,7 @@ zpl_inline u32 zpl_system_command(char const *command, usize buffer_len, char *b
     return 1;
 }
 
-zpl_inline zpl_string zpl_system_command_str(char const *command, zpl_allocator backing) {
+zpl_inline zpl_string zpl_system_command_str(const char *command, zpl_allocator backing) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else

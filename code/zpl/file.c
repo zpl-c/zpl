@@ -698,7 +698,17 @@ zplFileError zpl_file_temp(zpl_file *file) {
     ZPL_PANIC("zpl_file_temp is not supported for emscripten");
 #else
     zpl_zero_item(file);
-    FILE *fd = tmpfile( );
+    FILE *fd = NULL;
+    
+#if ZPL_SYSTEM_WINDOWS
+    errno_t errcode = tmpfile_s(&fd);
+
+    if (errcode != 0) {
+        fd = NULL;
+    }
+#else
+    fd = tmpfile();
+#endif
     
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
     
