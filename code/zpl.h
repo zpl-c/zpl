@@ -1931,7 +1931,7 @@ ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
 //! Match input string and output captures of the occurence.
 ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
 
-//! Match all occurences in an input string and output them into captures.
+//! Match all occurences in an input string and output them into captures. Array of captures is allocated on the heap and needs to be freed afterwards.
 ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
