@@ -208,7 +208,6 @@ zpl_inline void zpl_yield(void) {
 
 zpl_inline const char *zpl_get_env(const char *name) {
     char *buffer = NULL;
-#ifdef ZPL_SYSTEM_WINDOWS
     const char *ptr = zpl_get_env_buf(name);
 
     if (ptr == NULL) {
@@ -218,38 +217,19 @@ zpl_inline const char *zpl_get_env(const char *name) {
     isize ptr_size = zpl_strlen(ptr);
     buffer = (char *)zpl_malloc(ptr_size * sizeof(char)+1);
     zpl_memcopy((char *)buffer, ptr, ptr_size+1);
-#else
-    isize req_size = 0;
-    getenv_s(&req_size, NULL, 0, name);
-
-    if (req_size == 0) {
-        return NULL;
-    }
-
-    buffer = zpl_malloc(req_size * sizeof(char)+1);
-    getenv_s(&req_size, buffer, req_size, name);
-#endif
     return buffer;
 }
 
 zpl_inline const char *zpl_get_env_buf(const char *name) {
-    zpl_local_persist char buffer[32767] = {0};
 #ifdef ZPL_SYSTEM_WINDOWS
+    zpl_local_persist char buffer[32767] = {0};
     if (!GetEnvironmentVariable(name, buffer, 32767)) {
         return NULL;
     }
-#else
-    isize req_size = 0;
-    isize buffer_length = 0;
-
-    getenv_s(&req_size, NULL, 0, name);
-    if (req_size == 0) {
-        return NULL;
-    }
-
-    getenv_s(&req_size, buffer, req_size, name);
-#endif
     return (const char *)buffer;
+#else
+    return (const char *)getenv(name);
+#endif
 }
 
 zpl_inline zpl_string zpl_get_env_str(const char *name) {
