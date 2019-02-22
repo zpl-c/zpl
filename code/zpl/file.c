@@ -700,7 +700,7 @@ zplFileError zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
     FILE *fd = NULL;
     
-#if ZPL_SYSTEM_WINDOWS
+#if ZPL_SYSTEM_WINDOWS && !defined(ZPL_COMPILER_GCC)
     errno_t errcode = tmpfile_s(&fd);
 
     if (errcode != 0) {

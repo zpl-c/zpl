@@ -213,6 +213,11 @@ _In_ int nCmdShow)
 #define WC_ERR_INVALID_CHARS 0x0080
 #endif
 
+// include errno.h for MinGW
+#if defined(ZPL_COMPILER_GCC)
+#include <errno.h>
+#endif
+
 #else
 
 #define ZPL_WINMAIN int main(void)

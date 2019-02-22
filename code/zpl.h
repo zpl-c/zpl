@@ -449,6 +449,11 @@ _In_ int nCmdShow)
 #define WC_ERR_INVALID_CHARS 0x0080
 #endif
 
+// include errno.h for MinGW
+#if defined(ZPL_COMPILER_GCC)
+#include <errno.h>
+#endif
+
 #else
 
 #define ZPL_WINMAIN int main(void)
@@ -9008,7 +9013,7 @@ zplFileError zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
     FILE *fd = NULL;
     
-#if ZPL_SYSTEM_WINDOWS
+#if ZPL_SYSTEM_WINDOWS && !defined(ZPL_COMPILER_GCC)
     errno_t errcode = tmpfile_s(&fd);
 
     if (errcode != 0) {
