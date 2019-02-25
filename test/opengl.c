@@ -1,3 +1,4 @@
+#ifdef TEST_OPENGL
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_RECT_PACK_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -54,3 +55,9 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 
     return ERROR_SUCCESS;
 }
+#else
+int main()
+{
+    return 0;
+}
+#endif

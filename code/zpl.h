@@ -2702,12 +2702,11 @@ ZPL_DEF void zpl_file_free_contents(zpl_file_contents *fc);
 ZPL_DEF char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *) * lines, char const *filename,
                                   b32 strip_whitespace);
 
-// TODO: Should these have different names as they do not take in a zpl_file * ???
-ZPL_DEF b32 zpl_file_exists(char const *filepath);
-ZPL_DEF zpl_file_time zpl_file_last_write_time(char const *filepath);
-ZPL_DEF b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists);
-ZPL_DEF b32 zpl_file_move(char const *existing_filename, char const *new_filename);
-ZPL_DEF b32 zpl_file_remove(char const *filename);
+ZPL_DEF b32 zpl_fs_exists(char const *filepath);
+ZPL_DEF zpl_file_time zpl_fs_last_write_time(char const *filepath);
+ZPL_DEF b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists);
+ZPL_DEF b32 zpl_fs_move(char const *existing_filename, char const *new_filename);
+ZPL_DEF b32 zpl_fs_remove(char const *filename);
 
 #ifndef ZPL_PATH_SEPARATOR
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -8708,7 +8707,7 @@ zplFileError zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operatio
     f->fd = fd;
     f->filename = zpl_alloc_array(zpl_heap_allocator( ), char, len + 1);
     zpl_memcopy(cast(char *) f->filename, cast(char *) filename, len + 1);
-    f->last_write_time = zpl_file_last_write_time(f->filename);
+    f->last_write_time = zpl_fs_last_write_time(f->filename);
     
     return err;
 }
@@ -8814,7 +8813,7 @@ char const *zpl_file_name(zpl_file *f) { return f->filename ? f->filename : ""; 
 
 zpl_inline b32 zpl_file_has_changed(zpl_file *f) {
     b32 result = false;
-    zpl_file_time last_write_time = zpl_file_last_write_time(f->filename);
+    zpl_file_time last_write_time = zpl_fs_last_write_time(f->filename);
     if (f->last_write_time != last_write_time) {
         result = true;
         f->last_write_time = last_write_time;
@@ -8954,7 +8953,7 @@ zplFileError zpl_file_truncate(zpl_file *f, i64 size) {
     return err;
 }
 
-b32 zpl_file_exists(char const *name) {
+b32 zpl_fs_exists(char const *name) {
     WIN32_FIND_DATAW data;
     wchar_t *w_text;
     void *handle;
@@ -9002,7 +9001,7 @@ zpl_inline zplFileError zpl_file_truncate(zpl_file *f, i64 size) {
     return err;
 }
 
-zpl_inline b32 zpl_file_exists(char const *name) { return access(name, F_OK) != -1; }
+zpl_inline b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 
 #endif
 
@@ -9032,7 +9031,7 @@ zplFileError zpl_file_temp(zpl_file *file) {
 }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-zpl_file_time zpl_file_last_write_time(char const *filepath) {
+zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     ULARGE_INTEGER li = { 0 };
     FILETIME last_write_time = { 0 };
     WIN32_FILE_ATTRIBUTE_DATA data = { 0 };
@@ -9049,7 +9048,7 @@ zpl_file_time zpl_file_last_write_time(char const *filepath) {
     return cast(zpl_file_time) li.QuadPart;
 }
 
-zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
+zpl_inline b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
     
@@ -9064,7 +9063,7 @@ zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_file
     return result;
 }
 
-zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_filename) {
+zpl_inline b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
     
@@ -9079,7 +9078,7 @@ zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_file
     return result;
 }
 
-zpl_inline b32 zpl_file_remove(char const *filename) {
+zpl_inline b32 zpl_fs_remove(char const *filename) {
     b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
     
@@ -9094,7 +9093,7 @@ zpl_inline b32 zpl_file_remove(char const *filename) {
 
 #else
 
-zpl_file_time zpl_file_last_write_time(char const *filepath) {
+zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     time_t result = 0;
     struct stat file_stat;
     
@@ -9103,7 +9102,7 @@ zpl_file_time zpl_file_last_write_time(char const *filepath) {
     return cast(zpl_file_time) result;
 }
 
-zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
+zpl_inline b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists) {
     zpl_unused(fail_if_exists);
 #if defined(ZPL_SYSTEM_OSX)
     return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
@@ -9124,12 +9123,12 @@ zpl_inline b32 zpl_file_copy(char const *existing_filename, char const *new_file
 #endif
 }
 
-zpl_inline b32 zpl_file_move(char const *existing_filename, char const *new_filename) {
+zpl_inline b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
     if (link(existing_filename, new_filename) == 0) { return (unlink(existing_filename) != -1); }
     return false;
 }
 
-zpl_inline b32 zpl_file_remove(char const *filename) {
+zpl_inline b32 zpl_fs_remove(char const *filename) {
 #if defined(ZPL_SYSTEM_OSX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
     return (unlink(filename) != -1);
 #else

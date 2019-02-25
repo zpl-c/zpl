@@ -1,6 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #define ZPL_IMPLEMENTATION
 #include <zpl.h>
 #include <string.h>
+
 
 int main()
 {

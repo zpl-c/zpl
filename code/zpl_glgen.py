@@ -79,6 +79,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  1.1.0 - Added support for the latest glcorearb.h standard format
   1.0.0 - Initial version
 
   This Software is dual licensed under the following licenses:
@@ -127,6 +128,14 @@ Version History:
 
 '''
 
+if not os.path.exists('KHR'):
+    os.mkdir('KHR')
+
+if not os.path.exists('KHR/khrplatform.h'):
+    print('Downloading KHR/khrplatform.h...')
+    web = urllib2.urlopen('https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h')
+    with open('KHR/khrplatform.h', 'wb') as f:
+        f.writelines(web.readlines())
 
 # Download glcorearb.h
 if not os.path.exists('glcorearb.h'):
