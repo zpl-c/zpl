@@ -8,19 +8,12 @@
 // If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
 // https://github.com/ocornut/imgui
 
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "imgui.h"
 #include "imgui_impl_zpl_gl3.h"
 #include "zpl_glgen.h"
 
 #define ZPL_PLATFORM
 #include "zpl.h"
-
-// TODO
-#include <string.h> // strcat
 
 // ZPL data
 zpl_platform *g_platform = NULL;

@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
 9.1.0 - get_env rework and fixes
 9.0.3 - Small fixes and removals
 9.0.0 - New documentation format, removed deprecated code, changed styles
@@ -427,10 +428,12 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 _In_ int nCmdShow)
 
 #if !defined(ZPL_NO_WINDOWS_H)
+#ifndef WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_MEAN_AND_LEAN
 #define VC_EXTRALEAN
+#endif
 #include <windows.h>
 #undef NOMINMAX
 #undef WIN32_LEAN_AND_MEAN
