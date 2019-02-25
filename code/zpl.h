@@ -26,16 +26,17 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
-9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
-9.1.0 - get_env rework and fixes
-9.0.3 - Small fixes and removals
-9.0.0 - New documentation format, removed deprecated code, changed styles
+  9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
+  9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
+  9.1.0 - get_env rework and fixes
+  9.0.3 - Small fixes and removals
+  9.0.0 - New documentation format, removed deprecated code, changed styles
 
-8.14.1 - Fix string library
-8.14.0 - Added zpl_re_match_all
-8.13.0 - Update system command API
+  8.14.1 - Fix string library
+  8.14.0 - Added zpl_re_match_all
+  8.13.0 - Update system command API
   8.12.6 - Fix warning in CLI options parser
-8.12.5 - Support parametric options preceding positionals
+  8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
   8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
@@ -2623,21 +2624,36 @@ struct zpl_file_operations {
 
 extern zpl_file_operations const zpl_default_file_operations;
 
-// typedef struct zpl_dir_info {
-//  u8 *buf;
-//  isize buf_count;
-//  isize buf_pos;
-// } zpl_dir_info;
-
 typedef u64 zpl_file_time;
+typedef enum zpl_dir_type {
+    ZPL_DIR_TYPE_FILE,
+    ZPL_DIR_TYPE_FOLDER,
+    ZPL_DIR_TYPE_UNKNOWN,
+} zpl_dir_type;
 
+struct zpl_dir_info;
+
+typedef struct zpl_dir_entry {
+    char const *filename;
+    struct zpl_dir_info *dir_info;
+    u8 type;
+} zpl_dir_entry;
+
+typedef struct zpl_dir_info {
+    char const *fullpath;
+    zpl_dir_entry *entries; // zpl_array
+
+    // Internals
+    char **filenames; // zpl_array
+    zpl_string buf;
+} zpl_dir_info;
 
 typedef struct zpl_file {
     zpl_file_operations ops;
     zpl_file_descriptor fd;
     char const *filename;
     zpl_file_time last_write_time;
-    // zpl_dir_info *   dir_info; // TODO: Get directory info
+    zpl_dir_entry *dir;
 } zpl_file;
 
 #ifdef ZPL_THREADING
@@ -2684,6 +2700,10 @@ ZPL_DEF char const *zpl_file_name(zpl_file *file);
 ZPL_DEF zplFileError zpl_file_truncate(zpl_file *file, i64 size);
 ZPL_DEF b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since lasted checked
 
+//! Refresh dirinfo of specified file
+ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
+
+
 #ifdef ZPL_THREADING
 ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
 ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, isize size, zpl_async_file_cb proc);
@@ -2701,11 +2721,12 @@ typedef struct zpl_file_contents {
 ZPL_DEF zpl_file_contents zpl_file_read_contents(zpl_allocator a, b32 zero_terminate, char const *filepath);
 ZPL_DEF void zpl_file_free_contents(zpl_file_contents *fc);
 
-// NOTE: Make sure you free both the returned buffer and the lines (zpl_array)
+//! Make sure you free both the returned buffer and the lines (zpl_array)
 ZPL_DEF char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *) * lines, char const *filename,
                                   b32 strip_whitespace);
 
 ZPL_DEF b32 zpl_fs_exists(char const *filepath);
+ZPL_DEF u8  zpl_fs_get_type(char const *path);
 ZPL_DEF zpl_file_time zpl_fs_last_write_time(char const *filepath);
 ZPL_DEF b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, b32 fail_if_exists);
 ZPL_DEF b32 zpl_fs_move(char const *existing_filename, char const *new_filename);
@@ -2722,6 +2743,7 @@ ZPL_DEF b32 zpl_fs_remove(char const *filename);
 ZPL_DEF b32 zpl_path_is_absolute(char const *path);
 ZPL_DEF b32 zpl_path_is_relative(char const *path);
 ZPL_DEF b32 zpl_path_is_root(char const *path);
+ZPL_DEF void zpl_path_fix_slashes(char *path);
 ZPL_DEF char const *zpl_path_base_name(char const *path);
 ZPL_DEF char const *zpl_path_extension(char const *path);
 ZPL_DEF char *zpl_path_get_full_name(zpl_allocator a, char const *path);
@@ -2729,8 +2751,15 @@ ZPL_DEF char *zpl_path_get_full_name(zpl_allocator a, char const *path);
 ZPL_DEF zplFileError zpl_path_mkdir(char const *path, i32 mode);
 ZPL_DEF zplFileError zpl_path_rmdir(char const *path);
 
-// NOTE: Returns file paths terminated by newline (\n)
-zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse);
+//! Returns file paths terminated by newline (\n)
+ZPL_DEF zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurse);
+
+//! Initialize dirinfo from specified path
+ZPL_DEF void zpl_dirinfo_init(zpl_dir_info *dir, char const *path);
+ZPL_DEF void zpl_dirinfo_free(zpl_dir_info *dir);
+
+//! Analyze the entry's dirinfo
+ZPL_DEF void zpl_dirinfo_step(zpl_dir_entry *dir_entry);
 
 //! @}
 /** @file print.c
@@ -8726,6 +8755,8 @@ zplFileError zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *fil
     return err;
 }
 
+zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry);
+
 zplFileError zpl_file_close(zpl_file *f) {
     if (!f) return ZPL_FILE_ERROR_INVALID;
     
@@ -8739,6 +8770,12 @@ zplFileError zpl_file_close(zpl_file *f) {
     
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.close(f->fd);
+
+    if (f->dir) {
+        zpl__dirinfo_free_entry(f->dir);
+        zpl_mfree(f->dir);
+        f->dir = NULL;
+    }
     
     return ZPL_FILE_ERROR_NONE;
 }
@@ -9212,7 +9249,8 @@ zpl_inline b32 zpl_path_is_root(char const *path) {
 zpl_inline char const *zpl_path_base_name(char const *path) {
     char const *ls;
     ZPL_ASSERT_NOT_NULL(path);
-    ls = zpl_char_last_occurence(path, '/');
+    zpl_path_fix_slashes((char *)path);
+    ls = zpl_char_last_occurence(path, ZPL_PATH_SEPARATOR);
     return (ls == NULL) ? path : ls + 1;
 }
 
@@ -9400,6 +9438,137 @@ zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, b32 recurs
     return buf;
 }
 
+void zpl_dirinfo_init(zpl_dir_info *dir, char const *path) {
+    ZPL_ASSERT_NOT_NULL(dir);
+
+    zpl_dir_info dir_ = {0};
+    *dir = dir_;
+    dir->fullpath = (char const*)zpl_malloc(zpl_strlen(path));
+    zpl_strcpy((char *)dir->fullpath, path);
+    
+
+    zpl_string dirlist = zpl_path_dirlist(zpl_heap(), path, false);
+    char **files=zpl_str_split_lines(zpl_heap(), dirlist, false);
+    dir->filenames = files;
+    dir->buf = dirlist;
+
+    zpl_array_init(dir->entries, zpl_heap());
+    
+    for (i32 i=0; i<zpl_array_count(files); ++i) {
+        zpl_dir_entry entry = {0};
+        entry.filename = files[i];
+        entry.type = zpl_fs_get_type(entry.filename);
+
+        zpl_array_append(dir->entries, entry);
+    }
+}
+
+zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry) {
+    if (entry->dir_info) {
+        zpl_dirinfo_free(entry->dir_info);
+        zpl_mfree(entry->dir_info);
+        entry->dir_info = NULL;
+    }
+}
+
+void zpl_dirinfo_free(zpl_dir_info *dir) {
+    ZPL_ASSERT_NOT_NULL(dir);
+
+    for (isize i = 0; i < zpl_array_count(dir->entries); ++i) {
+        zpl__dirinfo_free_entry(dir->entries + i);
+    }
+
+    zpl_array_free(dir->entries);
+    zpl_array_free(dir->filenames);
+    zpl_string_free(dir->buf);
+    zpl_mfree((void *)dir->fullpath);
+}
+
+
+u8 zpl_fs_get_type(char const *path) {
+#ifdef ZPL_SYSTEM_WINDOWS
+    DWORD attrs = GetFileAttributesW((const wchar_t *)zpl_utf8_to_ucs2_buf((const u8 *)path));
+
+    if (attrs == INVALID_FILE_ATTRIBUTES) {
+        return ZPL_DIR_TYPE_UNKNOWN;
+    } 
+
+    if (attrs & FILE_ATTRIBUTE_DIRECTORY) {
+        return ZPL_DIR_TYPE_FOLDER;
+    }
+    else {
+        return ZPL_DIR_TYPE_FILE;
+    }
+
+#else
+    struct stat s;
+    if( stat(path,&s) == 0 )
+    {
+        if( s.st_mode & S_IFDIR )
+        {
+            return ZPL_DIR_TYPE_FOLDER;
+        }
+        else
+        {
+            return ZPL_DIR_TYPE_FILE;
+        }
+    }
+#endif
+
+    return ZPL_DIR_TYPE_UNKNOWN;
+}
+#undef ZPL_STAT
+
+void zpl_dirinfo_step(zpl_dir_entry *entry) {
+    if (entry->dir_info) {
+        zpl__dirinfo_free_entry(entry);
+    }
+
+    entry->dir_info = (zpl_dir_info *)zpl_malloc(sizeof(zpl_dir_info));
+    zpl_dir_info dir_ = {0};
+    *entry->dir_info = dir_;
+
+    zpl_local_persist char buf[128] = {0};
+    char const *path = entry->filename;
+
+    if (entry->type != ZPL_DIR_TYPE_FOLDER) {
+        zpl_path_fix_slashes((char *)path);
+        char const* slash = zpl_char_last_occurence(path, ZPL_PATH_SEPARATOR);
+        zpl_strncpy(buf, path, slash-path);
+        path = buf;
+    }
+
+    zpl_dirinfo_init(entry->dir_info, path);
+}
+
+void zpl_file_dirinfo_refresh(zpl_file *file) {
+    if (file->dir) {
+        zpl__dirinfo_free_entry(file->dir);
+        zpl_mfree(file->dir);
+        file->dir = NULL;
+    }
+
+    file->dir = (zpl_dir_entry *)zpl_malloc(sizeof(zpl_dir_entry));
+    zpl_dir_entry dir_ = {0};
+    *file->dir = dir_;
+    file->dir->filename = file->filename;
+    file->dir->type = ZPL_DIR_TYPE_FILE;
+    
+    zpl_dirinfo_step(file->dir);
+}
+
+void zpl_path_fix_slashes(char *path) {
+#ifdef ZPL_SYSTEM_WINDOWS
+    char *p = path;
+
+    while (*p != '\0') {
+        if (*p == '/')
+            *p = '\\';
+        
+        ++p;
+    }
+#endif
+}
 
 ////////////////////////////////////////////////////////////////
 //

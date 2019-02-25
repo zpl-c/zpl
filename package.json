@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "description": "Single-file header-only C and C++ helper library.",
   "main": "include/zpl.h",
   "directories": {
