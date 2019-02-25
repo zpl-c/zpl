@@ -26,16 +26,17 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
-9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
-9.1.0 - get_env rework and fixes
-9.0.3 - Small fixes and removals
-9.0.0 - New documentation format, removed deprecated code, changed styles
+  9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
+  9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
+  9.1.0 - get_env rework and fixes
+  9.0.3 - Small fixes and removals
+  9.0.0 - New documentation format, removed deprecated code, changed styles
 
-8.14.1 - Fix string library
-8.14.0 - Added zpl_re_match_all
-8.13.0 - Update system command API
+  8.14.1 - Fix string library
+  8.14.0 - Added zpl_re_match_all
+  8.13.0 - Update system command API
   8.12.6 - Fix warning in CLI options parser
-8.12.5 - Support parametric options preceding positionals
+  8.12.5 - Support parametric options preceding positionals
   8.12.4 - Fixed opts positionals ordering
   8.12.3 - Fixed incorrect handling of flags preceding positionals
   8.12.2 - JSON parsing remark added
