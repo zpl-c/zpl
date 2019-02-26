@@ -393,66 +393,48 @@ typedef zpl_b8 bool;
 #endif
 #endif
 
-#define u8 zpl_u8
-#define i8 zpl_i8
-#define u16 zpl_u16
-#define i16 zpl_i16
-#define u32 zpl_u32
-#define i32 zpl_i32
-#define u64 zpl_u64
-#define i64 zpl_i64
-#define b8 zpl_b8
-#define b16 zpl_b16
-#define b32 zpl_b32
-#define f32 zpl_f32
-#define f64 zpl_f64
-#define usize zpl_usize
-#define isize zpl_isize
-#define uintptr zpl_uintptr
-#define intptr zpl_intptr
+#ifndef ZPL_U8_MIN
+#define ZPL_U8_MIN 0u
+#define ZPL_U8_MAX 0xffu
+#define ZPL_I8_MIN (-0x7f - 1)
+#define ZPL_I8_MAX 0x7f
 
-#ifndef U8_MIN
-#define U8_MIN 0u
-#define U8_MAX 0xffu
-#define I8_MIN (-0x7f - 1)
-#define I8_MAX 0x7f
+#define ZPL_U16_MIN 0u
+#define ZPL_U16_MAX 0xffffu
+#define ZPL_I16_MIN (-0x7fff - 1)
+#define ZPL_I16_MAX 0x7fff
 
-#define U16_MIN 0u
-#define U16_MAX 0xffffu
-#define I16_MIN (-0x7fff - 1)
-#define I16_MAX 0x7fff
+#define ZPL_U32_MIN 0u
+#define ZPL_U32_MAX 0xffffffffu
+#define ZPL_I32_MIN (-0x7fffffff - 1)
+#define ZPL_I32_MAX 0x7fffffff
 
-#define U32_MIN 0u
-#define U32_MAX 0xffffffffu
-#define I32_MIN (-0x7fffffff - 1)
-#define I32_MAX 0x7fffffff
-
-#define U64_MIN 0ull
-#define U64_MAX 0xffffffffffffffffull
-#define I64_MIN (-0x7fffffffffffffffll - 1)
-#define I64_MAX 0x7fffffffffffffffll
+#define ZPL_U64_MIN 0ull
+#define ZPL_U64_MAX 0xffffffffffffffffull
+#define ZPL_I64_MIN (-0x7fffffffffffffffll - 1)
+#define ZPL_I64_MAX 0x7fffffffffffffffll
 
 #if defined(ZPL_ARCH_32_BIT)
-#define USIZE_MIN U32_MIN
-#define USIZE_MAX U32_MAX
+#define ZPL_USIZE_MIN ZPL_U32_MIN
+#define ZPL_USIZE_MAX ZPL_U32_MAX
 
-#define ISIZE_MIN S32_MIN
-#define ISIZE_MAX S32_MAX
+#define ZPL_ISIZE_MIN ZPL_S32_MIN
+#define ZPL_ISIZE_MAX ZPL_S32_MAX
 #elif defined(ZPL_ARCH_64_BIT)
-#define USIZE_MIN U64_MIN
-#define USIZE_MAX U64_MAX
+#define ZPL_USIZE_MIN ZPL_U64_MIN
+#define ZPL_USIZE_MAX ZPL_U64_MAX
 
-#define ISIZE_MIN I64_MIN
-#define ISIZE_MAX I64_MAX
+#define ZPL_ISIZE_MIN ZPL_I64_MIN
+#define ZPL_ISIZE_MAX ZPL_I64_MAX
 #else
 #error Unknown architecture size. This library only supports 32 bit and 64 bit architectures.
 #endif
 
-#define F32_MIN 1.17549435e-38f
-#define F32_MAX 3.40282347e+38f
+#define ZPL_F32_MIN 1.17549435e-38f
+#define ZPL_F32_MAX 3.40282347e+38f
 
-#define F64_MIN 2.2250738585072014e-308
-#define F64_MAX 1.7976931348623157e+308
+#define ZPL_F64_MIN 2.2250738585072014e-308
+#define ZPL_F64_MAX 1.7976931348623157e+308
 
 #endif
 
@@ -525,16 +507,16 @@ typedef zpl_b8 bool;
 #endif
 
 #ifndef zpl_size_of
-#define zpl_size_of(x) (isize)(sizeof(x))
+#define zpl_size_of(x) (zpl_isize)(sizeof(x))
 #endif
 
 #ifndef zpl_count_of
-#define zpl_count_of(x) ((zpl_size_of(x) / zpl_size_of(0 [x])) / ((isize)(!(zpl_size_of(x) % zpl_size_of(0 [x])))))
+#define zpl_count_of(x) ((zpl_size_of(x) / zpl_size_of(0 [x])) / ((zpl_isize)(!(zpl_size_of(x) % zpl_size_of(0 [x])))))
 #endif
 
 #ifndef zpl_offset_of
 #ifdef _MSC_VER
-#define zpl_offset_of(Type, element) ((isize) & (((Type *)0)->element))
+#define zpl_offset_of(Type, element) ((zpl_isize) & (((Type *)0)->element))
 #else
 #define zpl_offset_of(Type, element) __builtin_offsetof(Type, element)
 #endif
@@ -543,7 +525,7 @@ typedef zpl_b8 bool;
 #if defined(__cplusplus)
 #ifndef zpl_align_of
 #if __cplusplus >= 201103L
-#define zpl_align_of(Type) (isize)alignof(Type)
+#define zpl_align_of(Type) (zpl_isize)alignof(Type)
 #else
 extern "C++" {
     template <typename T> struct zpl_alignment_trick {
@@ -716,13 +698,13 @@ do {                                                                            
 #define ZPL_PANIC(msg, ...) ZPL_ASSERT_MSG(0, msg, ##__VA_ARGS__)
 #endif
 
-ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...);
-ZPL_DEF i32 zpl_assert_crash(char const *condition);
+ZPL_DEF void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...);
+ZPL_DEF zpl_i32 zpl_assert_crash(char const *condition);
 
 //! @}
 //$$
 
-void zpl_assert_handler(char const *condition, char const *file, i32 line, char const *msg, ...) {
+void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...) {
     zpl_printf_err("%s:(%d): Assert Failure: ", file, line);
     if (condition) zpl_printf_err("`%s` ", condition);
     if (msg) {
@@ -734,7 +716,7 @@ void zpl_assert_handler(char const *condition, char const *file, i32 line, char 
     zpl_printf_err("\n");
 }
 
-i32 zpl_assert_crash(char const *condition) {
+zpl_i32 zpl_assert_crash(char const *condition) {
     ZPL_PANIC(condition);
     
     return 0;

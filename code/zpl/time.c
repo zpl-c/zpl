@@ -8,27 +8,27 @@
  */
 
 //! Return CPU timestamp.
-ZPL_DEF u64 zpl_rdtsc(void);
+ZPL_DEF zpl_u64 zpl_rdtsc(void);
 
 //! Return relative time since the application start.
-ZPL_DEF f64 zpl_time_now(void);
+ZPL_DEF zpl_f64 zpl_time_now(void);
 
 //! Return time since 1601-01-01 UTC.
-ZPL_DEF f64 zpl_utc_time_now(void);
+ZPL_DEF zpl_f64 zpl_utc_time_now(void);
 
 //! Sleep for specified number of milliseconds.
-ZPL_DEF void zpl_sleep_ms(u32 ms);
+ZPL_DEF void zpl_sleep_ms(zpl_u32 ms);
 
 typedef void (*zpl_timer_cb)(void *data);
 
 //! Timer data structure
 typedef struct zpl_timer {
     zpl_timer_cb callback;
-    b32 enabled;
-    i32 remaining_calls;
-    i32 initial_calls;
-    f64 next_call_ts;
-    f64 duration;
+    zpl_b32 enabled;
+    zpl_i32 remaining_calls;
+    zpl_i32 initial_calls;
+    zpl_f64 next_call_ts;
+    zpl_f64 duration;
     void *user_data;
 } zpl_timer;
 
@@ -52,11 +52,11 @@ ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
 //! @param duration How long/often to fire a timer.
 //! @param count How many times we fire a timer. Use -1 for infinity.
 //! @param callback A method to execute once a timer triggers.
-ZPL_DEF void zpl_timer_set(zpl_timer *timer, f64 /* microseconds */ duration, i32 /* -1 for INFINITY */ count,
+ZPL_DEF void zpl_timer_set(zpl_timer *timer, zpl_f64 /* microseconds */ duration, zpl_i32 /* -1 for INFINITY */ count,
                            zpl_timer_cb callback);
 
 //! Start timer with specified delay.
-ZPL_DEF void zpl_timer_start(zpl_timer *timer, f64 delay_start);
+ZPL_DEF void zpl_timer_start(zpl_timer *timer, zpl_f64 delay_start);
 
 //! Stop timer and prevent it from triggering.
 ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
@@ -71,23 +71,23 @@ ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 //
 
 #if defined(ZPL_COMPILER_MSVC) && !defined(__clang__)
-zpl_inline u64 zpl_rdtsc(void) { return __rdtsc( ); }
+zpl_inline zpl_u64 zpl_rdtsc(void) { return __rdtsc( ); }
 #elif defined(__i386__)
-zpl_inline u64 zpl_rdtsc(void) {
-    u64 x;
+zpl_inline zpl_u64 zpl_rdtsc(void) {
+    zpl_u64 x;
     __asm__ volatile(".byte 0x0f, 0x31" : "=A"(x));
     return x;
 }
 #elif defined(__x86_64__)
-zpl_inline u64 zpl_rdtsc(void) {
-    u32 hi, lo;
+zpl_inline zpl_u64 zpl_rdtsc(void) {
+    zpl_u32 hi, lo;
     __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
-    return (cast(u64) lo) | ((cast(u64) hi) << 32);
+    return (cast(zpl_u64) lo) | ((cast(zpl_u64) hi) << 32);
 }
 #elif defined(__powerpc__)
-zpl_inline u64 zpl_rdtsc(void) {
-    u64 result = 0;
-    u32 upper, lower, tmp;
+zpl_inline zpl_u64 zpl_rdtsc(void) {
+    zpl_u64 result = 0;
+    zpl_u32 upper, lower, tmp;
     __asm__ volatile("0:                   \n"
                      "\tmftbu   %0         \n"
                      "\tmftb    %1         \n"
@@ -102,7 +102,7 @@ zpl_inline u64 zpl_rdtsc(void) {
     return result;
 }
 #elif defined(ZPL_CPU_ARM)
-zpl_inline u64 zpl_rdtsc(void) {
+zpl_inline zpl_u64 zpl_rdtsc(void) {
 #if defined(__aarch64__)
     int64_t r = 0;
     asm volatile("mrs %0, cntvct_el0" : "=r"(r));
@@ -133,9 +133,9 @@ zpl_inline u64 zpl_rdtsc(void) {
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-zpl_inline f64 zpl_time_now(void) {
+zpl_inline zpl_f64 zpl_time_now(void) {
     zpl_local_persist LARGE_INTEGER win32_perf_count_freq = { 0 };
-    f64 result;
+    zpl_f64 result;
     LARGE_INTEGER counter;
     zpl_local_persist LARGE_INTEGER win32_perf_counter = { 0 };
     if (!win32_perf_count_freq.QuadPart) {
@@ -146,11 +146,11 @@ zpl_inline f64 zpl_time_now(void) {
     
     QueryPerformanceCounter(&counter);
     
-    result = (counter.QuadPart - win32_perf_counter.QuadPart) / cast(f64)(win32_perf_count_freq.QuadPart);
+    result = (counter.QuadPart - win32_perf_counter.QuadPart) / cast(zpl_f64)(win32_perf_count_freq.QuadPart);
     return result;
 }
 
-zpl_inline f64 zpl_utc_time_now(void) {
+zpl_inline zpl_f64 zpl_utc_time_now(void) {
     FILETIME ft;
     ULARGE_INTEGER li;
     
@@ -161,14 +161,14 @@ zpl_inline f64 zpl_utc_time_now(void) {
     return li.QuadPart / 10 / 10e5;
 }
 
-zpl_inline void zpl_sleep_ms(u32 ms) { Sleep(ms); }
+zpl_inline void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
 
 #else
 
 #if defined(ZPL_SYSTEM_LINUX)
-f64 zpl__unix_getime(void) {
+zpl_f64 zpl__unix_getime(void) {
     struct timespec t;
-    f64 result;
+    zpl_f64 result;
     
     clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
     result = t.tv_sec + 1.0e-9 * t.tv_nsec;
@@ -176,12 +176,12 @@ f64 zpl__unix_getime(void) {
 }
 #endif
 
-zpl_inline f64 zpl_time_now(void) {
+zpl_inline zpl_f64 zpl_time_now(void) {
 #if defined(ZPL_SYSTEM_OSX)
-    f64 result;
+    zpl_f64 result;
     
-    zpl_local_persist f64 timebase = 0.0;
-    zpl_local_persist u64 timestart = 0;
+    zpl_local_persist zpl_f64 timebase = 0.0;
+    zpl_local_persist zpl_u64 timestart = 0;
     
     if (!timestart) {
         mach_timebase_info_data_t tb = { 0 };
@@ -195,17 +195,17 @@ zpl_inline f64 zpl_time_now(void) {
     result = 1.0e-9 * (mach_absolute_time( ) - timestart) * timebase;
     return result;
 #else
-    zpl_local_persist f64 unix_timestart = 0.0;
+    zpl_local_persist zpl_f64 unix_timestart = 0.0;
     
     if (!unix_timestart) { unix_timestart = zpl__unix_getime( ); }
     
-    f64 now = zpl__unix_getime( );
+    zpl_f64 now = zpl__unix_getime( );
     
     return (now - unix_timestart);
 #endif
 }
 
-zpl_inline f64 zpl_utc_time_now(void) {
+zpl_inline zpl_f64 zpl_utc_time_now(void) {
     struct timespec t;
 #if defined(ZPL_SYSTEM_OSX)
     clock_serv_t cclock;
@@ -218,10 +218,10 @@ zpl_inline f64 zpl_utc_time_now(void) {
 #else
     clock_gettime(0 /*CLOCK_REALTIME*/, &t);
 #endif
-    return (cast(u64) t.tv_sec * 1000000ull + t.tv_nsec / 1000 + 11644473600000000ull) / 10e5;
+    return (cast(zpl_u64) t.tv_sec * 1000000ull + t.tv_nsec / 1000 + 11644473600000000ull) / 10e5;
 }
 
-zpl_inline void zpl_sleep_ms(u32 ms) {
+zpl_inline void zpl_sleep_ms(zpl_u32 ms) {
     struct timespec req = { cast(time_t) ms / 1000, cast(long)((ms % 1000) * 1000000) };
     struct timespec rem = { 0, 0 };
     nanosleep(&req, &rem);
@@ -243,7 +243,7 @@ zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     return pool + (zpl_array_count(pool) - 1);
 }
 
-zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_cb cb) {
+zpl_inline void zpl_timer_set(zpl_timer *t, zpl_f64 duration, zpl_i32 count, zpl_timer_cb cb) {
     ZPL_ASSERT(t);
     
     t->duration = duration;
@@ -252,7 +252,7 @@ zpl_inline void zpl_timer_set(zpl_timer *t, f64 duration, i32 count, zpl_timer_c
     t->enabled = false;
 }
 
-zpl_inline void zpl_timer_start(zpl_timer *t, f64 delay_start) {
+zpl_inline void zpl_timer_start(zpl_timer *t, zpl_f64 delay_start) {
     ZPL_ASSERT(t && !t->enabled);
     
     t->enabled = true;
@@ -269,9 +269,9 @@ zpl_inline void zpl_timer_stop(zpl_timer *t) {
 zpl_inline void zpl_timer_update(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
     
-    f64 now = zpl_time_now( );
+    zpl_f64 now = zpl_time_now( );
     
-    for (isize i = 0; i < zpl_array_count(pool); ++i) {
+    for (zpl_isize i = 0; i < zpl_array_count(pool); ++i) {
         zpl_timer *t = pool + i;
         
         if (t->enabled) {

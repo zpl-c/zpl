@@ -26,8 +26,8 @@ Memory containers in various types: buffers, arrays, linked lists, ring buffers,
 
 typedef struct zpl_buffer_header {
     zpl_allocator backing;
-    isize count;
-    isize capacity;
+    zpl_isize count;
+    zpl_isize capacity;
 } zpl_buffer_header;
 
 #define zpl_buffer(Type) Type *
@@ -156,7 +156,7 @@ ZPL_DEF zpl_list *zpl_list_remove(zpl_list *list);
 
 #if 0 // Example
 void foo(void) {
-    isize i;
+    zpl_isize i;
     int test_values[] = {4, 2, 1, 7};
     zpl_allocator a = zpl_heap_allocator();
     zpl_array(int) items;
@@ -195,8 +195,8 @@ void foo(void) {
 
 typedef struct zpl_array_header {
     char *data;
-    isize count;
-    isize capacity;
+    zpl_isize count;
+    zpl_isize capacity;
     zpl_allocator allocator;
 } zpl_array_header;
 
@@ -246,11 +246,11 @@ do {                                                                            
 } while (0)
 
 // NOTE: Do not use the thing below directly, use the macro
-ZPL_DEF void *zpl__array_set_capacity(void *array, isize capacity, isize element_size);
+ZPL_DEF void *zpl__array_set_capacity(void *array, zpl_isize capacity, zpl_isize element_size);
 
 #define zpl_array_grow(x, min_capacity)                                                                                \
 do {                                                                                                               \
-    isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_array_capacity(x));                                            \
+    zpl_isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_array_capacity(x));                                            \
     if (new_capacity < (min_capacity)) new_capacity = (min_capacity);                                              \
     zpl_array_set_capacity(x, new_capacity);                                                                       \
 } while (0)
@@ -323,17 +323,17 @@ do {                                                                            
 /*
 int main()
 {
-    zpl_ring_u32 pad={0};
-    zpl_ring_u32_init(&pad, zpl_heap(), 3);
-    zpl_ring_u32_append(&pad, 1);
-    zpl_ring_u32_append(&pad, 2);
-    zpl_ring_u32_append(&pad, 3);
+    zpl_ring_zpl_u32 pad={0};
+    zpl_ring_zpl_u32_init(&pad, zpl_heap(), 3);
+    zpl_ring_zpl_u32_append(&pad, 1);
+    zpl_ring_zpl_u32_append(&pad, 2);
+    zpl_ring_zpl_u32_append(&pad, 3);
     
-    while (!zpl_ring_u32_empty(&pad)) {
-        zpl_printf("Result is %d\n", *zpl_ring_u32_get(&pad));
+    while (!zpl_ring_zpl_u32_empty(&pad)) {
+        zpl_printf("Result is %d\n", *zpl_ring_zpl_u32_get(&pad));
     }
     
-    zpl_ring_u32_free(&pad);
+    zpl_ring_zpl_u32_free(&pad);
     
     return 0;
 }
@@ -343,22 +343,22 @@ int main()
 typedef struct {                                                                                                   \
     zpl_allocator backing;                                                                                         \
     zpl_buffer(type) buf;                                                                                          \
-    usize head, tail;                                                                                              \
-    usize capacity;                                                                                                \
+    zpl_usize head, tail;                                                                                              \
+    zpl_usize capacity;                                                                                                \
 } ZPL_JOIN2(zpl_ring_, type);                                                                                      \
 \
-ZPL_DEF void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_allocator a, isize max_size); \
+ZPL_DEF void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_allocator a, zpl_isize max_size); \
 ZPL_DEF void ZPL_JOIN3(zpl_ring_, type, _free)(ZPL_JOIN2(zpl_ring_, type) * pad);                                  \
-ZPL_DEF b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) * pad);                                   \
-ZPL_DEF b32 ZPL_JOIN3(zpl_ring_, type, _empty)(ZPL_JOIN2(zpl_ring_, type) * pad);                                  \
+ZPL_DEF zpl_b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) * pad);                                   \
+ZPL_DEF zpl_b32 ZPL_JOIN3(zpl_ring_, type, _empty)(ZPL_JOIN2(zpl_ring_, type) * pad);                                  \
 ZPL_DEF void ZPL_JOIN3(zpl_ring_, type, _append)(ZPL_JOIN2(zpl_ring_, type) * pad, type data);                     \
 ZPL_DEF void ZPL_JOIN3(zpl_ring_, type, _append_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_array(type) data);    \
 ZPL_DEF type *ZPL_JOIN3(zpl_ring_, type, _get)(ZPL_JOIN2(zpl_ring_, type) * pad);                                  \
 ZPL_DEF zpl_array(type)                                                                                            \
-ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, usize max_size, zpl_allocator a);
+ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_usize max_size, zpl_allocator a);
 
 #define ZPL_RING_DEFINE(type)                                                                                          \
-void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_allocator a, isize max_size) {        \
+void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_allocator a, zpl_isize max_size) {        \
     ZPL_JOIN2(zpl_ring_, type) pad_ = { 0 };                                                                       \
     *pad = pad_;                                                                                                   \
     \
@@ -371,11 +371,11 @@ void ZPL_JOIN3(zpl_ring_, type, _free)(ZPL_JOIN2(zpl_ring_, type) * pad) {      
     zpl_buffer_free(pad->buf, pad->backing);                                                                       \
 }                                                                                                                  \
 \
-b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) * pad) {                                          \
+zpl_b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) * pad) {                                          \
     return ((pad->head + 1) % pad->capacity) == pad->tail;                                                         \
 }                                                                                                                  \
 \
-b32 ZPL_JOIN3(zpl_ring_, type, _empty)(ZPL_JOIN2(zpl_ring_, type) * pad) { return pad->head == pad->tail; }        \
+zpl_b32 ZPL_JOIN3(zpl_ring_, type, _empty)(ZPL_JOIN2(zpl_ring_, type) * pad) { return pad->head == pad->tail; }        \
 \
 void ZPL_JOIN3(zpl_ring_, type, _append)(ZPL_JOIN2(zpl_ring_, type) * pad, type data) {                            \
     pad->buf[pad->head] = data;                                                                                    \
@@ -385,8 +385,8 @@ void ZPL_JOIN3(zpl_ring_, type, _append)(ZPL_JOIN2(zpl_ring_, type) * pad, type 
 }                                                                                                                  \
 \
 void ZPL_JOIN3(zpl_ring_, type, _append_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_array(type) data) {           \
-    usize c = zpl_array_count(data);                                                                               \
-    for (usize i = 0; i < c; ++i) { ZPL_JOIN3(zpl_ring_, type, _append)(pad, data[i]); }                           \
+    zpl_usize c = zpl_array_count(data);                                                                               \
+    for (zpl_usize i = 0; i < c; ++i) { ZPL_JOIN3(zpl_ring_, type, _append)(pad, data[i]); }                           \
 }                                                                                                                  \
 \
 type *ZPL_JOIN3(zpl_ring_, type, _get)(ZPL_JOIN2(zpl_ring_, type) * pad) {                                         \
@@ -399,7 +399,7 @@ type *ZPL_JOIN3(zpl_ring_, type, _get)(ZPL_JOIN2(zpl_ring_, type) * pad) {      
 }                                                                                                                  \
 \
 zpl_array(type)                                                                                                    \
-ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, usize max_size, zpl_allocator a) {    \
+ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_usize max_size, zpl_allocator a) {    \
     zpl_array(type) vals;                                                                                          \
     zpl_array_init(vals, a);                                                                                       \
     while (--max_size && !ZPL_JOIN3(zpl_ring_, type, _empty)(pad)) {                                               \
@@ -444,7 +444,7 @@ zpl_inline zpl_list *zpl_list_remove(zpl_list *list) {
 //
 //
 
-zpl_no_inline void *zpl__array_set_capacity(void *array, isize capacity, isize element_size) {
+zpl_no_inline void *zpl__array_set_capacity(void *array, zpl_isize capacity, zpl_isize element_size) {
     zpl_array_header *h = ZPL_ARRAY_HEADER(array);
     
     ZPL_ASSERT(element_size > 0);
@@ -453,7 +453,7 @@ zpl_no_inline void *zpl__array_set_capacity(void *array, isize capacity, isize e
     
     if (capacity < h->count) {
         if (h->capacity < capacity) {
-            isize new_capacity = ZPL_ARRAY_GROW_FORMULA(h->capacity);
+            zpl_isize new_capacity = ZPL_ARRAY_GROW_FORMULA(h->capacity);
             if (new_capacity < capacity) new_capacity = capacity;
             zpl__array_set_capacity(array, new_capacity, element_size);
         }
@@ -461,7 +461,7 @@ zpl_no_inline void *zpl__array_set_capacity(void *array, isize capacity, isize e
     }
     
     {
-        isize size = zpl_size_of(zpl_array_header) + element_size * capacity;
+        zpl_isize size = zpl_size_of(zpl_array_header) + element_size * capacity;
         zpl_array_header *nh = cast(zpl_array_header *) zpl_alloc(h->allocator, size);
         zpl_memmove(nh, h, zpl_size_of(zpl_array_header) + element_size * h->count);
         nh->allocator = h->allocator;

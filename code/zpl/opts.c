@@ -16,14 +16,14 @@ typedef enum {
 
 typedef struct {
     char const *name, *lname, *desc;
-    u8 type;
-    b32 met, pos;
+    zpl_u8 type;
+    zpl_b32 met, pos;
     
     //! values
     union {
         zpl_string text;
-        i64 integer;
-        f64 real;
+        zpl_i64 integer;
+        zpl_f64 real;
     };
 } zpl_opts_entry;
 
@@ -36,7 +36,7 @@ typedef enum {
 
 typedef struct {
     char *val;
-    u8 type;
+    zpl_u8 type;
 } zpl_opts_err;
 
 typedef struct {
@@ -67,7 +67,7 @@ ZPL_DEF void zpl_opts_free(zpl_opts *opts);
 //! @param desc Description shown in the help screen.
 //! @param type Option's type (see zpl_opts_types)
 //! @see zpl_opts_types
-ZPL_DEF void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type);
+ZPL_DEF void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, zpl_u8 type);
 
 //! Registers option as positional.
 
@@ -82,7 +82,7 @@ ZPL_DEF void zpl_opts_positional_add(zpl_opts *opts, char const *name);
 //! @param opts
 //! @param argc Argument count in an array.
 //! @param argv Array of arguments.
-ZPL_DEF b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv);
+ZPL_DEF zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv);
 
 //! Prints out help screen.
 
@@ -106,23 +106,23 @@ ZPL_DEF zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const 
 //! @param opts
 //! @param name Name of an option.
 //! @param fallback Fallback real number we return if option was not found.
-ZPL_DEF f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback);
+ZPL_DEF zpl_f64 zpl_opts_real(zpl_opts *opts, char const *name, zpl_f64 fallback);
 
 //! Fetches an integer number from an option.
 
 //! @param opts
 //! @param name Name of an option.
 //! @param fallback Fallback integer number we return if option was not found.
-ZPL_DEF i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback);
+ZPL_DEF zpl_i64 zpl_opts_integer(zpl_opts *opts, char const *name, zpl_i64 fallback);
 
 //! Checks whether an option was used.
 
 //! @param opts
 //! @param name Name of an option.
-ZPL_DEF b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
+ZPL_DEF zpl_b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 
 //! Checks whether all positionals have been passed in.
-ZPL_DEF b32 zpl_opts_positionals_filled(zpl_opts *opts);
+ZPL_DEF zpl_b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 //! @}
 //$$
@@ -146,7 +146,7 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
 
 void zpl_opts_free(zpl_opts *opts) {
     
-    for (i32 i = 0; i < zpl_array_count(opts->entries); ++i) {
+    for (zpl_i32 i = 0; i < zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e = opts->entries + i;
         if (e->type == ZPL_OPTS_STRING) { 
             zpl_string_free(e->text);
@@ -158,7 +158,7 @@ void zpl_opts_free(zpl_opts *opts) {
     zpl_array_free(opts->errors);
 }
 
-void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, u8 type) {
+void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const char *desc, zpl_u8 type) {
     zpl_opts_entry e = { 0 };
     
     e.name = name;
@@ -171,7 +171,7 @@ void zpl_opts_add(zpl_opts *opts, char const *name, char const *lname, const cha
     zpl_array_append(opts->entries, e);
 }
 
-zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, usize len, b32 longname) {
+zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, zpl_usize len, zpl_b32 longname) {
     zpl_opts_entry *e = 0;
     
     for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
@@ -193,7 +193,7 @@ void zpl_opts_positional_add(zpl_opts *opts, char const *name) {
     }
 }
 
-b32 zpl_opts_positionals_filled(zpl_opts *opts) { return zpl_array_count(opts->positioned) == 0; }
+zpl_b32 zpl_opts_positionals_filled(zpl_opts *opts) { return zpl_array_count(opts->positioned) == 0; }
 
 zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
@@ -201,13 +201,13 @@ zpl_string zpl_opts_string(zpl_opts *opts, char const *name, char const *fallbac
     return (char *)((e && e->met) ? e->text : fallback);
 }
 
-f64 zpl_opts_real(zpl_opts *opts, char const *name, f64 fallback) {
+zpl_f64 zpl_opts_real(zpl_opts *opts, char const *name, zpl_f64 fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
     
     return (e && e->met) ? e->real : fallback;
 }
 
-i64 zpl_opts_integer(zpl_opts *opts, char const *name, i64 fallback) {
+zpl_i64 zpl_opts_integer(zpl_opts *opts, char const *name, zpl_i64 fallback) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
     
     return (e && e->met) ? e->integer : fallback;
@@ -222,15 +222,15 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
         } break;
         
         case ZPL_OPTS_FLOAT: {
-            t->real = zpl_str_to_f64(b, NULL);
+            t->real = zpl_str_to_zpl_f64(b, NULL);
         } break;
         
         case ZPL_OPTS_INT: {
-            t->integer = zpl_str_to_i64(b, NULL, 10);
+            t->integer = zpl_str_to_zpl_i64(b, NULL, 10);
         } break;
     }
     
-    for (isize i=0; i < zpl_array_count(opts->positioned); i++) {
+    for (zpl_isize i=0; i < zpl_array_count(opts->positioned); i++) {
         if (!zpl_strcmp(opts->positioned[i]->lname, t->lname)) {
             zpl_array_remove_at(opts->positioned, i);
             break;
@@ -238,7 +238,7 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
     }
 }
 
-b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) {
+zpl_b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) {
     zpl_opts_entry *e = zpl__opts_find(opts, name, zpl_strlen(name), true);
     
     if (e) { return e->met; }
@@ -249,15 +249,15 @@ b32 zpl_opts_has_arg(zpl_opts *opts, char const *name) {
 void zpl_opts_print_help(zpl_opts *opts) {
     zpl_printf("USAGE: %s", opts->appname);
     
-    for (isize i = zpl_array_count(opts->entries); i >= 0; --i) {
+    for (zpl_isize i = zpl_array_count(opts->entries); i >= 0; --i) {
         zpl_opts_entry *e = opts->entries + i;
         
-        if (e->pos == (b32) true) { zpl_printf(" [%s]", e->lname); }
+        if (e->pos == (zpl_b32) true) { zpl_printf(" [%s]", e->lname); }
     }
     
     zpl_printf("\nOPTIONS:\n");
     
-    for (isize i = 0; i < zpl_array_count(opts->entries); ++i) {
+    for (zpl_isize i = 0; i < zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e = opts->entries + i;
         
         zpl_printf("\t-%s, --%s: %s\n", e->name, e->lname, e->desc);
@@ -284,15 +284,15 @@ void zpl_opts_print_errors(zpl_opts *opts) {
     }
 }
 
-void zpl__opts_push_error(zpl_opts *opts, char *b, u8 errtype) {
+void zpl__opts_push_error(zpl_opts *opts, char *b, zpl_u8 errtype) {
     zpl_opts_err err = { 0 };
     err.val = b;
     err.type = errtype;
     zpl_array_append(opts->errors, err);
 }
 
-b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
-    b32 had_errors = false;
+zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
+    zpl_b32 had_errors = false;
     for (int i = 1; i < argc; ++i) {
         char *p = argv[i];
         
@@ -300,7 +300,7 @@ b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
             p = zpl__trim(p, false);
             if (*p == '-') {
                 zpl_opts_entry *t = 0;
-                b32 checkln = false;
+                zpl_b32 checkln = false;
                 if (*(p + 1) == '-') {
                     checkln = true;
                     ++p;

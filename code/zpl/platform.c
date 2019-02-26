@@ -150,14 +150,14 @@ typedef enum zplKeyType {
     ZPL_KEY_COUNT,
 } zplKeyType;
 
-typedef u8 zplKeyState;
+typedef zpl_u8 zplKeyState;
 typedef enum zplKeyStateFlag {
     ZPL_KEY_STATE_DOWN = ZPL_BIT(0),
     ZPL_KEY_STATE_PRESSED = ZPL_BIT(1),
     ZPL_KEY_STATE_RELEASED = ZPL_BIT(2)
 } zplKeyStateFlag;
 
-ZPL_DEF void zpl_key_state_update(zplKeyState *s, b32 is_down);
+ZPL_DEF void zpl_key_state_update(zplKeyState *s, zpl_b32 is_down);
 
 typedef enum zplMouseButtonType {
     ZPL_MOUSEBUTTON_LEFT,
@@ -200,9 +200,9 @@ typedef enum zplControllerButtonType {
 } zplControllerButtonType;
 
 typedef struct zpl_game_controller {
-    b16 is_connected, is_analog;
+    zpl_b16 is_connected, is_analog;
     
-    f32 axes[ZPL_CONTROLLER_AXIS_COUNT];
+    zpl_f32 axes[ZPL_CONTROLLER_AXIS_COUNT];
     zplKeyState buttons[zplControllerButton_Count];
 } zpl_game_controller;
 
@@ -237,23 +237,23 @@ typedef enum zplRendererType {
 
 #if defined(ZPL_SYSTEM_WINDOWS) && !defined(_WINDOWS_)
 typedef struct tagBITMAPINFOHEADER {
-    unsigned long biSize;
+    unsigned long bzpl_isize;
     long biWidth;
     long biHeight;
-    u16 biPlanes;
-    u16 biBitCount;
+    zpl_u16 biPlanes;
+    zpl_u16 biBitCount;
     unsigned long biCompression;
-    unsigned long biSizeImage;
+    unsigned long bzpl_isizeImage;
     long biXPelsPerMeter;
     long biYPelsPerMeter;
     unsigned long biClrUsed;
     unsigned long biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 typedef struct tagRGBQUAD {
-    u8 rgbBlue;
-    u8 rgbGreen;
-    u8 rgbRed;
-    u8 rgbReserved;
+    zpl_u8 rgbBlue;
+    zpl_u8 rgbGreen;
+    zpl_u8 rgbRed;
+    zpl_u8 rgbReserved;
 } RGBQUAD;
 typedef struct tagBITMAPINFO {
     BITMAPINFOHEADER bmiHeader;
@@ -262,15 +262,15 @@ typedef struct tagBITMAPINFO {
 #endif
 
 typedef struct zpl_platform {
-    b32 is_initialized;
+    zpl_b32 is_initialized;
     
     void *window_handle;
-    i32 window_x, window_y;
-    i32 window_width, window_height;
-    i32 outline_x, outline_y;
-    i32 outline_width, outline_height;
-    u32 window_flags;
-    b16 window_is_closed, window_has_focus;
+    zpl_i32 window_x, window_y;
+    zpl_i32 window_width, window_height;
+    zpl_i32 outline_x, outline_y;
+    zpl_i32 outline_width, outline_height;
+    zpl_u32 window_flags;
+    zpl_b16 window_is_closed, window_has_focus;
     
 #if defined(ZPL_SYSTEM_WINDOWS)
     void *win32_dc;
@@ -282,9 +282,9 @@ typedef struct zpl_platform {
     union {
         struct {
             void *context;
-            i32 major;
-            i32 minor;
-            b16 core, compatible;
+            zpl_i32 major;
+            zpl_i32 minor;
+            zpl_b16 core, compatible;
             zpl_dll_handle dll_handle;
         } opengl;
         
@@ -294,9 +294,9 @@ typedef struct zpl_platform {
             BITMAPINFO win32_bmi;
 #endif
             void *memory;
-            isize memory_size;
-            i32 pitch;
-            i32 bits_per_pixel;
+            zpl_isize memory_size;
+            zpl_i32 pitch;
+            zpl_i32 bits_per_pixel;
         } sw_framebuffer;
     };
     
@@ -308,22 +308,22 @@ typedef struct zpl_platform {
     } key_modifiers;
     
     Rune char_buffer[256];
-    isize char_buffer_count;
+    zpl_isize char_buffer_count;
     
     void *window_cursor;
-    b32 mouse_clip;
-    b32 mouse_outside;
-    i32 mouse_x, mouse_y;
-    i32 mouse_dx, mouse_dy;         // NOTE(bill): Not raw mouse movement
-    i32 mouse_raw_dx, mouse_raw_dy; // NOTE(bill): Raw mouse movement
-    f32 mouse_wheel_delta;
+    zpl_b32 mouse_clip;
+    zpl_b32 mouse_outside;
+    zpl_i32 mouse_x, mouse_y;
+    zpl_i32 mouse_dx, mouse_dy;         // NOTE(bill): Not raw mouse movement
+    zpl_i32 mouse_raw_dx, mouse_raw_dy; // NOTE(bill): Raw mouse movement
+    zpl_f32 mouse_wheel_delta;
     zplKeyState mouse_buttons[ZPL_MOUSEBUTTON_COUNT];
     
     zpl_game_controller game_controllers[ZPL_MAX_GAME_CONTROLLER_COUNT];
     
-    f64 curr_time;
-    f64 dt_for_frame;
-    b32 quit_requested;
+    zpl_f64 curr_time;
+    zpl_f64 dt_for_frame;
+    zpl_b32 quit_requested;
     
 #if defined(ZPL_SYSTEM_WINDOWS)
     struct {
@@ -334,38 +334,38 @@ typedef struct zpl_platform {
 } zpl_platform;
 
 typedef struct zpl_video_mode {
-    i32 width, height;
-    i32 bits_per_pixel;
+    zpl_i32 width, height;
+    zpl_i32 bits_per_pixel;
 } zpl_video_mode;
 
-ZPL_DEF zpl_video_mode zpl_set_video_mode(i32 width, i32 height, i32 bits_per_pixel);
-ZPL_DEF b32 zpl_video_mode_is_valid(zpl_video_mode mode);
+ZPL_DEF zpl_video_mode zpl_set_video_mode(zpl_i32 width, zpl_i32 height, zpl_i32 bits_per_pixel);
+ZPL_DEF zpl_b32 zpl_video_mode_is_valid(zpl_video_mode mode);
 ZPL_DEF zpl_video_mode zpl_video_mode_get_desktop(void);
-ZPL_DEF isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes,
-                                                  isize max_mode_count); // NOTE(bill): returns mode count
+ZPL_DEF zpl_isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes,
+                                                  zpl_isize max_mode_count); // NOTE(bill): returns mode count
 ZPL_DEF ZPL_COMPARE_PROC(zpl_video_mode_cmp);     // NOTE(bill): Sort smallest to largest (Ascending)
 ZPL_DEF ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp); // NOTE(bill): Sort largest to smallest (Descending)
 
 // NOTE(bill): Software rendering
-ZPL_DEF b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, i32 width, i32 height,
-                                            u32 window_flags);
+ZPL_DEF zpl_b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
+                                            zpl_u32 window_flags);
 // NOTE(bill): OpenGL Rendering
-ZPL_DEF b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, i32 width, i32 height,
-                                          u32 window_flags, i32 major, i32 minor, b32 core, b32 compatible);
+ZPL_DEF zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
+                                          zpl_u32 window_flags, zpl_i32 major, zpl_i32 minor, zpl_b32 core, zpl_b32 compatible);
 ZPL_DEF void zpl_platform_update(zpl_platform *p);
 ZPL_DEF void zpl_platform_display(zpl_platform *p);
 ZPL_DEF void zpl_platform_destroy(zpl_platform *p);
-ZPL_DEF void zpl_platform_show_cursor(zpl_platform *p, b32 show);
+ZPL_DEF void zpl_platform_show_cursor(zpl_platform *p, zpl_b32 show);
 ZPL_DEF void zpl_platform_set_cursor(zpl_platform *p, void *handle);
-ZPL_DEF void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y);
-ZPL_DEF void zpl_platform_set_controller_vibration(zpl_platform *p, isize index, f32 left_motor, f32 right_motor);
-ZPL_DEF b32 zpl_platform_has_clipboard_text(zpl_platform *p);
+ZPL_DEF void zpl_platform_set_mouse_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
+ZPL_DEF void zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize index, zpl_f32 left_motor, zpl_f32 right_motor);
+ZPL_DEF zpl_b32 zpl_platform_has_clipboard_text(zpl_platform *p);
 ZPL_DEF void zpl_platform_set_clipboard_text(zpl_platform *p, char const *str);
 ZPL_DEF char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a);
-ZPL_DEF u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key);
-ZPL_DEF void zpl_platform_set_window_position(zpl_platform *p, i32 x, i32 y);
+ZPL_DEF zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key);
+ZPL_DEF void zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
 ZPL_DEF void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) ZPL_PRINTF_ARGS(2);
-ZPL_DEF void zpl_platform_toggle_fullscreen(zpl_platform *p, b32 fullscreen_desktop);
+ZPL_DEF void zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop);
 ZPL_DEF void zpl_platform_toggle_borderless(zpl_platform *p);
 ZPL_DEF void zpl_platform_make_opengl_context_current(zpl_platform *p);
 ZPL_DEF void zpl_platform_show_window(zpl_platform *p);
@@ -384,8 +384,8 @@ ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
 
 #if defined(ZPL_PLATFORM)
 
-zpl_inline void zpl_key_state_update(zplKeyState *s, b32 is_down) {
-    b32 was_down = (*s & ZPL_KEY_STATE_DOWN) != 0;
+zpl_inline void zpl_key_state_update(zplKeyState *s, zpl_b32 is_down) {
+    zpl_b32 was_down = (*s & ZPL_KEY_STATE_DOWN) != 0;
     is_down = is_down != 0; // NOTE(bill): Make sure it's a boolean
     ZPL_MASK_SET(*s, is_down, ZPL_KEY_STATE_DOWN);
     ZPL_MASK_SET(*s, !was_down && is_down, ZPL_KEY_STATE_PRESSED);
@@ -409,19 +409,19 @@ ZPL_XINPUT_SET_STATE(zplXInputSetState_Stub) {
     return ERROR_DEVICE_NOT_CONNECTED;
 }
 
-zpl_internal zpl_inline f32 zpl__process_xinput_stick_value(i16 value, i16 dead_zone_threshold) {
-    f32 result = 0;
+zpl_internal zpl_inline zpl_f32 zpl__process_xinput_stick_value(zpl_i16 value, zpl_i16 dead_zone_threshold) {
+    zpl_f32 result = 0;
     
     if (value < -dead_zone_threshold) {
-        result = cast(f32)(value + dead_zone_threshold) / (32768.0f - dead_zone_threshold);
+        result = cast(zpl_f32)(value + dead_zone_threshold) / (32768.0f - dead_zone_threshold);
     } else if (value > dead_zone_threshold) {
-        result = cast(f32)(value - dead_zone_threshold) / (32767.0f - dead_zone_threshold);
+        result = cast(zpl_f32)(value - dead_zone_threshold) / (32767.0f - dead_zone_threshold);
     }
     
     return result;
 }
 
-zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, i32 width, i32 height) {
+zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, zpl_i32 width, zpl_i32 height) {
     if ((p->renderer_type == ZPL_RENDERER_SOFTWARE) && !(p->window_width == width && p->window_height == height)) {
         BITMAPINFO bmi = { 0 };
         
@@ -434,11 +434,11 @@ zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, i32 width, i
         p->sw_framebuffer.bits_per_pixel = zpl_video_mode_get_desktop( ).bits_per_pixel;
         p->sw_framebuffer.pitch = (p->sw_framebuffer.bits_per_pixel * width / 8);
         
-        bmi.bmiHeader.biSize = zpl_size_of(bmi.bmiHeader);
+        bmi.bmiHeader.bzpl_isize = zpl_size_of(bmi.bmiHeader);
         bmi.bmiHeader.biWidth = width;
         bmi.bmiHeader.biHeight = height; // NOTE(bill): -ve is top-down, +ve is bottom-up
         bmi.bmiHeader.biPlanes = 1;
-        bmi.bmiHeader.biBitCount = cast(u16) p->sw_framebuffer.bits_per_pixel;
+        bmi.bmiHeader.biBitCount = cast(zpl_u16) p->sw_framebuffer.bits_per_pixel;
         bmi.bmiHeader.biCompression = 0 /*BI_RGB*/;
         
         p->sw_framebuffer.win32_bmi = bmi;
@@ -446,7 +446,7 @@ zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, i32 width, i
         if (p->sw_framebuffer.memory) { zpl_vm_free(zpl_vm(p->sw_framebuffer.memory, p->sw_framebuffer.memory_size)); }
         
         {
-            isize memory_size = p->sw_framebuffer.pitch * height;
+            zpl_isize memory_size = p->sw_framebuffer.pitch * height;
             zpl_virtual_memory vm = zpl_vm_alloc(0, memory_size);
             p->sw_framebuffer.memory = vm.data;
             p->sw_framebuffer.memory_size = vm.size;
@@ -541,7 +541,7 @@ zpl_internal zplKeyType zpl__win32_from_vk(unsigned int key) {
 LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // NOTE(bill): Silly callbacks
     zpl_platform *platform = cast(zpl_platform *) GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-    b32 window_has_focus = (platform != NULL) && platform->window_has_focus;
+    zpl_b32 window_has_focus = (platform != NULL) && platform->window_has_focus;
     
     if (msg == WM_CREATE) { // NOTE(bill): Doesn't need the platform
         // NOTE(bill): https://msdn.microsoft.com/en-us/library/windows/desktop/ms645536(v=vs.85).aspx
@@ -604,10 +604,10 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
                     unsigned int flags = raw_kb->Flags;
                     // NOTE(bill): e0 and e1 are escape sequences used for certain special keys, such as PRINT and PAUSE/BREAK.
                     // NOTE(bill): http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
-                    b32 is_e0 = (flags & RI_KEY_E0) != 0;
-                    b32 is_e1 = (flags & RI_KEY_E1) != 0;
-                    b32 is_up = (flags & RI_KEY_BREAK) != 0;
-                    b32 is_down = !is_up;
+                    zpl_b32 is_e0 = (flags & RI_KEY_E0) != 0;
+                    zpl_b32 is_e1 = (flags & RI_KEY_E1) != 0;
+                    zpl_b32 is_up = (flags & RI_KEY_BREAK) != 0;
+                    zpl_b32 is_down = !is_up;
                     
                     // TODO(bill): Should I handle scan codes?
                     
@@ -685,11 +685,11 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
                 } break;
                 case RIM_TYPEMOUSE: {
                     RAWMOUSE *raw_mouse = &raw.data.mouse;
-                    u16 flags = raw_mouse->usButtonFlags;
+                    zpl_u16 flags = raw_mouse->usButtonFlags;
                     long dx = +raw_mouse->lLastX;
                     long dy = -raw_mouse->lLastY;
                     
-                    if (flags & RI_MOUSE_WHEEL) { platform->mouse_wheel_delta = cast(i16) raw_mouse->usButtonData; }
+                    if (flags & RI_MOUSE_WHEEL) { platform->mouse_wheel_delta = cast(zpl_i16) raw_mouse->usButtonData; }
                     
                     platform->mouse_raw_dx = dx;
                     platform->mouse_raw_dy = dy;
@@ -705,12 +705,12 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
 
 typedef void *wglCreateContextAttribsARB_Proc(void *hDC, void *hshareContext, int const *attribList);
 
-b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
-                       u32 window_flags) {
+zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
+                       zpl_u32 window_flags) {
     WNDCLASSEXW wc = { zpl_size_of(WNDCLASSEXW) };
     DWORD ex_style = 0, style = 0;
     RECT wr;
-    u16 title_buffer[256] = { 0 }; // TODO(bill): zpl_local_persist this?
+    zpl_u16 title_buffer[256] = { 0 }; // TODO(bill): zpl_local_persist this?
     
     wc.style = CS_HREDRAW | CS_VREDRAW; // | CS_OWNDC
     wc.lpfnWndProc = zpl__win32_window_callback;
@@ -778,7 +778,7 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
     p->window_flags = window_flags;
     p->window_handle = CreateWindowExW(
         ex_style, wc.lpszClassName,
-        cast(wchar_t const *) zpl_utf8_to_ucs2(title_buffer, zpl_size_of(title_buffer), (u8 *)window_title), style,
+        cast(wchar_t const *) zpl_utf8_to_ucs2(title_buffer, zpl_size_of(title_buffer), (zpl_u8 *)window_title), style,
         CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, 0, 0, GetModuleHandleW(NULL), NULL);
     
     if (!p->window_handle) {
@@ -792,8 +792,8 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
     switch (p->renderer_type) {
         case ZPL_RENDERER_OPENGL: {
             wglCreateContextAttribsARB_Proc *wglCreateContextAttribsARB;
-            i32 attribs[8] = { 0 };
-            isize c = 0;
+            zpl_i32 attribs[8] = { 0 };
+            zpl_isize c = 0;
             
             PIXELFORMATDESCRIPTOR pfd = { zpl_size_of(PIXELFORMATDESCRIPTOR) };
             pfd.nVersion = 1;
@@ -882,8 +882,8 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
     return true;
 }
 
-zpl_inline b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, i32 width, i32 height,
-                                               u32 window_flags) {
+zpl_inline zpl_b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
+                                               zpl_u32 window_flags) {
     zpl_video_mode mode;
     mode.width = width;
     mode.height = height;
@@ -891,28 +891,28 @@ zpl_inline b32 zpl_platform_init_with_software(zpl_platform *p, char const *wind
     return zpl__platform_init(p, window_title, mode, ZPL_RENDERER_SOFTWARE, window_flags);
 }
 
-zpl_inline b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, i32 width, i32 height,
-                                             u32 window_flags, i32 major, i32 minor, b32 core, b32 compatible) {
+zpl_inline zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
+                                             zpl_u32 window_flags, zpl_i32 major, zpl_i32 minor, zpl_b32 core, zpl_b32 compatible) {
     zpl_video_mode mode;
     mode.width = width;
     mode.height = height;
     mode.bits_per_pixel = 32;
     p->opengl.major = major;
     p->opengl.minor = minor;
-    p->opengl.core = cast(b16) core;
-    p->opengl.compatible = cast(b16) compatible;
+    p->opengl.core = cast(zpl_b16) core;
+    p->opengl.compatible = cast(zpl_b16) compatible;
     return zpl__platform_init(p, window_title, mode, ZPL_RENDERER_OPENGL, window_flags);
 }
 
 #ifndef _XINPUT_H_
 typedef struct _XINPUT_GAMEPAD {
-    u16 wButtons;
-    u8 bLeftTrigger;
-    u8 bRightTrigger;
-    u16 sThumbLX;
-    u16 sThumbLY;
-    u16 sThumbRX;
-    u16 sThumbRY;
+    zpl_u16 wButtons;
+    zpl_u8 bLeftTrigger;
+    zpl_u8 bRightTrigger;
+    zpl_u16 sThumbLX;
+    zpl_u16 sThumbLY;
+    zpl_u16 sThumbRX;
+    zpl_u16 sThumbRY;
 } XINPUT_GAMEPAD;
 
 typedef struct _XINPUT_STATE {
@@ -921,8 +921,8 @@ typedef struct _XINPUT_STATE {
 } XINPUT_STATE;
 
 typedef struct _XINPUT_VIBRATION {
-    u16 wLeftMotorSpeed;
-    u16 wRightMotorSpeed;
+    zpl_u16 wLeftMotorSpeed;
+    zpl_u16 wRightMotorSpeed;
 } XINPUT_VIBRATION;
 
 #define XINPUT_GAMEPAD_DPAD_UP 0x00000001
@@ -949,12 +949,12 @@ typedef struct _XINPUT_VIBRATION {
 #endif
 
 void zpl_platform_update(zpl_platform *p) {
-    isize i;
+    zpl_isize i;
     
     { // NOTE(bill): Set window state
         // TODO(bill): Should this be moved to zpl__win32_window_callback ?
         RECT window_rect;
-        i32 x, y, w, h;
+        zpl_i32 x, y, w, h;
         
         GetClientRect(cast(HWND) p->window_handle, &window_rect);
         x = window_rect.left;
@@ -1002,8 +1002,8 @@ void zpl_platform_update(zpl_platform *p) {
         GetCursorPos(&mouse_pos);
         ScreenToClient(cast(HWND) p->window_handle, &mouse_pos);
         {
-            i32 x = mouse_pos.x;
-            i32 y = p->window_height - 1 - mouse_pos.y;
+            zpl_i32 x = mouse_pos.x;
+            zpl_i32 y = p->window_height - 1 - mouse_pos.y;
             p->mouse_dx = x - p->mouse_x;
             p->mouse_dy = y - p->mouse_y;
             p->mouse_x = x;
@@ -1011,9 +1011,9 @@ void zpl_platform_update(zpl_platform *p) {
         }
         
         if (p->mouse_clip) {
-            b32 update = false;
-            i32 x = p->mouse_x;
-            i32 y = p->mouse_y;
+            zpl_b32 update = false;
+            zpl_i32 x = p->mouse_x;
+            zpl_i32 y = p->mouse_y;
             if (p->mouse_x < 0) {
                 x = 0;
                 update = true;
@@ -1047,7 +1047,7 @@ void zpl_platform_update(zpl_platform *p) {
         
         // NOTE(bill): Need to update as the keys only get updates on events
         for (i = 0; i < ZPL_KEY_COUNT; i++) {
-            b32 is_down = (p->keys[i] & ZPL_KEY_STATE_DOWN) != 0;
+            zpl_b32 is_down = (p->keys[i] & ZPL_KEY_STATE_DOWN) != 0;
             zpl_key_state_update(&p->keys[i], is_down);
         }
         
@@ -1057,7 +1057,7 @@ void zpl_platform_update(zpl_platform *p) {
     }
     
     { // NOTE(bill): Set Controller states
-        isize max_controller_count = XUSER_MAX_COUNT;
+        zpl_isize max_controller_count = XUSER_MAX_COUNT;
         if (max_controller_count > zpl_count_of(p->game_controllers)) {
             max_controller_count = zpl_count_of(p->game_controllers);
         }
@@ -1086,8 +1086,8 @@ void zpl_platform_update(zpl_platform *p) {
                 controller->axes[ZPL_CONTROLLER_AXIS_RIGHTY] =
                     zpl__process_xinput_stick_value(pad->sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
                 
-                controller->axes[ZPL_CONTROLLER_AXIS_LEFTTRIGGER] = cast(f32) pad->bLeftTrigger / 255.0f;
-                controller->axes[ZPL_CONTROLLER_AXIS_RIGHTTRIGGER] = cast(f32) pad->bRightTrigger / 255.0f;
+                controller->axes[ZPL_CONTROLLER_AXIS_LEFTTRIGGER] = cast(zpl_f32) pad->bLeftTrigger / 255.0f;
+                controller->axes[ZPL_CONTROLLER_AXIS_RIGHTTRIGGER] = cast(zpl_f32) pad->bRightTrigger / 255.0f;
                 
                 if ((controller->axes[ZPL_CONTROLLER_AXIS_LEFTX] != 0.0f) ||
                     (controller->axes[ZPL_CONTROLLER_AXIS_LEFTY] != 0.0f)) {
@@ -1150,8 +1150,8 @@ void zpl_platform_display(zpl_platform *p) {
     }
     
     {
-        f64 prev_time = p->curr_time;
-        f64 curr_time = zpl_time_now( );
+        zpl_f64 prev_time = p->curr_time;
+        zpl_f64 curr_time = zpl_time_now( );
         p->dt_for_frame = curr_time - prev_time;
         p->curr_time = curr_time;
     }
@@ -1167,7 +1167,7 @@ void zpl_platform_destroy(zpl_platform *p) {
     DestroyWindow(cast(HWND) p->window_handle);
 }
 
-void zpl_platform_show_cursor(zpl_platform *p, b32 show) {
+void zpl_platform_show_cursor(zpl_platform *p, zpl_b32 show) {
     zpl_unused(p);
     ShowCursor(show);
 }
@@ -1178,7 +1178,7 @@ void zpl_platform_set_cursor(zpl_platform *p, void *handle) {
     SetCursor((HCURSOR)handle);
 }
 
-void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y) {
+void zpl_platform_set_mouse_position(zpl_platform *p, zpl_i32 x, zpl_i32 y) {
     POINT point;
     point.x = cast(LONG) x;
     point.y = cast(LONG)(p->window_height - 1 - y);
@@ -1189,7 +1189,7 @@ void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y) {
     p->mouse_y = p->window_height - 1 - point.y;
 }
 
-void zpl_platform_set_controller_vibration(zpl_platform *p, isize index, f32 left_motor, f32 right_motor) {
+void zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize index, zpl_f32 left_motor, zpl_f32 right_motor) {
     if (zpl_is_between(index, 0, ZPL_MAX_GAME_CONTROLLER_COUNT - 1)) {
         XINPUT_VIBRATION vibration = { 0 };
         left_motor = zpl_clamp01(left_motor);
@@ -1201,9 +1201,9 @@ void zpl_platform_set_controller_vibration(zpl_platform *p, isize index, f32 lef
     }
 }
 
-void zpl_platform_set_window_position(zpl_platform *p, i32 x, i32 y) {
+void zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y) {
     RECT rect;
-    i32 width, height;
+    zpl_i32 width, height;
     
     GetClientRect(cast(HWND) p->window_handle, &rect);
     width = rect.right - rect.left;
@@ -1212,7 +1212,7 @@ void zpl_platform_set_window_position(zpl_platform *p, i32 x, i32 y) {
 }
 
 void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) {
-    u16 buffer[256] = { 0 };
+    zpl_u16 buffer[256] = { 0 };
     char str[512] = { 0 };
     va_list va;
     va_start(va, title);
@@ -1221,11 +1221,11 @@ void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) {
     
     if (str[0] != '\0') {
         SetWindowTextW(cast(HWND) p->window_handle,
-                       cast(wchar_t const *) zpl_utf8_to_ucs2(buffer, zpl_size_of(buffer), (u8 *)str));
+                       cast(wchar_t const *) zpl_utf8_to_ucs2(buffer, zpl_size_of(buffer), (zpl_u8 *)str));
     }
 }
 
-void zpl_platform_toggle_fullscreen(zpl_platform *p, b32 fullscreen_desktop) {
+void zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop) {
     // NOTE(bill): From the man himself, Raymond Chen! (Modified for my need.)
     HWND handle = cast(HWND) p->window_handle;
     DWORD style = cast(DWORD) GetWindowLongW(handle, GWL_STYLE);
@@ -1266,7 +1266,7 @@ void zpl_platform_toggle_fullscreen(zpl_platform *p, b32 fullscreen_desktop) {
 void zpl_platform_toggle_borderless(zpl_platform *p) {
     HWND handle = cast(HWND) p->window_handle;
     DWORD style = GetWindowLongW(handle, GWL_STYLE);
-    b32 is_borderless = (style & WS_POPUP) != 0;
+    zpl_b32 is_borderless = (style & WS_POPUP) != 0;
     
     ZPL_MASK_SET(style, is_borderless, WS_OVERLAPPEDWINDOW | WS_CAPTION);
     ZPL_MASK_SET(style, !is_borderless, WS_POPUP);
@@ -1298,9 +1298,9 @@ zpl_inline zpl_video_mode zpl_video_mode_get_desktop(void) {
     return zpl_set_video_mode(win32_mode.dmPelsWidth, win32_mode.dmPelsHeight, win32_mode.dmBitsPerPel);
 }
 
-isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, isize max_mode_count) {
+zpl_isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, zpl_isize max_mode_count) {
     DEVMODEW win32_mode = { zpl_size_of(win32_mode) };
-    i32 count;
+    zpl_i32 count;
     for (count = 0; count < max_mode_count && EnumDisplaySettingsW(NULL, count, &win32_mode); count++) {
         modes[count] = zpl_set_video_mode(win32_mode.dmPelsWidth, win32_mode.dmPelsHeight, win32_mode.dmBitsPerPel);
     }
@@ -1309,8 +1309,8 @@ isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, isize max_mode_
     return count;
 }
 
-b32 zpl_platform_has_clipboard_text(zpl_platform *p) {
-    b32 result = false;
+zpl_b32 zpl_platform_has_clipboard_text(zpl_platform *p) {
+    zpl_b32 result = false;
     
     if (IsClipboardFormatAvailable(1 /*CF_TEXT*/) && OpenClipboard(cast(HWND) p->window_handle)) {
         HANDLE mem = GetClipboardData(1 /*CF_TEXT*/);
@@ -1331,7 +1331,7 @@ b32 zpl_platform_has_clipboard_text(zpl_platform *p) {
 // TODO(bill): Handle UTF-8
 void zpl_platform_set_clipboard_text(zpl_platform *p, char const *str) {
     if (OpenClipboard(cast(HWND) p->window_handle)) {
-        isize i, len = zpl_strlen(str) + 1;
+        zpl_isize i, len = zpl_strlen(str) + 1;
         
         HANDLE mem = cast(HANDLE) GlobalAlloc(0x0002 /*GMEM_MOVEABLE*/, len);
         if (mem) {
@@ -1374,10 +1374,10 @@ char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a) {
     return text;
 }
 
-u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key) {
-    u32 vk = p->keys[key];
+zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key) {
+    zpl_u32 vk = p->keys[key];
     
-    u32 scancode = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
+    zpl_u32 scancode = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
     return scancode;
 }
 
@@ -1449,13 +1449,13 @@ zpl_internal void zpl__osx_window_did_become_key(id self, SEL _sel, id notificat
     }
 }
 
-b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
-                       u32 window_flags) {
+zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
+                       zpl_u32 window_flags) {
     if (p->is_initialized) { return true; }
     // Init Platform
     { // Initial OSX State
         Class appDelegateClass;
-        b32 resultAddProtoc, resultAddMethod;
+        zpl_b32 resultAddProtoc, resultAddMethod;
         id dgAlloc, dg, menubarAlloc, menubar;
         id appMenuItemAlloc, appMenuItem;
         id appMenuAlloc, appMenu;
@@ -1534,7 +1534,7 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
         NSRect rect = { { 0, 0 }, { cast(CGFloat) mode.width, cast(CGFloat) mode.height } };
         id windowAlloc, window, wdgAlloc, wdg, contentView, titleString;
         Class WindowDelegateClass;
-        b32 resultAddProtoc, resultAddIvar, resultAddMethod;
+        zpl_b32 resultAddProtoc, resultAddIvar, resultAddMethod;
         
         windowAlloc = objc_msgSend_id(cast(id) objc_getClass("NSWindow"), sel_registerName("alloc"));
         window = ((id(*)(id, SEL, NSRect, NSUInteger, NSUInteger, BOOL))objc_msgSend)(
@@ -1584,8 +1584,8 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
         
         if (type == ZPL_RENDERER_OPENGL) {
             // TODO(bill): Make sure this works correctly
-            u32 opengl_hex_version = (p->opengl.major << 12) | (p->opengl.minor << 8);
-            u32 gl_attribs[] = { 8, 24, // NSOpenGLPFAColorSize, 24,
+            zpl_u32 opengl_hex_version = (p->opengl.major << 12) | (p->opengl.minor << 8);
+            zpl_u32 gl_attribs[] = { 8, 24, // NSOpenGLPFAColorSize, 24,
                 11, 8, // NSOpenGLPFAAlphaSize, 8,
                 5,     // NSOpenGLPFADoubleBuffer,
                 73,    // NSOpenGLPFAAccelerated,
@@ -1638,15 +1638,15 @@ b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode
 }
 
 // NOTE(bill): Software rendering
-b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, i32 width, i32 height,
-                                    u32 window_flags) {
+zpl_b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
+                                    zpl_u32 window_flags) {
     ZPL_PANIC("TODO(bill): Software rendering in not yet implemented on OS X\n");
     return zpl__platform_init(p, window_title, zpl_set_video_mode(width, height, 32), ZPL_RENDERER_SOFTWARE,
                               window_flags);
 }
 // NOTE(bill): OpenGL Rendering
-b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, i32 width, i32 height, u32 window_flags,
-                                  i32 major, i32 minor, b32 core, b32 compatible) {
+zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height, zpl_u32 window_flags,
+                                  zpl_i32 major, zpl_i32 minor, zpl_b32 core, zpl_b32 compatible) {
     
     p->opengl.major = major;
     p->opengl.minor = minor;
@@ -1657,7 +1657,7 @@ b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, i32
 }
 
 // NOTE(bill): Reverse engineering can be fun!!!
-zpl_internal zplKeyType zpl__osx_from_key_code(u16 key_code) {
+zpl_internal zplKeyType zpl__osx_from_key_code(zpl_u16 key_code) {
     switch (key_code) {
         default: return zplKey_Unknown;
         // NOTE(bill): WHO THE FUCK DESIGNED THIS VIRTUAL KEY CODE SYSTEM?!
@@ -1818,19 +1818,19 @@ zpl_internal void zpl__osx_on_cocoa_event(zpl_platform *p, id event, id window) 
 #if 0
                 // TODO(bill): Reverse engineer this properly
                 NSUInteger modifiers = ((NSUInteger (*)(id, SEL))objc_msgSend)(event, sel_registerName("modifierFlags"));
-                u32 upper_mask = (modifiers & 0xffff0000ul) >> 16;
-                b32 shift   = (upper_mask & 0x02) != 0;
-                b32 control = (upper_mask & 0x04) != 0;
-                b32 alt     = (upper_mask & 0x08) != 0;
-                b32 command = (upper_mask & 0x10) != 0;
+                zpl_u32 upper_mask = (modifiers & 0xffff0000ul) >> 16;
+                zpl_b32 shift   = (upper_mask & 0x02) != 0;
+                zpl_b32 control = (upper_mask & 0x04) != 0;
+                zpl_b32 alt     = (upper_mask & 0x08) != 0;
+                zpl_b32 command = (upper_mask & 0x10) != 0;
 #endif
                 
                 // zpl_printf("%u\n", keys.mask);
-                // zpl_printf("%x\n", cast(u32)modifiers);
+                // zpl_printf("%x\n", cast(zpl_u32)modifiers);
             } break;
             
             case 10: { // NSKeyDown
-                u16 key_code;
+                zpl_u16 key_code;
                 
                 id input_text = objc_msgSend_id(event, sel_registerName("characters"));
                 char const *input_text_utf8 =
@@ -1843,7 +1843,7 @@ zpl_internal void zpl__osx_on_cocoa_event(zpl_platform *p, id event, id window) 
             } break;
             
             case 11: { // NSKeyUp
-                u16 key_code = ((unsigned short (*)(id, SEL))objc_msgSend)(event, sel_registerName("keyCode"));
+                zpl_u16 key_code = ((unsigned short (*)(id, SEL))objc_msgSend)(event, sel_registerName("keyCode"));
                 zpl_key_state_update(&p->keys[zpl__osx_from_key_code(key_code)], false);
             } break;
             
@@ -1863,17 +1863,17 @@ void zpl_platform_update(zpl_platform *p) {
     p->window_has_focus = key_window == window; // TODO(bill): Is this right
     
     if (p->window_has_focus) {
-        isize i;
+        zpl_isize i;
         p->char_buffer_count = 0; // TODO(bill): Reset buffer count here or else where?
         
         // NOTE(bill): Need to update as the keys only get updates on events
         for (i = 0; i < ZPL_KEY_COUNT; i++) {
-            b32 is_down = (p->keys[i] & ZPL_KEY_STATE_DOWN) != 0;
+            zpl_b32 is_down = (p->keys[i] & ZPL_KEY_STATE_DOWN) != 0;
             zpl_key_state_update(&p->keys[i], is_down);
         }
         
         for (i = 0; i < ZPL_MOUSEBUTTON_COUNT; i++) {
-            b32 is_down = (p->mouse_buttons[i] & ZPL_KEY_STATE_DOWN) != 0;
+            zpl_b32 is_down = (p->mouse_buttons[i] & ZPL_KEY_STATE_DOWN) != 0;
             zpl_key_state_update(&p->mouse_buttons[i], is_down);
         }
     }
@@ -1926,8 +1926,8 @@ void zpl_platform_update(zpl_platform *p) {
         mouse_pos.y = zpl_clamp(mouse_pos.y, 0, frame.size.height - 1);
         
         {
-            i32 x = mouse_pos.x;
-            i32 y = mouse_pos.y;
+            zpl_i32 x = mouse_pos.x;
+            zpl_i32 y = mouse_pos.y;
             p->mouse_dx = x - p->mouse_x;
             p->mouse_dy = y - p->mouse_y;
             p->mouse_x = x;
@@ -1935,9 +1935,9 @@ void zpl_platform_update(zpl_platform *p) {
         }
         
         if (p->mouse_clip) {
-            b32 update = false;
-            i32 x = p->mouse_x;
-            i32 y = p->mouse_y;
+            zpl_b32 update = false;
+            zpl_i32 x = p->mouse_x;
+            zpl_i32 y = p->mouse_y;
             if (p->mouse_x < 0) {
                 x = 0;
                 update = true;
@@ -1981,8 +1981,8 @@ void zpl_platform_display(zpl_platform *p) {
     }
     
     {
-        f64 prev_time = p->curr_time;
-        f64 curr_time = zpl_time_now( );
+        zpl_f64 prev_time = p->curr_time;
+        zpl_f64 curr_time = zpl_time_now( );
         p->dt_for_frame = curr_time - prev_time;
         p->curr_time = curr_time;
     }
@@ -2000,7 +2000,7 @@ void zpl_platform_destroy(zpl_platform *p) {
 #endif
 }
 
-void zpl_platform_show_cursor(zpl_platform *p, b32 show) {
+void zpl_platform_show_cursor(zpl_platform *p, zpl_b32 show) {
     if (show) {
         // objc_msgSend_void(class_registerName("NSCursor"), sel_registerName("unhide"));
     } else {
@@ -2008,7 +2008,7 @@ void zpl_platform_show_cursor(zpl_platform *p, b32 show) {
     }
 }
 
-void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y) {
+void zpl_platform_set_mouse_position(zpl_platform *p, zpl_i32 x, zpl_i32 y) {
     // TODO(bill):
     CGPoint pos = { cast(CGFloat) x, cast(CGFloat) y };
     pos.x += p->window_x;
@@ -2016,11 +2016,11 @@ void zpl_platform_set_mouse_position(zpl_platform *p, i32 x, i32 y) {
     CGWarpMouseCursorPosition(pos);
 }
 
-void zpl_platform_set_controller_vibration(zpl_platform *p, isize index, f32 left_motor, f32 right_motor) {
+void zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize index, zpl_f32 left_motor, zpl_f32 right_motor) {
     // TODO(bill):
 }
 
-b32 zpl_platform_has_clipboard_text(zpl_platform *p) {
+zpl_b32 zpl_platform_has_clipboard_text(zpl_platform *p) {
     // TODO(bill):
     return false;
 }
@@ -2034,7 +2034,7 @@ char *zpl_platform_get_clipboard_text(zpl_platform *p, zplAllocator a) {
     return NULL;
 }
 
-void zpl_platform_set_window_position(zpl_platform *p, i32 x, i32 y) {
+void zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y) {
     // TODO(bill):
 }
 
@@ -2051,7 +2051,7 @@ void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) {
     objc_msgSend_void_id(cast(id) p->window_handle, sel_registerName("setTitle:"), title_string);
 }
 
-void zpl_platform_toggle_fullscreen(zpl_platform *p, b32 fullscreen_desktop) {
+void zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop) {
     // TODO(bill):
 }
 
@@ -2071,8 +2071,8 @@ void zpl_platform_hide_window(zpl_platform *p) {
     // TODO(bill):
 }
 
-i32 zpl__osx_mode_bits_per_pixel(CGDisplayModeRef mode) {
-    i32 bits_per_pixel = 0;
+zpl_i32 zpl__osx_mode_bits_per_pixel(CGDisplayModeRef mode) {
+    zpl_i32 bits_per_pixel = 0;
     CFStringRef pixel_encoding = CGDisplayModeCopyPixelEncoding(mode);
     if (CFStringCompare(pixel_encoding, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
         bits_per_pixel = 32;
@@ -2088,9 +2088,9 @@ i32 zpl__osx_mode_bits_per_pixel(CGDisplayModeRef mode) {
     return bits_per_pixel;
 }
 
-i32 zpl__osx_display_bits_per_pixel(CGDirectDisplayID display) {
+zpl_i32 zpl__osx_display_bits_per_pixel(CGDirectDisplayID display) {
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(display);
-    i32 bits_per_pixel = zpl__osx_mode_bits_per_pixel(mode);
+    zpl_i32 bits_per_pixel = zpl__osx_mode_bits_per_pixel(mode);
     CGDisplayModeRelease(mode);
     return bits_per_pixel;
 }
@@ -2101,7 +2101,7 @@ zpl_video_mode zpl_video_mode_get_desktop(void) {
                               zpl__osx_display_bits_per_pixel(display));
 }
 
-isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, isize max_mode_count) {
+zpl_isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, zpl_isize max_mode_count) {
     CFArrayRef cg_modes = CGDisplayCopyAllDisplayModes(CGMainDisplayID( ), NULL);
     CFIndex i, count;
     if (cg_modes == NULL) { return 0; }
@@ -2116,7 +2116,7 @@ isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, isize max_mode_
     CFRelease(cg_modes);
     
     zpl_sort_array(modes, count, zpl_video_mode_dsc_cmp);
-    return cast(isize) count;
+    return cast(zpl_isize) count;
 }
 
 #endif
@@ -2125,7 +2125,7 @@ isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, isize max_mode_
 // TODO(bill): OSX Platform Layer
 // NOTE(bill): Use this as a guide so there is no need for Obj-C https://github.com/jimon/osx_app_in_plain_c
 
-zpl_inline zpl_video_mode zpl_set_video_mode(i32 width, i32 height, i32 bits_per_pixel) {
+zpl_inline zpl_video_mode zpl_set_video_mode(zpl_i32 width, zpl_i32 height, zpl_i32 bits_per_pixel) {
     zpl_video_mode m;
     m.width = width;
     m.height = height;
@@ -2133,11 +2133,11 @@ zpl_inline zpl_video_mode zpl_set_video_mode(i32 width, i32 height, i32 bits_per
     return m;
 }
 
-zpl_inline b32 zpl_video_mode_is_valid(zpl_video_mode mode) {
+zpl_inline zpl_b32 zpl_video_mode_is_valid(zpl_video_mode mode) {
     zpl_local_persist zpl_video_mode modes[256] = { 0 };
-    zpl_local_persist isize mode_count = 0;
-    zpl_local_persist b32 is_set = false;
-    isize i;
+    zpl_local_persist zpl_isize mode_count = 0;
+    zpl_local_persist zpl_b32 is_set = false;
+    zpl_isize i;
     
     if (!is_set) {
         mode_count = zpl_video_mode_get_fullscreen_modes(modes, zpl_count_of(modes));

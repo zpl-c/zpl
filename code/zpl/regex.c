@@ -42,15 +42,15 @@ Supported Matching:
 
 typedef struct zpl_re {
     zpl_allocator backing;
-    isize capture_count;
+    zpl_isize capture_count;
     char *buf;
-    isize buf_len, buf_cap;
-    b32 can_realloc;
+    zpl_isize buf_len, buf_cap;
+    zpl_b32 can_realloc;
 } zpl_re;
 
 typedef struct zpl_re_capture {
     char const *str;
-    isize len;
+    zpl_isize len;
 } zpl_re_capture;
 
 typedef enum zplreError {
@@ -65,22 +65,22 @@ typedef enum zplreError {
 } zplreError;
 
 //! Compile regex pattern.
-ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, isize pattern_len);
+ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len);
 
 //! Compile regex pattern using a buffer.
-ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len);
+ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len);
 
 //! Destroy regex object.
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
 
 //! Retrieve number of retrievable captures.
-ZPL_DEF isize      zpl_re_capture_count(zpl_re *re);
+ZPL_DEF zpl_isize      zpl_re_capture_count(zpl_re *re);
 
 //! Match input string and output captures of the occurence.
-ZPL_DEF b32        zpl_re_match(zpl_re *re, char const *str, isize str_len, zpl_re_capture *captures, isize max_capture_count, isize *offset);
+ZPL_DEF zpl_b32        zpl_re_match(zpl_re *re, char const *str, zpl_isize str_len, zpl_re_capture *captures, zpl_isize max_capture_count, zpl_isize *offset);
 
 //! Match all occurences in an input string and output them into captures. Array of captures is allocated on the heap and needs to be freed afterwards.
-ZPL_DEF b32        zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
+ZPL_DEF zpl_b32        zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
 //! @}
@@ -127,7 +127,7 @@ typedef enum zplreCode {
 } zplreCode;
 
 typedef struct {
-    isize op, offset;
+    zpl_isize op, offset;
 } zpl_re_ctx;
 
 enum {
@@ -139,28 +139,28 @@ static char const ZPL_RE__META_CHARS[] = "^$()[].*+?|\\";
 static char const ZPL_RE__WHITESPACE[] = " \r\t\n\v\f";
 #define ZPL_RE__LITERAL(str) (str), zpl_size_of(str)-1
 
-static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count);
-static zpl_re_ctx zpl_re__exec(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count);
+static zpl_re_ctx zpl_re__exec_single(zpl_re *re, zpl_isize op, char const *str, zpl_isize str_len, zpl_isize offset, zpl_re_capture *captures, zpl_isize max_capture_count);
+static zpl_re_ctx zpl_re__exec(zpl_re *re, zpl_isize op, char const *str, zpl_isize str_len, zpl_isize offset, zpl_re_capture *captures, zpl_isize max_capture_count);
 
-static zpl_re_ctx zpl_re__ctx_no_match(isize op) {
+static zpl_re_ctx zpl_re__ctx_no_match(zpl_isize op) {
     zpl_re_ctx c;
     c.op = op;
     c.offset = ZPL_RE__NO_MATCH;
     return c;
 }
 
-static zpl_re_ctx zpl_re__ctx_internal_failure(isize op) {
+static zpl_re_ctx zpl_re__ctx_internal_failure(zpl_isize op) {
     zpl_re_ctx c;
     c.op = op;
     c.offset = ZPL_RE__INTERNAL_FAILURE;
     return c;
 }
 
-static u8 zpl_re__hex(char const *s) {
+static zpl_u8 zpl_re__hex(char const *s) {
     return ((zpl_char_to_hex_digit(*s) << 4) & 0xf0) | (zpl_char_to_hex_digit(*(s+1)) & 0x0f);
 }
 
-static isize zpl_re__strfind(char const *s, isize len, char c, isize offset) {
+static zpl_isize zpl_re__strfind(char const *s, zpl_isize len, char c, zpl_isize offset) {
     if (offset < len) {
         char const *found = (char const *)zpl_memchr(s+offset, c, len-offset);
         if (found)
@@ -170,7 +170,7 @@ static isize zpl_re__strfind(char const *s, isize len, char c, isize offset) {
     return -1;
 }
 
-static b32 zpl_re__match_escape(char c, int code) {
+static zpl_b32 zpl_re__match_escape(char c, int code) {
 	switch (code) {
         case ZPL_RE_CODE_NULL:           return c == 0;
         case ZPL_RE_CODE_WHITESPACE:     return zpl_re__strfind(ZPL_RE__LITERAL(ZPL_RE__WHITESPACE), c, 0) >= 0;
@@ -194,7 +194,7 @@ static b32 zpl_re__match_escape(char c, int code) {
 	return 0;
 }
 
-static zpl_re_ctx zpl_re__consume(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count, b32 is_greedy)
+static zpl_re_ctx zpl_re__consume(zpl_re *re, zpl_isize op, char const *str, zpl_isize str_len, zpl_isize offset, zpl_re_capture *captures, zpl_isize max_capture_count, zpl_b32 is_greedy)
 {
     zpl_re_ctx c, best_c, next_c;
     
@@ -226,22 +226,22 @@ static zpl_re_ctx zpl_re__consume(zpl_re *re, isize op, char const *str, isize s
     return best_c;
 }
 
-static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count) {
+static zpl_re_ctx zpl_re__exec_single(zpl_re *re, zpl_isize op, char const *str, zpl_isize str_len, zpl_isize offset, zpl_re_capture *captures, zpl_isize max_capture_count) {
     zpl_re_ctx ctx;
-    isize buffer_len;
-    isize match_len;
-    isize next_op;
-    isize skip;
+    zpl_isize buffer_len;
+    zpl_isize match_len;
+    zpl_isize next_op;
+    zpl_isize skip;
     
     switch (re->buf[op++]) {
         case ZPL_RE_OP_BEGIN_CAPTURE: {
-            u8 capture = re->buf[op++];
+            zpl_u8 capture = re->buf[op++];
             if (captures && (capture < max_capture_count))
                 captures[capture].str = str + offset;
         } break;
         
         case ZPL_RE_OP_END_CAPTURE: {
-            u8 capture = re->buf[op++];
+            zpl_u8 capture = re->buf[op++];
             if (captures && (capture < max_capture_count))
                 captures[capture].len = (str + offset) - captures[capture].str;
         } break;
@@ -283,7 +283,7 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
         } break;
         
         case ZPL_RE_OP_ANY_OF: {
-            isize i;
+            zpl_isize i;
             char cin = str[offset];
             buffer_len = re->buf[op++];
             
@@ -309,7 +309,7 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
         } break;
         
         case ZPL_RE_OP_ANY_BUT: {
-            isize i;
+            zpl_isize i;
             char cin = str[offset];
             buffer_len = re->buf[op++];
             
@@ -424,7 +424,7 @@ static zpl_re_ctx zpl_re__exec_single(zpl_re *re, isize op, char const *str, isi
     return ctx;
 }
 
-static zpl_re_ctx zpl_re__exec(zpl_re *re, isize op, char const *str, isize str_len, isize offset, zpl_re_capture *captures, isize max_capture_count) {
+static zpl_re_ctx zpl_re__exec(zpl_re *re, zpl_isize op, char const *str, zpl_isize str_len, zpl_isize offset, zpl_re_capture *captures, zpl_isize max_capture_count) {
     zpl_re_ctx c;
     c.op = op;
     c.offset = offset;
@@ -439,7 +439,7 @@ static zpl_re_ctx zpl_re__exec(zpl_re *re, isize op, char const *str, isize str_
     return c;
 }
 
-static zplreError zpl_re__emit_ops(zpl_re *re, isize op_count, ...) {
+static zplreError zpl_re__emit_ops(zpl_re *re, zpl_isize op_count, ...) {
     va_list va;
     
     if (re->buf_len + op_count > re->buf_cap) {
@@ -447,16 +447,16 @@ static zplreError zpl_re__emit_ops(zpl_re *re, isize op_count, ...) {
             return ZPL_RE_ERROR_TOO_LONG;
         }
         else {
-            isize new_cap = (re->buf_cap*2) + op_count;
+            zpl_isize new_cap = (re->buf_cap*2) + op_count;
             re->buf = (char *)zpl_resize(re->backing, re->buf, re->buf_cap, new_cap);
             re->buf_cap = new_cap;
         }
     }
     
     va_start(va, op_count);
-    for (isize i = 0; i < op_count; i++)
+    for (zpl_isize i = 0; i < op_count; i++)
     {
-        i32 v = va_arg(va, i32);
+        zpl_i32 v = va_arg(va, zpl_i32);
         if (v > 256)
             return ZPL_RE_ERROR_TOO_LONG;
         re->buf[re->buf_len++] = (char)v;
@@ -466,19 +466,19 @@ static zplreError zpl_re__emit_ops(zpl_re *re, isize op_count, ...) {
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__emit_ops_buffer(zpl_re *re, isize op_count, char const *buffer) {
+static zplreError zpl_re__emit_ops_buffer(zpl_re *re, zpl_isize op_count, char const *buffer) {
     if (re->buf_len + op_count > re->buf_cap) {
         if (!re->can_realloc) {
             return ZPL_RE_ERROR_TOO_LONG;
         }
         else {
-            isize new_cap = (re->buf_cap*2) + op_count;
+            zpl_isize new_cap = (re->buf_cap*2) + op_count;
             re->buf = (char *)zpl_resize(re->backing, re->buf, re->buf_cap, new_cap);
             re->buf_cap = new_cap;
         }
     }
     
-    for (isize i = 0; i < op_count; i++)
+    for (zpl_isize i = 0; i < op_count; i++)
     {
         re->buf[re->buf_len++] = buffer[i];
     }
@@ -518,11 +518,11 @@ static int zpl_re__encode_escape(char code) {
 	return code;
 }
 
-static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len, isize offset, isize *new_offset) {
+static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize *new_offset) {
     zplreError err = ZPL_RE_ERROR_NONE;
     char buffer[256] = {0};
-    isize buffer_len = 0, buffer_cap = zpl_size_of(buffer);
-    b32 closed = 0;
+    zpl_isize buffer_len = 0, buffer_cap = zpl_size_of(buffer);
+    zpl_b32 closed = 0;
     zplreOp op = ZPL_RE_OP_ANY_OF;
     
     if (pattern[offset] == '^') {
@@ -535,7 +535,7 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
           offset < len)
     {
         if (pattern[offset] == ']') {
-            err = zpl_re__emit_ops(re, 2, (i32)op, (i32)buffer_len);
+            err = zpl_re__emit_ops(re, 2, (zpl_i32)op, (zpl_i32)buffer_len);
             if (err) break;
             
             err = zpl_re__emit_ops_buffer(re, buffer_len, (const char*)buffer);
@@ -556,7 +556,7 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
                 offset++;
             }
             else if (offset < len) {
-                i32 code = zpl_re__encode_escape(pattern[offset]);
+                zpl_i32 code = zpl_re__encode_escape(pattern[offset]);
                 
                 if (!code || code > 0xff) {
                     buffer[buffer_len++] = 0;
@@ -584,9 +584,9 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, isize len
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__compile_quantifier(zpl_re *re, isize last_buf_len, unsigned char quantifier) {
+static zplreError zpl_re__compile_quantifier(zpl_re *re, zpl_isize last_buf_len, unsigned char quantifier) {
     zplreError err;
-    isize move_size;
+    zpl_isize move_size;
     
     if ((re->buf[last_buf_len] == ZPL_RE_OP_EXACT_MATCH) &&
         (re->buf[last_buf_len+1] > 1)) 
@@ -595,7 +595,7 @@ static zplreError zpl_re__compile_quantifier(zpl_re *re, isize last_buf_len, uns
         
         re->buf[last_buf_len+1]--;
         re->buf_len--;
-        err = zpl_re__emit_ops(re, 4, (i32)quantifier, (i32)ZPL_RE_OP_EXACT_MATCH, 1, (i32)last_char);
+        err = zpl_re__emit_ops(re, 4, (zpl_i32)quantifier, (zpl_i32)ZPL_RE_OP_EXACT_MATCH, 1, (zpl_i32)last_char);
         if (err) return err;
         return ZPL_RE_ERROR_NONE;
     }
@@ -611,11 +611,11 @@ static zplreError zpl_re__compile_quantifier(zpl_re *re, isize last_buf_len, uns
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isize offset, isize level, isize *new_offset) {
+static zplreError zpl_re__parse(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize level, zpl_isize *new_offset) {
     zplreError err = ZPL_RE_ERROR_NONE;
-    isize last_buf_len = re->buf_len;
-    isize branch_begin = re->buf_len;
-    isize branch_op = -1;
+    zpl_isize last_buf_len = re->buf_len;
+    zpl_isize branch_begin = re->buf_len;
+    zpl_isize branch_op = -1;
     
     while (offset < len) {
         switch (pattern[offset++]) {
@@ -630,9 +630,9 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
             } break;
             
             case '(': {
-                isize capture = re->capture_count++;
+                zpl_isize capture = re->capture_count++;
                 last_buf_len = re->buf_len;
-                err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_BEGIN_CAPTURE, (i32)capture);
+                err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_BEGIN_CAPTURE, (zpl_i32)capture);
                 if (err) return err;
                 
                 err = zpl_re__parse(re, pattern, len, offset, level+1, &offset);
@@ -640,7 +640,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                 if ((offset > len) || (pattern[offset-1] != ')'))
                     return ZPL_RE_ERROR_MISMATCHED_CAPTURES;
                 
-                err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_END_CAPTURE, (i32)capture);
+                err = zpl_re__emit_ops(re, 2, ZPL_RE_OP_END_CAPTURE, (zpl_i32)capture);
                 if (err) return err;
             } break;
             
@@ -667,7 +667,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
                 if (branch_begin >= re->buf_len) {
                     return ZPL_RE_ERROR_BRANCH_FAILURE;
                 } else {
-                    isize size = re->buf_len - branch_begin;
+                    zpl_isize size = re->buf_len - branch_begin;
                     err = zpl_re__emit_ops(re, 4, 0, 0, ZPL_RE_OP_BRANCH_END, 0);
                     if (err) return err;
                     
@@ -742,7 +742,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
             /* NOTE(bill): Exact match */
             default: {
                 char const *match_start;
-                isize size = 0;
+                zpl_isize size = 0;
                 offset--;
                 match_start = pattern+offset;
                 while ((offset < len) &&
@@ -763,7 +763,7 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, isize len, isiz
     return ZPL_RE_ERROR_NONE;
 }
 
-zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pattern_len, void *buffer, isize buffer_len) {
+zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len) {
     zplreError err;
     re->capture_count = 0;
     re->buf = (char *)buffer;
@@ -775,10 +775,10 @@ zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, isize pat
     return err;
 }
 
-zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, isize pattern_len) {
+zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len) {
     zplreError err;
-    isize cap = pattern_len+128;
-    isize offset = 0;
+    zpl_isize cap = pattern_len+128;
+    zpl_isize offset = 0;
     
     re->backing = backing;
     re->capture_count = 0;
@@ -795,16 +795,16 @@ zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern
     return err;
 }
 
-isize zpl_re_capture_count(zpl_re *re) { return re->capture_count; }
+zpl_isize zpl_re_capture_count(zpl_re *re) { return re->capture_count; }
 
-b32 zpl_re_match(zpl_re *re, char const *str, isize len, zpl_re_capture *captures, isize max_capture_count, isize *offset) {
+zpl_b32 zpl_re_match(zpl_re *re, char const *str, zpl_isize len, zpl_re_capture *captures, zpl_isize max_capture_count, zpl_isize *offset) {
 	if (re && re->buf_len > 0) {
 		if (re->buf[0] == ZPL_RE_OP_BEGINNING_OF_LINE) {
 			zpl_re_ctx c = zpl_re__exec(re, 0, str, len, 0, captures, max_capture_count);
 			if (c.offset >= 0 && c.offset <= len) { if (offset) *offset = c.offset; return 1; };
 			if (c.offset == ZPL_RE__INTERNAL_FAILURE) return 0;
 		} else {
-			isize i;
+			zpl_isize i;
 			for (i = 0; i < len; i++) {
 				zpl_re_ctx c = zpl_re__exec(re, 0, str, len, i, captures, max_capture_count);
 				if (c.offset >= 0 && c.offset <= len) { if (offset) *offset = c.offset; return 1; };
@@ -817,7 +817,7 @@ b32 zpl_re_match(zpl_re *re, char const *str, isize len, zpl_re_capture *capture
 }
 
 
-b32 zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_capture_count,
+zpl_b32 zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isize max_capture_count,
                      zpl_re_capture **out_captures)
 {
     char *end = (char *)str + str_len;
@@ -825,11 +825,11 @@ b32 zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_captu
     
     zpl_buffer_make(zpl_re_capture, cps, zpl_heap(), max_capture_count);
     
-    isize offset = 0;
+    zpl_isize offset = 0;
     
     while (p < end)
     {
-        b32 ok = zpl_re_match(re, p, end - p, cps, max_capture_count, &offset);
+        zpl_b32 ok = zpl_re_match(re, p, end - p, cps, max_capture_count, &offset);
         if (!ok) {
             zpl_buffer_free2(cps);
             return false;
@@ -837,7 +837,7 @@ b32 zpl_re_match_all(zpl_re *re, char const *str, isize str_len, isize max_captu
         
         p += offset;
         
-        for (isize i = 0; i < max_capture_count; i++) {
+        for (zpl_isize i = 0; i < max_capture_count; i++) {
             zpl_array_append(*out_captures, cps[i]);
         }
     }

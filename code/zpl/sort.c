@@ -14,18 +14,18 @@ typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 
 // Procedure pointers
 // NOTE: The offset parameter specifies the offset in the structure
-// e.g. zpl_i32_cmp(zpl_offset_of(Thing, value))
+// e.g. zpl_zpl_i32_cmp(zpl_offset_of(Thing, value))
 // Use 0 if it's just the type instead.
 
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i16_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_u8_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i32_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i64_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_isize_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_str_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f32_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f64_cmp(isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_char_cmp(isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i16_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_u8_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i64_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_isize_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_str_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f64_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_char_cmp(zpl_isize offset));
 
 // TODO: Better sorting algorithms
 
@@ -35,16 +35,16 @@ ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_char_cmp(isize offset));
 #define zpl_sort_array(array, count, compare_proc) zpl_sort(array, count, zpl_size_of(*(array)), compare_proc)
 
 //! Perform sorting operation on a memory location with a specified item count and size.
-ZPL_DEF void zpl_sort(void *base, isize count, isize size, zpl_compare_proc compare_proc);
+ZPL_DEF void zpl_sort(void *base, zpl_isize count, zpl_isize size, zpl_compare_proc compare_proc);
 
 // NOTE: the count of temp == count of items
 #define zpl_radix_sort(Type) zpl_radix_sort_##Type
-#define ZPL_RADIX_SORT_PROC(Type) void zpl_radix_sort(Type)(Type * items, Type * temp, isize count)
+#define ZPL_RADIX_SORT_PROC(Type) void zpl_radix_sort(Type)(Type * items, Type * temp, zpl_isize count)
 
-ZPL_DEF ZPL_RADIX_SORT_PROC(u8);
-ZPL_DEF ZPL_RADIX_SORT_PROC(u16);
-ZPL_DEF ZPL_RADIX_SORT_PROC(u32);
-ZPL_DEF ZPL_RADIX_SORT_PROC(u64);
+ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u8);
+ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u16);
+ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u32);
+ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u64);
 
 //! Performs binary search on an array.
 
@@ -53,18 +53,18 @@ ZPL_DEF ZPL_RADIX_SORT_PROC(u64);
 zpl_binary_search(array, count, zpl_size_of(*(array)), key, compare_proc)
 
 //! Performs binary search on a memory location with specified item count and size.
-ZPL_DEF isize zpl_binary_search(void const *base, isize count, isize size, void const *key,
+ZPL_DEF zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
                                 zpl_compare_proc compare_proc);
 
 #define zpl_shuffle_array(array, count) zpl_shuffle(array, count, zpl_size_of(*(array)))
 
 //! Shuffles a memory.
-ZPL_DEF void zpl_shuffle(void *base, isize count, isize size);
+ZPL_DEF void zpl_shuffle(void *base, zpl_isize count, zpl_isize size);
 
 #define zpl_reverse_array(array, count) zpl_reverse(array, count, zpl_size_of(*(array)))
 
 //! Reverses memory's contents
-ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
+ZPL_DEF void zpl_reverse(void *base, zpl_isize count, zpl_isize size);
 
 //! @}
 //$$
@@ -78,34 +78,34 @@ ZPL_DEF void zpl_reverse(void *base, isize count, isize size);
 // TODO: Should I make all the macros local?
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
-zpl_global isize zpl__##Type##_cmp_offset;                                                                         \
+zpl_global zpl_isize zpl__##Type##_cmp_offset;                                                                         \
 ZPL_COMPARE_PROC(zpl__##Type##_cmp) {                                                                              \
     Type const p = *cast(Type const *) zpl_pointer_add_const(a, zpl__##Type##_cmp_offset);                         \
     Type const q = *cast(Type const *) zpl_pointer_add_const(b, zpl__##Type##_cmp_offset);                         \
     return p < q ? -1 : p > q;                                                                                     \
 }                                                                                                                  \
-ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(isize offset)) {                                                             \
+ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(zpl_isize offset)) {                                                             \
     zpl__##Type##_cmp_offset = offset;                                                                             \
     return &zpl__##Type##_cmp;                                                                                     \
 }
 
-ZPL__COMPARE_PROC(u8);
-ZPL__COMPARE_PROC(i16);
-ZPL__COMPARE_PROC(i32);
-ZPL__COMPARE_PROC(i64);
-ZPL__COMPARE_PROC(isize);
-ZPL__COMPARE_PROC(f32);
-ZPL__COMPARE_PROC(f64);
+ZPL__COMPARE_PROC(zpl_u8);
+ZPL__COMPARE_PROC(zpl_i16);
+ZPL__COMPARE_PROC(zpl_i32);
+ZPL__COMPARE_PROC(zpl_i64);
+ZPL__COMPARE_PROC(zpl_isize);
+ZPL__COMPARE_PROC(zpl_f32);
+ZPL__COMPARE_PROC(zpl_f64);
 ZPL__COMPARE_PROC(char);
 
 // NOTE: str_cmp is special as it requires a funny type and funny comparison
-zpl_global isize zpl__str_cmp_offset;
+zpl_global zpl_isize zpl__str_cmp_offset;
 ZPL_COMPARE_PROC(zpl__str_cmp) {
     char const *p = *cast(char const **) zpl_pointer_add_const(a, zpl__str_cmp_offset);
     char const *q = *cast(char const **) zpl_pointer_add_const(b, zpl__str_cmp_offset);
     return zpl_strcmp(p, q);
 }
-ZPL_COMPARE_PROC_PTR(zpl_str_cmp(isize offset)) {
+ZPL_COMPARE_PROC_PTR(zpl_str_cmp(zpl_isize offset)) {
     zpl__str_cmp_offset = offset;
     return &zpl__str_cmp;
 }
@@ -130,15 +130,15 @@ do {                                                                            
     (_limit) = stack_ptr[1];                                                                                       \
 } while (0)
 
-void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
-    u8 *i, *j;
-    u8 *base = cast(u8 *) base_;
-    u8 *limit = base + count * size;
-    isize threshold = zpl__SORT_INSERT_SORT_TRESHOLD * size;
+void zpl_sort(void *base_, zpl_isize count, zpl_isize size, zpl_compare_proc cmp) {
+    zpl_u8 *i, *j;
+    zpl_u8 *base = cast(zpl_u8 *) base_;
+    zpl_u8 *limit = base + count * size;
+    zpl_isize threshold = zpl__SORT_INSERT_SORT_TRESHOLD * size;
     
     // NOTE: Prepare the stack
-    u8 *stack[ZPL__SORT_STACK_SIZE] = { 0 };
-    u8 **stack_ptr = stack;
+    zpl_u8 *stack[ZPL__SORT_STACK_SIZE] = { 0 };
+    zpl_u8 **stack_ptr = stack;
     
     for (;;) {
         if ((limit - base) > threshold) {
@@ -193,10 +193,10 @@ void zpl_sort(void *base_, isize count, isize size, zpl_compare_proc cmp) {
 ZPL_RADIX_SORT_PROC(Type) {                                                                                        \
     Type *source = items;                                                                                          \
     Type *dest = temp;                                                                                             \
-    isize byte_index, i, byte_max = 8 * zpl_size_of(Type);                                                         \
+    zpl_isize byte_index, i, byte_max = 8 * zpl_size_of(Type);                                                         \
     for (byte_index = 0; byte_index < byte_max; byte_index += 8) {                                                 \
-        isize offsets[256] = { 0 };                                                                                \
-        isize total = 0;                                                                                           \
+        zpl_isize offsets[256] = { 0 };                                                                                \
+        zpl_isize total = 0;                                                                                           \
         /* NOTE: First pass - count how many of each key */                                                        \
         for (i = 0; i < count; i++) {                                                                              \
             Type radix_value = source[i];                                                                          \
@@ -205,7 +205,7 @@ ZPL_RADIX_SORT_PROC(Type) {                                                     
         }                                                                                                          \
         /* NOTE: Change counts to offsets */                                                                       \
         for (i = 0; i < zpl_count_of(offsets); i++) {                                                              \
-            isize skcount = offsets[i];                                                                            \
+            zpl_isize skcount = offsets[i];                                                                            \
             offsets[i] = total;                                                                                    \
             total += skcount;                                                                                      \
         }                                                                                                          \
@@ -219,19 +219,19 @@ ZPL_RADIX_SORT_PROC(Type) {                                                     
     }                                                                                                              \
 }
 
-ZPL_RADIX_SORT_PROC_GEN(u8);
-ZPL_RADIX_SORT_PROC_GEN(u16);
-ZPL_RADIX_SORT_PROC_GEN(u32);
-ZPL_RADIX_SORT_PROC_GEN(u64);
+ZPL_RADIX_SORT_PROC_GEN(zpl_u8);
+ZPL_RADIX_SORT_PROC_GEN(zpl_u16);
+ZPL_RADIX_SORT_PROC_GEN(zpl_u32);
+ZPL_RADIX_SORT_PROC_GEN(zpl_u64);
 
-zpl_inline isize zpl_binary_search(void const *base, isize count, isize size, void const *key,
+zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
                                    zpl_compare_proc compare_proc) {
-    isize start = 0;
-    isize end = count;
+    zpl_isize start = 0;
+    zpl_isize end = count;
     
     while (start < end) {
-        isize mid = start + (end - start) / 2;
-        isize result = compare_proc(key, cast(u8 *) base + mid * size);
+        zpl_isize mid = start + (end - start) / 2;
+        zpl_isize result = compare_proc(key, cast(zpl_u8 *) base + mid * size);
         if (result < 0)
             end = mid;
         else if (result > 0)
@@ -243,21 +243,21 @@ zpl_inline isize zpl_binary_search(void const *base, isize count, isize size, vo
     return -1;
 }
 
-void zpl_shuffle(void *base, isize count, isize size) {
-    u8 *a;
-    isize i, j;
+void zpl_shuffle(void *base, zpl_isize count, zpl_isize size) {
+    zpl_u8 *a;
+    zpl_isize i, j;
     zpl_random random;
     zpl_random_init(&random);
     
-    a = cast(u8 *) base + (count - 1) * size;
+    a = cast(zpl_u8 *) base + (count - 1) * size;
     for (i = count; i > 1; i--) {
         j = zpl_random_gen_isize(&random) % i;
-        zpl_memswap(a, cast(u8 *) base + j * size, size);
+        zpl_memswap(a, cast(zpl_u8 *) base + j * size, size);
         a -= size;
     }
 }
 
-void zpl_reverse(void *base, isize count, isize size) {
-    isize i, j = count - 1;
-    for (i = 0; i < j; i++, j++) zpl_memswap(cast(u8 *) base + i * size, cast(u8 *) base + j * size, size);
+void zpl_reverse(void *base, zpl_isize count, zpl_isize size) {
+    zpl_isize i, j = count - 1;
+    for (i = 0; i < j; i++, j++) zpl_memswap(cast(zpl_u8 *) base + i * size, cast(zpl_u8 *) base + j * size, size);
 }

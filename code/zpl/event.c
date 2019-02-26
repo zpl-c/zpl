@@ -35,9 +35,9 @@ ZPL_TABLE_DECLARE(static, zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
 ZPL_DEF void zpl_event_init   (zpl_event_pool *pool, zpl_allocator alloc);
 ZPL_DEF void zpl_event_destroy(zpl_event_pool *pool);
-ZPL_DEF u64  zpl_event_add    (zpl_event_pool *pool, u64 slot, zpl_event_cb cb);
-ZPL_DEF void zpl_event_remove (zpl_event_pool *pool, u64 slot, u64 index);
-ZPL_DEF void zpl_event_trigger(zpl_event_pool *pool, u64 slot, zpl_event_data evt);
+ZPL_DEF zpl_u64  zpl_event_add    (zpl_event_pool *pool, zpl_u64 slot, zpl_event_cb cb);
+ZPL_DEF void zpl_event_remove (zpl_event_pool *pool, zpl_u64 slot, zpl_u64 index);
+ZPL_DEF void zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_data evt);
 
 //! @}
 //$$
@@ -53,7 +53,7 @@ ZPL_TABLE_DEFINE(zpl_event_pool, zpl_event_pool_, zpl_event_block);
 zpl_inline void zpl_event_init(zpl_event_pool *pool, zpl_allocator alloc) { zpl_event_pool_init(pool, alloc); }
 
 zpl_inline void zpl_event_destroy(zpl_event_pool *pool) {
-    for (isize i = 0; i < zpl_array_count(pool->entries); ++i) {
+    for (zpl_isize i = 0; i < zpl_array_count(pool->entries); ++i) {
         zpl_event_block *block = &pool->entries[i].value;
         
         if (block) { zpl_array_free(*block); }
@@ -62,7 +62,7 @@ zpl_inline void zpl_event_destroy(zpl_event_pool *pool) {
     zpl_event_pool_destroy(pool);
 }
 
-u64 zpl_event_add(zpl_event_pool *pool, u64 slot, zpl_event_cb cb) {
+zpl_u64 zpl_event_add(zpl_event_pool *pool, zpl_u64 slot, zpl_event_cb cb) {
     zpl_event_block *block = zpl_event_pool_get(pool, slot);
     
     if (!block) {
@@ -72,21 +72,21 @@ u64 zpl_event_add(zpl_event_pool *pool, u64 slot, zpl_event_cb cb) {
         block = zpl_event_pool_get(pool, slot);
     }
     
-    u64 offset = zpl_array_count(block);
+    zpl_u64 offset = zpl_array_count(block);
     zpl_array_append(*block, cb);
     return offset;
 }
 
-void zpl_event_remove(zpl_event_pool *pool, u64 slot, u64 index) {
+void zpl_event_remove(zpl_event_pool *pool, zpl_u64 slot, zpl_u64 index) {
     zpl_event_block *block = zpl_event_pool_get(pool, slot);
     
-    if (block) { zpl_array_remove_at(*block, (isize)index); }
+    if (block) { zpl_array_remove_at(*block, (zpl_isize)index); }
 }
 
-void zpl_event_trigger(zpl_event_pool *pool, u64 slot, zpl_event_data evt) {
+void zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_data evt) {
     zpl_event_block *block = zpl_event_pool_get(pool, slot);
     
     if (block) {
-        for (isize i = 0; i < zpl_array_count(*block); ++i) { (*block)[i](evt); }
+        for (zpl_isize i = 0; i < zpl_array_count(*block); ++i) { (*block)[i](evt); }
     }
 }

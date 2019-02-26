@@ -15,58 +15,58 @@ Offers methods for c-string manipulation, but also a string library based on gb_
 
 ZPL_DEF char zpl_char_to_lower(char c);
 ZPL_DEF char zpl_char_to_upper(char c);
-ZPL_DEF b32 zpl_char_is_space(char c);
-ZPL_DEF b32 zpl_char_is_digit(char c);
-ZPL_DEF b32 zpl_char_is_hex_digit(char c);
-ZPL_DEF b32 zpl_char_is_alpha(char c);
-ZPL_DEF b32 zpl_char_is_alphanumeric(char c);
-ZPL_DEF i32 zpl_digit_to_int(char c);
-ZPL_DEF i32 zpl_hex_digit_to_int(char c);
-ZPL_DEF u8  zpl_char_to_hex_digit(char c);
+ZPL_DEF zpl_b32 zpl_char_is_space(char c);
+ZPL_DEF zpl_b32 zpl_char_is_digit(char c);
+ZPL_DEF zpl_b32 zpl_char_is_hex_digit(char c);
+ZPL_DEF zpl_b32 zpl_char_is_alpha(char c);
+ZPL_DEF zpl_b32 zpl_char_is_alphanumeric(char c);
+ZPL_DEF zpl_i32 zpl_digit_to_int(char c);
+ZPL_DEF zpl_i32 zpl_hex_digit_to_int(char c);
+ZPL_DEF zpl_u8  zpl_char_to_hex_digit(char c);
 
 // NOTE: ASCII only
 ZPL_DEF void zpl_str_to_lower(char *str);
 ZPL_DEF void zpl_str_to_upper(char *str);
 
-ZPL_DEF char *zpl_str_trim(char *str, b32 skip_newline);
+ZPL_DEF char *zpl_str_trim(char *str, zpl_b32 skip_newline);
 ZPL_DEF char *zpl_str_skip(char *str, char c);
 
-ZPL_DEF isize zpl_strlen(const char *str);
-ZPL_DEF isize zpl_strnlen(const char *str, isize max_len);
-ZPL_DEF i32 zpl_strcmp(const char *s1, const char *s2);
-ZPL_DEF i32 zpl_strncmp(const char *s1, const char *s2, isize len);
+ZPL_DEF zpl_isize zpl_strlen(const char *str);
+ZPL_DEF zpl_isize zpl_strnlen(const char *str, zpl_isize max_len);
+ZPL_DEF zpl_i32 zpl_strcmp(const char *s1, const char *s2);
+ZPL_DEF zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len);
 ZPL_DEF char *zpl_strcpy(char *dest, const char *source);
-ZPL_DEF char *zpl_strdup(zpl_allocator a, char *src, isize max_len);
-ZPL_DEF char *zpl_strncpy(char *dest, const char *source, isize len);
-ZPL_DEF isize zpl_strlcpy(char *dest, const char *source, isize len);
+ZPL_DEF char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len);
+ZPL_DEF char *zpl_strncpy(char *dest, const char *source, zpl_isize len);
+ZPL_DEF zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len);
 ZPL_DEF char *zpl_strrev(char *str); // NOTE: ASCII only
 
 ZPL_DEF const char *zpl_strtok(char *output, const char *src, const char *delimit);
 
 // NOTE: This edits *source* string.
 // Returns: zpl_array
-ZPL_DEF char **zpl_str_split_lines(zpl_allocator alloc, char *source, b32 strip_whitespace);
+ZPL_DEF char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace);
 
 #define zpl_str_expand(str) str, zpl_strlen(str)
 
-ZPL_DEF b32 zpl_str_has_prefix(const char *str, const char *prefix);
-ZPL_DEF b32 zpl_str_has_suffix(const char *str, const char *suffix);
+ZPL_DEF zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix);
+ZPL_DEF zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix);
 
 ZPL_DEF const char *zpl_char_first_occurence(const char *str, char c);
 ZPL_DEF const char *zpl_char_last_occurence(const char *str, char c);
 #define zpl_strchr zpl_char_first_occurence
 
-ZPL_DEF void zpl_str_concat(char *dest, isize dest_len, const char *src_a, isize src_a_len, const char *src_b,
-                            isize src_b_len);
+ZPL_DEF void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
+                            zpl_isize src_b_len);
 
-ZPL_DEF u64 zpl_str_to_u64(const char *str, char **end_ptr,
-                           i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF i64 zpl_str_to_i64(const char *str, char **end_ptr,
-                           i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF f32 zpl_str_to_f32(const char *str, char **end_ptr);
-ZPL_DEF f64 zpl_str_to_f64(const char *str, char **end_ptr);
-ZPL_DEF void zpl_i64_to_str(i64 value, char *string, i32 base);
-ZPL_DEF void zpl_u64_to_str(u64 value, char *string, i32 base);
+ZPL_DEF zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr,
+                           zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
+ZPL_DEF zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr,
+                           zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
+ZPL_DEF zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr);
+ZPL_DEF zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr);
+ZPL_DEF void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
+ZPL_DEF void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -75,19 +75,19 @@ ZPL_DEF void zpl_u64_to_str(u64 value, char *string, i32 base);
 //
 
 // NOTE: Does not check if utf-8 string is valid
-ZPL_DEF isize zpl_utf8_strlen(u8 const *str);
-ZPL_DEF isize zpl_utf8_strnlen(u8 const *str, isize max_len);
+ZPL_DEF zpl_isize zpl_utf8_strlen(zpl_u8 const *str);
+ZPL_DEF zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len);
 
 // NOTE: Windows doesn't handle 8 bit filenames well
-ZPL_DEF u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str);
-ZPL_DEF u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str);
-ZPL_DEF u16 *zpl_utf8_to_ucs2_buf(u8 const *str); // NOTE: Uses locally persisting buffer
-ZPL_DEF u8 *zpl_ucs2_to_utf8_buf(u16 const *str); // NOTE: Uses locally persisting buffer
+ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2(zpl_u16 *buffer, zpl_isize len, zpl_u8 const *str);
+ZPL_DEF zpl_u8 *zpl_ucs2_to_utf8(zpl_u8 *buffer, zpl_isize len, zpl_u16 const *str);
+ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2_buf(zpl_u8 const *str); // NOTE: Uses locally persisting buffer
+ZPL_DEF zpl_u8 *zpl_ucs2_to_utf8_buf(zpl_u16 const *str); // NOTE: Uses locally persisting buffer
 
 // NOTE: Returns size of codepoint in bytes
-ZPL_DEF isize zpl_utf8_decode(u8 const *str, isize str_len, Rune *codepoint);
-ZPL_DEF isize zpl_utf8_codepoint_size(u8 const *str, isize str_len);
-ZPL_DEF isize zpl_utf8_encode_rune(u8 buf[4], Rune r);
+ZPL_DEF zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint);
+ZPL_DEF zpl_isize zpl_utf8_codepoint_size(zpl_u8 const *str, zpl_isize str_len);
+ZPL_DEF zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], Rune r);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -185,35 +185,35 @@ int main(int argc, char **argv) {
 
 typedef char *zpl_string;
 
-// NOTE: If you only need a small string, just use a standard c string or change the size from isize to u16, etc.
+// NOTE: If you only need a small string, just use a standard c string or change the size from zpl_isize to zpl_u16, etc.
 
 typedef struct zpl_string_header {
     zpl_allocator allocator;
-    isize length;
-    isize capacity;
+    zpl_isize length;
+    zpl_isize capacity;
 } zpl_string_header;
 
 #define ZPL_STRING_HEADER(str) (cast(zpl_string_header *)(str) - 1)
 
-ZPL_DEF zpl_string zpl_string_make_reserve(zpl_allocator a, isize capacity);
+ZPL_DEF zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity);
 ZPL_DEF zpl_string zpl_string_make(zpl_allocator a, const char *str);
-ZPL_DEF zpl_string zpl_string_make_length(zpl_allocator a, void const *str, isize num_bytes);
-ZPL_DEF zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, isize num_bytes, const char *fmt, ...);
+ZPL_DEF zpl_string zpl_string_make_length(zpl_allocator a, void const *str, zpl_isize num_bytes);
+ZPL_DEF zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, zpl_isize num_bytes, const char *fmt, ...);
 ZPL_DEF zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt,
                                           ...); // NOTE: Uses locally persistent buffer
 ZPL_DEF void zpl_string_free(zpl_string str);
 ZPL_DEF zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str);
-ZPL_DEF isize zpl_string_length(zpl_string const str);
-ZPL_DEF isize zpl_string_capacity(zpl_string const str);
-ZPL_DEF isize zpl_string_available_space(zpl_string const str);
+ZPL_DEF zpl_isize zpl_string_length(zpl_string const str);
+ZPL_DEF zpl_isize zpl_string_capacity(zpl_string const str);
+ZPL_DEF zpl_isize zpl_string_available_space(zpl_string const str);
 ZPL_DEF void zpl_string_clear(zpl_string str);
 ZPL_DEF zpl_string zpl_string_append(zpl_string str, zpl_string const other);
-ZPL_DEF zpl_string zpl_string_append_length(zpl_string str, void const *other, isize num_bytes);
+ZPL_DEF zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize num_bytes);
 ZPL_DEF zpl_string zpl_string_appendc(zpl_string str, const char *other);
 ZPL_DEF zpl_string zpl_string_set(zpl_string str, const char *cstr);
-ZPL_DEF zpl_string zpl_string_make_space_for(zpl_string str, isize add_len);
-ZPL_DEF isize zpl_string_allocation_size(zpl_string const str);
-ZPL_DEF b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs);
+ZPL_DEF zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len);
+ZPL_DEF zpl_isize zpl_string_allocation_size(zpl_string const str);
+ZPL_DEF zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs);
 ZPL_DEF zpl_string zpl_string_trim(zpl_string str, const char *cut_set);
 ZPL_DEF zpl_string zpl_string_trim_space(zpl_string str); // Whitespace ` \t\r\n\v\f`
 ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
@@ -239,31 +239,31 @@ zpl_inline char zpl_char_to_upper(char c) {
     return c;
 }
 
-zpl_inline b32 zpl_char_is_space(char c) {
+zpl_inline zpl_b32 zpl_char_is_space(char c) {
     if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') return true;
     return false;
 }
 
-zpl_inline b32 zpl_char_is_digit(char c) {
+zpl_inline zpl_b32 zpl_char_is_digit(char c) {
     if (c >= '0' && c <= '9') return true;
     return false;
 }
 
-zpl_inline b32 zpl_char_is_hex_digit(char c) {
+zpl_inline zpl_b32 zpl_char_is_hex_digit(char c) {
     if (zpl_char_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) return true;
     return false;
 }
 
-zpl_inline b32 zpl_char_is_alpha(char c) {
+zpl_inline zpl_b32 zpl_char_is_alpha(char c) {
     if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return true;
     return false;
 }
 
-zpl_inline b32 zpl_char_is_alphanumeric(char c) { return zpl_char_is_alpha(c) || zpl_char_is_digit(c); }
+zpl_inline zpl_b32 zpl_char_is_alphanumeric(char c) { return zpl_char_is_alpha(c) || zpl_char_is_digit(c); }
 
-zpl_inline i32 zpl_digit_to_int(char c) { return zpl_char_is_digit(c) ? c - '0' : c - 'W'; }
+zpl_inline zpl_i32 zpl_digit_to_int(char c) { return zpl_char_is_digit(c) ? c - '0' : c - 'W'; }
 
-zpl_inline i32 zpl_hex_digit_to_int(char c) {
+zpl_inline zpl_i32 zpl_hex_digit_to_int(char c) {
     if (zpl_char_is_digit(c))
         return zpl_digit_to_int(c);
     else if (zpl_is_between(c, 'a', 'f'))
@@ -273,13 +273,13 @@ zpl_inline i32 zpl_hex_digit_to_int(char c) {
     return -1;
 }
 
-zpl_inline u8 zpl_char_to_hex_digit(char c) {
+zpl_inline zpl_u8 zpl_char_to_hex_digit(char c) {
     if (c >= '0' && c <= '9')
-        return (u8)(c - '0');
+        return (zpl_u8)(c - '0');
     if (c >= 'a' && c <= 'f')
-        return (u8)(c - 'a');
+        return (zpl_u8)(c - 'a');
     if (c >= 'A' && c <= 'F')
-        return (u8)(c - 'A');
+        return (zpl_u8)(c - 'A');
     return 0;
 }
 
@@ -300,33 +300,33 @@ zpl_inline void zpl_str_to_upper(char *str) {
     }
 }
 
-zpl_inline isize zpl_strlen(const char *str) {
+zpl_inline zpl_isize zpl_strlen(const char *str) {
     if (str == NULL) { return 0; }
     
     const char *begin = str;
-    isize const *w;
-    while (cast(uintptr) str % sizeof(usize)) {
+    zpl_isize const *w;
+    while (cast(zpl_uintptr) str % sizeof(zpl_usize)) {
         if (!*str) return str - begin;
         str++;
     }
-    w = cast(isize const *) str;
+    w = cast(zpl_isize const *) str;
     while (!ZPL__HAS_ZERO(*w)) w++;
     str = cast(const char *) w;
     while (*str) str++;
     return str - begin;
 }
 
-zpl_inline isize zpl_strnlen(const char *str, isize max_len) {
+zpl_inline zpl_isize zpl_strnlen(const char *str, zpl_isize max_len) {
     const char *end = cast(const char *) zpl_memchr(str, 0, max_len);
     if (end) return end - str;
     return max_len;
 }
 
-zpl_inline isize zpl_utf8_strlen(u8 const *str) {
-    isize count = 0;
+zpl_inline zpl_isize zpl_utf8_strlen(zpl_u8 const *str) {
+    zpl_isize count = 0;
     for (; *str; count++) {
-        u8 c = *str;
-        isize inc = 0;
+        zpl_u8 c = *str;
+        zpl_isize inc = 0;
         if (c < 0x80)
             inc = 1;
         else if ((c & 0xe0) == 0xc0)
@@ -343,11 +343,11 @@ zpl_inline isize zpl_utf8_strlen(u8 const *str) {
     return count;
 }
 
-zpl_inline isize zpl_utf8_strnlen(u8 const *str, isize max_len) {
-    isize count = 0;
+zpl_inline zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len) {
+    zpl_isize count = 0;
     for (; *str && max_len > 0; count++) {
-        u8 c = *str;
-        isize inc = 0;
+        zpl_u8 c = *str;
+        zpl_isize inc = 0;
         if (c < 0x80)
             inc = 1;
         else if ((c & 0xe0) == 0xc0)
@@ -365,9 +365,9 @@ zpl_inline isize zpl_utf8_strnlen(u8 const *str, isize max_len) {
     return count;
 }
 
-zpl_inline i32 zpl_strcmp(const char *s1, const char *s2) {
+zpl_inline zpl_i32 zpl_strcmp(const char *s1, const char *s2) {
     while (*s1 && (*s1 == *s2)) { s1++, s2++; }
-    return *(u8 *)s1 - *(u8 *)s2;
+    return *(zpl_u8 *)s1 - *(zpl_u8 *)s2;
 }
 
 zpl_inline char *zpl_strcpy(char *dest, const char *source) {
@@ -379,9 +379,9 @@ zpl_inline char *zpl_strcpy(char *dest, const char *source) {
     return dest;
 }
 
-zpl_inline char *zpl_strdup(zpl_allocator a, char *src, isize max_len) {
+zpl_inline char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len) {
     ZPL_ASSERT_NOT_NULL(src);
-    isize len = zpl_strlen(src);
+    zpl_isize len = zpl_strlen(src);
     char *dest = cast(char *) zpl_alloc(a, max_len);
     zpl_memset(dest + len, 0, max_len - len);
     zpl_strncpy(dest, src, max_len);
@@ -389,7 +389,7 @@ zpl_inline char *zpl_strdup(zpl_allocator a, char *src, isize max_len) {
     return dest;
 }
 
-zpl_inline char *zpl_strncpy(char *dest, const char *source, isize len) {
+zpl_inline char *zpl_strncpy(char *dest, const char *source, zpl_isize len) {
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
         char *str = dest;
@@ -405,8 +405,8 @@ zpl_inline char *zpl_strncpy(char *dest, const char *source, isize len) {
     return dest;
 }
 
-zpl_inline isize zpl_strlcpy(char *dest, const char *source, isize len) {
-    isize result = 0;
+zpl_inline zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len) {
+    zpl_isize result = 0;
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
         const char *source_start = source;
@@ -426,7 +426,7 @@ zpl_inline isize zpl_strlcpy(char *dest, const char *source, isize len) {
 }
 
 zpl_inline char *zpl_strrev(char *str) {
-    isize len = zpl_strlen(str);
+    zpl_isize len = zpl_strlen(str);
     char *a = str + 0;
     char *b = str + len - 1;
     len /= 2;
@@ -437,7 +437,7 @@ zpl_inline char *zpl_strrev(char *str) {
     return str;
 }
 
-zpl_inline i32 zpl_strncmp(const char *s1, const char *s2, isize len) {
+zpl_inline zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len) {
     for (; len > 0; s1++, s2++, len--) {
         if (*s1 != *s2)
             return ((s1 < s2) ? -1 : +1);
@@ -454,7 +454,7 @@ zpl_inline const char *zpl_strtok(char *output, const char *src, const char *del
     return *src ? src + 1 : src;
 }
 
-zpl_inline char **zpl_str_split_lines(zpl_allocator alloc, char *source, b32 strip_whitespace) {
+zpl_inline char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace) {
     char **lines = NULL, *p = source, *pd = p;
     zpl_array_init(lines, alloc);
     
@@ -474,16 +474,16 @@ zpl_inline char **zpl_str_split_lines(zpl_allocator alloc, char *source, b32 str
     return lines;
 }
 
-zpl_inline b32 zpl_str_has_prefix(const char *str, const char *prefix) {
+zpl_inline zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix) {
     while (*prefix) {
         if (*str++ != *prefix++) return false;
     }
     return true;
 }
 
-zpl_inline b32 zpl_str_has_suffix(const char *str, const char *suffix) {
-    isize i = zpl_strlen(str);
-    isize j = zpl_strlen(suffix);
+zpl_inline zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix) {
+    zpl_isize i = zpl_strlen(str);
+    zpl_isize j = zpl_strlen(suffix);
     if (j <= i) return zpl_strcmp(str + i - j, suffix) == 0;
     return false;
 }
@@ -505,7 +505,7 @@ zpl_inline const char *zpl_char_last_occurence(const char *s, char c) {
     return result;
 }
 
-zpl_inline char *zpl_str_trim(char *str, b32 skip_newline)
+zpl_inline char *zpl_str_trim(char *str, zpl_b32 skip_newline)
 {
     while (*str && zpl_char_is_space(*str) && (!skip_newline || (skip_newline && *str != '\n'))) { ++str; }
     return str;
@@ -516,8 +516,8 @@ zpl_inline char *zpl_str_skip(char *str, char c) {
     return str;
 }
 
-zpl_inline void zpl_str_concat(char *dest, isize dest_len, const char *src_a, isize src_a_len, const char *src_b,
-                               isize src_b_len) {
+zpl_inline void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
+                               zpl_isize src_b_len) {
     ZPL_ASSERT(dest_len >= src_a_len + src_b_len + 1);
     if (dest) {
         zpl_memcopy(dest, src_a, src_a_len);
@@ -526,10 +526,10 @@ zpl_inline void zpl_str_concat(char *dest, isize dest_len, const char *src_a, is
     }
 }
 
-zpl_internal isize zpl__scan_i64(const char *text, i32 base, i64 *value) {
+zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64 *value) {
     const char *text_begin = text;
-    i64 result = 0;
-    b32 negative = false;
+    zpl_i64 result = 0;
+    zpl_b32 negative = false;
     
     if (*text == '-') {
         negative = true;
@@ -539,7 +539,7 @@ zpl_internal isize zpl__scan_i64(const char *text, i32 base, i64 *value) {
     if (base == 16 && zpl_strncmp(text, "0x", 2) == 0) text += 2;
     
     for (;;) {
-        i64 v;
+        zpl_i64 v;
         if (zpl_char_is_digit(*text))
             v = *text - '0';
         else if (base == 16 && zpl_char_is_hex_digit(*text))
@@ -560,14 +560,14 @@ zpl_internal isize zpl__scan_i64(const char *text, i32 base, i64 *value) {
     return (text - text_begin);
 }
 
-zpl_internal isize zpl__scan_u64(const char *text, i32 base, u64 *value) {
+zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64 *value) {
     const char *text_begin = text;
-    u64 result = 0;
+    zpl_u64 result = 0;
     
     if (base == 16 && zpl_strncmp(text, "0x", 2) == 0) text += 2;
     
     for (;;) {
-        u64 v;
+        zpl_u64 v;
         if (zpl_char_is_digit(*text))
             v = *text - '0';
         else if (base == 16 && zpl_char_is_hex_digit(*text))
@@ -587,9 +587,9 @@ zpl_internal isize zpl__scan_u64(const char *text, i32 base, u64 *value) {
 }
 
 // TODO: Make better
-u64 zpl_str_to_u64(const char *str, char **end_ptr, i32 base) {
-    isize len;
-    u64 value = 0;
+zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr, zpl_i32 base) {
+    zpl_isize len;
+    zpl_u64 value = 0;
     
     if (!base) {
         if ((zpl_strlen(str) > 2) && (zpl_strncmp(str, "0x", 2) == 0))
@@ -598,14 +598,14 @@ u64 zpl_str_to_u64(const char *str, char **end_ptr, i32 base) {
             base = 10;
     }
     
-    len = zpl__scan_u64(str, base, &value);
+    len = zpl__scan_zpl_u64(str, base, &value);
     if (end_ptr) *end_ptr = (char *)str + len;
     return value;
 }
 
-i64 zpl_str_to_i64(const char *str, char **end_ptr, i32 base) {
-    isize len;
-    i64 value;
+zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr, zpl_i32 base) {
+    zpl_isize len;
+    zpl_i64 value;
     
     if (!base) {
         if ((zpl_strlen(str) > 2) && (zpl_strncmp(str, "0x", 2) == 0))
@@ -614,7 +614,7 @@ i64 zpl_str_to_i64(const char *str, char **end_ptr, i32 base) {
             base = 10;
     }
     
-    len = zpl__scan_i64(str, base, &value);
+    len = zpl__scan_zpl_i64(str, base, &value);
     if (end_ptr) *end_ptr = (char *)str + len;
     return value;
 }
@@ -625,17 +625,17 @@ zpl_global const char zpl__num_to_char_table[] = "0123456789"
 "abcdefghijklmnopqrstuvwxyz"
 "@$";
 
-zpl_inline void zpl_i64_to_str(i64 value, char *string, i32 base) {
+zpl_inline void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     char *buf = string;
-    b32 negative = false;
-    u64 v;
+    zpl_b32 negative = false;
+    zpl_u64 v;
     
     if (value < 0) {
         negative = true;
         value = -value;
     }
     
-    v = cast(u64) value;
+    v = cast(zpl_u64) value;
     if (v != 0) {
         while (v > 0) {
             *buf++ = zpl__num_to_char_table[v % base];
@@ -649,7 +649,7 @@ zpl_inline void zpl_i64_to_str(i64 value, char *string, i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline void zpl_u64_to_str(u64 value, char *string, i32 base) {
+zpl_inline void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     char *buf = string;
     
     if (value) {
@@ -665,15 +665,15 @@ zpl_inline void zpl_u64_to_str(u64 value, char *string, i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline f32 zpl_str_to_f32(const char *str, char **end_ptr) {
-    f64 f = zpl_str_to_f64(str, end_ptr);
-    f32 r = cast(f32) f;
+zpl_inline zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr) {
+    zpl_f64 f = zpl_str_to_zpl_f64(str, end_ptr);
+    zpl_f32 r = cast(zpl_f32) f;
     return r;
 }
 
-zpl_inline f64 zpl_str_to_f64(const char *str, char **end_ptr) {
-    f64 result, value, sign, scale;
-    i32 frac;
+zpl_inline zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr) {
+    zpl_f64 result, value, sign, scale;
+    zpl_i32 frac;
     
     while (zpl_char_is_space(*str)) { str++; }
     
@@ -688,7 +688,7 @@ zpl_inline f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     for (value = 0.0; zpl_char_is_digit(*str); str++) { value = value * 10.0 + (*str - '0'); }
     
     if (*str == '.') {
-        f64 pow10 = 10.0;
+        zpl_f64 pow10 = 10.0;
         str++;
         while (zpl_char_is_digit(*str)) {
             value += (*str - '0') / pow10;
@@ -700,7 +700,7 @@ zpl_inline f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     frac = 0;
     scale = 1.0;
     if ((*str == 'e') || (*str == 'E')) {
-        u32 exp;
+        zpl_u32 exp;
         
         str++;
         if (*str == '-') {
@@ -734,11 +734,11 @@ zpl_inline f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     return result;
 }
 
-zpl_inline void zpl__set_string_length(zpl_string str, isize len) { ZPL_STRING_HEADER(str)->length = len; }
-zpl_inline void zpl__set_string_capacity(zpl_string str, isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
+zpl_inline void zpl__set_string_length(zpl_string str, zpl_isize len) { ZPL_STRING_HEADER(str)->length = len; }
+zpl_inline void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
 
-zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, isize capacity) {
-    isize header_size = zpl_size_of(zpl_string_header);
+zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity) {
+    zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + capacity + 1);
     
     zpl_string str;
@@ -758,12 +758,12 @@ zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, isize capacity) {
 }
 
 zpl_inline zpl_string zpl_string_make(zpl_allocator a, const char *str) {
-    isize len = str ? zpl_strlen(str) : 0;
+    zpl_isize len = str ? zpl_strlen(str) : 0;
     return zpl_string_make_length(a, str, len);
 }
 
-zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, isize num_bytes) {
-    isize header_size = zpl_size_of(zpl_string_header);
+zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, zpl_isize num_bytes) {
+    zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + num_bytes + 1);
     
     zpl_string str;
@@ -793,7 +793,7 @@ zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt, ...) {
     return zpl_string_make(a, buf);
 }
 
-zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, isize num_bytes, const char *fmt, ...) {
+zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, zpl_isize num_bytes, const char *fmt, ...) {
     va_list va;
     va_start(va, fmt);
     zpl_snprintf_va(buf, num_bytes, fmt, va);
@@ -813,10 +813,10 @@ zpl_inline zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str
     return zpl_string_make_length(a, str, zpl_string_length(str));
 }
 
-zpl_inline isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
-zpl_inline isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
+zpl_inline zpl_isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
+zpl_inline zpl_isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
 
-zpl_inline isize zpl_string_available_space(zpl_string const str) {
+zpl_inline zpl_isize zpl_string_available_space(zpl_string const str) {
     zpl_string_header *h = ZPL_STRING_HEADER(str);
     if (h->capacity > h->length) return h->capacity - h->length;
     return 0;
@@ -831,9 +831,9 @@ zpl_inline zpl_string zpl_string_append(zpl_string str, zpl_string const other) 
     return zpl_string_append_length(str, other, zpl_string_length(other));
 }
 
-zpl_string zpl_string_append_length(zpl_string str, void const *other, isize other_len) {
+zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize other_len) {
     if (other_len > 0) {
-        isize curr_len = zpl_string_length(str);
+        zpl_isize curr_len = zpl_string_length(str);
         
         str = zpl_string_make_space_for(str, other_len);
         if (str == NULL) return NULL;
@@ -850,7 +850,7 @@ zpl_inline zpl_string zpl_string_appendc(zpl_string str, const char *other) {
 }
 
 zpl_string zpl_string_set(zpl_string str, const char *cstr) {
-    isize len = zpl_strlen(cstr);
+    zpl_isize len = zpl_strlen(cstr);
     if (zpl_string_capacity(str) < len) {
         str = zpl_string_make_space_for(str, len - zpl_string_length(str));
         if (str == NULL) return NULL;
@@ -863,14 +863,14 @@ zpl_string zpl_string_set(zpl_string str, const char *cstr) {
     return str;
 }
 
-zpl_string zpl_string_make_space_for(zpl_string str, isize add_len) {
-    isize available = zpl_string_available_space(str);
+zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len) {
+    zpl_isize available = zpl_string_available_space(str);
     
     // NOTE: Return if there is enough space left
     if (available >= add_len) {
         return str;
     } else {
-        isize new_len, old_size, new_size;
+        zpl_isize new_len, old_size, new_size;
         void *ptr, *new_ptr;
         zpl_allocator a = ZPL_STRING_HEADER(str)->allocator;
         zpl_string_header *header;
@@ -893,13 +893,13 @@ zpl_string zpl_string_make_space_for(zpl_string str, isize add_len) {
     }
 }
 
-zpl_inline isize zpl_string_allocation_size(zpl_string const str) {
-    isize cap = zpl_string_capacity(str);
+zpl_inline zpl_isize zpl_string_allocation_size(zpl_string const str) {
+    zpl_isize cap = zpl_string_capacity(str);
     return zpl_size_of(zpl_string_header) + cap;
 }
 
-zpl_inline b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs) {
-    isize lhs_len, rhs_len, i;
+zpl_inline zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs) {
+    zpl_isize lhs_len, rhs_len, i;
     lhs_len = zpl_string_length(lhs);
     rhs_len = zpl_string_length(rhs);
     if (lhs_len != rhs_len) return false;
@@ -913,7 +913,7 @@ zpl_inline b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs) 
 
 zpl_string zpl_string_trim(zpl_string str, const char *cut_set) {
     char *start, *end, *start_pos, *end_pos;
-    isize len;
+    zpl_isize len;
     
     start_pos = start = str;
     end_pos = end = str + zpl_string_length(str) - 1;
@@ -921,7 +921,7 @@ zpl_string zpl_string_trim(zpl_string str, const char *cut_set) {
     while (start_pos <= end && zpl_char_first_occurence(cut_set, *start_pos)) start_pos++;
     while (end_pos > start_pos && zpl_char_first_occurence(cut_set, *end_pos)) end_pos--;
     
-    len = cast(isize)((start_pos > end_pos) ? 0 : ((end_pos - start_pos) + 1));
+    len = cast(zpl_isize)((start_pos > end_pos) ? 0 : ((end_pos - start_pos) + 1));
     
     if (str != start_pos) zpl_memmove(str, start_pos, len);
     str[len] = '\0';
@@ -935,8 +935,8 @@ zpl_inline zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_
 
 zpl_string zpl_string_append_rune(zpl_string str, Rune r) {
     if (r >= 0) {
-        u8 buf[8] = { 0 };
-        isize len = zpl_utf8_encode_rune(buf, r);
+        zpl_u8 buf[8] = { 0 };
+        zpl_isize len = zpl_utf8_encode_rune(buf, r);
         return zpl_string_append_length(str, buf, len);
     }
     
@@ -944,7 +944,7 @@ zpl_string zpl_string_append_rune(zpl_string str, Rune r) {
 }
 
 zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...) {
-    isize res;
+    zpl_isize res;
     char buf[4096] = { 0 };
     va_list va;
     va_start(va, fmt);
@@ -959,9 +959,9 @@ zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...) {
 //
 //
 
-u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str) {
+zpl_u16 *zpl_utf8_to_ucs2(zpl_u16 *buffer, zpl_isize len, zpl_u8 const *str) {
     Rune c;
-    isize i = 0;
+    zpl_isize i = 0;
     len--;
     while (*str) {
         if (i >= len) return NULL;
@@ -971,7 +971,7 @@ u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str) {
             if (*str < 0xc2) return NULL;
             c = (*str++ & 0x1f) << 6;
             if ((*str & 0xc0) != 0x80) return NULL;
-            buffer[i++] = cast(u16)(c + (*str++ & 0x3f));
+            buffer[i++] = cast(zpl_u16)(c + (*str++ & 0x3f));
         } else if ((*str & 0xf0) == 0xe0) {
             if (*str == 0xe0 && (str[1] < 0xa0 || str[1] > 0xbf)) return NULL;
             if (*str == 0xed && str[1] > 0x9f) // str[1] < 0x80 is checked below
@@ -980,7 +980,7 @@ u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str) {
             if ((*str & 0xc0) != 0x80) return NULL;
             c += (*str++ & 0x3f) << 6;
             if ((*str & 0xc0) != 0x80) return NULL;
-            buffer[i++] = cast(u16)(c + (*str++ & 0x3f));
+            buffer[i++] = cast(zpl_u16)(c + (*str++ & 0x3f));
         } else if ((*str & 0xf8) == 0xf0) {
             if (*str > 0xf4) return NULL;
             if (*str == 0xf0 && (str[1] < 0x90 || str[1] > 0xbf)) return NULL;
@@ -1009,8 +1009,8 @@ u16 *zpl_utf8_to_ucs2(u16 *buffer, isize len, u8 const *str) {
     return buffer;
 }
 
-u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str) {
-    isize i = 0;
+zpl_u8 *zpl_ucs2_to_utf8(zpl_u8 *buffer, zpl_isize len, zpl_u16 const *str) {
+    zpl_isize i = 0;
     len--;
     while (*str) {
         if (*str < 0x80) {
@@ -1044,17 +1044,17 @@ u8 *zpl_ucs2_to_utf8(u8 *buffer, isize len, u16 const *str) {
     return buffer;
 }
 
-u16 *zpl_utf8_to_ucs2_buf(u8 const *str) { // NOTE: Uses locally persisting buffer
-    zpl_local_persist u16 buf[4096];
+zpl_u16 *zpl_utf8_to_ucs2_buf(zpl_u8 const *str) { // NOTE: Uses locally persisting buffer
+    zpl_local_persist zpl_u16 buf[4096];
     return zpl_utf8_to_ucs2(buf, zpl_count_of(buf), str);
 }
 
-u8 *zpl_ucs2_to_utf8_buf(u16 const *str) { // NOTE: Uses locally persisting buffer
-    zpl_local_persist u8 buf[4096];
+zpl_u8 *zpl_ucs2_to_utf8_buf(zpl_u16 const *str) { // NOTE: Uses locally persisting buffer
+    zpl_local_persist zpl_u8 buf[4096];
     return zpl_ucs2_to_utf8(buf, zpl_count_of(buf), str);
 }
 
-zpl_global u8 const zpl__utf8_first[256] = {
+zpl_global zpl_u8 const zpl__utf8_first[256] = {
     0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, // 0x00-0x0F
     0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, // 0x10-0x1F
     0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, 0xf0, // 0x20-0x2F
@@ -1075,22 +1075,22 @@ zpl_global u8 const zpl__utf8_first[256] = {
 
 
 typedef struct zpl_utf8_accept_range {
-    u8 lo, hi;
+    zpl_u8 lo, hi;
 } zpl_utf8_accept_range;
 
 zpl_global zpl_utf8_accept_range const zpl__utf8_accept_ranges[] = {
     { 0x80, 0xbf }, { 0xa0, 0xbf }, { 0x80, 0x9f }, { 0x90, 0xbf }, { 0x80, 0x8f },
 };
 
-isize zpl_utf8_decode(u8 const *str, isize str_len, Rune *codepoint_out) {
+zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_out) {
     
-    isize width = 0;
+    zpl_isize width = 0;
     Rune codepoint = ZPL_RUNE_INVALID;
     
     if (str_len > 0) {
-        u8 s0 = str[0];
-        u8 x = zpl__utf8_first[s0], sz;
-        u8 b1, b2, b3;
+        zpl_u8 s0 = str[0];
+        zpl_u8 x = zpl__utf8_first[s0], sz;
+        zpl_u8 b1, b2, b3;
         zpl_utf8_accept_range accept;
         if (x >= 0xf0) {
             Rune mask = (cast(Rune) x << 31) >> 31;
@@ -1144,24 +1144,24 @@ isize zpl_utf8_decode(u8 const *str, isize str_len, Rune *codepoint_out) {
     return width;
 }
 
-isize zpl_utf8_codepoint_size(u8 const *str, isize str_len) {
-    isize i = 0;
+zpl_isize zpl_utf8_codepoint_size(zpl_u8 const *str, zpl_isize str_len) {
+    zpl_isize i = 0;
     for (; i < str_len && str[i]; i++) {
         if ((str[i] & 0xc0) != 0x80) break;
     }
     return i + 1;
 }
 
-isize zpl_utf8_encode_rune(u8 buf[4], Rune r) {
-    u32 i = cast(u32) r;
-    u8 mask = 0x3f;
+zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], Rune r) {
+    zpl_u32 i = cast(zpl_u32) r;
+    zpl_u8 mask = 0x3f;
     if (i <= (1 << 7) - 1) {
-        buf[0] = cast(u8) r;
+        buf[0] = cast(zpl_u8) r;
         return 1;
     }
     if (i <= (1 << 11) - 1) {
-        buf[0] = 0xc0 | cast(u8)(r >> 6);
-        buf[1] = 0x80 | (cast(u8)(r) & mask);
+        buf[0] = 0xc0 | cast(zpl_u8)(r >> 6);
+        buf[1] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 2;
     }
     
@@ -1169,22 +1169,22 @@ isize zpl_utf8_encode_rune(u8 buf[4], Rune r) {
     if (i > ZPL_RUNE_MAX || zpl_is_between(i, 0xd800, 0xdfff)) {
         r = ZPL_RUNE_INVALID;
         
-        buf[0] = 0xe0 | cast(u8)(r >> 12);
-        buf[1] = 0x80 | (cast(u8)(r >> 6) & mask);
-        buf[2] = 0x80 | (cast(u8)(r) & mask);
+        buf[0] = 0xe0 | cast(zpl_u8)(r >> 12);
+        buf[1] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);
+        buf[2] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 3;
     }
     
     if (i <= (1 << 16) - 1) {
-        buf[0] = 0xe0 | cast(u8)(r >> 12);
-        buf[1] = 0x80 | (cast(u8)(r >> 6) & mask);
-        buf[2] = 0x80 | (cast(u8)(r) & mask);
+        buf[0] = 0xe0 | cast(zpl_u8)(r >> 12);
+        buf[1] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);
+        buf[2] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 3;
     }
     
-    buf[0] = 0xf0 | cast(u8)(r >> 18);
-    buf[1] = 0x80 | (cast(u8)(r >> 12) & mask);
-    buf[2] = 0x80 | (cast(u8)(r >> 6) & mask);
-    buf[3] = 0x80 | (cast(u8)(r) & mask);
+    buf[0] = 0xf0 | cast(zpl_u8)(r >> 18);
+    buf[1] = 0x80 | (cast(zpl_u8)(r >> 12) & mask);
+    buf[2] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);
+    buf[3] = 0x80 | (cast(zpl_u8)(r) & mask);
     return 4;
 }

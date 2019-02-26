@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+  9.3.0 - Change how zpl uses basic types internally
   9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
   9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
   9.1.0 - get_env rework and fixes

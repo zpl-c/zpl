@@ -8,25 +8,25 @@
  */
 
 //! Checks if value is power of 2.
-ZPL_DEF b32 zpl_is_power_of_two(isize x);
+ZPL_DEF zpl_b32 zpl_is_power_of_two(zpl_isize x);
 
 //! Aligns address to specified alignment.
-ZPL_DEF void *zpl_align_forward(void *ptr, isize alignment);
+ZPL_DEF void *zpl_align_forward(void *ptr, zpl_isize alignment);
 
 //! Moves pointer forward by bytes.
-ZPL_DEF void *zpl_pointer_add(void *ptr, isize bytes);
+ZPL_DEF void *zpl_pointer_add(void *ptr, zpl_isize bytes);
 
 //! Moves pointer backward by bytes.
-ZPL_DEF void *zpl_pointer_sub(void *ptr, isize bytes);
+ZPL_DEF void *zpl_pointer_sub(void *ptr, zpl_isize bytes);
 
 //! Moves pointer forward by bytes.
-ZPL_DEF void const *zpl_pointer_add_const(void const *ptr, isize bytes);
+ZPL_DEF void const *zpl_pointer_add_const(void const *ptr, zpl_isize bytes);
 
 //! Moves pointer backward by bytes.
-ZPL_DEF void const *zpl_pointer_sub_const(void const *ptr, isize bytes);
+ZPL_DEF void const *zpl_pointer_sub_const(void const *ptr, zpl_isize bytes);
 
 //! Calculates difference between two addresses.
-ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
+ZPL_DEF zpl_isize zpl_pointer_diff(void const *begin, void const *end);
 
 #define zpl_ptr_add zpl_pointer_add
 #define zpl_ptr_sub zpl_pointer_sub
@@ -38,7 +38,7 @@ ZPL_DEF isize zpl_pointer_diff(void const *begin, void const *end);
 
 //! @param ptr Memory location to clear up.
 //! @param size The size to clear up with.
-ZPL_DEF void zpl_zero_size(void *ptr, isize size);
+ZPL_DEF void zpl_zero_size(void *ptr, zpl_isize size);
 
 #ifndef zpl_zero_item
 //! Clears up an item.
@@ -49,25 +49,25 @@ ZPL_DEF void zpl_zero_size(void *ptr, isize size);
 #endif
 
 //! Copy non-overlapping memory from source to destination.
-ZPL_DEF void *zpl_memcopy(void *dest, void const *source, isize size);
+ZPL_DEF void *zpl_memcopy(void *dest, void const *source, zpl_isize size);
 
 //! Copy memory from source to destination.
-ZPL_DEF void *zpl_memmove(void *dest, void const *source, isize size);
+ZPL_DEF void *zpl_memmove(void *dest, void const *source, zpl_isize size);
 
 //! Set constant value at memory location with specified size.
-ZPL_DEF void *zpl_memset(void *data, u8 byte_value, isize size);
+ZPL_DEF void *zpl_memset(void *data, zpl_u8 byte_value, zpl_isize size);
 
 //! Compare two memory locations with specified size.
-ZPL_DEF i32 zpl_memcompare(void const *s1, void const *s2, isize size);
+ZPL_DEF zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size);
 
 //! Swap memory contents between 2 locations with size.
-ZPL_DEF void zpl_memswap(void *i, void *j, isize size);
+ZPL_DEF void zpl_memswap(void *i, void *j, zpl_isize size);
 
 //! Search for a constant value within the size limit at memory location.
-ZPL_DEF void const *zpl_memchr(void const *data, u8 byte_value, isize size);
+ZPL_DEF void const *zpl_memchr(void const *data, zpl_u8 byte_value, zpl_isize size);
 
 //! Search for a constant value within the size limit at memory location in backwards.
-ZPL_DEF void const *zpl_memrchr(void const *data, u8 byte_value, isize size);
+ZPL_DEF void const *zpl_memrchr(void const *data, zpl_u8 byte_value, zpl_isize size);
 
 #ifndef zpl_memcopy_array
 
@@ -89,10 +89,10 @@ do {                                                                            
 #endif
 
 #ifndef zpl_kilobytes
-#define zpl_kilobytes(x) ((x) * (i64)(1024))
-#define zpl_megabytes(x) (zpl_kilobytes(x) * (i64)(1024))
-#define zpl_gigabytes(x) (zpl_megabytes(x) * (i64)(1024))
-#define zpl_terabytes(x) (zpl_gigabytes(x) * (i64)(1024))
+#define zpl_kilobytes(x) ((x) * (zpl_i64)(1024))
+#define zpl_megabytes(x) (zpl_kilobytes(x) * (zpl_i64)(1024))
+#define zpl_gigabytes(x) (zpl_megabytes(x) * (zpl_i64)(1024))
+#define zpl_terabytes(x) (zpl_gigabytes(x) * (zpl_i64)(1024))
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -104,28 +104,28 @@ do {                                                                            
 
 typedef struct zpl_virtual_memory {
     void *data;
-    isize size;
+    zpl_isize size;
 } zpl_virtual_memory;
 
 //! Initialize virtual memory from existing data.
-ZPL_DEF zpl_virtual_memory zpl_vm(void *data, isize size);
+ZPL_DEF zpl_virtual_memory zpl_vm(void *data, zpl_isize size);
 
 //! Allocate virtual memory at address with size.
 
 //! @param addr The starting address of the region to allocate. If NULL, it lets operating system to decide where to allocate it.
-ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, isize size);
+ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size);
 
 //! Release the virtual memory.
-ZPL_DEF b32 zpl_vm_free(zpl_virtual_memory vm);
+ZPL_DEF zpl_b32 zpl_vm_free(zpl_virtual_memory vm);
 
 //! Trim virtual memory.
-ZPL_DEF zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size, isize size);
+ZPL_DEF zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size);
 
 //! Purge virtual memory.
-ZPL_DEF b32 zpl_vm_purge(zpl_virtual_memory vm);
+ZPL_DEF zpl_b32 zpl_vm_purge(zpl_virtual_memory vm);
 
 //! Retrieve VM's page size and alignment.
-ZPL_DEF isize zpl_virtual_memory_page_size(isize *alignment_out);
+ZPL_DEF zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -142,8 +142,8 @@ typedef enum zplAllocationType {
 
 // NOTE: This is useful so you can define an allocator of the same type and parameters
 #define ZPL_ALLOCATOR_PROC(name)                                                                                       \
-void *name(void *allocator_data, zplAllocationType type, isize size, isize alignment, void *old_memory,            \
-isize old_size, u64 flags)
+void *name(void *allocator_data, zplAllocationType type, zpl_isize size, zpl_isize alignment, void *old_memory,            \
+zpl_isize old_size, zpl_u64 flags)
 typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
 
@@ -165,10 +165,10 @@ typedef enum zplAllocatorFlag {
 #endif
 
 //! Allocate memory with specified alignment.
-ZPL_DEF void *zpl_alloc_align(zpl_allocator a, isize size, isize alignment);
+ZPL_DEF void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment);
 
 //! Allocate memory with default alignment.
-ZPL_DEF void *zpl_alloc(zpl_allocator a, isize size);
+ZPL_DEF void *zpl_alloc(zpl_allocator a, zpl_isize size);
 
 //! Free allocated memory.
 ZPL_DEF void zpl_free(zpl_allocator a, void *ptr);
@@ -177,22 +177,22 @@ ZPL_DEF void zpl_free(zpl_allocator a, void *ptr);
 ZPL_DEF void zpl_free_all(zpl_allocator a);
 
 //! Resize an allocated memory.
-ZPL_DEF void *zpl_resize(zpl_allocator a, void *ptr, isize old_size, isize new_size);
+ZPL_DEF void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size);
 
 //! Resize an allocated memory with specified alignment.
-ZPL_DEF void *zpl_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
+ZPL_DEF void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
 
 //! Allocate memory and copy data into it.
-ZPL_DEF void *zpl_alloc_copy(zpl_allocator a, void const *src, isize size);
+ZPL_DEF void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size);
 
 //! Allocate memory with specified alignment and copy data into it.
-ZPL_DEF void *zpl_alloc_copy_align(zpl_allocator a, void const *src, isize size, isize alignment);
+ZPL_DEF void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment);
 
 //! Allocate memory for null-terminated C-String.
 ZPL_DEF char *zpl_alloc_str(zpl_allocator a, char const *str);
 
 //! Allocate memory for C-String with specified size.
-ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, isize len);
+ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len);
 
 #ifndef zpl_alloc_item
 
@@ -206,7 +206,7 @@ ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, isize len);
 //! Allocate/Resize memory using default options.
 
 //! Use this if you don't need a "fancy" resize allocation
-ZPL_DEF void *zpl_default_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment);
+ZPL_DEF void *zpl_default_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
 
 //! The heap allocator backed by operating system's memory manager.
 ZPL_DEF zpl_allocator zpl_heap_allocator(void);
@@ -231,29 +231,29 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 typedef struct zpl_arena {
     zpl_allocator backing;
     void *physical_start;
-    isize total_size;
-    isize total_allocated;
-    isize temp_count;
+    zpl_isize total_size;
+    zpl_isize total_allocated;
+    zpl_isize temp_count;
 } zpl_arena;
 
 //! Initialize memory arena from existing memory region.
-ZPL_DEF void zpl_arena_init_from_memory(zpl_arena *arena, void *start, isize size);
+ZPL_DEF void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size);
 
 //! Initialize memory arena using existing memory allocator.
-ZPL_DEF void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, isize size);
+ZPL_DEF void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size);
 
 //! Initialize memory arena within an existing parent memory arena.
-ZPL_DEF void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, isize size);
+ZPL_DEF void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size);
 
 //! Release the memory used by memory arena.
 ZPL_DEF void zpl_arena_free(zpl_arena *arena);
 
 
 //! Retrieve memory arena's aligned allocation address.
-ZPL_DEF isize zpl_arena_alignment_of(zpl_arena *arena, isize alignment);
+ZPL_DEF zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment);
 
 //! Retrieve memory arena's remaining size.
-ZPL_DEF isize zpl_arena_size_remaining(zpl_arena *arena, isize alignment);
+ZPL_DEF zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment);
 
 //! Check whether memory arena has any temporary snapshots.
 ZPL_DEF void zpl_arena_check(zpl_arena *arena);
@@ -265,7 +265,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
 typedef struct zpl_temp_arena_memory {
     zpl_arena *arena;
-    isize original_count;
+    zpl_isize original_count;
 } zpl_temp_arena_memory;
 
 //! Capture a snapshot of used memory in a memory arena.
@@ -283,18 +283,18 @@ typedef struct zpl_pool {
     zpl_allocator backing;
     void *physical_start;
     void *free_list;
-    isize block_size;
-    isize block_align;
-    isize total_size;
+    zpl_isize block_size;
+    zpl_isize block_align;
+    zpl_isize total_size;
 } zpl_pool;
 
 
 //! Initialize pool allocator.
-ZPL_DEF void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size);
+ZPL_DEF void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size);
 
 //! Initialize pool allocator with specific block alignment.
-ZPL_DEF void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size,
-                                 isize block_align);
+ZPL_DEF void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size,
+                                 zpl_isize block_align);
 
 //! Release the resources used by pool allocator.
 ZPL_DEF void zpl_pool_free(zpl_pool *pool);
@@ -305,16 +305,16 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
 
 typedef struct zpl_allocation_header_ev {
-    isize size;
+    zpl_isize size;
 } zpl_allocation_header_ev;
 
 ZPL_DEF zpl_allocation_header_ev *zpl_allocation_header(void *data);
-ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, isize size);
+ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size);
 
 #if defined(ZPL_ARCH_32_BIT)
-#define ZPL_ISIZE_HIGH_BIT 0x80000000
+#define ZPL_zpl_isize_HIGH_BIT 0x80000000
 #elif defined(ZPL_ARCH_64_BIT)
-#define ZPL_ISIZE_HIGH_BIT 0x8000000000000000ll
+#define ZPL_zpl_isize_HIGH_BIT 0x8000000000000000ll
 #else
 #error
 #endif
@@ -326,16 +326,16 @@ ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *
 
 typedef struct zpl_scratch_memory {
     void *physical_start;
-    isize total_size;
+    zpl_isize total_size;
     void *alloc_point;
     void *free_point;
 } zpl_scratch_memory;
 
 //! Initialize ring buffer arena.
-ZPL_DEF void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, isize size);
+ZPL_DEF void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, zpl_isize size);
 
 //! Check whether ring buffer arena is in use.
-ZPL_DEF b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr);
+ZPL_DEF zpl_b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr);
 
 //! Allocation Types: alloc, free, free_all, resize
 ZPL_DEF zpl_allocator zpl_scratch_allocator(zpl_scratch_memory *s);
@@ -350,18 +350,18 @@ typedef struct zpl_stack_memory {
     zpl_allocator backing;
     
     void *physical_start;
-    usize total_size;
-    usize allocated;
+    zpl_usize total_size;
+    zpl_usize allocated;
 } zpl_stack_memory;
 
 //! Initialize stack allocator from existing memory.
-ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, isize size);
+ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size);
 
 //! Initialize stack allocator using existing memory allocator.
-ZPL_DEF void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, isize size);
+ZPL_DEF void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size);
 
 //! Check whether stack allocator is in use.
-ZPL_DEF b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
+ZPL_DEF zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
 
 //! Release the resources used by stack allocator.
 ZPL_DEF void zpl_stack_memory_free(zpl_stack_memory *s);
@@ -376,39 +376,39 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 //! @}
 //$$
 
-b32 zpl_is_power_of_two(isize x) {
+zpl_b32 zpl_is_power_of_two(zpl_isize x) {
     if (x <= 0) return false;
     return !(x & (x - 1));
 }
 
-zpl_inline void *zpl_align_forward(void *ptr, isize alignment) {
-    uintptr p;
+zpl_inline void *zpl_align_forward(void *ptr, zpl_isize alignment) {
+    zpl_uintptr p;
     
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
     
-    p = cast(uintptr) ptr;
+    p = cast(zpl_uintptr) ptr;
     return cast(void *)((p + (alignment - 1)) & ~(alignment - 1));
 }
 
-zpl_inline void *zpl_pointer_add(void *ptr, isize bytes) { return cast(void *)(cast(u8 *) ptr + bytes); }
-zpl_inline void *zpl_pointer_sub(void *ptr, isize bytes) { return cast(void *)(cast(u8 *) ptr - bytes); }
-zpl_inline void const *zpl_pointer_add_const(void const *ptr, isize bytes) {
-    return cast(void const *)(cast(u8 const *) ptr + bytes);
+zpl_inline void *zpl_pointer_add(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr + bytes); }
+zpl_inline void *zpl_pointer_sub(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr - bytes); }
+zpl_inline void const *zpl_pointer_add_const(void const *ptr, zpl_isize bytes) {
+    return cast(void const *)(cast(zpl_u8 const *) ptr + bytes);
 }
-zpl_inline void const *zpl_pointer_sub_const(void const *ptr, isize bytes) {
-    return cast(void const *)(cast(u8 const *) ptr - bytes);
+zpl_inline void const *zpl_pointer_sub_const(void const *ptr, zpl_isize bytes) {
+    return cast(void const *)(cast(zpl_u8 const *) ptr - bytes);
 }
-zpl_inline isize zpl_pointer_diff(void const *begin, void const *end) {
-    return cast(isize)(cast(u8 const *) end - cast(u8 const *) begin);
+zpl_inline zpl_isize zpl_pointer_diff(void const *begin, void const *end) {
+    return cast(zpl_isize)(cast(zpl_u8 const *) end - cast(zpl_u8 const *) begin);
 }
 
-zpl_inline void zpl_zero_size(void *ptr, isize size) { zpl_memset(ptr, 0, size); }
+zpl_inline void zpl_zero_size(void *ptr, zpl_isize size) { zpl_memset(ptr, 0, size); }
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma intrinsic(__movsb)
 #endif
 
-zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
+zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
     if (dest == NULL) { return NULL; }
     
     return memcpy(dest, source, n);
@@ -416,35 +416,35 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     // TODO: Re-work the whole method
 #if 0
 #if defined(_MSC_VER)
-    __movsb(cast(u8 *) dest, cast(u8 *) source, n);
+    __movsb(cast(zpl_u8 *) dest, cast(zpl_u8 *) source, n);
 #elif defined(ZPL_CPU_X86) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
-    u8 *__dest8 = cast(u8 *) dest;
-    u8 *__source8 = cast(u8 *) source;
+    zpl_u8 *__dest8 = cast(zpl_u8 *) dest;
+    zpl_u8 *__source8 = cast(zpl_u8 *) source;
     __asm__ __volatile__("rep movsb" : "+D"(__dest8), "+S"(__source8), "+c"(n) : : "memory");
 #elif defined(ZPL_CPU_ARM)
     return memcpy(dest, source, n);
 #else
-    u8 *d = cast(u8 *) dest;
-    u8 const *s = cast(u8 const *) source;
-    u32 w, x;
+    zpl_u8 *d = cast(zpl_u8 *) dest;
+    zpl_u8 const *s = cast(zpl_u8 const *) source;
+    zpl_u32 w, x;
     
-    for (; cast(uintptr) s % 4 && n; n--) *d++ = *s++;
+    for (; cast(zpl_uintptr) s % 4 && n; n--) *d++ = *s++;
     
-    if (cast(uintptr) d % 4 == 0) {
+    if (cast(zpl_uintptr) d % 4 == 0) {
         for (; n >= 16; s += 16, d += 16, n -= 16) {
-            *cast(u32 *)(d + 0) = *cast(u32 *)(s + 0);
-            *cast(u32 *)(d + 4) = *cast(u32 *)(s + 4);
-            *cast(u32 *)(d + 8) = *cast(u32 *)(s + 8);
-            *cast(u32 *)(d + 12) = *cast(u32 *)(s + 12);
+            *cast(zpl_u32 *)(d + 0) = *cast(zpl_u32 *)(s + 0);
+            *cast(zpl_u32 *)(d + 4) = *cast(zpl_u32 *)(s + 4);
+            *cast(zpl_u32 *)(d + 8) = *cast(zpl_u32 *)(s + 8);
+            *cast(zpl_u32 *)(d + 12) = *cast(zpl_u32 *)(s + 12);
         }
         if (n & 8) {
-            *cast(u32 *)(d + 0) = *cast(u32 *)(s + 0);
-            *cast(u32 *)(d + 4) = *cast(u32 *)(s + 4);
+            *cast(zpl_u32 *)(d + 0) = *cast(zpl_u32 *)(s + 0);
+            *cast(zpl_u32 *)(d + 4) = *cast(zpl_u32 *)(s + 4);
             d += 8;
             s += 8;
         }
         if (n & 4) {
-            *cast(u32 *)(d + 0) = *cast(u32 *)(s + 0);
+            *cast(zpl_u32 *)(d + 0) = *cast(zpl_u32 *)(s + 0);
             d += 4;
             s += 4;
         }
@@ -464,22 +464,22 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
 #define LS >>
 #define RS <<
 #endif
-        switch (cast(uintptr) d % 4) {
+        switch (cast(zpl_uintptr) d % 4) {
             case 1: {
-                w = *cast(u32 *) s;
+                w = *cast(zpl_u32 *) s;
                 *d++ = *s++;
                 *d++ = *s++;
                 *d++ = *s++;
                 n -= 3;
                 while (n > 16) {
-                    x = *cast(u32 *)(s + 1);
-                    *cast(u32 *)(d + 0) = (w LS 24) | (x RS 8);
-                    w = *cast(u32 *)(s + 5);
-                    *cast(u32 *)(d + 4) = (x LS 24) | (w RS 8);
-                    x = *cast(u32 *)(s + 9);
-                    *cast(u32 *)(d + 8) = (w LS 24) | (x RS 8);
-                    w = *cast(u32 *)(s + 13);
-                    *cast(u32 *)(d + 12) = (x LS 24) | (w RS 8);
+                    x = *cast(zpl_u32 *)(s + 1);
+                    *cast(zpl_u32 *)(d + 0) = (w LS 24) | (x RS 8);
+                    w = *cast(zpl_u32 *)(s + 5);
+                    *cast(zpl_u32 *)(d + 4) = (x LS 24) | (w RS 8);
+                    x = *cast(zpl_u32 *)(s + 9);
+                    *cast(zpl_u32 *)(d + 8) = (w LS 24) | (x RS 8);
+                    w = *cast(zpl_u32 *)(s + 13);
+                    *cast(zpl_u32 *)(d + 12) = (x LS 24) | (w RS 8);
                     
                     s += 16;
                     d += 16;
@@ -487,19 +487,19 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
                 }
             } break;
             case 2: {
-                w = *cast(u32 *) s;
+                w = *cast(zpl_u32 *) s;
                 *d++ = *s++;
                 *d++ = *s++;
                 n -= 2;
                 while (n > 17) {
-                    x = *cast(u32 *)(s + 2);
-                    *cast(u32 *)(d + 0) = (w LS 16) | (x RS 16);
-                    w = *cast(u32 *)(s + 6);
-                    *cast(u32 *)(d + 4) = (x LS 16) | (w RS 16);
-                    x = *cast(u32 *)(s + 10);
-                    *cast(u32 *)(d + 8) = (w LS 16) | (x RS 16);
-                    w = *cast(u32 *)(s + 14);
-                    *cast(u32 *)(d + 12) = (x LS 16) | (w RS 16);
+                    x = *cast(zpl_u32 *)(s + 2);
+                    *cast(zpl_u32 *)(d + 0) = (w LS 16) | (x RS 16);
+                    w = *cast(zpl_u32 *)(s + 6);
+                    *cast(zpl_u32 *)(d + 4) = (x LS 16) | (w RS 16);
+                    x = *cast(zpl_u32 *)(s + 10);
+                    *cast(zpl_u32 *)(d + 8) = (w LS 16) | (x RS 16);
+                    w = *cast(zpl_u32 *)(s + 14);
+                    *cast(zpl_u32 *)(d + 12) = (x LS 16) | (w RS 16);
                     
                     s += 16;
                     d += 16;
@@ -507,18 +507,18 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
                 }
             } break;
             case 3: {
-                w = *cast(u32 *) s;
+                w = *cast(zpl_u32 *) s;
                 *d++ = *s++;
                 n -= 1;
                 while (n > 18) {
-                    x = *cast(u32 *)(s + 3);
-                    *cast(u32 *)(d + 0) = (w LS 8) | (x RS 24);
-                    w = *cast(u32 *)(s + 7);
-                    *cast(u32 *)(d + 4) = (x LS 8) | (w RS 24);
-                    x = *cast(u32 *)(s + 11);
-                    *cast(u32 *)(d + 8) = (w LS 8) | (x RS 24);
-                    w = *cast(u32 *)(s + 15);
-                    *cast(u32 *)(d + 12) = (x LS 8) | (w RS 24);
+                    x = *cast(zpl_u32 *)(s + 3);
+                    *cast(zpl_u32 *)(d + 0) = (w LS 8) | (x RS 24);
+                    w = *cast(zpl_u32 *)(s + 7);
+                    *cast(zpl_u32 *)(d + 4) = (x LS 8) | (w RS 24);
+                    x = *cast(zpl_u32 *)(s + 11);
+                    *cast(zpl_u32 *)(d + 8) = (w LS 8) | (x RS 24);
+                    w = *cast(zpl_u32 *)(s + 15);
+                    *cast(zpl_u32 *)(d + 12) = (x LS 8) | (w RS 24);
                     
                     s += 16;
                     d += 16;
@@ -576,39 +576,39 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, isize n) {
     return dest;
 }
 
-zpl_inline void *zpl_memmove(void *dest, void const *source, isize n) {
+zpl_inline void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
     if (dest == NULL) { return NULL; }
     
-    u8 *d = cast(u8 *) dest;
-    u8 const *s = cast(u8 const *) source;
+    zpl_u8 *d = cast(zpl_u8 *) dest;
+    zpl_u8 const *s = cast(zpl_u8 const *) source;
     
     if (d == s) return d;
     if (s + n <= d || d + n <= s) // NOTE: Non-overlapping
         return zpl_memcopy(d, s, n);
     
     if (d < s) {
-        if (cast(uintptr) s % zpl_size_of(isize) == cast(uintptr) d % zpl_size_of(isize)) {
-            while (cast(uintptr) d % zpl_size_of(isize)) {
+        if (cast(zpl_uintptr) s % zpl_size_of(zpl_isize) == cast(zpl_uintptr) d % zpl_size_of(zpl_isize)) {
+            while (cast(zpl_uintptr) d % zpl_size_of(zpl_isize)) {
                 if (!n--) return dest;
                 *d++ = *s++;
             }
-            while (n >= zpl_size_of(isize)) {
-                *cast(isize *) d = *cast(isize *) s;
-                n -= zpl_size_of(isize);
-                d += zpl_size_of(isize);
-                s += zpl_size_of(isize);
+            while (n >= zpl_size_of(zpl_isize)) {
+                *cast(zpl_isize *) d = *cast(zpl_isize *) s;
+                n -= zpl_size_of(zpl_isize);
+                d += zpl_size_of(zpl_isize);
+                s += zpl_size_of(zpl_isize);
             }
         }
         for (; n; n--) *d++ = *s++;
     } else {
-        if ((cast(uintptr) s % zpl_size_of(isize)) == (cast(uintptr) d % zpl_size_of(isize))) {
-            while (cast(uintptr)(d + n) % zpl_size_of(isize)) {
+        if ((cast(zpl_uintptr) s % zpl_size_of(zpl_isize)) == (cast(zpl_uintptr) d % zpl_size_of(zpl_isize))) {
+            while (cast(zpl_uintptr)(d + n) % zpl_size_of(zpl_isize)) {
                 if (!n--) return dest;
                 d[n] = s[n];
             }
-            while (n >= zpl_size_of(isize)) {
-                n -= zpl_size_of(isize);
-                *cast(isize *)(d + n) = *cast(isize *)(s + n);
+            while (n >= zpl_size_of(zpl_isize)) {
+                n -= zpl_size_of(zpl_isize);
+                *cast(zpl_isize *)(d + n) = *cast(zpl_isize *)(s + n);
             }
         }
         while (n) n--, d[n] = s[n];
@@ -617,12 +617,12 @@ zpl_inline void *zpl_memmove(void *dest, void const *source, isize n) {
     return dest;
 }
 
-zpl_inline void *zpl_memset(void *dest, u8 c, isize n) {
+zpl_inline void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     if (dest == NULL) { return NULL; }
     
-    u8 *s = cast(u8 *) dest;
-    isize k;
-    u32 c32 = ((u32)-1) / 255 * c;
+    zpl_u8 *s = cast(zpl_u8 *) dest;
+    zpl_isize k;
+    zpl_u32 c32 = ((zpl_u32)-1) / 255 * c;
     
     if (n == 0) return dest;
     s[0] = s[n - 1] = c;
@@ -633,39 +633,39 @@ zpl_inline void *zpl_memset(void *dest, u8 c, isize n) {
     s[3] = s[n - 4] = c;
     if (n < 9) return dest;
     
-    k = -cast(intptr) s & 3;
+    k = -cast(zpl_intptr) s & 3;
     s += k;
     n -= k;
     n &= -4;
     
-    *cast(u32 *)(s + 0) = c32;
-    *cast(u32 *)(s + n - 4) = c32;
+    *cast(zpl_u32 *)(s + 0) = c32;
+    *cast(zpl_u32 *)(s + n - 4) = c32;
     if (n < 9) return dest;
-    *cast(u32 *)(s + 4) = c32;
-    *cast(u32 *)(s + 8) = c32;
-    *cast(u32 *)(s + n - 12) = c32;
-    *cast(u32 *)(s + n - 8) = c32;
+    *cast(zpl_u32 *)(s + 4) = c32;
+    *cast(zpl_u32 *)(s + 8) = c32;
+    *cast(zpl_u32 *)(s + n - 12) = c32;
+    *cast(zpl_u32 *)(s + n - 8) = c32;
     if (n < 25) return dest;
-    *cast(u32 *)(s + 12) = c32;
-    *cast(u32 *)(s + 16) = c32;
-    *cast(u32 *)(s + 20) = c32;
-    *cast(u32 *)(s + 24) = c32;
-    *cast(u32 *)(s + n - 28) = c32;
-    *cast(u32 *)(s + n - 24) = c32;
-    *cast(u32 *)(s + n - 20) = c32;
-    *cast(u32 *)(s + n - 16) = c32;
+    *cast(zpl_u32 *)(s + 12) = c32;
+    *cast(zpl_u32 *)(s + 16) = c32;
+    *cast(zpl_u32 *)(s + 20) = c32;
+    *cast(zpl_u32 *)(s + 24) = c32;
+    *cast(zpl_u32 *)(s + n - 28) = c32;
+    *cast(zpl_u32 *)(s + n - 24) = c32;
+    *cast(zpl_u32 *)(s + n - 20) = c32;
+    *cast(zpl_u32 *)(s + n - 16) = c32;
     
-    k = 24 + (cast(uintptr) s & 4);
+    k = 24 + (cast(zpl_uintptr) s & 4);
     s += k;
     n -= k;
     
     {
-        u64 c64 = (cast(u64) c32 << 32) | c32;
+        zpl_u64 c64 = (cast(zpl_u64) c32 << 32) | c32;
         while (n > 31) {
-            *cast(u64 *)(s + 0) = c64;
-            *cast(u64 *)(s + 8) = c64;
-            *cast(u64 *)(s + 16) = c64;
-            *cast(u64 *)(s + 24) = c64;
+            *cast(zpl_u64 *)(s + 0) = c64;
+            *cast(zpl_u64 *)(s + 8) = c64;
+            *cast(zpl_u64 *)(s + 16) = c64;
+            *cast(zpl_u64 *)(s + 24) = c64;
             
             n -= 32;
             s += 32;
@@ -675,31 +675,31 @@ zpl_inline void *zpl_memset(void *dest, u8 c, isize n) {
     return dest;
 }
 
-zpl_inline i32 zpl_memcompare(void const *s1, void const *s2, isize size) {
-    u8 const *s1p8 = cast(u8 const *) s1;
-    u8 const *s2p8 = cast(u8 const *) s2;
+zpl_inline zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size) {
+    zpl_u8 const *s1p8 = cast(zpl_u8 const *) s1;
+    zpl_u8 const *s2p8 = cast(zpl_u8 const *) s2;
     
     if (s1 == NULL || s2 == NULL) { return 0; }
     
     while (size--) {
-        isize d;
-        if ((d = (*s1p8++ - *s2p8++)) != 0) return cast(i32) d;
+        zpl_isize d;
+        if ((d = (*s1p8++ - *s2p8++)) != 0) return cast(zpl_i32) d;
     }
     return 0;
 }
 
-void zpl_memswap(void *i, void *j, isize size) {
+void zpl_memswap(void *i, void *j, zpl_isize size) {
     if (i == j) return;
     
     if (size == 4) {
-        zpl_swap(u32, *cast(u32 *) i, *cast(u32 *) j);
+        zpl_swap(zpl_u32, *cast(zpl_u32 *) i, *cast(zpl_u32 *) j);
     } else if (size == 8) {
-        zpl_swap(u64, *cast(u64 *) i, *cast(u64 *) j);
+        zpl_swap(zpl_u64, *cast(zpl_u64 *) i, *cast(zpl_u64 *) j);
     } else if (size < 8) {
-        u8 *a = cast(u8 *) i;
-        u8 *b = cast(u8 *) j;
+        zpl_u8 *a = cast(zpl_u8 *) i;
+        zpl_u8 *b = cast(zpl_u8 *) j;
         if (a != b) {
-            while (size--) { zpl_swap(u8, *a++, *b++); }
+            while (size--) { zpl_swap(zpl_u8, *a++, *b++); }
         }
     } else {
         char buffer[256];
@@ -717,25 +717,25 @@ void zpl_memswap(void *i, void *j, isize size) {
     }
 }
 
-#define ZPL__ONES (cast(usize) - 1 / U8_MAX)
-#define ZPL__HIGHS (ZPL__ONES * (U8_MAX / 2 + 1))
+#define ZPL__ONES (cast(zpl_usize) - 1 / ZPL_U8_MAX)
+#define ZPL__HIGHS (ZPL__ONES * (ZPL_U8_MAX / 2 + 1))
 #define ZPL__HAS_ZERO(x) (((x)-ZPL__ONES) & ~(x)&ZPL__HIGHS)
 
-void const *zpl_memchr(void const *data, u8 c, isize n) {
-    u8 const *s = cast(u8 const *) data;
-    while ((cast(uintptr) s & (sizeof(usize) - 1)) && n && *s != c) {
+void const *zpl_memchr(void const *data, zpl_u8 c, zpl_isize n) {
+    zpl_u8 const *s = cast(zpl_u8 const *) data;
+    while ((cast(zpl_uintptr) s & (sizeof(zpl_usize) - 1)) && n && *s != c) {
         s++;
         n--;
     }
     if (n && *s != c) {
-        isize const *w;
-        isize k = ZPL__ONES * c;
-        w = cast(isize const *) s;
-        while (n >= zpl_size_of(isize) && !ZPL__HAS_ZERO(*w ^ k)) {
+        zpl_isize const *w;
+        zpl_isize k = ZPL__ONES * c;
+        w = cast(zpl_isize const *) s;
+        while (n >= zpl_size_of(zpl_isize) && !ZPL__HAS_ZERO(*w ^ k)) {
             w++;
-            n -= zpl_size_of(isize);
+            n -= zpl_size_of(zpl_isize);
         }
-        s = cast(u8 const *) w;
+        s = cast(zpl_u8 const *) w;
         while (n && *s != c) {
             s++;
             n--;
@@ -745,8 +745,8 @@ void const *zpl_memchr(void const *data, u8 c, isize n) {
     return n ? cast(void const *) s : NULL;
 }
 
-void const *zpl_memrchr(void const *data, u8 c, isize n) {
-    u8 const *s = cast(u8 const *) data;
+void const *zpl_memrchr(void const *data, zpl_u8 c, zpl_isize n) {
+    zpl_u8 const *s = cast(zpl_u8 const *) data;
     while (n--) {
         if (s[n] == c) return cast(void const *)(s + n);
     }
@@ -759,7 +759,7 @@ void const *zpl_memrchr(void const *data, u8 c, isize n) {
 //
 //
 
-zpl_virtual_memory zpl_vm(void *data, isize size) {
+zpl_virtual_memory zpl_vm(void *data, zpl_isize size) {
     zpl_virtual_memory vm;
     vm.data = data;
     vm.size = size;
@@ -767,7 +767,7 @@ zpl_virtual_memory zpl_vm(void *data, isize size) {
 }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, isize size) {
+zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
     zpl_virtual_memory vm;
     ZPL_ASSERT(size > 0);
     vm.data = VirtualAlloc(addr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -775,12 +775,12 @@ zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, isize size) {
     return vm;
 }
 
-zpl_inline b32 zpl_vm_free(zpl_virtual_memory vm) {
+zpl_inline zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
     MEMORY_BASIC_INFORMATION info;
     while (vm.size > 0) {
         if (VirtualQuery(vm.data, &info, zpl_size_of(info)) == 0) return false;
         if (info.BaseAddress != vm.data || info.AllocationBase != vm.data || info.State != MEM_COMMIT ||
-            info.RegionSize > cast(usize) vm.size) {
+            info.RegionSize > cast(zpl_usize) vm.size) {
             return false;
         }
         if (VirtualFree(vm.data, 0, MEM_RELEASE) == 0) return false;
@@ -790,7 +790,7 @@ zpl_inline b32 zpl_vm_free(zpl_virtual_memory vm) {
     return true;
 }
 
-zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size, isize size) {
+zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
     zpl_virtual_memory new_vm = { 0 };
     void *ptr;
     ZPL_ASSERT(vm.size >= lead_size + size);
@@ -804,13 +804,13 @@ zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size
     return new_vm;
 }
 
-zpl_inline b32 zpl_vm_purge(zpl_virtual_memory vm) {
+zpl_inline zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
     VirtualAlloc(vm.data, vm.size, MEM_RESET, PAGE_READWRITE);
     // NOTE: Can this really fail?
     return true;
 }
 
-isize zpl_virtual_memory_page_size(isize *alignment_out) {
+zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
     SYSTEM_INFO info;
     GetSystemInfo(&info);
     if (alignment_out) *alignment_out = info.dwAllocationGranularity;
@@ -823,7 +823,7 @@ isize zpl_virtual_memory_page_size(isize *alignment_out) {
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
-zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, isize size) {
+zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
     zpl_virtual_memory vm;
     ZPL_ASSERT(size > 0);
     vm.data = mmap(addr, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
@@ -831,14 +831,14 @@ zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, isize size) {
     return vm;
 }
 
-zpl_inline b32 zpl_vm_free(zpl_virtual_memory vm) {
+zpl_inline zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
     munmap(vm.data, vm.size);
     return true;
 }
 
-zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size, isize size) {
+zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
     void *ptr;
-    isize trail_size;
+    zpl_isize trail_size;
     ZPL_ASSERT(vm.size >= lead_size + size);
     
     ptr = zpl_pointer_add(vm.data, lead_size);
@@ -849,24 +849,24 @@ zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, isize lead_size
     return zpl_vm(ptr, size);
 }
 
-zpl_inline b32 zpl_vm_purge(zpl_virtual_memory vm) {
+zpl_inline zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
     int err = madvise(vm.data, vm.size, MADV_DONTNEED);
     return err != 0;
 }
 
-isize zpl_virtual_memory_page_size(isize *alignment_out) {
+zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
     // TODO: Is this always true?
-    isize result = cast(isize) sysconf(_SC_PAGE_SIZE);
+    zpl_isize result = cast(zpl_isize) sysconf(_SC_PAGE_SIZE);
     if (alignment_out) *alignment_out = result;
     return result;
 }
 
 #endif
 
-zpl_inline void *zpl_alloc_align(zpl_allocator a, isize size, isize alignment) {
+zpl_inline void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment) {
     return a.proc(a.data, ZPL_ALLOCATION_ALLOC, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
-zpl_inline void *zpl_alloc(zpl_allocator a, isize size) {
+zpl_inline void *zpl_alloc(zpl_allocator a, zpl_isize size) {
     return zpl_alloc_align(a, size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
 zpl_inline void zpl_free(zpl_allocator a, void *ptr) {
@@ -875,31 +875,31 @@ zpl_inline void zpl_free(zpl_allocator a, void *ptr) {
 zpl_inline void zpl_free_all(zpl_allocator a) {
     a.proc(a.data, ZPL_ALLOCATION_FREE_ALL, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
-zpl_inline void *zpl_resize(zpl_allocator a, void *ptr, isize old_size, isize new_size) {
+zpl_inline void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size) {
     return zpl_resize_align(a, ptr, old_size, new_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
-zpl_inline void *zpl_resize_align(zpl_allocator a, void *ptr, isize old_size, isize new_size, isize alignment) {
+zpl_inline void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment) {
     return a.proc(a.data, ZPL_ALLOCATION_RESIZE, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
 
-zpl_inline void *zpl_alloc_copy(zpl_allocator a, void const *src, isize size) {
+zpl_inline void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size) {
     return zpl_memcopy(zpl_alloc(a, size), src, size);
 }
-zpl_inline void *zpl_alloc_copy_align(zpl_allocator a, void const *src, isize size, isize alignment) {
+zpl_inline void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment) {
     return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size);
 }
 
 zpl_inline char *zpl_alloc_str(zpl_allocator a, char const *str) { return zpl_alloc_str_len(a, str, zpl_strlen(str)); }
 
-zpl_inline char *zpl_alloc_str_len(zpl_allocator a, char const *str, isize len) {
+zpl_inline char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
     char *result;
     result = cast(char *) zpl_alloc_copy(a, str, len + 1);
     result[len] = '\0';
     return result;
 }
 
-zpl_inline void *zpl_default_resize_align(zpl_allocator a, void *old_memory, isize old_size, isize new_size,
-                                          isize alignment) {
+zpl_inline void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl_isize old_size, zpl_isize new_size,
+                                          zpl_isize alignment) {
     if (!old_memory) return zpl_alloc_align(a, new_size, alignment);
     
     if (new_size == 0) {
@@ -993,7 +993,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
 // Arena Allocator
 //
 
-zpl_inline void zpl_arena_init_from_memory(zpl_arena *arena, void *start, isize size) {
+zpl_inline void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size) {
     arena->backing.proc = NULL;
     arena->backing.data = NULL;
     arena->physical_start = start;
@@ -1002,7 +1002,7 @@ zpl_inline void zpl_arena_init_from_memory(zpl_arena *arena, void *start, isize 
     arena->temp_count = 0;
 }
 
-zpl_inline void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, isize size) {
+zpl_inline void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size) {
     arena->backing = backing;
     arena->physical_start = zpl_alloc(backing, size); // NOTE: Uses default alignment
     arena->total_size = size;
@@ -1010,7 +1010,7 @@ zpl_inline void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator ba
     arena->temp_count = 0;
 }
 
-zpl_inline void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, isize size) {
+zpl_inline void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size) {
     zpl_arena_init_from_allocator(arena, zpl_arena_allocator(parent_arena), size);
 }
 
@@ -1021,20 +1021,20 @@ zpl_inline void zpl_arena_free(zpl_arena *arena) {
     }
 }
 
-zpl_inline isize zpl_arena_alignment_of(zpl_arena *arena, isize alignment) {
-    isize alignment_offset, result_pointer, mask;
+zpl_inline zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment) {
+    zpl_isize alignment_offset, result_pointer, mask;
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
     
     alignment_offset = 0;
-    result_pointer = cast(isize) arena->physical_start + arena->total_allocated;
+    result_pointer = cast(zpl_isize) arena->physical_start + arena->total_allocated;
     mask = alignment - 1;
     if (result_pointer & mask) alignment_offset = alignment - (result_pointer & mask);
     
     return alignment_offset;
 }
 
-zpl_inline isize zpl_arena_size_remaining(zpl_arena *arena, isize alignment) {
-    isize result = arena->total_size - (arena->total_allocated + zpl_arena_alignment_of(arena, alignment));
+zpl_inline zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment) {
+    zpl_isize result = arena->total_size - (arena->total_allocated + zpl_arena_alignment_of(arena, alignment));
     return result;
 }
 
@@ -1056,10 +1056,10 @@ ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
-            isize total_size = size + alignment;
+            zpl_isize total_size = size + alignment;
             
             // NOTE: Out of memory
-            if (arena->total_allocated + total_size > cast(isize) arena->total_size) {
+            if (arena->total_allocated + total_size > cast(zpl_isize) arena->total_size) {
                 zpl_printf_err("Arena out of memory\n");
                 return NULL;
             }
@@ -1104,14 +1104,14 @@ zpl_inline void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
 // Pool Allocator
 //
 
-zpl_inline void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size) {
+zpl_inline void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size) {
     zpl_pool_init_align(pool, backing, num_blocks, block_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
 
-void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, isize num_blocks, isize block_size, isize block_align) {
-    isize actual_block_size, pool_size, block_index;
+void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size, zpl_isize block_align) {
+    zpl_isize actual_block_size, pool_size, block_index;
     void *data, *curr;
-    uintptr *end;
+    zpl_uintptr *end;
     
     zpl_zero_item(pool);
     
@@ -1127,13 +1127,13 @@ void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, isize num_blocks
     // NOTE: Init intrusive freelist
     curr = data;
     for (block_index = 0; block_index < num_blocks - 1; block_index++) {
-        uintptr *next = cast(uintptr *) curr;
-        *next = cast(uintptr) curr + actual_block_size;
+        zpl_uintptr *next = cast(zpl_uintptr *) curr;
+        *next = cast(zpl_uintptr) curr + actual_block_size;
         curr = zpl_pointer_add(curr, actual_block_size);
     }
     
-    end = cast(uintptr *) curr;
-    *end = cast(uintptr) NULL;
+    end = cast(zpl_uintptr *) curr;
+    *end = cast(zpl_uintptr) NULL;
     
     pool->physical_start = data;
     pool->free_list = data;
@@ -1157,12 +1157,12 @@ ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
     
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
-            uintptr next_free;
+            zpl_uintptr next_free;
             ZPL_ASSERT(size == pool->block_size);
             ZPL_ASSERT(alignment == pool->block_align);
             ZPL_ASSERT(pool->free_list != NULL);
             
-            next_free = *cast(uintptr *) pool->free_list;
+            next_free = *cast(zpl_uintptr *) pool->free_list;
             ptr = pool->free_list;
             pool->free_list = cast(void *) next_free;
             pool->total_size += pool->block_size;
@@ -1170,11 +1170,11 @@ ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
         } break;
         
         case ZPL_ALLOCATION_FREE: {
-            uintptr *next;
+            zpl_uintptr *next;
             if (old_memory == NULL) return NULL;
             
-            next = cast(uintptr *) old_memory;
-            *next = cast(uintptr) pool->free_list;
+            next = cast(zpl_uintptr *) old_memory;
+            *next = cast(zpl_uintptr) pool->free_list;
             pool->free_list = old_memory;
             pool->total_size -= pool->block_size;
         } break;
@@ -1193,30 +1193,30 @@ ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
 }
 
 zpl_inline zpl_allocation_header_ev *zpl_allocation_header(void *data) {
-    isize *p = cast(isize *) data;
-    while (p[-1] == cast(isize)(-1)) p--;
+    zpl_isize *p = cast(zpl_isize *) data;
+    while (p[-1] == cast(zpl_isize)(-1)) p--;
     return cast(zpl_allocation_header_ev *) p - 1;
 }
 
-zpl_inline void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, isize size) {
-    isize *ptr;
+zpl_inline void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size) {
+    zpl_isize *ptr;
     header->size = size;
-    ptr = cast(isize *)(header + 1);
-    while (cast(void *) ptr < data) *ptr++ = cast(isize)(-1);
+    ptr = cast(zpl_isize *)(header + 1);
+    while (cast(void *) ptr < data) *ptr++ = cast(zpl_isize)(-1);
 }
 
 //
 // Scratch Memory Allocator
 //
 
-void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, isize size) {
+void zpl_scratch_memory_init(zpl_scratch_memory *s, void *start, zpl_isize size) {
     s->physical_start = start;
     s->total_size = size;
     s->alloc_point = start;
     s->free_point = start;
 }
 
-b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr) {
+zpl_b32 zpl_scratch_memory_is_in_use(zpl_scratch_memory *s, void *ptr) {
     if (s->free_point == s->alloc_point) return false;
     if (s->alloc_point > s->free_point) return ptr >= s->free_point && ptr < s->alloc_point;
     return ptr >= s->free_point || ptr < s->alloc_point;
@@ -1247,7 +1247,7 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
             
             // NOTE: Wrap around
             if (pt > end) {
-                header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
+                header->size = zpl_pointer_diff(header, end) | ZPL_zpl_isize_HIGH_BIT;
                 pt = s->physical_start;
                 header = cast(zpl_allocation_header_ev *) pt;
                 data = zpl_align_forward(header + 1, alignment);
@@ -1256,7 +1256,7 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
             
             if (!zpl_scratch_memory_is_in_use(s, pt)) {
                 zpl_allocation_header_fill(header, pt, zpl_pointer_diff(header, pt));
-                s->alloc_point = cast(u8 *) pt;
+                s->alloc_point = cast(zpl_u8 *) pt;
                 ptr = data;
             }
             
@@ -1271,14 +1271,14 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
                 } else {
                     // NOTE: Mark as free
                     zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
-                    ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
-                    h->size = h->size | ZPL_ISIZE_HIGH_BIT;
+                    ZPL_ASSERT((h->size & ZPL_zpl_isize_HIGH_BIT) == 0);
+                    h->size = h->size | ZPL_zpl_isize_HIGH_BIT;
                     
                     while (s->free_point != s->alloc_point) {
                         zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *) s->free_point;
-                        if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0) break;
+                        if ((header->size & ZPL_zpl_isize_HIGH_BIT) == 0) break;
                         
-                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
+                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_zpl_isize_HIGH_BIT));
                         if (s->free_point == end) s->free_point = s->physical_start;
                     }
                 }
@@ -1302,23 +1302,23 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
 // Stack Memory Allocator
 //
 
-#define ZPL_STACK_ALLOC_OFFSET sizeof(u64)
+#define ZPL_STACK_ALLOC_OFFSET sizeof(zpl_u64)
 ZPL_STATIC_ASSERT(ZPL_STACK_ALLOC_OFFSET == 8);
 
-zpl_inline void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, isize size) {
+zpl_inline void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size) {
     s->physical_start = start;
     s->total_size = size;
     s->allocated = 0;
 }
 
-zpl_inline void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, isize size) {
+zpl_inline void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size) {
     s->backing = backing;
     s->physical_start = zpl_alloc(backing, size);
     s->total_size = size;
     s->allocated = 0;
 }
 
-zpl_inline b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
+zpl_inline zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
     if (s->allocated == 0) return false;
     
     if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) { return true; }
@@ -1350,18 +1350,18 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             size += ZPL_STACK_ALLOC_OFFSET;
-            u64 alloc_offset = s->allocated;
+            zpl_u64 alloc_offset = s->allocated;
             
             void *curr =
-                cast(u64 *) zpl_align_forward(cast(u64 *) zpl_pointer_add(s->physical_start, s->allocated), alignment);
+                cast(zpl_u64 *) zpl_align_forward(cast(zpl_u64 *) zpl_pointer_add(s->physical_start, s->allocated), alignment);
             
-            if (cast(u64 *) zpl_pointer_add(curr, size) > cast(u64 *) zpl_pointer_add(s->physical_start, s->total_size)) {
+            if (cast(zpl_u64 *) zpl_pointer_add(curr, size) > cast(zpl_u64 *) zpl_pointer_add(s->physical_start, s->total_size)) {
                 if (s->backing.proc) {
                     void *old_start = s->physical_start;
                     s->physical_start =
                         zpl_resize_align(s->backing, s->physical_start, s->total_size, s->total_size + size, alignment);
-                    curr = cast(u64 *)
-                        zpl_align_forward(cast(u64 *) zpl_pointer_add(s->physical_start, s->allocated), alignment);
+                    curr = cast(zpl_u64 *)
+                        zpl_align_forward(cast(zpl_u64 *) zpl_pointer_add(s->physical_start, s->allocated), alignment);
                     s->total_size = zpl_pointer_diff(old_start, s->physical_start);
                 } else {
                     ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
@@ -1370,7 +1370,7 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
             
             s->allocated = zpl_pointer_diff(s->physical_start, curr) + size;
             
-            *(u64 *)curr = alloc_offset;
+            *(zpl_u64 *)curr = alloc_offset;
             curr = zpl_pointer_add(curr, ZPL_STACK_ALLOC_OFFSET);
             
             ptr = curr;
@@ -1381,8 +1381,8 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
                 void *curr = old_memory;
                 curr = zpl_pointer_sub(curr, ZPL_STACK_ALLOC_OFFSET);
                 
-                u64 alloc_offset = *(u64 *)curr;
-                s->allocated = (usize)alloc_offset;
+                zpl_u64 alloc_offset = *(zpl_u64 *)curr;
+                s->allocated = (zpl_usize)alloc_offset;
             }
         } break;
         
