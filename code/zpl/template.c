@@ -344,6 +344,7 @@ typedef zpl_b16 b16;
 typedef zpl_b32 b32;
 typedef zpl_f32 f32;
 typedef zpl_f64 f64;
+typedef zpl_rune rune;
 typedef zpl_usize usize;
 typedef zpl_isize isize;
 typedef zpl_uintptr uintptr;

@@ -2,7 +2,7 @@
 @brief JSON5 Parser/Writer
 @defgroup json JSON5 parser/writer
 
-Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
+Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files. The parser also supports the **Simplified JSON (SJSON)** format.
 
 We can parse JSON5 files in two different modes:
     @n 1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.

@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History:
+  9.3.0 - Change how zpl uses basic types internally
   9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
   9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
   9.1.0 - get_env rework and fixes
@@ -606,12 +607,12 @@ typedef double zpl_f64;
 ZPL_STATIC_ASSERT(sizeof(zpl_f32) == 4);
 ZPL_STATIC_ASSERT(sizeof(zpl_f64) == 8);
 
-typedef zpl_i32 Rune; // NOTE: Unicode codepoint
-typedef zpl_i32 char32;
-#define ZPL_RUNE_INVALID cast(Rune)(0xfffd)
-#define ZPL_RUNE_MAX cast(Rune)(0x0010ffff)
-#define ZPL_RUNE_BOM cast(Rune)(0xfeff)
-#define ZPL_RUNE_EOF cast(Rune)(-1)
+typedef zpl_i32 zpl_rune; // NOTE: Unicode codepoint
+typedef zpl_i32 zpl_char32;
+#define ZPL_RUNE_INVALID cast(zpl_rune)(0xfffd)
+#define ZPL_RUNE_MAX cast(zpl_rune)(0x0010ffff)
+#define ZPL_RUNE_BOM cast(zpl_rune)(0xfeff)
+#define ZPL_RUNE_EOF cast(zpl_rune)(-1)
 
 typedef zpl_i8 zpl_b8;
 typedef zpl_i16 zpl_b16;
@@ -1705,9 +1706,9 @@ ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2_buf(zpl_u8 const *str); // NOTE: Uses locally 
 ZPL_DEF zpl_u8 *zpl_ucs2_to_utf8_buf(zpl_u16 const *str); // NOTE: Uses locally persisting buffer
 
 // NOTE: Returns size of codepoint in bytes
-ZPL_DEF zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint);
+ZPL_DEF zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepoint);
 ZPL_DEF zpl_isize zpl_utf8_codepoint_size(zpl_u8 const *str, zpl_isize str_len);
-ZPL_DEF zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], Rune r);
+ZPL_DEF zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -1836,7 +1837,7 @@ ZPL_DEF zpl_isize zpl_string_allocation_size(zpl_string const str);
 ZPL_DEF zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs);
 ZPL_DEF zpl_string zpl_string_trim(zpl_string str, const char *cut_set);
 ZPL_DEF zpl_string zpl_string_trim_space(zpl_string str); // Whitespace ` \t\r\n\v\f`
-ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, Rune r);
+ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r);
 ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...);
 
 
@@ -2937,7 +2938,7 @@ ZPL_DEF zpl_string zpl_system_command_str(const char *command, zpl_allocator bac
 @brief JSON5 Parser/Writer
 @defgroup json JSON5 parser/writer
 
-Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
+Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files. The parser also supports the **Simplified JSON (SJSON)** format.
 
 We can parse JSON5 files in two different modes:
     @n 1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.
@@ -4020,7 +4021,7 @@ typedef struct zpl_platform {
         zplKeyState shift;
     } key_modifiers;
     
-    Rune char_buffer[256];
+    zpl_rune char_buffer[256];
     zpl_isize char_buffer_count;
     
     void *window_cursor;
@@ -7098,7 +7099,7 @@ zpl_string zpl_string_trim(zpl_string str, const char *cut_set) {
 
 zpl_inline zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
 
-zpl_string zpl_string_append_rune(zpl_string str, Rune r) {
+zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r) {
     if (r >= 0) {
         zpl_u8 buf[8] = { 0 };
         zpl_isize len = zpl_utf8_encode_rune(buf, r);
@@ -7125,7 +7126,7 @@ zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...) {
 //
 
 zpl_u16 *zpl_utf8_to_ucs2(zpl_u16 *buffer, zpl_isize len, zpl_u8 const *str) {
-    Rune c;
+    zpl_rune c;
     zpl_isize i = 0;
     len--;
     while (*str) {
@@ -7187,7 +7188,7 @@ zpl_u8 *zpl_ucs2_to_utf8(zpl_u8 *buffer, zpl_isize len, zpl_u16 const *str) {
             buffer[i++] = cast(char)(0x80 + (*str & 0x3f));
             str += 1;
         } else if (*str >= 0xd800 && *str < 0xdc00) {
-            Rune c;
+            zpl_rune c;
             if (i + 4 > len) return NULL;
             c = ((str[0] - 0xd800) << 10) + ((str[1]) - 0xdc00) + 0x10000;
             buffer[i++] = cast(char)(0xf0 + (c >> 18));
@@ -7247,10 +7248,10 @@ zpl_global zpl_utf8_accept_range const zpl__utf8_accept_ranges[] = {
     { 0x80, 0xbf }, { 0xa0, 0xbf }, { 0x80, 0x9f }, { 0x90, 0xbf }, { 0x80, 0x8f },
 };
 
-zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_out) {
+zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepoint_out) {
     
     zpl_isize width = 0;
-    Rune codepoint = ZPL_RUNE_INVALID;
+    zpl_rune codepoint = ZPL_RUNE_INVALID;
     
     if (str_len > 0) {
         zpl_u8 s0 = str[0];
@@ -7258,8 +7259,8 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_
         zpl_u8 b1, b2, b3;
         zpl_utf8_accept_range accept;
         if (x >= 0xf0) {
-            Rune mask = (cast(Rune) x << 31) >> 31;
-            codepoint = (cast(Rune) s0 & (~mask)) | (ZPL_RUNE_INVALID & mask);
+            zpl_rune mask = (cast(zpl_rune) x << 31) >> 31;
+            codepoint = (cast(zpl_rune) s0 & (~mask)) | (ZPL_RUNE_INVALID & mask);
             width = 1;
             goto end;
         }
@@ -7277,7 +7278,7 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_
         if (b1 < accept.lo || accept.hi < b1) goto invalid_codepoint;
         
         if (sz == 2) {
-            codepoint = (cast(Rune) s0 & 0x1f) << 6 | (cast(Rune) b1 & 0x3f);
+            codepoint = (cast(zpl_rune) s0 & 0x1f) << 6 | (cast(zpl_rune) b1 & 0x3f);
             width = 2;
             goto end;
         }
@@ -7286,7 +7287,7 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_
         if (!zpl_is_between(b2, 0x80, 0xbf)) goto invalid_codepoint;
         
         if (sz == 3) {
-            codepoint = (cast(Rune) s0 & 0x1f) << 12 | (cast(Rune) b1 & 0x3f) << 6 | (cast(Rune) b2 & 0x3f);
+            codepoint = (cast(zpl_rune) s0 & 0x1f) << 12 | (cast(zpl_rune) b1 & 0x3f) << 6 | (cast(zpl_rune) b2 & 0x3f);
             width = 3;
             goto end;
         }
@@ -7294,8 +7295,8 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, Rune *codepoint_
         b3 = str[3];
         if (!zpl_is_between(b3, 0x80, 0xbf)) goto invalid_codepoint;
         
-        codepoint = (cast(Rune) s0 & 0x07) << 18 | (cast(Rune) b1 & 0x3f) << 12 | (cast(Rune) b2 & 0x3f) << 6 |
-            (cast(Rune) b3 & 0x3f);
+        codepoint = (cast(zpl_rune) s0 & 0x07) << 18 | (cast(zpl_rune) b1 & 0x3f) << 12 | (cast(zpl_rune) b2 & 0x3f) << 6 |
+            (cast(zpl_rune) b3 & 0x3f);
         width = 4;
         goto end;
         
@@ -7317,7 +7318,7 @@ zpl_isize zpl_utf8_codepoint_size(zpl_u8 const *str, zpl_isize str_len) {
     return i + 1;
 }
 
-zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], Rune r) {
+zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r) {
     zpl_u32 i = cast(zpl_u32) r;
     zpl_u8 mask = 0x3f;
     if (i <= (1 << 7) - 1) {
@@ -13387,7 +13388,7 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
             if (window_has_focus) {
                 if (wParam == '\r') { wParam = '\n'; }
                 
-                platform->char_buffer[platform->char_buffer_count++] = cast(Rune) wParam;
+                platform->char_buffer[platform->char_buffer_count++] = cast(zpl_rune) wParam;
             }
         } break;
         
@@ -15033,6 +15034,7 @@ typedef zpl_b16 b16;
 typedef zpl_b32 b32;
 typedef zpl_f32 f32;
 typedef zpl_f64 f64;
+typedef zpl_rune rune;
 typedef zpl_usize usize;
 typedef zpl_isize isize;
 typedef zpl_uintptr uintptr;

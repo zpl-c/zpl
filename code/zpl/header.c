@@ -368,12 +368,12 @@ typedef double zpl_f64;
 ZPL_STATIC_ASSERT(sizeof(zpl_f32) == 4);
 ZPL_STATIC_ASSERT(sizeof(zpl_f64) == 8);
 
-typedef zpl_i32 Rune; // NOTE: Unicode codepoint
-typedef zpl_i32 char32;
-#define ZPL_RUNE_INVALID cast(Rune)(0xfffd)
-#define ZPL_RUNE_MAX cast(Rune)(0x0010ffff)
-#define ZPL_RUNE_BOM cast(Rune)(0xfeff)
-#define ZPL_RUNE_EOF cast(Rune)(-1)
+typedef zpl_i32 zpl_rune; // NOTE: Unicode codepoint
+typedef zpl_i32 zpl_char32;
+#define ZPL_RUNE_INVALID cast(zpl_rune)(0xfffd)
+#define ZPL_RUNE_MAX cast(zpl_rune)(0x0010ffff)
+#define ZPL_RUNE_BOM cast(zpl_rune)(0xfeff)
+#define ZPL_RUNE_EOF cast(zpl_rune)(-1)
 
 typedef zpl_i8 zpl_b8;
 typedef zpl_i16 zpl_b16;

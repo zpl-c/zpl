@@ -307,7 +307,7 @@ typedef struct zpl_platform {
         zplKeyState shift;
     } key_modifiers;
     
-    Rune char_buffer[256];
+    zpl_rune char_buffer[256];
     zpl_isize char_buffer_count;
     
     void *window_cursor;
@@ -585,7 +585,7 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
             if (window_has_focus) {
                 if (wParam == '\r') { wParam = '\n'; }
                 
-                platform->char_buffer[platform->char_buffer_count++] = cast(Rune) wParam;
+                platform->char_buffer[platform->char_buffer_count++] = cast(zpl_rune) wParam;
             }
         } break;
         
