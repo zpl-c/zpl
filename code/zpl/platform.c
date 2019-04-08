@@ -434,7 +434,7 @@ zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, zpl_i32 widt
         p->sw_framebuffer.bits_per_pixel = zpl_video_mode_get_desktop( ).bits_per_pixel;
         p->sw_framebuffer.pitch = (p->sw_framebuffer.bits_per_pixel * width / 8);
         
-        bmi.bmiHeader.bzpl_isize = zpl_size_of(bmi.bmiHeader);
+        bmi.bmiHeader.biSize = zpl_size_of(bmi.bmiHeader);
         bmi.bmiHeader.biWidth = width;
         bmi.bmiHeader.biHeight = height; // NOTE(bill): -ve is top-down, +ve is bottom-up
         bmi.bmiHeader.biPlanes = 1;
