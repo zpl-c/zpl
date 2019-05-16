@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.1 - Reordered JSON5 constants to integrate better with conditions
   9.4.0 - JSON5 API changes made to zpl_json_find
   9.3.0 - Change how zpl uses basic types internally
   9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
@@ -2980,9 +2981,9 @@ typedef enum zpl_json_props {
 
 //! Value constants
 typedef enum zpl_json_const {
-    ZPL_JSON_CONST_NULL,
     ZPL_JSON_CONST_FALSE,
     ZPL_JSON_CONST_TRUE,
+    ZPL_JSON_CONST_NULL,
 } zpl_json_const;
 
 // TODO(ZaKlaus): Error handling
@@ -3046,7 +3047,7 @@ typedef struct zpl_json_object {
     };
 } zpl_json_object;
 
-//! Parses JSON5/HJSON text.
+//! Parses JSON5/SJSON text.
 
 //! This method takes text form of JSON document as a source and parses its contents into JSON object structure we can work with. It also optionally handles comments that usually appear in documents used for configuration.
 //! @param root JSON object we store data to.
