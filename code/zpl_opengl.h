@@ -546,7 +546,7 @@ extern "C" {
 #if !defined(ZPLGL_NO_FONTS)
 
     typedef struct zplgl_glyph_mapkv_pair {
-        char32 codepoint;
+        zpl_char32 codepoint;
         u16    index;
     } zplgl_glyph_mapkv_pair;
 
@@ -615,7 +615,7 @@ extern "C" {
         char *font_char_list;
 
         isize   codepoint_count;
-        char32 *codepoints;
+        zpl_char32 *codepoints;
 
         stbtt_pack_range *ranges;
         stbtt_packedchar *packed_char_data;
@@ -637,7 +637,7 @@ extern "C" {
 
 
     ZPLGL_DEF b32            zplgl_get_packed_font_dim(zplgl_font_cache *cache, zplgl_font_cached_ttf *ttf, i32 *width, i32 *height);
-    ZPLGL_DEF zplgl_glyph_info *zplgl_get_glyph_info(zplgl_font *font, char32 codepoint, isize *out_index);
+    ZPLGL_DEF zplgl_glyph_info *zplgl_get_glyph_info(zplgl_font *font, zpl_char32 codepoint, isize *out_index);
     ZPLGL_DEF f32            zplgl_get_font_kerning_from_glyph_indices(zplgl_font *font, isize left_index, isize right_index);
     ZPLGL_DEF void           zplgl_get_string_dimensions(zplgl_font *font, char const *str, f32 *out_width, f32 *out_height);
     ZPLGL_DEF f32            zplgl_get_sub_string_width(zplgl_font *font, char const *str, isize char_count);
@@ -1444,9 +1444,9 @@ zpl_inline ZPL_COMPARE_PROC(zplgl__glyph_map_compare) {
 
 
 b32 zplgl_get_packed_font_dim(zplgl_font_cache *cache, zplgl_font_cached_ttf *ttf, i32 *width, i32 *height) {
-    b32 result = true;
+    zpl_b32 result = true;
     stbtt_pack_context spc;
-    b32 ext_w = true;
+    zpl_b32 ext_w = true;
     isize sanity_counter = 0, i, j;
     *width = *height = (1 << 5);
     for (j = 0; j < cache->codepoint_count; j++) {
@@ -1454,14 +1454,14 @@ b32 zplgl_get_packed_font_dim(zplgl_font_cache *cache, zplgl_font_cached_ttf *tt
     }
 
     for (;;) {
-        i32 res = stbtt_PackBegin(&spc, NULL, *width, *height, 0, 1, 0);
+        zpl_i32 res = stbtt_PackBegin(&spc, NULL, *width, *height, 0, 1, 0);
         ZPL_ASSERT(res == 1);
         if (res != 1) {
             return false;
         }
         else {
             stbrp_context *rp_ctx;
-            b32 fit = true;
+            zpl_b32 fit = true;
 
             zpl_zero_array(cache->rect_cache, cache->codepoint_count);
             rp_ctx = cast(stbrp_context *)spc.pack_info;

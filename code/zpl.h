@@ -25,7 +25,8 @@ Credits:
 GitHub:
   https://github.com/zpl-c/zpl
   
-Version History:
+Version History: 
+  9.4.0 - JSON5 API changes made to zpl_json_find
   9.3.0 - Change how zpl uses basic types internally
   9.2.0 - Directory listing was added. Check dirlist_api.c test for more info
   9.1.1 - Fix WIN32_LEAN_AND_MEAN redefinition properly
@@ -3075,8 +3076,7 @@ ZPL_DEF void zpl_json_free(zpl_json_object *obj);
 //! @param obj JSON object to search in.
 //! @param name JSON node's name to search for.
 //! @param deep_search Perform the search recursively.
-//! @param node Array of JSON nodes we've found under this name.
-ZPL_DEF zpl_isize zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 deep_search, zpl_json_object **node);
+ZPL_DEF zpl_json_object *zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 deep_search);
 
 //! Initializes a JSON node.
 
@@ -11227,20 +11227,18 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
     return p;
 }
 
-zpl_isize zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 deep_search, zpl_json_object **node)
+zpl_json_object *zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 deep_search)
 {
     if (obj->type != ZPL_JSON_TYPE_OBJECT)
     {
-        if (node) *node = NULL;
-        return -1;
+        return NULL;
     }
     
     for (zpl_isize i = 0; i < zpl_array_count(obj->nodes); i++)
     {
         if (!zpl_strncmp(obj->nodes[i].name, name, zpl_strlen(name)))
         {
-            if (node) *node = obj->nodes + i;
-            return i;
+            return (obj->nodes + i);
         }
     }
     
@@ -11248,15 +11246,14 @@ zpl_isize zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 deep_sea
     {
         for (zpl_isize i = 0; i < zpl_array_count(obj->nodes); i++)
         {
-            zpl_isize res = zpl_json_find(obj->nodes + i, name, deep_search, node);
+            zpl_json_object *res = zpl_json_find(obj->nodes + i, name, deep_search);
             
-            if (res != -1)
+            if (res != NULL)
                 return res;
         }
     }
     
-    if (node) *node = NULL;
-    return -1;
+    return NULL;
 }
 
 void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char const *name, zpl_u8 type)

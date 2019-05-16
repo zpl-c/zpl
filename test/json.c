@@ -11,9 +11,9 @@ int main(void) {
     zpl_json_parse(&root, fc.size, (char *const)fc.data, zpl_heap_allocator(), true, &err);
 
     zpl_json_object *replace = NULL;
-    isize index = zpl_json_find(&root, "replace_me", false, &replace);
+    replace = zpl_json_find(&root, "replace_me", false);
 
-    if (index != -1)
+    if (replace != NULL)
     {
         zpl_printf("Field was found! Current value: %lld\nReplacing with an array!\n", replace->integer);
 
