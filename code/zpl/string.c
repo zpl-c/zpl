@@ -59,14 +59,14 @@ ZPL_DEF const char *zpl_char_last_occurence(const char *str, char c);
 ZPL_DEF void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
                             zpl_isize src_b_len);
 
-ZPL_DEF zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr,
+ZPL_DEF zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr,
                            zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr,
+ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr,
                            zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr);
-ZPL_DEF zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr);
-ZPL_DEF void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
-ZPL_DEF void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
+ZPL_DEF zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr);
+ZPL_DEF zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr);
+ZPL_DEF void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
+ZPL_DEF void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -587,7 +587,7 @@ zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64
 }
 
 // TODO: Make better
-zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr, zpl_i32 base) {
+zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_u64 value = 0;
     
@@ -603,7 +603,7 @@ zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr, zpl_i32 base) {
     return value;
 }
 
-zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr, zpl_i32 base) {
+zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_i64 value;
     
@@ -625,7 +625,7 @@ zpl_global const char zpl__num_to_char_table[] = "0123456789"
 "abcdefghijklmnopqrstuvwxyz"
 "@$";
 
-zpl_inline void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
+zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     char *buf = string;
     zpl_b32 negative = false;
     zpl_u64 v;
@@ -649,7 +649,7 @@ zpl_inline void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
+zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     char *buf = string;
     
     if (value) {
@@ -665,13 +665,13 @@ zpl_inline void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr) {
-    zpl_f64 f = zpl_str_to_zpl_f64(str, end_ptr);
+zpl_inline zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
+    zpl_f64 f = zpl_str_to_f64(str, end_ptr);
     zpl_f32 r = cast(zpl_f32) f;
     return r;
 }
 
-zpl_inline zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr) {
+zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     zpl_f64 result, value, sign, scale;
     zpl_i32 frac;
     

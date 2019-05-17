@@ -1257,9 +1257,9 @@ ZPL_DEF zpl_allocation_header_ev *zpl_allocation_header(void *data);
 ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size);
 
 #if defined(ZPL_ARCH_32_BIT)
-#define ZPL_zpl_isize_HIGH_BIT 0x80000000
+#define ZPL_ISIZE_HIGH_BIT 0x80000000
 #elif defined(ZPL_ARCH_64_BIT)
-#define ZPL_zpl_isize_HIGH_BIT 0x8000000000000000ll
+#define ZPL_ISIZE_HIGH_BIT 0x8000000000000000ll
 #else
 #error
 #endif
@@ -1682,14 +1682,14 @@ ZPL_DEF const char *zpl_char_last_occurence(const char *str, char c);
 ZPL_DEF void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
                             zpl_isize src_b_len);
 
-ZPL_DEF zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr,
+ZPL_DEF zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr,
                            zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr,
+ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr,
                            zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr);
-ZPL_DEF zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr);
-ZPL_DEF void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
-ZPL_DEF void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
+ZPL_DEF zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr);
+ZPL_DEF zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr);
+ZPL_DEF void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
+ZPL_DEF void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -5019,7 +5019,7 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
             
             // NOTE: Wrap around
             if (pt > end) {
-                header->size = zpl_pointer_diff(header, end) | ZPL_zpl_isize_HIGH_BIT;
+                header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
                 pt = s->physical_start;
                 header = cast(zpl_allocation_header_ev *) pt;
                 data = zpl_align_forward(header + 1, alignment);
@@ -5043,14 +5043,14 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
                 } else {
                     // NOTE: Mark as free
                     zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
-                    ZPL_ASSERT((h->size & ZPL_zpl_isize_HIGH_BIT) == 0);
-                    h->size = h->size | ZPL_zpl_isize_HIGH_BIT;
+                    ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
+                    h->size = h->size | ZPL_ISIZE_HIGH_BIT;
                     
                     while (s->free_point != s->alloc_point) {
                         zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *) s->free_point;
-                        if ((header->size & ZPL_zpl_isize_HIGH_BIT) == 0) break;
+                        if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0) break;
                         
-                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_zpl_isize_HIGH_BIT));
+                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
                         if (s->free_point == end) s->free_point = s->physical_start;
                     }
                 }
@@ -6754,7 +6754,7 @@ zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64
 }
 
 // TODO: Make better
-zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr, zpl_i32 base) {
+zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_u64 value = 0;
     
@@ -6770,7 +6770,7 @@ zpl_u64 zpl_str_to_zpl_u64(const char *str, char **end_ptr, zpl_i32 base) {
     return value;
 }
 
-zpl_i64 zpl_str_to_zpl_i64(const char *str, char **end_ptr, zpl_i32 base) {
+zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_i64 value;
     
@@ -6792,7 +6792,7 @@ zpl_global const char zpl__num_to_char_table[] = "0123456789"
 "abcdefghijklmnopqrstuvwxyz"
 "@$";
 
-zpl_inline void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
+zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     char *buf = string;
     zpl_b32 negative = false;
     zpl_u64 v;
@@ -6816,7 +6816,7 @@ zpl_inline void zpl_zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
+zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     char *buf = string;
     
     if (value) {
@@ -6832,13 +6832,13 @@ zpl_inline void zpl_zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline zpl_f32 zpl_str_to_zpl_f32(const char *str, char **end_ptr) {
-    zpl_f64 f = zpl_str_to_zpl_f64(str, end_ptr);
+zpl_inline zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
+    zpl_f64 f = zpl_str_to_f64(str, end_ptr);
     zpl_f32 r = cast(zpl_f32) f;
     return r;
 }
 
-zpl_inline zpl_f64 zpl_str_to_zpl_f64(const char *str, char **end_ptr) {
+zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     zpl_f64 result, value, sign, scale;
     zpl_i32 frac;
     
@@ -9706,13 +9706,13 @@ zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zplprivFmt
 
 zpl_internal zpl_isize zpl__print_zpl_i64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_i64 value) {
     char num[130];
-    zpl_zpl_i64_to_str(value, num, info ? info->base : 10);
+    zpl_i64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
 zpl_internal zpl_isize zpl__print_zpl_u64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_u64 value) {
     char num[130];
-    zpl_zpl_u64_to_str(value, num, info ? info->base : 10);
+    zpl_u64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
@@ -9829,7 +9829,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             }
             fmt++;
         } else {
-            info.width = cast(zpl_i32) zpl_str_to_zpl_i64(fmt, cast(char **) & fmt, 10);
+            info.width = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
         }
         
         // NOTE: Optional Precision
@@ -9839,7 +9839,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                 info.precision = va_arg(va, int);
                 fmt++;
             } else {
-                info.precision = cast(zpl_i32) zpl_str_to_zpl_i64(fmt, cast(char **) & fmt, 10);
+                info.precision = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
             }
             info.flags &= ~ZPL_FMT_ZERO;
         }
@@ -11018,23 +11018,23 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
                 while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
             }
             
-            exp = (zpl_i32)zpl_str_to_zpl_i64(expbuf, NULL, 10);
+            exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
         }
         
         if (obj->type == ZPL_JSON_TYPE_INTEGER) {
-            obj->integer = zpl_str_to_zpl_i64(buf, 0, 0);
+            obj->integer = zpl_str_to_i64(buf, 0, 0);
             
             while (exp-- > 0) { obj->integer *= (zpl_i64)eb; }
         } else {
-            obj->real = zpl_str_to_zpl_f64(buf, 0);
+            obj->real = zpl_str_to_f64(buf, 0);
             
             char *q = buf, *qp = q, *qp2 = q;
             while (*qp != '.') ++qp;
             *qp = '\0';
             qp2 = qp + 1;
             
-            obj->base = (zpl_i32)zpl_str_to_zpl_i64(q, 0, 0);
-            obj->base2 = (zpl_i32)zpl_str_to_zpl_i64(qp2, 0, 0);
+            obj->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
+            obj->base2 = (zpl_i32)zpl_str_to_i64(qp2, 0, 0);
             
             if (exp) {
                 obj->exp = exp;
@@ -11429,11 +11429,11 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
         } break;
         
         case ZPL_OPTS_FLOAT: {
-            t->real = zpl_str_to_zpl_f64(b, NULL);
+            t->real = zpl_str_to_f64(b, NULL);
         } break;
         
         case ZPL_OPTS_INT: {
-            t->integer = zpl_str_to_zpl_i64(b, NULL, 10);
+            t->integer = zpl_str_to_i64(b, NULL, 10);
         } break;
     }
     

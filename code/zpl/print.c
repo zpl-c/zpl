@@ -176,13 +176,13 @@ zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zplprivFmt
 
 zpl_internal zpl_isize zpl__print_zpl_i64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_i64 value) {
     char num[130];
-    zpl_zpl_i64_to_str(value, num, info ? info->base : 10);
+    zpl_i64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
 zpl_internal zpl_isize zpl__print_zpl_u64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_u64 value) {
     char num[130];
-    zpl_zpl_u64_to_str(value, num, info ? info->base : 10);
+    zpl_u64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
@@ -299,7 +299,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             }
             fmt++;
         } else {
-            info.width = cast(zpl_i32) zpl_str_to_zpl_i64(fmt, cast(char **) & fmt, 10);
+            info.width = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
         }
         
         // NOTE: Optional Precision
@@ -309,7 +309,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                 info.precision = va_arg(va, int);
                 fmt++;
             } else {
-                info.precision = cast(zpl_i32) zpl_str_to_zpl_i64(fmt, cast(char **) & fmt, 10);
+                info.precision = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
             }
             info.flags &= ~ZPL_FMT_ZERO;
         }

@@ -312,9 +312,9 @@ ZPL_DEF zpl_allocation_header_ev *zpl_allocation_header(void *data);
 ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size);
 
 #if defined(ZPL_ARCH_32_BIT)
-#define ZPL_zpl_isize_HIGH_BIT 0x80000000
+#define ZPL_ISIZE_HIGH_BIT 0x80000000
 #elif defined(ZPL_ARCH_64_BIT)
-#define ZPL_zpl_isize_HIGH_BIT 0x8000000000000000ll
+#define ZPL_ISIZE_HIGH_BIT 0x8000000000000000ll
 #else
 #error
 #endif
@@ -1247,7 +1247,7 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
             
             // NOTE: Wrap around
             if (pt > end) {
-                header->size = zpl_pointer_diff(header, end) | ZPL_zpl_isize_HIGH_BIT;
+                header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
                 pt = s->physical_start;
                 header = cast(zpl_allocation_header_ev *) pt;
                 data = zpl_align_forward(header + 1, alignment);
@@ -1271,14 +1271,14 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
                 } else {
                     // NOTE: Mark as free
                     zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
-                    ZPL_ASSERT((h->size & ZPL_zpl_isize_HIGH_BIT) == 0);
-                    h->size = h->size | ZPL_zpl_isize_HIGH_BIT;
+                    ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
+                    h->size = h->size | ZPL_ISIZE_HIGH_BIT;
                     
                     while (s->free_point != s->alloc_point) {
                         zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *) s->free_point;
-                        if ((header->size & ZPL_zpl_isize_HIGH_BIT) == 0) break;
+                        if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0) break;
                         
-                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_zpl_isize_HIGH_BIT));
+                        s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
                         if (s->free_point == end) s->free_point = s->physical_start;
                     }
                 }

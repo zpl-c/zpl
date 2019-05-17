@@ -619,23 +619,23 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
                 while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
             }
             
-            exp = (zpl_i32)zpl_str_to_zpl_i64(expbuf, NULL, 10);
+            exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
         }
         
         if (obj->type == ZPL_JSON_TYPE_INTEGER) {
-            obj->integer = zpl_str_to_zpl_i64(buf, 0, 0);
+            obj->integer = zpl_str_to_i64(buf, 0, 0);
             
             while (exp-- > 0) { obj->integer *= (zpl_i64)eb; }
         } else {
-            obj->real = zpl_str_to_zpl_f64(buf, 0);
+            obj->real = zpl_str_to_f64(buf, 0);
             
             char *q = buf, *qp = q, *qp2 = q;
             while (*qp != '.') ++qp;
             *qp = '\0';
             qp2 = qp + 1;
             
-            obj->base = (zpl_i32)zpl_str_to_zpl_i64(q, 0, 0);
-            obj->base2 = (zpl_i32)zpl_str_to_zpl_i64(qp2, 0, 0);
+            obj->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
+            obj->base2 = (zpl_i32)zpl_str_to_i64(qp2, 0, 0);
             
             if (exp) {
                 obj->exp = exp;

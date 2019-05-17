@@ -222,11 +222,11 @@ void zpl__opts_set_value(zpl_opts *opts, zpl_opts_entry *t, char *b) {
         } break;
         
         case ZPL_OPTS_FLOAT: {
-            t->real = zpl_str_to_zpl_f64(b, NULL);
+            t->real = zpl_str_to_f64(b, NULL);
         } break;
         
         case ZPL_OPTS_INT: {
-            t->integer = zpl_str_to_zpl_i64(b, NULL, 10);
+            t->integer = zpl_str_to_i64(b, NULL, 10);
         } break;
     }
     
