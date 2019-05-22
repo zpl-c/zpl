@@ -14,18 +14,17 @@ typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 
 // Procedure pointers
 // NOTE: The offset parameter specifies the offset in the structure
-// e.g. zpl_zpl_i32_cmp(zpl_offset_of(Thing, value))
+// e.g. zpl_i32_cmp(zpl_offset_of(Thing, value))
 // Use 0 if it's just the type instead.
 
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i16_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_u8_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i32_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i64_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_isize_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_str_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f32_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f64_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_char_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(i16_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(u8_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(i32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(i64_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(isize_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(str_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(f32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(f64_cmp(zpl_isize offset));
 
 // TODO: Better sorting algorithms
 
@@ -39,12 +38,12 @@ ZPL_DEF void zpl_sort(void *base, zpl_isize count, zpl_isize size, zpl_compare_p
 
 // NOTE: the count of temp == count of items
 #define zpl_radix_sort(Type) zpl_radix_sort_##Type
-#define ZPL_RADIX_SORT_PROC(Type) void zpl_radix_sort(Type)(Type * items, Type * temp, zpl_isize count)
+#define ZPL_RADIX_SORT_PROC(Type) void zpl_radix_sort(Type)(zpl_##Type * items, zpl_##Type * temp, zpl_isize count)
 
-ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u8);
-ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u16);
-ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u32);
-ZPL_DEF ZPL_RADIX_SORT_PROC(zpl_u64);
+ZPL_DEF ZPL_RADIX_SORT_PROC(u8);
+ZPL_DEF ZPL_RADIX_SORT_PROC(u16);
+ZPL_DEF ZPL_RADIX_SORT_PROC(u32);
+ZPL_DEF ZPL_RADIX_SORT_PROC(u64);
 
 //! Performs binary search on an array.
 
@@ -78,15 +77,15 @@ ZPL_DEF void zpl_reverse(void *base, zpl_isize count, zpl_isize size);
 // TODO: Should I make all the macros local?
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
-zpl_global zpl_isize zpl__##Type##_cmp_offset;                                                                         \
-ZPL_COMPARE_PROC(zpl__##Type##_cmp) {                                                                              \
-    Type const p = *cast(Type const *) zpl_pointer_add_const(a, zpl__##Type##_cmp_offset);                         \
-    Type const q = *cast(Type const *) zpl_pointer_add_const(b, zpl__##Type##_cmp_offset);                         \
+zpl_global zpl_isize Type##__cmp_offset;                                                                         \
+ZPL_COMPARE_PROC(##Type##__cmp) {                                                                              \
+    Type const p = *cast(Type const *) zpl_pointer_add_const(a, Type##__cmp_offset);                         \
+    Type const q = *cast(Type const *) zpl_pointer_add_const(b, Type##__cmp_offset);                         \
     return p < q ? -1 : p > q;                                                                                     \
 }                                                                                                                  \
-ZPL_COMPARE_PROC_PTR(zpl_##Type##_cmp(zpl_isize offset)) {                                                             \
-    zpl__##Type##_cmp_offset = offset;                                                                             \
-    return &zpl__##Type##_cmp;                                                                                     \
+ZPL_COMPARE_PROC_PTR(Type##_cmp(zpl_isize offset)) {                                                             \
+    ##Type##__cmp_offset = offset;                                                                             \
+    return &Type##__cmp;                                                                                     \
 }
 
 ZPL__COMPARE_PROC(zpl_u8);
@@ -96,7 +95,6 @@ ZPL__COMPARE_PROC(zpl_i64);
 ZPL__COMPARE_PROC(zpl_isize);
 ZPL__COMPARE_PROC(zpl_f32);
 ZPL__COMPARE_PROC(zpl_f64);
-ZPL__COMPARE_PROC(char);
 
 // NOTE: str_cmp is special as it requires a funny type and funny comparison
 zpl_global zpl_isize zpl__str_cmp_offset;
@@ -191,16 +189,16 @@ void zpl_sort(void *base_, zpl_isize count, zpl_isize size, zpl_compare_proc cmp
 
 #define ZPL_RADIX_SORT_PROC_GEN(Type)                                                                                  \
 ZPL_RADIX_SORT_PROC(Type) {                                                                                        \
-    Type *source = items;                                                                                          \
-    Type *dest = temp;                                                                                             \
-    zpl_isize byte_index, i, byte_max = 8 * zpl_size_of(Type);                                                         \
+    zpl_##Type *source = items;                                                                                          \
+    zpl_##Type *dest = temp;                                                                                             \
+    zpl_isize byte_index, i, byte_max = 8 * zpl_size_of(zpl_##Type);                                                         \
     for (byte_index = 0; byte_index < byte_max; byte_index += 8) {                                                 \
         zpl_isize offsets[256] = { 0 };                                                                                \
         zpl_isize total = 0;                                                                                           \
         /* NOTE: First pass - count how many of each key */                                                        \
         for (i = 0; i < count; i++) {                                                                              \
-            Type radix_value = source[i];                                                                          \
-            Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
+            zpl_##Type radix_value = source[i];                                                                          \
+            zpl_##Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
             offsets[radix_piece]++;                                                                                \
         }                                                                                                          \
         /* NOTE: Change counts to offsets */                                                                       \
@@ -211,18 +209,18 @@ ZPL_RADIX_SORT_PROC(Type) {                                                     
         }                                                                                                          \
         /* NOTE: Second pass - place elements into the right location */                                           \
         for (i = 0; i < count; i++) {                                                                              \
-            Type radix_value = source[i];                                                                          \
-            Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
+            zpl_##Type radix_value = source[i];                                                                          \
+            zpl_##Type radix_piece = (radix_value >> byte_index) & 0xff;                                                 \
             dest[offsets[radix_piece]++] = source[i];                                                              \
         }                                                                                                          \
-        zpl_swap(Type *, source, dest);                                                                            \
+        zpl_swap(zpl_##Type *, source, dest);                                                                            \
     }                                                                                                              \
 }
 
-ZPL_RADIX_SORT_PROC_GEN(zpl_u8);
-ZPL_RADIX_SORT_PROC_GEN(zpl_u16);
-ZPL_RADIX_SORT_PROC_GEN(zpl_u32);
-ZPL_RADIX_SORT_PROC_GEN(zpl_u64);
+ZPL_RADIX_SORT_PROC_GEN(u8);
+ZPL_RADIX_SORT_PROC_GEN(u16);
+ZPL_RADIX_SORT_PROC_GEN(u32);
+ZPL_RADIX_SORT_PROC_GEN(u64);
 
 zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
                                    zpl_compare_proc compare_proc) {

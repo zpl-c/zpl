@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.3 - Fix old API shenanigans
   9.4.2 - Fix small API typos
   9.4.1 - Reordered JSON5 constants to integrate better with conditions
   9.4.0 - JSON5 API changes made to zpl_json_find
