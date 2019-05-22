@@ -78,13 +78,13 @@ ZPL_DEF void zpl_reverse(void *base, zpl_isize count, zpl_isize size);
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
 zpl_global zpl_isize Type##__cmp_offset;                                                                         \
-ZPL_COMPARE_PROC(##Type##__cmp) {                                                                              \
+ZPL_COMPARE_PROC(Type##__cmp) {                                                                              \
     Type const p = *cast(Type const *) zpl_pointer_add_const(a, Type##__cmp_offset);                         \
     Type const q = *cast(Type const *) zpl_pointer_add_const(b, Type##__cmp_offset);                         \
     return p < q ? -1 : p > q;                                                                                     \
 }                                                                                                                  \
 ZPL_COMPARE_PROC_PTR(Type##_cmp(zpl_isize offset)) {                                                             \
-    ##Type##__cmp_offset = offset;                                                                             \
+    Type##__cmp_offset = offset;                                                                             \
     return &Type##__cmp;                                                                                     \
 }
 

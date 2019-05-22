@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.3 - Fix old API shenanigans
   9.4.2 - Fix small API typos
   9.4.1 - Reordered JSON5 constants to integrate better with conditions
   9.4.0 - JSON5 API changes made to zpl_json_find
@@ -6206,13 +6207,13 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
 zpl_global zpl_isize Type##__cmp_offset;                                                                         \
-ZPL_COMPARE_PROC(##Type##__cmp) {                                                                              \
+ZPL_COMPARE_PROC(Type##__cmp) {                                                                              \
     Type const p = *cast(Type const *) zpl_pointer_add_const(a, Type##__cmp_offset);                         \
     Type const q = *cast(Type const *) zpl_pointer_add_const(b, Type##__cmp_offset);                         \
     return p < q ? -1 : p > q;                                                                                     \
 }                                                                                                                  \
 ZPL_COMPARE_PROC_PTR(Type##_cmp(zpl_isize offset)) {                                                             \
-    ##Type##__cmp_offset = offset;                                                                             \
+    Type##__cmp_offset = offset;                                                                             \
     return &Type##__cmp;                                                                                     \
 }
 
