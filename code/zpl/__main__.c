@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.6 - Fix issue where zpl_json_find would have false match on substrings
   9.4.5 - Mistakes were made, fixed compilation errors
   9.4.3 - Fix old API shenanigans
   9.4.2 - Fix small API typos
