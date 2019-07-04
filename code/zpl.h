@@ -26,6 +26,8 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.7 - Additional change to the code
+  9.4.6 - Fix issue where zpl_json_find would have false match on substrings
   9.4.5 - Mistakes were made, fixed compilation errors
   9.4.3 - Fix old API shenanigans
   9.4.2 - Fix small API typos
@@ -11237,14 +11239,8 @@ zpl_json_object *zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 d
     }
     
     for (zpl_isize i = 0; i < zpl_array_count(obj->nodes); i++)
-    {
-        zpl_isize a = zpl_strlen(name);
-        zpl_isize b = zpl_strlen(obj->nodes[i].name);
-
-        if (a != b) 
-            continue;
-            
-        if (!zpl_strncmp(obj->nodes[i].name, name, zpl_strlen(name)))
+    {            
+        if (!zpl_strcmp(obj->nodes[i].name, name))
         {
             return (obj->nodes + i);
         }
