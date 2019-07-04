@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.8 - Fix quote-less JSON node name resolution
   9.4.7 - Additional change to the code
   9.4.6 - Fix issue where zpl_json_find would have false match on substrings
   9.4.5 - Mistakes were made, fixed compilation errors
@@ -11123,6 +11124,12 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
                 do {
                     ++e;
                 } while (*e && (zpl_char_is_alphanumeric(*e) || *e == '_') && !zpl_char_is_space(*e) && !zpl__json_is_assign_char(*e));
+
+                if (zpl_char_is_space(*e)) {
+                    // NOTE(zaklaus): We know this is where the node name ends, cut it here
+                    *e = '\0';
+                    ++e;
+                }
                 
                 if (zpl__json_is_assign_char(*e)) {
                     p = e;

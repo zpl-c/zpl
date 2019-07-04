@@ -721,6 +721,12 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
                 do {
                     ++e;
                 } while (*e && (zpl_char_is_alphanumeric(*e) || *e == '_') && !zpl_char_is_space(*e) && !zpl__json_is_assign_char(*e));
+
+                if (zpl_char_is_space(*e)) {
+                    // NOTE(zaklaus): We know this is where the node name ends, cut it here
+                    *e = '\0';
+                    ++e;
+                }
                 
                 if (zpl__json_is_assign_char(*e)) {
                     p = e;
