@@ -39,6 +39,9 @@ typedef enum zpl_json_props {
     ZPL_JSON_PROPS_INFINITY_NEG = 4,
     ZPL_JSON_PROPS_IS_EXP = 5,
     ZPL_JSON_PROPS_IS_HEX = 6,
+
+    // Used internally so that people can fill in real numbers for JSON files they plan to write.
+    ZPL_JSON_PROPS_IS_PARSED_REAL = 7,
 } zpl_json_props;
 
 //! Value constants
@@ -366,7 +369,11 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
             zpl_fprintf(f, "[");
             zpl_isize elemn = zpl_array_count(node->nodes);
             for (int j = 0; j < elemn; ++j) {
-                zpl__json_write_value(f, node->nodes + j, o, -4, true, true);
+                if ((node->nodes + j)->type == ZPL_JSON_TYPE_OBJECT || (node->nodes + j)->type == ZPL_JSON_TYPE_ARRAY) {
+                    zpl__json_write_value(f, node->nodes + j, o, 0, true, true);
+                } else {
+                    zpl__json_write_value(f, node->nodes + j, o, -4, true, true);
+                }
                 
                 if (j < elemn - 1) { zpl_fprintf(f, ", "); }
             }
@@ -393,11 +400,13 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
             } else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
                 zpl_fprintf(f, "%lld.%llde%c%lld", (long long)node->base, (long long)node->base2, node->exp_neg ? '-' : '+',
                             (long long)node->exp);
-            } else {
+            } else if (node->props == ZPL_JSON_PROPS_IS_PARSED_REAL) {
                 if (!node->lead_digit)
                     zpl_fprintf(f, ".%lld", (long long)node->base2);
                 else
                     zpl_fprintf(f, "%lld.%lld", (long long)node->base, (long long)node->base2);
+            } else {
+                zpl_fprintf(f, "%llf", node->real);
             }
         } break;
         
@@ -580,6 +589,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
         
         if (*e == '.') {
             obj->type = ZPL_JSON_TYPE_REAL;
+            obj->props = ZPL_JSON_PROPS_IS_PARSED_REAL;
             buf[ib++] = '0';
             obj->lead_digit = false;
             

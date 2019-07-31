@@ -26,6 +26,8 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.5.1 - Fixed JSON5 real number export support + indentation fixes
+  9.5.0 - Added base64 encode/decode methods
   9.4.10- Small enum style changes
   9.4.9 - Remove #undef for cast and hard_cast (sorry)
   9.4.8 - Fix quote-less JSON node name resolution
@@ -902,6 +904,11 @@ do {                                                                            
 #define ZPL_PRINTF_ARGS(FMT) __attribute__((format(printf, FMT, (FMT + 1))))
 #else
 #define ZPL_PRINTF_ARGS(FMT)
+#endif
+
+// Multiline string literals in C99!
+#ifndef ZPL_MULTILINE
+#define ZPL_MULTILINE(...) #__VA_ARGS__
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -2667,15 +2674,16 @@ typedef void (*zpl_async_file_cb)(zpl_async_file *file);
 
 #endif // ZPL_THREADING
 
-typedef enum zplFileStandardType {
+#define zplFileStandardType zpl_file_standard_type
+typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_INPUT,
     ZPL_FILE_STANDARD_OUTPUT,
     ZPL_FILE_STANDARD_ERROR,
     
     ZPL_FILE_STANDARD_COUNT,
-} zplFileStandardType;
+} zpl_file_standard_type;
 
-ZPL_DEF zpl_file *zpl_file_get_standard(zplFileStandardType std);
+ZPL_DEF zpl_file *zpl_file_get_standard(zpl_file_standard_type std);
 
 ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
 ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
@@ -2701,14 +2709,12 @@ ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since las
 //! Refresh dirinfo of specified file
 ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
 
-
 #ifdef ZPL_THREADING
 ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
 ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, zpl_isize size, zpl_async_file_cb proc);
 #endif
 
 zpl_file_error zpl_file_temp(zpl_file *file);
-
 
 typedef struct zpl_file_contents {
     zpl_allocator allocator;
@@ -2990,6 +2996,9 @@ typedef enum zpl_json_props {
     ZPL_JSON_PROPS_INFINITY_NEG = 4,
     ZPL_JSON_PROPS_IS_EXP = 5,
     ZPL_JSON_PROPS_IS_HEX = 6,
+
+    // Used internally so that people can fill in real numbers for JSON files they plan to write.
+    ZPL_JSON_PROPS_IS_PARSED_REAL = 7,
 } zpl_json_props;
 
 //! Value constants
@@ -8381,15 +8390,13 @@ zpl_global zpl_u8 zpl__base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm
 
 /* generated table based on: */
 #if 0
-void zpl__base64_decode_table()
-{
+void zpl__base64_decode_table() {
     zpl_i32 inv[80];
     zpl_isize i;
 
     zpl_memset(inv, -1, zpl_size_of(inv));
 
-    for (i=0; i < zpl_size_of(zpl__base64_chars)-1; i++)
-    {
+    for (i=0; i < zpl_size_of(zpl__base64_chars)-1; i++) {
         inv[zpl__base64_chars[i]-43] = i;
     }
 }
@@ -8403,12 +8410,10 @@ zpl_global zpl_i32 zpl__base64_dec_table[] = {
 	29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
 	43, 44, 45, 46, 47, 48, 49, 50, 51 };
 
-zpl_isize zpl__base64_encoded_size(zpl_isize len)
-{
+zpl_isize zpl__base64_encoded_size(zpl_isize len) {
     zpl_isize ret = len;
 
-    if (len % 3 != 0)
-    {
+    if (len % 3 != 0) {
         ret += 3 - (len % 3);
     }
 
@@ -8418,27 +8423,21 @@ zpl_isize zpl__base64_encoded_size(zpl_isize len)
     return ret;
 }
 
-zpl_isize zpl__base64_decoded_size(void const *data)
-{
+zpl_isize zpl__base64_decoded_size(void const *data) {
     zpl_isize len, ret, i;
     const zpl_u8 *s = cast(const zpl_u8 *)data;
 
-    if (s == NULL)
-    {
+    if (s == NULL) {
         return 0;
     }
 
-    len = zpl_strlen(s);
+    len = zpl_strlen(cast(const char*)s);
     ret = len / 4 * 3;
 
-    for (i=len; i-- > 0;)
-    {
-        if (s[i] == '=')
-        {
+    for (i=len; i-- > 0;) {
+        if (s[i] == '=') {
             ret--;
-        }
-        else
-        {
+        } else {
             break;
         }
     }
@@ -8446,36 +8445,25 @@ zpl_isize zpl__base64_decoded_size(void const *data)
     return ret;
 }
 
-zpl_b32 zpl__base64_valid_char(zpl_u8 c)
-{
+zpl_b32 zpl__base64_valid_char(zpl_u8 c) {
     if (c >= '0' && c <= '9')
-    {
         return true;
-    }
     if (c >= 'A' && c <= 'Z')
-    {
         return true;
-    }
     if (c >= 'a' && c <= 'z')
-    {
         return true;
-    }
     if (c == '+' || c == '/' || c == '=')
-    {
         return true;
-    }
     
     return false;
 }
 
-zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len)
-{
+zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len) {
     const zpl_u8 *s = cast(const zpl_u8*)data;
     zpl_u8 *ret = NULL;
     zpl_isize enc_len, i, j, v;
 
-    if (data == NULL || len == 0)
-    {
+    if (data == NULL || len == 0) {
         return NULL;
     }
 
@@ -8483,8 +8471,7 @@ zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len)
     ret = cast(zpl_u8 *)zpl_alloc(a, enc_len+1);
     ret[enc_len] = 0;
 
-    for (i=0, j=0; i < len; i+=3, j+=4)
-    {
+    for (i=0, j=0; i < len; i+=3, j+=4) {
         v = s[i];
         v = (i+1 < len) ? (v << 8 | s[i+1]) : (v << 8);
         v = (i+2 < len) ? (v << 8 | s[i+2]) : (v << 8);
@@ -8493,35 +8480,26 @@ zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len)
         ret[j+1] = zpl__base64_chars[(v >> 12) & 0x3F];
 
         if (i+1 < len)
-        {
             ret[j+2] = zpl__base64_chars[(v >> 6) & 0x3F];
-        }
-        else
-        {
-            ret[j+2] = '=';
-        }
+
+        else ret[j+2] = '=';
 
         if (i+2 < len)
-        {
             ret[j+3] = zpl__base64_chars[v & 0x3F];
-        }
-        else 
-        {
-            ret[j+3] = '=';
-        }
+
+        else ret[j+3] = '=';
+        
     }
 
     return ret;
 }
 
-zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len)
-{
+zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len) {
     const zpl_u8 *s = cast(const zpl_u8*)data;
     zpl_u8 *ret = NULL;
     zpl_isize alen, i, j, v;
 
-    if (data == NULL)
-    {
+    if (data == NULL) {
         return NULL;
     }
 
@@ -8532,16 +8510,12 @@ zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len)
 
     ret[alen] = 0;
 
-    for (i=0; i<len; i++)
-    {
+    for (i=0; i<len; i++) {
         if (!zpl__base64_valid_char(s[i]))
-        {
             return NULL;
-        }
     }
 
-    for (i=0, j=0; i<len; i+=4, j+=3)
-    {
+    for (i=0, j=0; i<len; i+=4, j+=3) {
         v = zpl__base64_dec_table[s[i]-43];
         v = (v << 6) | zpl__base64_dec_table[s[i+1]-43];
         v = (s[i+2] == '=') ? (v << 6) : ((v << 6) | zpl__base64_dec_table[s[i+2]-43]);
@@ -8550,14 +8524,10 @@ zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len)
         ret[j] = (v >> 16) & 0xFF;
 
         if (s[i+2] != '=')
-        {
             ret[j+1] = (v >> 8) & 0xFF;
-        }
 
         if (s[i+3] != '=')
-        {
             ret[j+2] = v & 0xFF;
-        }
     }
 
     return ret;
@@ -8930,6 +8900,8 @@ zpl_file_error zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operat
 }
 
 zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *filename) {
+    zpl_file file_ = {0};
+    *f = file_;
     zpl_file_error err;
 #if defined(ZPL_SYSTEM_WINDOWS)
     err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
@@ -9149,7 +9121,7 @@ zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
+zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.p = v;                                                                                     \
@@ -9196,7 +9168,7 @@ zpl_b32 zpl_fs_exists(char const *name) {
 
 #else // POSIX
 
-zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
+zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.i = v;                                                                                     \
@@ -10966,7 +10938,11 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
             zpl_fprintf(f, "[");
             zpl_isize elemn = zpl_array_count(node->nodes);
             for (int j = 0; j < elemn; ++j) {
-                zpl__json_write_value(f, node->nodes + j, o, -4, true, true);
+                if ((node->nodes + j)->type == ZPL_JSON_TYPE_OBJECT || (node->nodes + j)->type == ZPL_JSON_TYPE_ARRAY) {
+                    zpl__json_write_value(f, node->nodes + j, o, 0, true, true);
+                } else {
+                    zpl__json_write_value(f, node->nodes + j, o, -4, true, true);
+                }
                 
                 if (j < elemn - 1) { zpl_fprintf(f, ", "); }
             }
@@ -10993,11 +10969,13 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
             } else if (node->props == ZPL_JSON_PROPS_IS_EXP) {
                 zpl_fprintf(f, "%lld.%llde%c%lld", (long long)node->base, (long long)node->base2, node->exp_neg ? '-' : '+',
                             (long long)node->exp);
-            } else {
+            } else if (node->props == ZPL_JSON_PROPS_IS_PARSED_REAL) {
                 if (!node->lead_digit)
                     zpl_fprintf(f, ".%lld", (long long)node->base2);
                 else
                     zpl_fprintf(f, "%lld.%lld", (long long)node->base, (long long)node->base2);
+            } else {
+                zpl_fprintf(f, "%llf", node->real);
             }
         } break;
         
@@ -11180,6 +11158,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
         
         if (*e == '.') {
             obj->type = ZPL_JSON_TYPE_REAL;
+            obj->props = ZPL_JSON_PROPS_IS_PARSED_REAL;
             buf[ib++] = '0';
             obj->lead_digit = false;
             

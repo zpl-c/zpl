@@ -119,15 +119,16 @@ typedef void (*zpl_async_file_cb)(zpl_async_file *file);
 
 #endif // ZPL_THREADING
 
-typedef enum zplFileStandardType {
+#define zplFileStandardType zpl_file_standard_type
+typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_INPUT,
     ZPL_FILE_STANDARD_OUTPUT,
     ZPL_FILE_STANDARD_ERROR,
     
     ZPL_FILE_STANDARD_COUNT,
-} zplFileStandardType;
+} zpl_file_standard_type;
 
-ZPL_DEF zpl_file *zpl_file_get_standard(zplFileStandardType std);
+ZPL_DEF zpl_file *zpl_file_get_standard(zpl_file_standard_type std);
 
 ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
 ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
@@ -153,14 +154,12 @@ ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since las
 //! Refresh dirinfo of specified file
 ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
 
-
 #ifdef ZPL_THREADING
 ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
 ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, zpl_isize size, zpl_async_file_cb proc);
 #endif
 
 zpl_file_error zpl_file_temp(zpl_file *file);
-
 
 typedef struct zpl_file_contents {
     zpl_allocator allocator;
@@ -432,6 +431,8 @@ zpl_file_error zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operat
 }
 
 zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *filename) {
+    zpl_file file_ = {0};
+    *f = file_;
     zpl_file_error err;
 #if defined(ZPL_SYSTEM_WINDOWS)
     err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
@@ -651,7 +652,7 @@ zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
+zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.p = v;                                                                                     \
@@ -698,7 +699,7 @@ zpl_b32 zpl_fs_exists(char const *name) {
 
 #else // POSIX
 
-zpl_inline zpl_file *zpl_file_get_standard(zplFileStandardType std) {
+zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.i = v;                                                                                     \

@@ -32,6 +32,7 @@ GitHub:
 https://github.com/zpl-c/zpl
 
 Version History:
+  1.1.1 - Fixed font loading code
   1.1.0 - Internal design changes
   1.0.1 - Small fixes
   1.0.0 - Initial port from https://raw.githubusercontent.com/gingerBill/gb/master/ZPL_gl.h
@@ -140,9 +141,6 @@ extern "C" {
 #define ZPLGL_TAU 6.28318530717958647692528676655900576f
 #endif
 
-
-
-
     ////////////////////////////////////////////////////////////////
     //
     // Color Type
@@ -166,6 +164,7 @@ extern "C" {
 
 
     ZPL_DEF zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a);
+    ZPL_DEF zplgl_color zplgl_color_opacity(zplgl_color color, zpl_f32 alpha);
 
     zpl_global zplgl_color const zplgl_color_white = { 0xffffffff };
     zpl_global zplgl_color const zplgl_color_grey = { 0xff808080 };
@@ -846,6 +845,13 @@ zpl_inline zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a) 
     return result;
 }
 
+zpl_inline zplgl_color zplgl_color_opacity(zplgl_color color, zpl_f32 alpha)
+{
+    zplgl_color result;
+    result = color;
+    result.a = alpha;
+    return result;
+}
 
 zpl_u32 zplgl_make_sampler(zpl_u32 min_filter, zpl_u32 max_filter, zpl_u32 s_wrap, zpl_u32 t_wrap) {
     zpl_u32 samp;
@@ -1583,7 +1589,7 @@ zplgl_font * zplgl_cache_font(zplgl_font_cache *fc, char const *ttf_filename, zp
         f->next = cast(zplgl_font *)zplgl_malloc(zpl_size_of(zplgl_font));
         f = f->next;
     }
-    ZPL_ASSERT_NOT_NULL(f);
+
     if (!f) {
         zpl_printf_err("Failed to cache font\n");
         return NULL;
@@ -1638,7 +1644,7 @@ zplgl_font * zplgl_cache_font(zplgl_font_cache *fc, char const *ttf_filename, zp
         }
         if (!*ttf_cache) {
             zpl_isize name_len;
-            zpl_file file;
+            zpl_file file = {0};
 
 
             *ttf_cache = cast(zplgl_font_cached_ttf *)zplgl_malloc(zpl_size_of(zplgl_font_cached_ttf));
@@ -1648,8 +1654,8 @@ zplgl_font * zplgl_cache_font(zplgl_font_cache *fc, char const *ttf_filename, zp
             zpl_zero_item(&(*ttf_cache)->finfo);
             (*ttf_cache)->next = NULL;
 
-
             name_len = zpl_strlen(ttf_filename);
+
             (*ttf_cache)->name = cast(char *)zplgl_malloc(name_len + 1);
             zpl_strncpy((*ttf_cache)->name, ttf_filename, name_len);
             (*ttf_cache)->name[name_len] = '\0';
@@ -1973,64 +1979,88 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
     bs->mipmap_sampler = zplgl_make_sampler(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT);
 
     zplgl_load_shader_from_memory_vf(&bs->ortho_tex_shader,
-        "#version 410 core\n"
-        "layout (location = 0) in vec4 a_position;\n"
-        "layout (location = 1) in vec2 a_tex_coord;\n"
-        "uniform mat4 u_ortho_mat;\n"
-        "out vec2 v_tex_coord;\n"
-        "void main(void) {\n"
-        "	gl_Position = u_ortho_mat * a_position;\n"
-        "	v_tex_coord = a_tex_coord;\n"
-        "}\n",
+        ZPL_MULTILINE(#version 420 core\n
+        
+        layout (location = 0) in vec4 a_position;
+        layout (location = 1) in vec2 a_tex_coord;
 
-        "#version 410 core\n"
-        "precision mediump float;"
-        "in vec2 v_tex_coord;\n"
-        "layout (binding = 0) uniform sampler2D u_tex;\n"
-        "out vec4 o_colour;\n"
-        "void main(void) {\n"
-        "	o_colour = texture2D(u_tex, v_tex_coord);\n"
-        "}\n"
+        uniform mat4 u_ortho_mat;
+
+        out vec2 v_tex_coord;
+
+        void main(void) {
+            gl_Position = u_ortho_mat * a_position;
+            v_tex_coord = a_tex_coord;
+        }),
+
+        ZPL_MULTILINE(#version 420 core\n
+
+        precision mediump float;
+
+        in vec2 v_tex_coord;
+        layout (binding = 0) uniform sampler2D u_tex;
+
+        out vec4 o_colour;
+        
+        void main(void) {
+        	o_colour = texture2D(u_tex, v_tex_coord);
+        })
     );
 
     zplgl_load_shader_from_memory_vf(&bs->ortho_col_shader,
-        "#version 410 core\n"
-        "precision mediump float;"
-        "layout (location = 0) in vec4 a_position;\n"
-        "uniform mat4 u_ortho_mat;\n"
-        "void main(void) {\n"
-        "	gl_Position = u_ortho_mat * a_position;\n"
-        "}\n",
+        ZPL_MULTILINE(#version 420 core\n
 
-        "#version 410 core\n"
-        "uniform vec4 u_colour;\n"
-        "out vec4 o_colour;\n"
-        "void main(void) {\n"
-        "	o_colour = u_colour;\n"
-        "}\n"
+        precision mediump float;
+        
+        layout (location = 0) in vec4 a_position;
+        
+        uniform mat4 u_ortho_mat;
+        
+        void main(void) {
+        	gl_Position = u_ortho_mat * a_position;
+        }),
+
+        ZPL_MULTILINE(#version 420 core\n
+        
+        uniform vec4 u_colour;
+        
+        out vec4 o_colour;
+        
+        void main(void) {
+        	o_colour = u_colour;
+        })
     );
 
 
 #if !defined(ZPLGL_NO_FONTS)
     zplgl_load_shader_from_memory_vf(&bs->font_shader,
-        "#version 410 core\n"
-        "layout (location = 0) in vec4 a_position;\n"
-        "layout (location = 1) in vec2 a_tex_coord;\n"
-        "uniform mat4 u_ortho_mat;\n"
-        "out vec2 v_tex_coord;\n"
-        "void main(void) {\n"
-        "	gl_Position = u_ortho_mat * a_position;\n"
-        "	v_tex_coord = a_tex_coord;\n"
-        "}\n",
+        ZPL_MULTILINE(#version 420 core\n
+        
+        layout (location = 0) in vec4 a_position;
+        layout (location = 1) in vec2 a_tex_coord;
+        
+        uniform mat4 u_ortho_mat;
+        
+        out vec2 v_tex_coord;
+        
+        void main(void) {
+        	gl_Position = u_ortho_mat * a_position;
+        	v_tex_coord = a_tex_coord;
+        }),
 
-        "#version 410 core\n"
-        "in vec2 v_tex_coord;\n"
-        "uniform vec4 u_colour;\n"
-        "layout (binding = 0) uniform sampler2D u_tex;\n"
-        "out vec4 o_colour;\n"
-        "void main(void) {\n"
-        "	o_colour = u_colour * texture2D(u_tex, v_tex_coord).r;\n"
-        "}\n"
+        ZPL_MULTILINE(#version 420 core\n
+        
+        in vec2 v_tex_coord;
+        
+        uniform vec4 u_colour;
+        
+        layout (binding = 0) uniform sampler2D u_tex;
+        
+        out vec4 o_colour;
+        
+        void main(void) {
+        	o_colour = u_colour * texture2D(u_tex, v_tex_coord).r;
+        })
     );
 
     glGenVertexArrays(1, &bs->font_vao);

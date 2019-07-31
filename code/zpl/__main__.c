@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.5.1 - Fixed JSON5 real number export support + indentation fixes
   9.5.0 - Added base64 encode/decode methods
   9.4.10- Small enum style changes
   9.4.9 - Remove #undef for cast and hard_cast (sorry)

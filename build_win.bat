@@ -29,7 +29,7 @@ IF [%5] == [] set LIBPATHS=%VULKAN% %GLFW%
 
 set SUBSYSTEM=%6
 
-IF [%6] == [] set SUBSYSTEM=windows
+IF [%6] == [] set SUBSYSTEM=console
 
 set CPP_EXTRAS=%~7
 set LNK_EXTRAS=%~8

@@ -655,6 +655,11 @@ do {                                                                            
 #define ZPL_PRINTF_ARGS(FMT)
 #endif
 
+// Multiline string literals in C99!
+#ifndef ZPL_MULTILINE
+#define ZPL_MULTILINE(...) #__VA_ARGS__
+#endif
+
 ////////////////////////////////////////////////////////////////
 //
 // Debug
