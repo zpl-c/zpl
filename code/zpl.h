@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.10- Small enum style changes
   9.4.9 - Remove #undef for cast and hard_cast (sorry)
   9.4.8 - Fix quote-less JSON node name resolution
   9.4.7 - Additional change to the code
