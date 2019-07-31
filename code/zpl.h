@@ -2366,6 +2366,9 @@ ZPL_DEF zpl_u64 zpl_fnv64(void const *data, zpl_isize len);
 ZPL_DEF zpl_u32 zpl_fnv32a(void const *data, zpl_isize len);
 ZPL_DEF zpl_u64 zpl_fnv64a(void const *data, zpl_isize len);
 
+ZPL_DEF zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len);
+ZPL_DEF zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len);
+
 //! Default seed of 0x9747b28c
 ZPL_DEF zpl_u32 zpl_murmur32(void const *data, zpl_isize len);
 
@@ -8369,6 +8372,195 @@ zpl_u64 zpl_fnv64a(void const *data, zpl_isize len) {
     for (i = 0; i < len; i++) h = (h ^ c[i]) * 0x100000001b3ll;
     
     return h;
+}
+
+// base64 implementation based on https://nachtimwald.com/2017/11/18/base64-encode-and-decode-in-c/
+//
+zpl_global zpl_u8 zpl__base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+
+/* generated table based on: */
+#if 0
+void zpl__base64_decode_table()
+{
+    zpl_i32 inv[80];
+    zpl_isize i;
+
+    zpl_memset(inv, -1, zpl_size_of(inv));
+
+    for (i=0; i < zpl_size_of(zpl__base64_chars)-1; i++)
+    {
+        inv[zpl__base64_chars[i]-43] = i;
+    }
+}
+#endif
+/* === */
+zpl_global zpl_i32 zpl__base64_dec_table[] = { 
+    62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58,
+	59, 60, 61, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, 5,
+	6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+	21, 22, 23, 24, 25, -1, -1, -1, -1, -1, -1, 26, 27, 28,
+	29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+	43, 44, 45, 46, 47, 48, 49, 50, 51 };
+
+zpl_isize zpl__base64_encoded_size(zpl_isize len)
+{
+    zpl_isize ret = len;
+
+    if (len % 3 != 0)
+    {
+        ret += 3 - (len % 3);
+    }
+
+    ret /= 3;
+    ret *= 4;
+
+    return ret;
+}
+
+zpl_isize zpl__base64_decoded_size(void const *data)
+{
+    zpl_isize len, ret, i;
+    const zpl_u8 *s = cast(const zpl_u8 *)data;
+
+    if (s == NULL)
+    {
+        return 0;
+    }
+
+    len = zpl_strlen(s);
+    ret = len / 4 * 3;
+
+    for (i=len; i-- > 0;)
+    {
+        if (s[i] == '=')
+        {
+            ret--;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return ret;
+}
+
+zpl_b32 zpl__base64_valid_char(zpl_u8 c)
+{
+    if (c >= '0' && c <= '9')
+    {
+        return true;
+    }
+    if (c >= 'A' && c <= 'Z')
+    {
+        return true;
+    }
+    if (c >= 'a' && c <= 'z')
+    {
+        return true;
+    }
+    if (c == '+' || c == '/' || c == '=')
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len)
+{
+    const zpl_u8 *s = cast(const zpl_u8*)data;
+    zpl_u8 *ret = NULL;
+    zpl_isize enc_len, i, j, v;
+
+    if (data == NULL || len == 0)
+    {
+        return NULL;
+    }
+
+    enc_len = zpl__base64_encoded_size(len);
+    ret = cast(zpl_u8 *)zpl_alloc(a, enc_len+1);
+    ret[enc_len] = 0;
+
+    for (i=0, j=0; i < len; i+=3, j+=4)
+    {
+        v = s[i];
+        v = (i+1 < len) ? (v << 8 | s[i+1]) : (v << 8);
+        v = (i+2 < len) ? (v << 8 | s[i+2]) : (v << 8);
+
+        ret[j] = zpl__base64_chars[(v >> 18) & 0x3F];
+        ret[j+1] = zpl__base64_chars[(v >> 12) & 0x3F];
+
+        if (i+1 < len)
+        {
+            ret[j+2] = zpl__base64_chars[(v >> 6) & 0x3F];
+        }
+        else
+        {
+            ret[j+2] = '=';
+        }
+
+        if (i+2 < len)
+        {
+            ret[j+3] = zpl__base64_chars[v & 0x3F];
+        }
+        else 
+        {
+            ret[j+3] = '=';
+        }
+    }
+
+    return ret;
+}
+
+zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len)
+{
+    const zpl_u8 *s = cast(const zpl_u8*)data;
+    zpl_u8 *ret = NULL;
+    zpl_isize alen, i, j, v;
+
+    if (data == NULL)
+    {
+        return NULL;
+    }
+
+    alen = zpl__base64_decoded_size(s);
+    ret = cast(zpl_u8 *)zpl_alloc_align(a, alen+1, 4);
+
+    ZPL_ASSERT_NOT_NULL(ret);
+
+    ret[alen] = 0;
+
+    for (i=0; i<len; i++)
+    {
+        if (!zpl__base64_valid_char(s[i]))
+        {
+            return NULL;
+        }
+    }
+
+    for (i=0, j=0; i<len; i+=4, j+=3)
+    {
+        v = zpl__base64_dec_table[s[i]-43];
+        v = (v << 6) | zpl__base64_dec_table[s[i+1]-43];
+        v = (s[i+2] == '=') ? (v << 6) : ((v << 6) | zpl__base64_dec_table[s[i+2]-43]);
+        v = (s[i+3] == '=') ? (v << 6) : ((v << 6) | zpl__base64_dec_table[s[i+3]-43]);
+
+        ret[j] = (v >> 16) & 0xFF;
+
+        if (s[i+2] != '=')
+        {
+            ret[j+1] = (v >> 8) & 0xFF;
+        }
+
+        if (s[i+3] != '=')
+        {
+            ret[j+2] = v & 0xFF;
+        }
+    }
+
+    return ret;
 }
 
 zpl_inline zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
