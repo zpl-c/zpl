@@ -53,7 +53,8 @@ typedef struct zpl_re_capture {
     zpl_isize len;
 } zpl_re_capture;
 
-typedef enum zplreError {
+#define zplRegexError zpl_regex_error
+typedef enum zpl_regex_error {
     ZPL_RE_ERROR_NONE,
     ZPL_RE_ERROR_NO_MATCH,
     ZPL_RE_ERROR_TOO_LONG,
@@ -62,13 +63,13 @@ typedef enum zplreError {
     ZPL_RE_ERROR_BRANCH_FAILURE,
     ZPL_RE_ERROR_INVALID_QUANTIFIER,
     ZPL_RE_ERROR_INTERNAL_FAILURE,
-} zplreError;
+} zpl_regex_error;
 
 //! Compile regex pattern.
-ZPL_DEF zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len);
+ZPL_DEF zpl_regex_error zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len);
 
 //! Compile regex pattern using a buffer.
-ZPL_DEF zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len);
+ZPL_DEF zpl_regex_error zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len);
 
 //! Destroy regex object.
 ZPL_DEF void       zpl_re_destroy(zpl_re *re);
@@ -439,7 +440,7 @@ static zpl_re_ctx zpl_re__exec(zpl_re *re, zpl_isize op, char const *str, zpl_is
     return c;
 }
 
-static zplreError zpl_re__emit_ops(zpl_re *re, zpl_isize op_count, ...) {
+static zpl_regex_error zpl_re__emit_ops(zpl_re *re, zpl_isize op_count, ...) {
     va_list va;
     
     if (re->buf_len + op_count > re->buf_cap) {
@@ -466,7 +467,7 @@ static zplreError zpl_re__emit_ops(zpl_re *re, zpl_isize op_count, ...) {
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__emit_ops_buffer(zpl_re *re, zpl_isize op_count, char const *buffer) {
+static zpl_regex_error zpl_re__emit_ops_buffer(zpl_re *re, zpl_isize op_count, char const *buffer) {
     if (re->buf_len + op_count > re->buf_cap) {
         if (!re->can_realloc) {
             return ZPL_RE_ERROR_TOO_LONG;
@@ -518,8 +519,8 @@ static int zpl_re__encode_escape(char code) {
 	return code;
 }
 
-static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize *new_offset) {
-    zplreError err = ZPL_RE_ERROR_NONE;
+static zpl_regex_error zpl_re__parse_group(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize *new_offset) {
+    zpl_regex_error err = ZPL_RE_ERROR_NONE;
     char buffer[256] = {0};
     zpl_isize buffer_len = 0, buffer_cap = zpl_size_of(buffer);
     zpl_b32 closed = 0;
@@ -584,8 +585,8 @@ static zplreError zpl_re__parse_group(zpl_re *re, char const *pattern, zpl_isize
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__compile_quantifier(zpl_re *re, zpl_isize last_buf_len, unsigned char quantifier) {
-    zplreError err;
+static zpl_regex_error zpl_re__compile_quantifier(zpl_re *re, zpl_isize last_buf_len, unsigned char quantifier) {
+    zpl_regex_error err;
     zpl_isize move_size;
     
     if ((re->buf[last_buf_len] == ZPL_RE_OP_EXACT_MATCH) &&
@@ -611,8 +612,8 @@ static zplreError zpl_re__compile_quantifier(zpl_re *re, zpl_isize last_buf_len,
     return ZPL_RE_ERROR_NONE;
 }
 
-static zplreError zpl_re__parse(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize level, zpl_isize *new_offset) {
-    zplreError err = ZPL_RE_ERROR_NONE;
+static zpl_regex_error zpl_re__parse(zpl_re *re, char const *pattern, zpl_isize len, zpl_isize offset, zpl_isize level, zpl_isize *new_offset) {
+    zpl_regex_error err = ZPL_RE_ERROR_NONE;
     zpl_isize last_buf_len = re->buf_len;
     zpl_isize branch_begin = re->buf_len;
     zpl_isize branch_op = -1;
@@ -763,8 +764,8 @@ static zplreError zpl_re__parse(zpl_re *re, char const *pattern, zpl_isize len, 
     return ZPL_RE_ERROR_NONE;
 }
 
-zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len) {
-    zplreError err;
+zpl_regex_error zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len) {
+    zpl_regex_error err;
     re->capture_count = 0;
     re->buf = (char *)buffer;
     re->buf_len = 0;
@@ -775,8 +776,8 @@ zplreError zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize
     return err;
 }
 
-zplreError zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len) {
-    zplreError err;
+zpl_regex_error zpl_re_compile(zpl_re *re, zpl_allocator backing, char const *pattern, zpl_isize pattern_len) {
+    zpl_regex_error err;
     zpl_isize cap = pattern_len+128;
     zpl_isize offset = 0;
     
