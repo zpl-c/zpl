@@ -1080,7 +1080,7 @@ zpl_mat3 *zpl_mat3_f(zpl_f32 m[3][3]) { return (zpl_mat3 *)m; }
 
 zpl_float3 *zpl_float33_m(zpl_mat3 *m) { return (zpl_float3 *)m; }
 zpl_float3 *zpl_float33_v(zpl_vec3 m[3]) { return (zpl_float3 *)m; }
-zpl_float3 *zpl_float33_16(zpl_f32 m[9]) { return (zpl_float3 *)m; }
+zpl_float3 *zpl_float33_9(zpl_f32 m[9]) { return (zpl_float3 *)m; }
 
 void zpl_float33_transpose(zpl_f32 (*vec)[3]) {
     int i, j;

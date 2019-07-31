@@ -1,4 +1,4 @@
-﻿/*
+/*
 
 ZPL OpenGL - OpenGL Helper Library
 
@@ -32,6 +32,7 @@ GitHub:
 https://github.com/zpl-c/zpl
 
 Version History:
+  1.2.0 - Added Cyrillic support for font renderer
   1.1.1 - Fixed font loading code
   1.1.0 - Internal design changes
   1.0.1 - Small fixes
@@ -670,6 +671,8 @@ extern "C" {
 	"ŃńŅņņŇňŉŊŋŌōōŎŏŐőŒœŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽža!ö"\
 	"\"#$%%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"\
 	"ŠšŒœŸÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõøùúûüýþÿ®™£"\
+    "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"\
+    "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"\
 	" \t\r\n"
 #endif
 
@@ -1679,7 +1682,7 @@ zplgl_font * zplgl_cache_font(zplgl_font_cache *fc, char const *ttf_filename, zp
         ZPL_ASSERT_NOT_NULL(ttf);
     }
 
-    // NOTE(bill): Set the range for the this look up
+    // NOTE(bill): Set the range for the look up
     for (i = 0; i < fc->codepoint_count; i++)
         fc->ranges[i].font_size = font_size;
 
