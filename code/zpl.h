@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.5.2 - zpl_printf family now prints (null) on NULL string arguments
   9.5.1 - Fixed JSON5 real number export support + indentation fixes
   9.5.0 - Added base64 encode/decode methods
   9.4.10- Small enum style changes
@@ -9811,7 +9812,7 @@ enum {
     ZPL_FMT_LONG = ZPL_BIT(8),
     ZPL_FMT_LLONG = ZPL_BIT(9),
     ZPL_FMT_SIZE = ZPL_BIT(10),
-    ZPL_FMT_zpl_intptr = ZPL_BIT(11),
+    ZPL_FMT_INTPTR = ZPL_BIT(11),
     
     ZPL_FMT_UNSIGNED = ZPL_BIT(12),
     ZPL_FMT_LOWER = ZPL_BIT(13),
@@ -9820,7 +9821,7 @@ enum {
     ZPL_FMT_DONE = ZPL_BIT(30),
     
     ZPL_FMT_INTS =
-        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT | ZPL_FMT_LONG | ZPL_FMT_LLONG | ZPL_FMT_SIZE | ZPL_FMT_zpl_intptr
+        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT | ZPL_FMT_LONG | ZPL_FMT_LLONG | ZPL_FMT_SIZE | ZPL_FMT_INTPTR
 };
 
 typedef struct {
@@ -9828,13 +9829,18 @@ typedef struct {
     zpl_i32 flags;
     zpl_i32 width;
     zpl_i32 precision;
-} zplprivFmtInfo;
+} zpl__format_info;
 
-zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zplprivFmtInfo *info, char const *str) {
+zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__format_info *info, char const *str) {
     // TODO: Get precision and width to work correctly. How does it actually work?!
     // TODO: This looks very buggy indeed.
     zpl_isize res = 0, len;
     zpl_isize remaining = max_len;
+
+    if (str == NULL && max_len >= 4) {
+        res += zpl_strlcpy(text, "(null)", 6);
+        return res;
+    }
     
     if (info && info->precision >= 0)
         len = zpl_strnlen(str, info->precision);
@@ -9871,25 +9877,25 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zplprivF
     return res;
 }
 
-zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zplprivFmtInfo *info, char arg) {
+zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zpl__format_info *info, char arg) {
     char str[2] = "";
     str[0] = arg;
     return zpl__print_string(text, max_len, info, str);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_i64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_i64 value) {
+zpl_internal zpl_isize zpl__print_zpl_i64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_i64 value) {
     char num[130];
     zpl_i64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_u64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_u64 value) {
+zpl_internal zpl_isize zpl__print_zpl_u64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_u64 value) {
     char num[130];
     zpl_u64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_f64(char *text, zpl_isize max_len, zplprivFmtInfo *info, zpl_f64 arg) {
+zpl_internal zpl_isize zpl__print_zpl_f64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_f64 arg) {
     // TODO: Handle exponent notation
     zpl_isize width, len, remaining = max_len;
     char *text_begin = text;
@@ -9972,7 +9978,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
     zpl_isize remaining = max_len, res;
     
     while (*fmt) {
-        zplprivFmtInfo info = { 0 };
+        zpl__format_info info = { 0 };
         zpl_isize len = 0;
         info.precision = -1;
         
@@ -10083,7 +10089,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             
             case 'p':
             info.base = 16;
-            info.flags |= (ZPL_FMT_LOWER | ZPL_FMT_UNSIGNED | ZPL_FMT_ALT | ZPL_FMT_zpl_intptr);
+            info.flags |= (ZPL_FMT_LOWER | ZPL_FMT_UNSIGNED | ZPL_FMT_ALT | ZPL_FMT_INTPTR);
             break;
             
             case '%': len = zpl__print_char(text, remaining, &info, '%'); break;
@@ -10102,7 +10108,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                     case ZPL_FMT_LONG: value = cast(zpl_u64) va_arg(va, unsigned long); break;
                     case ZPL_FMT_LLONG: value = cast(zpl_u64) va_arg(va, unsigned long long); break;
                     case ZPL_FMT_SIZE: value = cast(zpl_u64) va_arg(va, zpl_usize); break;
-                    case ZPL_FMT_zpl_intptr: value = cast(zpl_u64) va_arg(va, zpl_uintptr); break;
+                    case ZPL_FMT_INTPTR: value = cast(zpl_u64) va_arg(va, zpl_uintptr); break;
                     default: value = cast(zpl_u64) va_arg(va, unsigned int); break;
                 }
                 
@@ -10116,7 +10122,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                     case ZPL_FMT_LONG: value = cast(zpl_i64) va_arg(va, long); break;
                     case ZPL_FMT_LLONG: value = cast(zpl_i64) va_arg(va, long long); break;
                     case ZPL_FMT_SIZE: value = cast(zpl_i64) va_arg(va, zpl_usize); break;
-                    case ZPL_FMT_zpl_intptr: value = cast(zpl_i64) va_arg(va, zpl_uintptr); break;
+                    case ZPL_FMT_INTPTR: value = cast(zpl_i64) va_arg(va, zpl_uintptr); break;
                     default: value = cast(zpl_i64) va_arg(va, int); break;
                 }
                 

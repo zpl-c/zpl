@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.5.2 - zpl_printf family now prints (null) on NULL string arguments
   9.5.1 - Fixed JSON5 real number export support + indentation fixes
   9.5.0 - Added base64 encode/decode methods
   9.4.10- Small enum style changes
