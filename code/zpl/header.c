@@ -155,8 +155,6 @@ defined(__ppc64__) || defined(__aarch64__)
 #endif
 #endif
 
-
-
 #ifndef ZPL_STATIC_ASSERT
 #define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond)) * 2 - 1]
 #define ZPL_STATIC_ASSERT2(cond, line) ZPL_STATIC_ASSERT3(cond, static_assertion_at_line_##line)

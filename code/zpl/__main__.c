@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.4.9 - Remove #undef for cast and hard_cast (sorry)
   9.4.8 - Fix quote-less JSON node name resolution
   9.4.7 - Additional change to the code
   9.4.6 - Fix issue where zpl_json_find would have false match on substrings
@@ -357,9 +358,6 @@ typedef zpl_usize usize;
 typedef zpl_isize isize;
 typedef zpl_uintptr uintptr;
 typedef zpl_intptr intptr;
-#else
-#undef cast
-#undef hard_cast
 #endif // ZPL_PREFIX_TYPES
 
 #endif // ZPL_INCLUDE_ZPL_H

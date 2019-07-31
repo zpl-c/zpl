@@ -1,7 +1,7 @@
 @echo off
 SETLOCAL
 
-REM build.bat [file_name] [OPTS] [LIBS] [INCLUDE PATHS] [LIB PATHS] [SUBSYSTEM] [CPP_EXTRAS] [LNK_EXTRAS]
+REM build.bat [file_name] [OPTS] [INCLUDE PATHS] [LIBS] [LIB PATHS] [SUBSYSTEM] [CPP_EXTRAS] [LNK_EXTRAS]
 
 if not exist build\bin mkdir build\bin
 
@@ -12,17 +12,20 @@ set OPTS=%2
 
 IF [%2] == [] set OPTS=/Od
 
-set LIBS=%~3
+set INCLUDEPATHS=%~3
 
-IF [%3] == [] set LIBS=user32.lib gdi32.lib winmm.lib opengl32.lib kernel32.lib shell32.lib
+IF [%3] == [] set INCLUDEPATHS=/I..\..\ /IW:\zpl\code /IC:\VulkanSDK\1.1.97.0\Include /IC:\glfw\include
 
-set INCLUDEPATHS=%~4
+set LIBS=%~4
 
-IF [%4] == [] set INCLUDEPATHS=/I..\..\code /IC:\VulkanSDK\1.1.82.1\Include /IC:\glfw\include
+IF [%4] == [] set LIBS=user32.lib gdi32.lib winmm.lib opengl32.lib kernel32.lib shell32.lib
 
 set LIBPATHS=%~5
 
-IF [%5] == [] set LIBPATHS=/LIBPATH:C:\VulkanSDK\1.1.82.1\Lib /LIBPATH:C:\glfw\lib-vc2015
+set VULKAN=/LIBPATH:D:\VulkanSDK\1.1.97.0\Lib
+set GLFW=/LIBPATH:C:\glfw\lib-vc2015
+
+IF [%5] == [] set LIBPATHS=%VULKAN% %GLFW%
 
 set SUBSYSTEM=%6
 

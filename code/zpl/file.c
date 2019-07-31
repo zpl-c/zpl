@@ -8,23 +8,27 @@ File I/O operations as well as path and folder structure manipulation methods. W
 */
 
 typedef zpl_u32 zpl_file_mode;
-typedef enum zplFileModeFlag {
+
+#define zplFileModeFlag zpl_file_mode_flag
+typedef enum zpl_file_mode_flag {
     ZPL_FILE_MODE_READ = ZPL_BIT(0),
     ZPL_FILE_MODE_WRITE = ZPL_BIT(1),
     ZPL_FILE_MODE_APPEND = ZPL_BIT(2),
     ZPL_FILE_MODE_RW = ZPL_BIT(3),
     
     zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
-} zplFileModeFlag;
+} zpl_file_mode_flag;
 
 // NOTE: Only used internally and for the file operations
-typedef enum zplSeekWhenceType {
+#define zplSeekWhenceType zpl_seek_whence_type
+typedef enum zpl_seek_whence_type {
     ZPL_SEEK_WHENCE_BEGIN = 0,
     ZPL_SEEK_WHENCE_CURRENT = 1,
     ZPL_SEEK_WHENCE_END = 2,
-} zplSeekWhenceType;
+} zpl_seek_whence_type;
 
-typedef enum zplFileError {
+#define zplFileError zpl_file_error
+typedef enum zpl_file_error {
     ZPL_FILE_ERROR_NONE,
     ZPL_FILE_ERROR_INVALID,
     ZPL_FILE_ERROR_INVALID_FILENAME,
@@ -35,7 +39,7 @@ typedef enum zplFileError {
     ZPL_FILE_ERROR_NOT_EMPTY,
     ZPL_FILE_ERROR_NAME_TOO_LONG,
     ZPL_FILE_ERROR_UNKNOWN,
-} zplFileError;
+} zpl_file_error;
 
 
 typedef union zpl_file_descriptor {
@@ -48,12 +52,12 @@ typedef union zpl_file_descriptor {
 typedef struct zpl_file_operations zpl_file_operations;
 
 #define ZPL_FILE_OPEN_PROC(name)                                                                                       \
-zplFileError name(zpl_file_descriptor *fd, zpl_file_operations *ops, zpl_file_mode mode, char const *filename)
+zpl_file_error name(zpl_file_descriptor *fd, zpl_file_operations *ops, zpl_file_mode mode, char const *filename)
 #define ZPL_FILE_READ_AT_PROC(name)                                                                                    \
 zpl_b32 name(zpl_file_descriptor fd, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read, zpl_b32 stop_at_newline)
 #define ZPL_FILE_WRITE_AT_PROC(name)                                                                                   \
 zpl_b32 name(zpl_file_descriptor fd, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written)
-#define ZPL_FILE_SEEK_PROC(name) zpl_b32 name(zpl_file_descriptor fd, zpl_i64 offset, zplSeekWhenceType whence, zpl_i64 *new_offset)
+#define ZPL_FILE_SEEK_PROC(name) zpl_b32 name(zpl_file_descriptor fd, zpl_i64 offset, zpl_seek_whence_type whence, zpl_i64 *new_offset)
 #define ZPL_FILE_CLOSE_PROC(name) void name(zpl_file_descriptor fd)
 typedef ZPL_FILE_OPEN_PROC(zpl_file_open_proc);
 typedef ZPL_FILE_READ_AT_PROC(zpl_file_read_proc);
@@ -125,10 +129,10 @@ typedef enum zplFileStandardType {
 
 ZPL_DEF zpl_file *zpl_file_get_standard(zplFileStandardType std);
 
-ZPL_DEF zplFileError zpl_file_create(zpl_file *file, char const *filename);
-ZPL_DEF zplFileError zpl_file_open(zpl_file *file, char const *filename);
-ZPL_DEF zplFileError zpl_file_open_mode(zpl_file *file, zpl_file_mode mode, char const *filename);
-ZPL_DEF zplFileError zpl_file_new(zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops,
+ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
+ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
+ZPL_DEF zpl_file_error zpl_file_open_mode(zpl_file *file, zpl_file_mode mode, char const *filename);
+ZPL_DEF zpl_file_error zpl_file_new(zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops,
                                   char const *filename);
 ZPL_DEF zpl_b32 zpl_file_read_at_check(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read);
 ZPL_DEF zpl_b32 zpl_file_write_at_check(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written);
@@ -138,12 +142,12 @@ ZPL_DEF zpl_i64 zpl_file_seek(zpl_file *file, zpl_i64 offset);
 ZPL_DEF zpl_i64 zpl_file_seek_to_end(zpl_file *file);
 ZPL_DEF zpl_i64 zpl_file_skip(zpl_file *file, zpl_i64 bytes); // NOTE: Skips a certain amount of bytes
 ZPL_DEF zpl_i64 zpl_file_tell(zpl_file *file);
-ZPL_DEF zplFileError zpl_file_close(zpl_file *file);
+ZPL_DEF zpl_file_error zpl_file_close(zpl_file *file);
 ZPL_DEF zpl_b32 zpl_file_read(zpl_file *file, void *buffer, zpl_isize size);
 ZPL_DEF zpl_b32 zpl_file_write(zpl_file *file, void const *buffer, zpl_isize size);
 ZPL_DEF zpl_i64 zpl_file_size(zpl_file *file);
 ZPL_DEF char const *zpl_file_name(zpl_file *file);
-ZPL_DEF zplFileError zpl_file_truncate(zpl_file *file, zpl_i64 size);
+ZPL_DEF zpl_file_error zpl_file_truncate(zpl_file *file, zpl_i64 size);
 ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since lasted checked
 
 //! Refresh dirinfo of specified file
@@ -155,7 +159,7 @@ ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
 ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, zpl_isize size, zpl_async_file_cb proc);
 #endif
 
-zplFileError zpl_file_temp(zpl_file *file);
+zpl_file_error zpl_file_temp(zpl_file *file);
 
 
 typedef struct zpl_file_contents {
@@ -194,8 +198,8 @@ ZPL_DEF char const *zpl_path_base_name(char const *path);
 ZPL_DEF char const *zpl_path_extension(char const *path);
 ZPL_DEF char *zpl_path_get_full_name(zpl_allocator a, char const *path);
 
-ZPL_DEF zplFileError zpl_path_mkdir(char const *path, zpl_i32 mode);
-ZPL_DEF zplFileError zpl_path_rmdir(char const *path);
+ZPL_DEF zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode);
+ZPL_DEF zpl_file_error zpl_path_rmdir(char const *path);
 
 //! Returns file paths terminated by newline (\n)
 ZPL_DEF zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, zpl_b32 recurse);
@@ -414,8 +418,8 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
 
 #endif
 
-zplFileError zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename) {
-    zplFileError err = ZPL_FILE_ERROR_NONE;
+zpl_file_error zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename) {
+    zpl_file_error err = ZPL_FILE_ERROR_NONE;
     zpl_isize len = zpl_strlen(filename);
     
     f->ops = ops;
@@ -427,8 +431,8 @@ zplFileError zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operatio
     return err;
 }
 
-zplFileError zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *filename) {
-    zplFileError err;
+zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *filename) {
+    zpl_file_error err;
 #if defined(ZPL_SYSTEM_WINDOWS)
     err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
 #else
@@ -440,7 +444,7 @@ zplFileError zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *fil
 
 zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry);
 
-zplFileError zpl_file_close(zpl_file *f) {
+zpl_file_error zpl_file_close(zpl_file *f) {
     if (!f) return ZPL_FILE_ERROR_INVALID;
     
     if (f->filename) zpl_free(zpl_heap_allocator( ), cast(char *) f->filename);
@@ -524,11 +528,11 @@ zpl_inline zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isize siz
     return result;
 }
 
-zplFileError zpl_file_create(zpl_file *f, char const *filename) {
+zpl_file_error zpl_file_create(zpl_file *f, char const *filename) {
     return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW, filename);
 }
 
-zplFileError zpl_file_open(zpl_file *f, char const *filename) {
+zpl_file_error zpl_file_open(zpl_file *f, char const *filename) {
     return zpl_file_open_mode(f, ZPL_FILE_MODE_READ, filename);
 }
 
@@ -667,8 +671,8 @@ zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
     return size.QuadPart;
 }
 
-zplFileError zpl_file_truncate(zpl_file *f, zpl_i64 size) {
-    zplFileError err = ZPL_FILE_ERROR_NONE;
+zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
+    zpl_file_error err = ZPL_FILE_ERROR_NONE;
     zpl_i64 prev_offset = zpl_file_tell(f);
     zpl_file_seek(f, size);
     if (!SetEndOfFile(f)) err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
@@ -717,8 +721,8 @@ zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
     return size;
 }
 
-zpl_inline zplFileError zpl_file_truncate(zpl_file *f, zpl_i64 size) {
-    zplFileError err = ZPL_FILE_ERROR_NONE;
+zpl_inline zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
+    zpl_file_error err = ZPL_FILE_ERROR_NONE;
     int i = ftruncate(f->fd.i, size);
     if (i != 0) err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
     return err;
@@ -728,7 +732,7 @@ zpl_inline zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) !
 
 #endif
 
-zplFileError zpl_file_temp(zpl_file *file) {
+zpl_file_error zpl_file_temp(zpl_file *file) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_file_temp is not supported for emscripten");
 #else
@@ -1004,7 +1008,7 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
 #endif
 }
 
-zplFileError zpl_path_mkdir(char const *path, zpl_i32 mode) {
+zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode) {
     zpl_i32 error = 0;
 #if defined(ZPL_SYSTEM_WINDOWS)
     error = _wmkdir((const wchar_t *)zpl_utf8_to_ucs2_buf((const zpl_u8 *)path));
@@ -1024,7 +1028,7 @@ zplFileError zpl_path_mkdir(char const *path, zpl_i32 mode) {
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
-zplFileError zpl_path_rmdir(char const *path) {
+zpl_file_error zpl_path_rmdir(char const *path) {
     zpl_i32 error = 0;
 #if defined(ZPL_SYSTEM_WINDOWS)
     error = _wrmdir((const wchar_t *)zpl_utf8_to_ucs2_buf((const zpl_u8 *)path));
