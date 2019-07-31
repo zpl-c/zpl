@@ -19,3 +19,6 @@ docs/export
 docs/_build
 docs/_static
 docs/_templates
+
+# workdir
+!work/.gitignore
