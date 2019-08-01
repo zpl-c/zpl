@@ -62,8 +62,8 @@ ZPL_DEF void zpl_opts_free(zpl_opts *opts);
 
 //! Registers an option with its short and long name, specifies option's type and its description.
 //! @param opts Options parser to add to.
-//! @param Shorter name of option. (ex. "f")
-//! @param Full name of option. (ex. "foo") Note that rest of the module uses longer names to manipulate opts.
+//! @param lname Shorter name of option. (ex. "f")
+//! @param name Full name of option. (ex. "foo") Note that rest of the module uses longer names to manipulate opts.
 //! @param desc Description shown in the help screen.
 //! @param type Option's type (see zpl_opts_types)
 //! @see zpl_opts_types

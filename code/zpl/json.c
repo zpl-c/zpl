@@ -130,7 +130,7 @@ ZPL_DEF void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *so
 //! @param file File we write text to.
 //! @param obj JSON object we export data from.
 //! @param indent Text indentation used during export. Use 0 for root objects.
-ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *o, zpl_isize indent);
+ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *obj, zpl_isize indent);
 
 //! Releases used resources by a JSON object.
 
@@ -156,6 +156,7 @@ ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, cha
 //! Adds object into JSON document at a specific index.
 
 //! Initializes and adds a JSON object into a JSON document at a specific index.
+//! @param obj Root node to add to.
 //! @param index Index to store at.
 //! @param name JSON node's name.
 //! @param type JSON node's type. (See zpl_json_type)
@@ -165,6 +166,7 @@ ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, 
 //! Appends object into JSON document.
 
 //! Initializes and appends a JSON object into a JSON document.
+//! @param obj Root node to add to.
 //! @param name JSON node's name.
 //! @param type JSON node's type. (See zpl_json_type)
 //! @see zpl_json_type

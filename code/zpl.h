@@ -1072,7 +1072,8 @@ ZPL_DEF zpl_virtual_memory zpl_vm(void *data, zpl_isize size);
 
 //! Allocate virtual memory at address with size.
 
-//! @param addr The starting address of the region to allocate. If NULL, it lets operating system to decide where to allocate it.
+//! @param addr The starting address of the region to reserve. If NULL, it lets operating system to decide where to allocate it.
+//! @param size The size to server.
 ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size);
 
 //! Release the virtual memory.
@@ -3091,7 +3092,7 @@ ZPL_DEF void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *so
 //! @param file File we write text to.
 //! @param obj JSON object we export data from.
 //! @param indent Text indentation used during export. Use 0 for root objects.
-ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *o, zpl_isize indent);
+ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *obj, zpl_isize indent);
 
 //! Releases used resources by a JSON object.
 
@@ -3117,6 +3118,7 @@ ZPL_DEF void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, cha
 //! Adds object into JSON document at a specific index.
 
 //! Initializes and adds a JSON object into a JSON document at a specific index.
+//! @param obj Root node to add to.
 //! @param index Index to store at.
 //! @param name JSON node's name.
 //! @param type JSON node's type. (See zpl_json_type)
@@ -3126,6 +3128,7 @@ ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, 
 //! Appends object into JSON document.
 
 //! Initializes and appends a JSON object into a JSON document.
+//! @param obj Root node to add to.
 //! @param name JSON node's name.
 //! @param type JSON node's type. (See zpl_json_type)
 //! @see zpl_json_type
@@ -3205,8 +3208,8 @@ ZPL_DEF void zpl_opts_free(zpl_opts *opts);
 
 //! Registers an option with its short and long name, specifies option's type and its description.
 //! @param opts Options parser to add to.
-//! @param Shorter name of option. (ex. "f")
-//! @param Full name of option. (ex. "foo") Note that rest of the module uses longer names to manipulate opts.
+//! @param lname Shorter name of option. (ex. "f")
+//! @param name Full name of option. (ex. "foo") Note that rest of the module uses longer names to manipulate opts.
 //! @param desc Description shown in the help screen.
 //! @param type Option's type (see zpl_opts_types)
 //! @see zpl_opts_types

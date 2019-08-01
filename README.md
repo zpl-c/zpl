@@ -48,7 +48,7 @@ ZPL consists of the following modules:
 * **Event** - Simple event handler which can fire multiple callbacks per registered event.
 * **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
-* * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
+* **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
 * **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
