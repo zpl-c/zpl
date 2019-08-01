@@ -11,10 +11,10 @@ typedef zpl_u32 zpl_file_mode;
 
 #define zplFileModeFlag zpl_file_mode_flag
 typedef enum zpl_file_mode_flag {
-    ZPL_FILE_MODE_READ = ZPL_BIT(0),
-    ZPL_FILE_MODE_WRITE = ZPL_BIT(1),
+    ZPL_FILE_MODE_READ   = ZPL_BIT(0),
+    ZPL_FILE_MODE_WRITE  = ZPL_BIT(1),
     ZPL_FILE_MODE_APPEND = ZPL_BIT(2),
-    ZPL_FILE_MODE_RW = ZPL_BIT(3),
+    ZPL_FILE_MODE_RW     = ZPL_BIT(3),
     
     zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
 } zpl_file_mode_flag;
@@ -22,9 +22,9 @@ typedef enum zpl_file_mode_flag {
 // NOTE: Only used internally and for the file operations
 #define zplSeekWhenceType zpl_seek_whence_type
 typedef enum zpl_seek_whence_type {
-    ZPL_SEEK_WHENCE_BEGIN = 0,
+    ZPL_SEEK_WHENCE_BEGIN   = 0,
     ZPL_SEEK_WHENCE_CURRENT = 1,
-    ZPL_SEEK_WHENCE_END = 2,
+    ZPL_SEEK_WHENCE_END     = 2,
 } zpl_seek_whence_type;
 
 #define zplFileError zpl_file_error
@@ -66,9 +66,9 @@ typedef ZPL_FILE_SEEK_PROC(zpl_file_seek_proc);
 typedef ZPL_FILE_CLOSE_PROC(zpl_file_close_proc);
 
 struct zpl_file_operations {
-    zpl_file_read_proc *read_at;
+    zpl_file_read_proc  *read_at;
     zpl_file_write_proc *write_at;
-    zpl_file_seek_proc *seek;
+    zpl_file_seek_proc  *seek;
     zpl_file_close_proc *close;
 };
 
@@ -90,7 +90,7 @@ typedef struct zpl_dir_entry {
 } zpl_dir_entry;
 
 typedef struct zpl_dir_info {
-    char const *fullpath;
+    char const    *fullpath;
     zpl_dir_entry *entries; // zpl_array
 
     // Internals
@@ -101,7 +101,8 @@ typedef struct zpl_dir_info {
 typedef struct zpl_file {
     zpl_file_operations ops;
     zpl_file_descriptor fd;
-    char const *filename;
+
+    char const    *filename;
     zpl_file_time last_write_time;
     zpl_dir_entry *dir;
 } zpl_file;
@@ -129,28 +130,31 @@ typedef enum zpl_file_standard_type {
 } zpl_file_standard_type;
 
 ZPL_DEF zpl_file    *zpl_file_get_standard(zpl_file_standard_type std);
-ZPL_DEF void        zpl_file_connect_handle(zpl_file *file, void *handle);
+ZPL_DEF void         zpl_file_connect_handle(zpl_file *file, void *handle);
 
 ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
 ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
 ZPL_DEF zpl_file_error zpl_file_open_mode(zpl_file *file, zpl_file_mode mode, char const *filename);
-ZPL_DEF zpl_file_error zpl_file_new(zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops,
-                                  char const *filename);
-ZPL_DEF zpl_b32 zpl_file_read_at_check(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read);
-ZPL_DEF zpl_b32 zpl_file_write_at_check(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written);
-ZPL_DEF zpl_b32 zpl_file_read_at(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset);
-ZPL_DEF zpl_b32 zpl_file_write_at(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset);
-ZPL_DEF zpl_i64 zpl_file_seek(zpl_file *file, zpl_i64 offset);
-ZPL_DEF zpl_i64 zpl_file_seek_to_end(zpl_file *file);
-ZPL_DEF zpl_i64 zpl_file_skip(zpl_file *file, zpl_i64 bytes); // NOTE: Skips a certain amount of bytes
-ZPL_DEF zpl_i64 zpl_file_tell(zpl_file *file);
+ZPL_DEF zpl_file_error zpl_file_new(zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename);
+
+ZPL_DEF zpl_b32        zpl_file_read_at_check(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read);
+ZPL_DEF zpl_b32        zpl_file_write_at_check(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written);
+ZPL_DEF zpl_b32        zpl_file_read_at(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset);
+ZPL_DEF zpl_b32        zpl_file_write_at(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset);
+ZPL_DEF zpl_i64        zpl_file_seek(zpl_file *file, zpl_i64 offset);
+ZPL_DEF zpl_i64        zpl_file_seek_to_end(zpl_file *file);
+ZPL_DEF zpl_i64        zpl_file_skip(zpl_file *file, zpl_i64 bytes); // NOTE: Skips a certain amount of bytes
+ZPL_DEF zpl_i64        zpl_file_tell(zpl_file *file);
 ZPL_DEF zpl_file_error zpl_file_close(zpl_file *file);
+
 ZPL_DEF zpl_b32 zpl_file_read(zpl_file *file, void *buffer, zpl_isize size);
 ZPL_DEF zpl_b32 zpl_file_write(zpl_file *file, void const *buffer, zpl_isize size);
 ZPL_DEF zpl_i64 zpl_file_size(zpl_file *file);
-ZPL_DEF char const *zpl_file_name(zpl_file *file);
+ZPL_DEF char const    *zpl_file_name(zpl_file *file);
 ZPL_DEF zpl_file_error zpl_file_truncate(zpl_file *file, zpl_i64 size);
-ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file); // NOTE: Changed since lasted checked
+
+// NOTE: Changed since lasted checked
+ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file);
 
 //! Refresh dirinfo of specified file
 ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
@@ -169,18 +173,18 @@ typedef struct zpl_file_contents {
 } zpl_file_contents;
 
 ZPL_DEF zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_terminate, char const *filepath);
-ZPL_DEF void zpl_file_free_contents(zpl_file_contents *fc);
+ZPL_DEF void              zpl_file_free_contents(zpl_file_contents *fc);
 
 //! Make sure you free both the returned buffer and the lines (zpl_array)
 ZPL_DEF char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *) * lines, char const *filename,
                                   zpl_b32 strip_whitespace);
 
-ZPL_DEF zpl_b32 zpl_fs_exists(char const *filepath);
-ZPL_DEF zpl_u8  zpl_fs_get_type(char const *path);
+ZPL_DEF zpl_b32       zpl_fs_exists(char const *filepath);
+ZPL_DEF zpl_u8        zpl_fs_get_type(char const *path);
 ZPL_DEF zpl_file_time zpl_fs_last_write_time(char const *filepath);
-ZPL_DEF zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists);
-ZPL_DEF zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename);
-ZPL_DEF zpl_b32 zpl_fs_remove(char const *filename);
+ZPL_DEF zpl_b32       zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists);
+ZPL_DEF zpl_b32       zpl_fs_move(char const *existing_filename, char const *new_filename);
+ZPL_DEF zpl_b32       zpl_fs_remove(char const *filename);
 
 #ifndef ZPL_PATH_SEPARATOR
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -193,10 +197,11 @@ ZPL_DEF zpl_b32 zpl_fs_remove(char const *filename);
 ZPL_DEF zpl_b32 zpl_path_is_absolute(char const *path);
 ZPL_DEF zpl_b32 zpl_path_is_relative(char const *path);
 ZPL_DEF zpl_b32 zpl_path_is_root(char const *path);
-ZPL_DEF void zpl_path_fix_slashes(char *path);
+ZPL_DEF void    zpl_path_fix_slashes(char *path);
+
 ZPL_DEF char const *zpl_path_base_name(char const *path);
 ZPL_DEF char const *zpl_path_extension(char const *path);
-ZPL_DEF char *zpl_path_get_full_name(zpl_allocator a, char const *path);
+ZPL_DEF char       *zpl_path_get_full_name(zpl_allocator a, char const *path);
 
 ZPL_DEF zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode);
 ZPL_DEF zpl_file_error zpl_path_rmdir(char const *path);

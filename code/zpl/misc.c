@@ -14,14 +14,14 @@ typedef struct zpl_random {
 } zpl_random;
 
 // NOTE: Generates from numerous sources to produce a decent pseudo-random seed
-ZPL_DEF void zpl_random_init(zpl_random *r);
-ZPL_DEF zpl_u32 zpl_random_gen_u32(zpl_random *r);
-ZPL_DEF zpl_u32 zpl_random_gen_u32_unique(zpl_random *r);
-ZPL_DEF zpl_u64 zpl_random_gen_u64(zpl_random *r); // NOTE: (zpl_random_gen_u32() << 32) | zpl_random_gen_u32()
+ZPL_DEF void      zpl_random_init(zpl_random *r);
+ZPL_DEF zpl_u32   zpl_random_gen_u32(zpl_random *r);
+ZPL_DEF zpl_u32   zpl_random_gen_u32_unique(zpl_random *r);
+ZPL_DEF zpl_u64   zpl_random_gen_u64(zpl_random *r); // NOTE: (zpl_random_gen_u32() << 32) | zpl_random_gen_u32()
 ZPL_DEF zpl_isize zpl_random_gen_isize(zpl_random *r);
-ZPL_DEF zpl_i64 zpl_random_range_i64(zpl_random *r, zpl_i64 lower_inc, zpl_i64 higher_inc);
+ZPL_DEF zpl_i64   zpl_random_range_i64(zpl_random *r, zpl_i64 lower_inc, zpl_i64 higher_inc);
 ZPL_DEF zpl_isize zpl_random_range_isize(zpl_random *r, zpl_isize lower_inc, zpl_isize higher_inc);
-ZPL_DEF zpl_f64 zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_inc);
+ZPL_DEF zpl_f64   zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_inc);
 
 ZPL_DEF void zpl_exit(zpl_u32 code);
 ZPL_DEF void zpl_yield(void);
@@ -29,9 +29,9 @@ ZPL_DEF void zpl_yield(void);
 //! Returns allocated buffer
 ZPL_DEF const char *zpl_get_env(const char *name);
 ZPL_DEF const char *zpl_get_env_buf(const char *name);
-ZPL_DEF zpl_string zpl_get_env_str(const char *name);
-ZPL_DEF void zpl_set_env(const char *name, const char *value);
-ZPL_DEF void zpl_unset_env(const char *name);
+ZPL_DEF zpl_string  zpl_get_env_str(const char *name);
+ZPL_DEF void        zpl_set_env(const char *name, const char *value);
+ZPL_DEF void        zpl_unset_env(const char *name);
 
 ZPL_DEF zpl_u16 zpl_endian_swap16(zpl_u16 i);
 ZPL_DEF zpl_u32 zpl_endian_swap32(zpl_u32 i);
@@ -39,7 +39,7 @@ ZPL_DEF zpl_u64 zpl_endian_swap64(zpl_u64 i);
 
 ZPL_DEF zpl_isize zpl_count_set_bits(zpl_u64 mask);
 
-ZPL_DEF zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len, char *buffer);
+ZPL_DEF zpl_u32    zpl_system_command(const char *command, zpl_usize buffer_len, char *buffer);
 ZPL_DEF zpl_string zpl_system_command_str(const char *command, zpl_allocator backing);
 
 //! @}

@@ -89,7 +89,7 @@ do {                                                                            
 #endif
 
 #ifndef zpl_kilobytes
-#define zpl_kilobytes(x) ((x) * (zpl_i64)(1024))
+#define zpl_kilobytes(x) ((x)              * (zpl_i64)(1024))
 #define zpl_megabytes(x) (zpl_kilobytes(x) * (zpl_i64)(1024))
 #define zpl_gigabytes(x) (zpl_megabytes(x) * (zpl_i64)(1024))
 #define zpl_terabytes(x) (zpl_gigabytes(x) * (zpl_i64)(1024))

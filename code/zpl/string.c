@@ -13,8 +13,8 @@ Offers methods for c-string manipulation, but also a string library based on gb_
 //
 //
 
-ZPL_DEF char zpl_char_to_lower(char c);
-ZPL_DEF char zpl_char_to_upper(char c);
+ZPL_DEF char    zpl_char_to_lower(char c);
+ZPL_DEF char    zpl_char_to_upper(char c);
 ZPL_DEF zpl_b32 zpl_char_is_space(char c);
 ZPL_DEF zpl_b32 zpl_char_is_digit(char c);
 ZPL_DEF zpl_b32 zpl_char_is_hex_digit(char c);
@@ -31,16 +31,15 @@ ZPL_DEF void zpl_str_to_upper(char *str);
 ZPL_DEF char *zpl_str_trim(char *str, zpl_b32 skip_newline);
 ZPL_DEF char *zpl_str_skip(char *str, char c);
 
-ZPL_DEF zpl_isize zpl_strlen(const char *str);
-ZPL_DEF zpl_isize zpl_strnlen(const char *str, zpl_isize max_len);
-ZPL_DEF zpl_i32 zpl_strcmp(const char *s1, const char *s2);
-ZPL_DEF zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len);
-ZPL_DEF char *zpl_strcpy(char *dest, const char *source);
-ZPL_DEF char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len);
-ZPL_DEF char *zpl_strncpy(char *dest, const char *source, zpl_isize len);
-ZPL_DEF zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len);
-ZPL_DEF char *zpl_strrev(char *str); // NOTE: ASCII only
-
+ZPL_DEF zpl_isize   zpl_strlen(const char *str);
+ZPL_DEF zpl_isize   zpl_strnlen(const char *str, zpl_isize max_len);
+ZPL_DEF zpl_i32     zpl_strcmp(const char *s1, const char *s2);
+ZPL_DEF zpl_i32     zpl_strncmp(const char *s1, const char *s2, zpl_isize len);
+ZPL_DEF char       *zpl_strcpy(char *dest, const char *source);
+ZPL_DEF char       *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len);
+ZPL_DEF char       *zpl_strncpy(char *dest, const char *source, zpl_isize len);
+ZPL_DEF zpl_isize   zpl_strlcpy(char *dest, const char *source, zpl_isize len);
+ZPL_DEF char       *zpl_strrev(char *str); // NOTE: ASCII only
 ZPL_DEF const char *zpl_strtok(char *output, const char *src, const char *delimit);
 
 // NOTE: This edits *source* string.
@@ -65,8 +64,8 @@ ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr,
                            zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
 ZPL_DEF zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr);
 ZPL_DEF zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr);
-ZPL_DEF void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
-ZPL_DEF void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
+ZPL_DEF void    zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
+ZPL_DEF void    zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
 
 ////////////////////////////////////////////////////////////////
 //
@@ -80,9 +79,9 @@ ZPL_DEF zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len);
 
 // NOTE: Windows doesn't handle 8 bit filenames well
 ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2(zpl_u16 *buffer, zpl_isize len, zpl_u8 const *str);
-ZPL_DEF zpl_u8 *zpl_ucs2_to_utf8(zpl_u8 *buffer, zpl_isize len, zpl_u16 const *str);
+ZPL_DEF zpl_u8  *zpl_ucs2_to_utf8(zpl_u8 *buffer, zpl_isize len, zpl_u16 const *str);
 ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2_buf(zpl_u8 const *str); // NOTE: Uses locally persisting buffer
-ZPL_DEF zpl_u8 *zpl_ucs2_to_utf8_buf(zpl_u16 const *str); // NOTE: Uses locally persisting buffer
+ZPL_DEF zpl_u8  *zpl_ucs2_to_utf8_buf(zpl_u16 const *str); // NOTE: Uses locally persisting buffer
 
 // NOTE: Returns size of codepoint in bytes
 ZPL_DEF zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepoint);
@@ -185,8 +184,6 @@ int main(int argc, char **argv) {
 
 typedef char *zpl_string;
 
-// NOTE: If you only need a small string, just use a standard c string or change the size from zpl_isize to zpl_u16, etc.
-
 typedef struct zpl_string_header {
     zpl_allocator allocator;
     zpl_isize length;
@@ -199,22 +196,21 @@ ZPL_DEF zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity);
 ZPL_DEF zpl_string zpl_string_make(zpl_allocator a, const char *str);
 ZPL_DEF zpl_string zpl_string_make_length(zpl_allocator a, void const *str, zpl_isize num_bytes);
 ZPL_DEF zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, zpl_isize num_bytes, const char *fmt, ...);
-ZPL_DEF zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt,
-                                          ...); // NOTE: Uses locally persistent buffer
-ZPL_DEF void zpl_string_free(zpl_string str);
+ZPL_DEF zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt, ...); // NOTE: Uses locally persistent buffer
+ZPL_DEF void       zpl_string_free(zpl_string str);
 ZPL_DEF zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str);
-ZPL_DEF zpl_isize zpl_string_length(zpl_string const str);
-ZPL_DEF zpl_isize zpl_string_capacity(zpl_string const str);
-ZPL_DEF zpl_isize zpl_string_available_space(zpl_string const str);
-ZPL_DEF void zpl_string_clear(zpl_string str);
+ZPL_DEF zpl_isize  zpl_string_length(zpl_string const str);
+ZPL_DEF zpl_isize  zpl_string_capacity(zpl_string const str);
+ZPL_DEF zpl_isize  zpl_string_available_space(zpl_string const str);
+ZPL_DEF void       zpl_string_clear(zpl_string str);
 ZPL_DEF zpl_string zpl_string_append(zpl_string str, zpl_string const other);
 ZPL_DEF zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize num_bytes);
 ZPL_DEF zpl_string zpl_string_appendc(zpl_string str, const char *other);
 ZPL_DEF zpl_string zpl_string_join(zpl_allocator a, const char **parts, zpl_isize count, const char *glue);
 ZPL_DEF zpl_string zpl_string_set(zpl_string str, const char *cstr);
 ZPL_DEF zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len);
-ZPL_DEF zpl_isize zpl_string_allocation_size(zpl_string const str);
-ZPL_DEF zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs);
+ZPL_DEF zpl_isize  zpl_string_allocation_size(zpl_string const str);
+ZPL_DEF zpl_b32    zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs);
 ZPL_DEF zpl_string zpl_string_trim(zpl_string str, const char *cut_set);
 ZPL_DEF zpl_string zpl_string_trim_space(zpl_string str); // Whitespace ` \t\r\n\v\f`
 ZPL_DEF zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r);

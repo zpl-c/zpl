@@ -13,9 +13,12 @@ ZPL_DEF zpl_isize zpl_printf_err_va(char const *fmt, va_list va);
 ZPL_DEF zpl_isize zpl_fprintf(zpl_file *f, char const *fmt, ...) ZPL_PRINTF_ARGS(2);
 ZPL_DEF zpl_isize zpl_fprintf_va(zpl_file *f, char const *fmt, va_list va);
 
-ZPL_DEF char *zpl_bprintf(char const *fmt, ...)
-ZPL_PRINTF_ARGS(1);                                    // NOTE: A locally persisting buffer is used internally
-ZPL_DEF char *zpl_bprintf_va(char const *fmt, va_list va); // NOTE: A locally persisting buffer is used internally
+// NOTE: A locally persisting buffer is used internally
+ZPL_DEF char *zpl_bprintf(char const *fmt, ...) ZPL_PRINTF_ARGS(1);
+
+// NOTE: A locally persisting buffer is used internally
+ZPL_DEF char *zpl_bprintf_va(char const *fmt, va_list va);
+
 ZPL_DEF zpl_isize zpl_snprintf(char *str, zpl_isize n, char const *fmt, ...) ZPL_PRINTF_ARGS(3);
 ZPL_DEF zpl_isize zpl_snprintf_va(char *str, zpl_isize n, char const *fmt, va_list va);
 
@@ -97,27 +100,28 @@ zpl_inline char *zpl_bprintf_va(char const *fmt, va_list va) {
 
 enum {
     ZPL_FMT_MINUS = ZPL_BIT(0),
-    ZPL_FMT_PLUS = ZPL_BIT(1),
-    ZPL_FMT_ALT = ZPL_BIT(2),
+    ZPL_FMT_PLUS  = ZPL_BIT(1),
+    ZPL_FMT_ALT   = ZPL_BIT(2),
     ZPL_FMT_SPACE = ZPL_BIT(3),
-    ZPL_FMT_ZERO = ZPL_BIT(4),
+    ZPL_FMT_ZERO  = ZPL_BIT(4),
     
-    ZPL_FMT_CHAR = ZPL_BIT(5),
-    ZPL_FMT_SHORT = ZPL_BIT(6),
-    ZPL_FMT_INT = ZPL_BIT(7),
-    ZPL_FMT_LONG = ZPL_BIT(8),
-    ZPL_FMT_LLONG = ZPL_BIT(9),
-    ZPL_FMT_SIZE = ZPL_BIT(10),
+    ZPL_FMT_CHAR   = ZPL_BIT(5),
+    ZPL_FMT_SHORT  = ZPL_BIT(6),
+    ZPL_FMT_INT    = ZPL_BIT(7),
+    ZPL_FMT_LONG   = ZPL_BIT(8),
+    ZPL_FMT_LLONG  = ZPL_BIT(9),
+    ZPL_FMT_SIZE   = ZPL_BIT(10),
     ZPL_FMT_INTPTR = ZPL_BIT(11),
     
     ZPL_FMT_UNSIGNED = ZPL_BIT(12),
-    ZPL_FMT_LOWER = ZPL_BIT(13),
-    ZPL_FMT_UPPER = ZPL_BIT(14),
+    ZPL_FMT_LOWER    = ZPL_BIT(13),
+    ZPL_FMT_UPPER    = ZPL_BIT(14),
     
     ZPL_FMT_DONE = ZPL_BIT(30),
     
     ZPL_FMT_INTS =
-        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT | ZPL_FMT_LONG | ZPL_FMT_LLONG | ZPL_FMT_SIZE | ZPL_FMT_INTPTR
+        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT  | 
+        ZPL_FMT_LONG | ZPL_FMT_LLONG | ZPL_FMT_SIZE | ZPL_FMT_INTPTR
 };
 
 typedef struct {
@@ -135,7 +139,7 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
 
     if (str == NULL && max_len >= 4) {
         res += zpl_strlcpy(text, "(null)", 6);
-        return res;
+        return 6;
     }
     
     if (info && info->precision >= 0)
@@ -179,19 +183,19 @@ zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zpl__forma
     return zpl__print_string(text, max_len, info, str);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_i64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_i64 value) {
+zpl_internal zpl_isize zpl__print_i64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_i64 value) {
     char num[130];
     zpl_i64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_u64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_u64 value) {
+zpl_internal zpl_isize zpl__print_u64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_u64 value) {
     char num[130];
     zpl_u64_to_str(value, num, info ? info->base : 10);
     return zpl__print_string(text, max_len, info, num);
 }
 
-zpl_internal zpl_isize zpl__print_zpl_f64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_f64 arg) {
+zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_f64 arg) {
     // TODO: Handle exponent notation
     zpl_isize width, len, remaining = max_len;
     char *text_begin = text;
@@ -208,7 +212,7 @@ zpl_internal zpl_isize zpl__print_zpl_f64(char *text, zpl_isize max_len, zpl__fo
         }
         
         value = cast(zpl_u64) arg;
-        len = zpl__print_zpl_u64(text, remaining, NULL, value);
+        len = zpl__print_u64(text, remaining, NULL, value);
         text += len;
         
         if (len >= remaining)
@@ -225,7 +229,7 @@ zpl_internal zpl_isize zpl__print_zpl_f64(char *text, zpl_isize max_len, zpl__fo
             text++;
             while (info->precision-- > 0) {
                 value = cast(zpl_u64)(arg * mult);
-                len = zpl__print_zpl_u64(text, remaining, NULL, value);
+                len = zpl__print_u64(text, remaining, NULL, value);
                 text += len;
                 if (len >= remaining)
                     remaining = zpl_min(remaining, 1);
@@ -341,52 +345,52 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             break;
             
             case 'z': // NOTE: zpl_usize
-            info.flags |= ZPL_FMT_UNSIGNED;
-            // fallthrough
+                info.flags |= ZPL_FMT_UNSIGNED;
+                // fallthrough
             case 't': // NOTE: zpl_isize
-            info.flags |= ZPL_FMT_SIZE;
-            break;
+                info.flags |= ZPL_FMT_SIZE;
+                break;
             
             default: fmt--; break;
         }
         
         switch (*fmt) {
             case 'u':
-            info.flags |= ZPL_FMT_UNSIGNED;
-            // fallthrough
+                info.flags |= ZPL_FMT_UNSIGNED;
+                // fallthrough
             case 'd':
             case 'i': info.base = 10; break;
             
             case 'o': info.base = 8; break;
             
             case 'x':
-            info.base = 16;
-            info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_LOWER);
-            break;
+                info.base = 16;
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_LOWER);
+                break;
             
             case 'X':
-            info.base = 16;
-            info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_UPPER);
-            break;
+                info.base = 16;
+                info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_UPPER);
+                break;
             
             case 'f':
             case 'F':
             case 'g':
-            case 'G': len = zpl__print_zpl_f64(text, remaining, &info, va_arg(va, zpl_f64)); break;
+            case 'G': len = zpl__print_f64(text, remaining, &info, va_arg(va, zpl_f64)); break;
             
             case 'a':
             case 'A':
-            // TODO:
-            break;
+                // TODO:
+                break;
             
             case 'c': len = zpl__print_char(text, remaining, &info, cast(char) va_arg(va, int)); break;
             
             case 's': len = zpl__print_string(text, remaining, &info, va_arg(va, char *)); break;
             
             case 'p':
-            info.base = 16;
-            info.flags |= (ZPL_FMT_LOWER | ZPL_FMT_UNSIGNED | ZPL_FMT_ALT | ZPL_FMT_INTPTR);
-            break;
+                info.base = 16;
+                info.flags |= (ZPL_FMT_LOWER | ZPL_FMT_UNSIGNED | ZPL_FMT_ALT | ZPL_FMT_INTPTR);
+                break;
             
             case '%': len = zpl__print_char(text, remaining, &info, '%'); break;
             
@@ -399,30 +403,30 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             if (info.flags & ZPL_FMT_UNSIGNED) {
                 zpl_u64 value = 0;
                 switch (info.flags & ZPL_FMT_INTS) {
-                    case ZPL_FMT_CHAR: value = cast(zpl_u64) cast(zpl_u8) va_arg(va, int); break;
-                    case ZPL_FMT_SHORT: value = cast(zpl_u64) cast(zpl_u16) va_arg(va, int); break;
-                    case ZPL_FMT_LONG: value = cast(zpl_u64) va_arg(va, unsigned long); break;
-                    case ZPL_FMT_LLONG: value = cast(zpl_u64) va_arg(va, unsigned long long); break;
-                    case ZPL_FMT_SIZE: value = cast(zpl_u64) va_arg(va, zpl_usize); break;
+                    case ZPL_FMT_CHAR:   value = cast(zpl_u64) cast(zpl_u8) va_arg(va, int); break;
+                    case ZPL_FMT_SHORT:  value = cast(zpl_u64) cast(zpl_u16) va_arg(va, int); break;
+                    case ZPL_FMT_LONG:   value = cast(zpl_u64) va_arg(va, unsigned long); break;
+                    case ZPL_FMT_LLONG:  value = cast(zpl_u64) va_arg(va, unsigned long long); break;
+                    case ZPL_FMT_SIZE:   value = cast(zpl_u64) va_arg(va, zpl_usize); break;
                     case ZPL_FMT_INTPTR: value = cast(zpl_u64) va_arg(va, zpl_uintptr); break;
-                    default: value = cast(zpl_u64) va_arg(va, unsigned int); break;
+                    default: value             = cast(zpl_u64) va_arg(va, unsigned int); break;
                 }
                 
-                len = zpl__print_zpl_u64(text, remaining, &info, value);
+                len = zpl__print_u64(text, remaining, &info, value);
                 
             } else {
                 zpl_i64 value = 0;
                 switch (info.flags & ZPL_FMT_INTS) {
-                    case ZPL_FMT_CHAR: value = cast(zpl_i64) cast(zpl_i8) va_arg(va, int); break;
-                    case ZPL_FMT_SHORT: value = cast(zpl_i64) cast(zpl_i16) va_arg(va, int); break;
-                    case ZPL_FMT_LONG: value = cast(zpl_i64) va_arg(va, long); break;
-                    case ZPL_FMT_LLONG: value = cast(zpl_i64) va_arg(va, long long); break;
-                    case ZPL_FMT_SIZE: value = cast(zpl_i64) va_arg(va, zpl_usize); break;
+                    case ZPL_FMT_CHAR:   value = cast(zpl_i64) cast(zpl_i8) va_arg(va, int); break;
+                    case ZPL_FMT_SHORT:  value = cast(zpl_i64) cast(zpl_i16) va_arg(va, int); break;
+                    case ZPL_FMT_LONG:   value = cast(zpl_i64) va_arg(va, long); break;
+                    case ZPL_FMT_LLONG:  value = cast(zpl_i64) va_arg(va, long long); break;
+                    case ZPL_FMT_SIZE:   value = cast(zpl_i64) va_arg(va, zpl_usize); break;
                     case ZPL_FMT_INTPTR: value = cast(zpl_i64) va_arg(va, zpl_uintptr); break;
-                    default: value = cast(zpl_i64) va_arg(va, int); break;
+                    default: value             = cast(zpl_i64) va_arg(va, int); break;
                 }
                 
-                len = zpl__print_zpl_i64(text, remaining, &info, value);
+                len = zpl__print_i64(text, remaining, &info, value);
             }
         }
         

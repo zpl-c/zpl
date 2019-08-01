@@ -72,16 +72,16 @@ ZPL_DEF zpl_regex_error zpl_re_compile(zpl_re *re, zpl_allocator backing, char c
 ZPL_DEF zpl_regex_error zpl_re_compile_from_buffer(zpl_re *re, char const *pattern, zpl_isize pattern_len, void *buffer, zpl_isize buffer_len);
 
 //! Destroy regex object.
-ZPL_DEF void       zpl_re_destroy(zpl_re *re);
+ZPL_DEF void            zpl_re_destroy(zpl_re *re);
 
 //! Retrieve number of retrievable captures.
-ZPL_DEF zpl_isize      zpl_re_capture_count(zpl_re *re);
+ZPL_DEF zpl_isize       zpl_re_capture_count(zpl_re *re);
 
 //! Match input string and output captures of the occurence.
-ZPL_DEF zpl_b32        zpl_re_match(zpl_re *re, char const *str, zpl_isize str_len, zpl_re_capture *captures, zpl_isize max_capture_count, zpl_isize *offset);
+ZPL_DEF zpl_b32         zpl_re_match(zpl_re *re, char const *str, zpl_isize str_len, zpl_re_capture *captures, zpl_isize max_capture_count, zpl_isize *offset);
 
 //! Match all occurences in an input string and output them into captures. Array of captures is allocated on the heap and needs to be freed afterwards.
-ZPL_DEF zpl_b32        zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isize max_capture_count,
+ZPL_DEF zpl_b32         zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isize max_capture_count,
                                     zpl_re_capture **out_captures);
 
 //! @}

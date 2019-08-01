@@ -40,11 +40,11 @@ typedef struct {
 } zpl_opts_err;
 
 typedef struct {
-    zpl_allocator alloc;
-    zpl_opts_entry *entries; ///< zpl_array
-    zpl_opts_err *errors; ///< zpl_array
+    zpl_allocator    alloc;
+    zpl_opts_entry  *entries; ///< zpl_array
+    zpl_opts_err    *errors; ///< zpl_array
     zpl_opts_entry **positioned; ///< zpl_array
-    char const *appname;
+    char const      *appname;
 } zpl_opts;
 
 //! Initializes options parser.

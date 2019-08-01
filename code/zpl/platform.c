@@ -152,8 +152,8 @@ typedef enum zplKeyType {
 
 typedef zpl_u8 zplKeyState;
 typedef enum zplKeyStateFlag {
-    ZPL_KEY_STATE_DOWN = ZPL_BIT(0),
-    ZPL_KEY_STATE_PRESSED = ZPL_BIT(1),
+    ZPL_KEY_STATE_DOWN     = ZPL_BIT(0),
+    ZPL_KEY_STATE_PRESSED  = ZPL_BIT(1),
     ZPL_KEY_STATE_RELEASED = ZPL_BIT(2)
 } zplKeyStateFlag;
 
@@ -219,12 +219,12 @@ typedef ZPL_XINPUT_SET_STATE(zpl_xinput_set_state_proc);
 #endif
 
 typedef enum zplWindowFlag {
-    ZPL_WINDOW_FULLSCREEN = ZPL_BIT(0),
-    ZPL_WINDOW_HIDDEN = ZPL_BIT(1),
-    ZPL_WINDOW_BORDERLESS = ZPL_BIT(2),
-    ZPL_WINDOW_RESIZABLE = ZPL_BIT(3),
-    ZPL_WINDOW_MINIMIZED = ZPL_BIT(4),
-    ZPL_WINDOW_MAXIMIZED = ZPL_BIT(5),
+    ZPL_WINDOW_FULLSCREEN        = ZPL_BIT(0),
+    ZPL_WINDOW_HIDDEN            = ZPL_BIT(1),
+    ZPL_WINDOW_BORDERLESS        = ZPL_BIT(2),
+    ZPL_WINDOW_RESIZABLE         = ZPL_BIT(3),
+    ZPL_WINDOW_MINIMIZED         = ZPL_BIT(4),
+    ZPL_WINDOW_MAXIMIZED         = ZPL_BIT(5),
     ZPL_WINDOW_FULLSCREENDESKTOP = ZPL_WINDOW_FULLSCREEN | ZPL_WINDOW_BORDERLESS,
 } zplWindowFlag;
 
@@ -275,7 +275,8 @@ typedef struct zpl_platform {
 #if defined(ZPL_SYSTEM_WINDOWS)
     void *win32_dc;
 #elif defined(ZPL_SYSTEM_OSX)
-    void *osx_autorelease_pool; // TODO(bill): Is this really needed?
+    // TODO(bill): Is this really needed?
+    void *osx_autorelease_pool; 
 #endif
     
     zplRendererType renderer_type;
@@ -314,8 +315,13 @@ typedef struct zpl_platform {
     zpl_b32 mouse_clip;
     zpl_b32 mouse_outside;
     zpl_i32 mouse_x, mouse_y;
-    zpl_i32 mouse_dx, mouse_dy;         // NOTE(bill): Not raw mouse movement
-    zpl_i32 mouse_raw_dx, mouse_raw_dy; // NOTE(bill): Raw mouse movement
+
+    // NOTE(bill): Not raw mouse movement
+    zpl_i32 mouse_dx, mouse_dy;
+
+    // NOTE(bill): Raw mouse movement
+    zpl_i32 mouse_raw_dx, mouse_raw_dy;
+
     zpl_f32 mouse_wheel_delta;
     zplKeyState mouse_buttons[ZPL_MOUSEBUTTON_COUNT];
     
@@ -339,37 +345,39 @@ typedef struct zpl_video_mode {
 } zpl_video_mode;
 
 ZPL_DEF zpl_video_mode zpl_set_video_mode(zpl_i32 width, zpl_i32 height, zpl_i32 bits_per_pixel);
-ZPL_DEF zpl_b32 zpl_video_mode_is_valid(zpl_video_mode mode);
+ZPL_DEF zpl_b32        zpl_video_mode_is_valid(zpl_video_mode mode);
 ZPL_DEF zpl_video_mode zpl_video_mode_get_desktop(void);
-ZPL_DEF zpl_isize zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes,
-                                                  zpl_isize max_mode_count); // NOTE(bill): returns mode count
+
+// NOTE(bill): returns mode count
+ZPL_DEF zpl_isize      zpl_video_mode_get_fullscreen_modes(zpl_video_mode *modes, zpl_isize max_mode_count);
+
 ZPL_DEF ZPL_COMPARE_PROC(zpl_video_mode_cmp);     // NOTE(bill): Sort smallest to largest (Ascending)
 ZPL_DEF ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp); // NOTE(bill): Sort largest to smallest (Descending)
 
 // NOTE(bill): Software rendering
-ZPL_DEF zpl_b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
-                                            zpl_u32 window_flags);
+ZPL_DEF zpl_b32 zpl_platform_init_with_software(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height, zpl_u32 window_flags);
+
 // NOTE(bill): OpenGL Rendering
-ZPL_DEF zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height,
-                                          zpl_u32 window_flags, zpl_i32 major, zpl_i32 minor, zpl_b32 core, zpl_b32 compatible);
-ZPL_DEF void zpl_platform_update(zpl_platform *p);
-ZPL_DEF void zpl_platform_display(zpl_platform *p);
-ZPL_DEF void zpl_platform_destroy(zpl_platform *p);
-ZPL_DEF void zpl_platform_show_cursor(zpl_platform *p, zpl_b32 show);
-ZPL_DEF void zpl_platform_set_cursor(zpl_platform *p, void *handle);
-ZPL_DEF void zpl_platform_set_mouse_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
-ZPL_DEF void zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize index, zpl_f32 left_motor, zpl_f32 right_motor);
+ZPL_DEF zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title, zpl_i32 width, zpl_i32 height, zpl_u32 window_flags, zpl_i32 major, zpl_i32 minor, zpl_b32 core, zpl_b32 compatible);
+
+ZPL_DEF void    zpl_platform_update(zpl_platform *p);
+ZPL_DEF void    zpl_platform_display(zpl_platform *p);
+ZPL_DEF void    zpl_platform_destroy(zpl_platform *p);
+ZPL_DEF void    zpl_platform_show_cursor(zpl_platform *p, zpl_b32 show);
+ZPL_DEF void    zpl_platform_set_cursor(zpl_platform *p, void *handle);
+ZPL_DEF void    zpl_platform_set_mouse_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
+ZPL_DEF void    zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize index, zpl_f32 left_motor, zpl_f32 right_motor);
 ZPL_DEF zpl_b32 zpl_platform_has_clipboard_text(zpl_platform *p);
-ZPL_DEF void zpl_platform_set_clipboard_text(zpl_platform *p, char const *str);
-ZPL_DEF char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a);
+ZPL_DEF void    zpl_platform_set_clipboard_text(zpl_platform *p, char const *str);
+ZPL_DEF char   *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a);
 ZPL_DEF zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key);
-ZPL_DEF void zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
-ZPL_DEF void zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) ZPL_PRINTF_ARGS(2);
-ZPL_DEF void zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop);
-ZPL_DEF void zpl_platform_toggle_borderless(zpl_platform *p);
-ZPL_DEF void zpl_platform_make_opengl_context_current(zpl_platform *p);
-ZPL_DEF void zpl_platform_show_window(zpl_platform *p);
-ZPL_DEF void zpl_platform_hide_window(zpl_platform *p);
+ZPL_DEF void    zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
+ZPL_DEF void    zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) ZPL_PRINTF_ARGS(2);
+ZPL_DEF void    zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop);
+ZPL_DEF void    zpl_platform_toggle_borderless(zpl_platform *p);
+ZPL_DEF void    zpl_platform_make_opengl_context_current(zpl_platform *p);
+ZPL_DEF void    zpl_platform_show_window(zpl_platform *p);
+ZPL_DEF void    zpl_platform_hide_window(zpl_platform *p);
 
 #endif // ZPL_PLATFORM
 

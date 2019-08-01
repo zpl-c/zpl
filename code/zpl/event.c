@@ -33,11 +33,11 @@ typedef zpl_event_cb* zpl_event_block; ///< zpl_array
 
 ZPL_TABLE_DECLARE(static, zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
-ZPL_DEF void zpl_event_init   (zpl_event_pool *pool, zpl_allocator alloc);
-ZPL_DEF void zpl_event_destroy(zpl_event_pool *pool);
-ZPL_DEF zpl_u64  zpl_event_add    (zpl_event_pool *pool, zpl_u64 slot, zpl_event_cb cb);
-ZPL_DEF void zpl_event_remove (zpl_event_pool *pool, zpl_u64 slot, zpl_u64 index);
-ZPL_DEF void zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_data evt);
+ZPL_DEF void    zpl_event_init   (zpl_event_pool *pool, zpl_allocator alloc);
+ZPL_DEF void    zpl_event_destroy(zpl_event_pool *pool);
+ZPL_DEF zpl_u64 zpl_event_add    (zpl_event_pool *pool, zpl_u64 slot, zpl_event_cb cb);
+ZPL_DEF void    zpl_event_remove (zpl_event_pool *pool, zpl_u64 slot, zpl_u64 index);
+ZPL_DEF void    zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_data evt);
 
 //! @}
 //$$

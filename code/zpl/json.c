@@ -32,13 +32,13 @@ typedef enum zpl_json_type {
 
 //! Field value properties
 typedef enum zpl_json_props {
-    ZPL_JSON_PROPS_NONE = 0,
-    ZPL_JSON_PROPS_NAN = 1,
-    ZPL_JSON_PROPS_NAN_NEG = 2,
-    ZPL_JSON_PROPS_INFINITY = 3,
+    ZPL_JSON_PROPS_NONE         = 0,
+    ZPL_JSON_PROPS_NAN          = 1,
+    ZPL_JSON_PROPS_NAN_NEG      = 2,
+    ZPL_JSON_PROPS_INFINITY     = 3,
     ZPL_JSON_PROPS_INFINITY_NEG = 4,
-    ZPL_JSON_PROPS_IS_EXP = 5,
-    ZPL_JSON_PROPS_IS_HEX = 6,
+    ZPL_JSON_PROPS_IS_EXP       = 5,
+    ZPL_JSON_PROPS_IS_HEX       = 6,
 
     // Used internally so that people can fill in real numbers for JSON files they plan to write.
     ZPL_JSON_PROPS_IS_PARSED_REAL = 7,
@@ -87,12 +87,12 @@ typedef enum zpl_json_delim_style {
 typedef struct zpl_json_object {
     zpl_allocator backing;
     char *name;
-    zpl_u8 type:6;
-    zpl_u8 name_style:2;
-    zpl_u8 props:7;
-    zpl_u8 cfg_mode:1;
+    zpl_u8 type        :6;
+    zpl_u8 name_style  :2;
+    zpl_u8 props       :7;
+    zpl_u8 cfg_mode    :1;
     zpl_u8 assign_style:4;
-    zpl_u8 delim_style:4;
+    zpl_u8 delim_style :4;
     zpl_u8 delim_line_width;
     
     union {
@@ -105,7 +105,7 @@ typedef struct zpl_json_object {
             zpl_i32 base;
             zpl_i32 base2;
             zpl_i32 exp;
-            zpl_u8 exp_neg:1;
+            zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
         };
         zpl_u8 constant;
@@ -178,7 +178,7 @@ ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_alloca
 
 #define zpl__trim zpl_str_trim
 #define zpl__skip zpl__json_skip
-ZPL_DEF char *zpl__json_skip(char *str, char c);
+ZPL_DEF char   *zpl__json_skip(char *str, char c);
 ZPL_DEF zpl_b32 zpl__json_validate_name(char *str, char *err);
 
 //! @}

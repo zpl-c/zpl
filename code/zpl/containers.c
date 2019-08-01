@@ -34,8 +34,8 @@ typedef struct zpl_buffer_header {
 
 #define zpl_buffer_make(Type, Name, allocator, cap) Type *Name; zpl_buffer_init(Name, allocator, cap)
 
-#define ZPL_BUFFER_HEADER(x) (cast(zpl_buffer_header *)(x) - 1)
-#define zpl_buffer_count(x) (ZPL_BUFFER_HEADER(x)->count)
+#define ZPL_BUFFER_HEADER(x)   (cast(zpl_buffer_header *)(x) - 1)
+#define zpl_buffer_count(x)    (ZPL_BUFFER_HEADER(x)->count)
 #define zpl_buffer_capacity(x) (ZPL_BUFFER_HEADER(x)->capacity)
 #define zpl_buffer_end(x) (x + (zpl_buffer_count(x) - 1))
 
@@ -126,7 +126,7 @@ typedef struct zpl__list {
     struct zpl__list *next, *prev;
 } zpl_list;
 
-ZPL_DEF void zpl_list_init(zpl_list *list, void const *ptr);
+ZPL_DEF void      zpl_list_init(zpl_list *list, void const *ptr);
 ZPL_DEF zpl_list *zpl_list_add(zpl_list *list, zpl_list *item);
 
 // NOTE(zaklaus): Returns a pointer to the next node (or NULL if the removed node has no trailing node.)
@@ -210,11 +210,11 @@ typedef struct zpl_array_header {
 
 ZPL_STATIC_ASSERT(ZPL_ARRAY_GROW_FORMULA(0) > 0);
 
-#define ZPL_ARRAY_HEADER(x) (cast(zpl_array_header *)(x) - 1)
+#define ZPL_ARRAY_HEADER(x)    (cast(zpl_array_header *)(x) - 1)
 #define zpl_array_allocator(x) (ZPL_ARRAY_HEADER(x)->allocator)
-#define zpl_array_count(x) (ZPL_ARRAY_HEADER(x)->count)
-#define zpl_array_capacity(x) (ZPL_ARRAY_HEADER(x)->capacity)
-#define zpl_array_end(x) (x + (zpl_array_count(x) - 1))
+#define zpl_array_count(x)     (ZPL_ARRAY_HEADER(x)->count)
+#define zpl_array_capacity(x)  (ZPL_ARRAY_HEADER(x)->capacity)
+#define zpl_array_end(x)       (x + (zpl_array_count(x) - 1))
 
 #define zpl_array_init_reserve(x, allocator_, cap)                                                                     \
 do {                                                                                                               \

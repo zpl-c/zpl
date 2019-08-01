@@ -14,13 +14,13 @@
 @n     FUNC    - the name will prefix function names
 @n     VALUE   - the type of the value to be stored
 @n
- @n tablename_init(NAME * h, zpl_allocator a);
- @n tablename_destroy(NAME * h);
-  @n tablename_get(NAME * h, zpl_u64 key);
- @n tablename_set(NAME * h, zpl_u64 key, VALUE value);
+@n tablename_init(NAME * h, zpl_allocator a);
+@n tablename_destroy(NAME * h);
+@n tablename_get(NAME * h, zpl_u64 key);
+@n tablename_set(NAME * h, zpl_u64 key, VALUE value);
 @n tablename_grow(NAME * h);
-  @n tablename_rehash(NAME * h, zpl_isize new_count);
- @n tablename_remove(NAME * h, zpl_u64 key);
+@n tablename_rehash(NAME * h, zpl_isize new_count);
+@n tablename_remove(NAME * h, zpl_u64 key);
  
  @{
 */

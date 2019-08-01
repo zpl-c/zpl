@@ -7,15 +7,12 @@ OpenGL gamedev friendly library for math.
 @{
 */
 
-
-
 typedef union zpl_vec2 {
     struct {
         zpl_f32 x, y;
     };
     zpl_f32 e[2];
 } zpl_vec2;
-
 
 typedef union zpl_vec3 {
     struct {
@@ -28,7 +25,6 @@ typedef union zpl_vec3 {
     zpl_vec2 xy;
     zpl_f32 e[3];
 } zpl_vec3;
-
 
 typedef union zpl_vec4 {
     struct {
@@ -45,7 +41,6 @@ typedef union zpl_vec4 {
     zpl_f32 e[4];
 } zpl_vec4;
 
-
 typedef union zpl_mat2 {
     struct {
         zpl_vec2 x, y;
@@ -53,7 +48,6 @@ typedef union zpl_mat2 {
     zpl_vec2 col[2];
     zpl_f32 e[4];
 } zpl_mat2;
-
 
 typedef union zpl_mat3 {
     struct {
@@ -63,7 +57,6 @@ typedef union zpl_mat3 {
     zpl_f32 e[9];
 } zpl_mat3;
 
-
 typedef union zpl_mat4 {
     struct {
         zpl_vec4 x, y, z, w;
@@ -71,7 +64,6 @@ typedef union zpl_mat4 {
     zpl_vec4 col[4];
     zpl_f32 e[16];
 } zpl_mat4;
-
 
 typedef union zpl_quat {
     struct {
@@ -104,24 +96,24 @@ typedef short zpl_half;
 
 #ifndef ZPL_CONSTANTS
 #define ZPL_CONSTANTS
-#define ZPL_EPSILON 1.19209290e-7f
-#define ZPL_ZERO 0.0f
-#define ZPL_ONE 1.0f
+#define ZPL_EPSILON    1.19209290e-7f
+#define ZPL_ZERO       0.0f
+#define ZPL_ONE        1.0f
 #define ZPL_TWO_THIRDS 0.666666666666666666666666666666666666667f
 
-#define ZPL_TAU 6.28318530717958647692528676655900576f
-#define ZPL_PI 3.14159265358979323846264338327950288f
+#define ZPL_TAU          6.28318530717958647692528676655900576f
+#define ZPL_PI           3.14159265358979323846264338327950288f
 #define ZPL_ONE_OVER_TAU 0.636619772367581343075535053490057448f
-#define ZPL_ONE_OVER_PI 0.159154943091895335768883763372514362f
+#define ZPL_ONE_OVER_PI  0.159154943091895335768883763372514362f
 
 #define ZPL_TAU_OVER_2 3.14159265358979323846264338327950288f
 #define ZPL_TAU_OVER_4 1.570796326794896619231321691639751442f
 #define ZPL_TAU_OVER_8 0.785398163397448309615660845819875721f
 
-#define ZPL_E 2.71828182845904523536f
-#define ZPL_SQRT_TWO 1.41421356237309504880168872420969808f
+#define ZPL_E          2.71828182845904523536f
+#define ZPL_SQRT_TWO   1.41421356237309504880168872420969808f
 #define ZPL_SQRT_THREE 1.73205080756887729352744634150587236f
-#define ZPL_SQRT_FIVE 2.23606797749978969640917366873127623f
+#define ZPL_SQRT_FIVE  2.23606797749978969640917366873127623f
 
 #define ZPL_LOG_TWO 0.693147180559945309417232121458176568f
 #define ZPL_LOG_TEN 2.30258509299404568401799145468436421f
@@ -181,7 +173,7 @@ ZPL_DEF zpl_f32 zpl_round(zpl_f32 x);
 ZPL_DEF zpl_f32 zpl_floor(zpl_f32 x);
 ZPL_DEF zpl_f32 zpl_ceil(zpl_f32 x);
 
-ZPL_DEF zpl_f32 zpl_half_to_float(zpl_half value);
+ZPL_DEF zpl_f32  zpl_half_to_float(zpl_half value);
 ZPL_DEF zpl_half zpl_float_to_half(zpl_f32 value);
 
 ZPL_DEF zpl_vec2 zpl_vec2f_zero(void);
@@ -259,14 +251,14 @@ ZPL_DEF zpl_f32 zpl_vec2_aspect_ratio(zpl_vec2 v);
 ZPL_DEF void zpl_mat2_identity(zpl_mat2 *m);
 ZPL_DEF void zpl_float22_identity(zpl_f32 m[2][2]);
 
-ZPL_DEF void zpl_mat2_transpose(zpl_mat2 *m);
-ZPL_DEF void zpl_mat2_mul(zpl_mat2 *out, zpl_mat2 *m1, zpl_mat2 *m2);
-ZPL_DEF void zpl_mat2_mul_vec2(zpl_vec2 *out, zpl_mat2 *m, zpl_vec2 in);
-ZPL_DEF void zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in);
+ZPL_DEF void    zpl_mat2_transpose(zpl_mat2 *m);
+ZPL_DEF void    zpl_mat2_mul(zpl_mat2 *out, zpl_mat2 *m1, zpl_mat2 *m2);
+ZPL_DEF void    zpl_mat2_mul_vec2(zpl_vec2 *out, zpl_mat2 *m, zpl_vec2 in);
+ZPL_DEF void    zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in);
 ZPL_DEF zpl_f32 zpl_mat2_determinate(zpl_mat2 *m);
 
-ZPL_DEF zpl_mat2 *zpl_mat2_v(zpl_vec2 m[2]);
-ZPL_DEF zpl_mat2 *zpl_mat2_f(zpl_f32 m[2][2]);
+ZPL_DEF zpl_mat2   *zpl_mat2_v(zpl_vec2 m[2]);
+ZPL_DEF zpl_mat2   *zpl_mat2_f(zpl_f32 m[2][2]);
 ZPL_DEF zpl_float2 *zpl_float22_m(zpl_mat2 *m);
 ZPL_DEF zpl_float2 *zpl_float22_v(zpl_vec2 m[2]);
 ZPL_DEF zpl_float2 *zpl_float22_4(zpl_f32 m[4]);
@@ -278,14 +270,14 @@ ZPL_DEF void zpl_float22_mul_vec2(zpl_vec2 *out, zpl_f32 m[2][2], zpl_vec2 in);
 ZPL_DEF void zpl_mat3_identity(zpl_mat3 *m);
 ZPL_DEF void zpl_float33_identity(zpl_f32 m[3][3]);
 
-ZPL_DEF void zpl_mat3_transpose(zpl_mat3 *m);
-ZPL_DEF void zpl_mat3_mul(zpl_mat3 *out, zpl_mat3 *m1, zpl_mat3 *m2);
-ZPL_DEF void zpl_mat3_mul_vec3(zpl_vec3 *out, zpl_mat3 *m, zpl_vec3 in);
-ZPL_DEF void zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in);
+ZPL_DEF void    zpl_mat3_transpose(zpl_mat3 *m);
+ZPL_DEF void    zpl_mat3_mul(zpl_mat3 *out, zpl_mat3 *m1, zpl_mat3 *m2);
+ZPL_DEF void    zpl_mat3_mul_vec3(zpl_vec3 *out, zpl_mat3 *m, zpl_vec3 in);
+ZPL_DEF void    zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in);
 ZPL_DEF zpl_f32 zpl_mat3_determinate(zpl_mat3 *m);
 
-ZPL_DEF zpl_mat3 *zpl_mat3_v(zpl_vec3 m[3]);
-ZPL_DEF zpl_mat3 *zpl_mat3_f(zpl_f32 m[3][3]);
+ZPL_DEF zpl_mat3   *zpl_mat3_v(zpl_vec3 m[3]);
+ZPL_DEF zpl_mat3   *zpl_mat3_f(zpl_f32 m[3][3]);
 
 ZPL_DEF zpl_float3 *zpl_float33_m(zpl_mat3 *m);
 ZPL_DEF zpl_float3 *zpl_float33_v(zpl_vec3 m[3]);
@@ -354,7 +346,7 @@ ZPL_DEF void zpl_quat_norm(zpl_quat *d, zpl_quat q);
 ZPL_DEF void zpl_quat_conj(zpl_quat *d, zpl_quat q);
 ZPL_DEF void zpl_quat_inverse(zpl_quat *d, zpl_quat q);
 
-ZPL_DEF void zpl_quat_axis(zpl_vec3 *axis, zpl_quat q);
+ZPL_DEF void    zpl_quat_axis(zpl_vec3 *axis, zpl_quat q);
 ZPL_DEF zpl_f32 zpl_quat_angle(zpl_quat q);
 
 ZPL_DEF zpl_f32 zpl_quat_pitch(zpl_quat q);
@@ -397,10 +389,6 @@ ZPL_DEF int zpl_rect2_contains(zpl_rect2 a, zpl_f32 x, zpl_f32 y);
 ZPL_DEF int zpl_rect2_contains_vec2(zpl_rect2 a, zpl_vec2 p);
 ZPL_DEF int zpl_rect2_intersects(zpl_rect2 a, zpl_rect2 b);
 ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersection);
-
-#ifndef ZPL_MURMUR64_DEFAULT_SEED
-#define ZPL_MURMUR64_DEFAULT_SEED 0x9747b28c
-#endif
 
 //! @}
 //$$
@@ -459,12 +447,12 @@ zpl_f64 zpl_copy_sign64(zpl_f64 x, zpl_f64 y) {
     return *cast(zpl_f64 *) & ix;
 }
 
-zpl_f64 zpl_floor64(zpl_f64 x) { return cast(zpl_f64)((x >= 0.0) ? cast(zpl_i64) x : cast(zpl_i64)(x - 0.9999999999999999)); }
-zpl_f64 zpl_ceil64(zpl_f64 x) { return cast(zpl_f64)((x < 0) ? cast(zpl_i64) x : (cast(zpl_i64) x) + 1); }
-zpl_f64 zpl_round64(zpl_f64 x) { return cast(zpl_f64)((x >= 0.0) ? zpl_floor64(x + 0.5) : zpl_ceil64(x - 0.5)); }
+zpl_f64 zpl_floor64(zpl_f64 x)                { return cast(zpl_f64)((x >= 0.0) ? cast(zpl_i64) x : cast(zpl_i64)(x - 0.9999999999999999)); }
+zpl_f64 zpl_ceil64(zpl_f64 x)                 { return cast(zpl_f64)((x < 0) ? cast(zpl_i64) x : (cast(zpl_i64) x) + 1); }
+zpl_f64 zpl_round64(zpl_f64 x)                { return cast(zpl_f64)((x >= 0.0) ? zpl_floor64(x + 0.5) : zpl_ceil64(x - 0.5)); }
 zpl_f64 zpl_remainder64(zpl_f64 x, zpl_f64 y) { return x - (zpl_round64(x / y) * y); }
-zpl_f64 zpl_abs64(zpl_f64 x) { return x < 0 ? -x : x; }
-zpl_f64 zpl_sign64(zpl_f64 x) { return x < 0 ? -1.0 : +1.0; }
+zpl_f64 zpl_abs64(zpl_f64 x)                  { return x < 0 ? -x : x; }
+zpl_f64 zpl_sign64(zpl_f64 x)                 { return x < 0 ? -1.0 : +1.0; }
 
 zpl_f64 zpl_mod64(zpl_f64 x, zpl_f64 y) {
     zpl_f64 result;
@@ -495,7 +483,8 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
 #if defined(_MSC_VER)
 
 zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_zpl_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
-zpl_f32 zpl_sqrt(zpl_f32 a) { return _mm_cvtss_zpl_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
+zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_zpl_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
+
 zpl_f32 zpl_sin(zpl_f32 a) {
     static zpl_f32 const a0 = +1.91059300966915117e-31f;
     static zpl_f32 const a1 = +1.00086760103908896f;
@@ -507,6 +496,7 @@ zpl_f32 zpl_sin(zpl_f32 a) {
     static zpl_f32 const a7 = +1.38235642404333740e-4f;
     return a0 + a * (a1 + a * (a2 + a * (a3 + a * (a4 + a * (a5 + a * (a6 + a * a7))))));
 }
+
 zpl_f32 zpl_cos(zpl_f32 a) {
     static zpl_f32 const a0 = +1.00238601909309722f;
     static zpl_f32 const a1 = -3.81919947353040024e-2f;
@@ -607,14 +597,14 @@ zpl_f32 zpl_pow(zpl_f32 a, zpl_f32 b) {
 
 #else
 
-zpl_f32 zpl_rsqrt(zpl_f32 a) { return 1.0f / __builtin_sqrt(a); }
-zpl_f32 zpl_sqrt(zpl_f32 a) { return __builtin_sqrt(a); }
-zpl_f32 zpl_sin(zpl_f32 radians) { return __builtin_sinf(radians); }
-zpl_f32 zpl_cos(zpl_f32 radians) { return __builtin_cosf(radians); }
-zpl_f32 zpl_tan(zpl_f32 radians) { return __builtin_tanf(radians); }
-zpl_f32 zpl_arcsin(zpl_f32 a) { return __builtin_asinf(a); }
-zpl_f32 zpl_arccos(zpl_f32 a) { return __builtin_acosf(a); }
-zpl_f32 zpl_arctan(zpl_f32 a) { return __builtin_atanf(a); }
+zpl_f32 zpl_rsqrt(zpl_f32 a)              { return 1.0f / __builtin_sqrt(a); }
+zpl_f32 zpl_sqrt(zpl_f32 a)               { return __builtin_sqrt(a); }
+zpl_f32 zpl_sin(zpl_f32 radians)          { return __builtin_sinf(radians); }
+zpl_f32 zpl_cos(zpl_f32 radians)          { return __builtin_cosf(radians); }
+zpl_f32 zpl_tan(zpl_f32 radians)          { return __builtin_tanf(radians); }
+zpl_f32 zpl_arcsin(zpl_f32 a)             { return __builtin_asinf(a); }
+zpl_f32 zpl_arccos(zpl_f32 a)             { return __builtin_acosf(a); }
+zpl_f32 zpl_arctan(zpl_f32 a)             { return __builtin_atanf(a); }
 zpl_f32 zpl_arctan2(zpl_f32 y, zpl_f32 x) { return __builtin_atan2f(y, x); }
 
 zpl_f32 zpl_exp(zpl_f32 x) { return __builtin_expf(x); }
@@ -626,18 +616,18 @@ zpl_f32 zpl_pow(zpl_f32 x, zpl_f32 y) { return __builtin_powf(x, y); }
 #endif
 
 #else
-zpl_f32 zpl_rsqrt(zpl_f32 a) { return 1.0f / sqrtf(a); }
-zpl_f32 zpl_sqrt(zpl_f32 a) { return sqrtf(a); };
-zpl_f32 zpl_sin(zpl_f32 radians) { return sinf(radians); };
-zpl_f32 zpl_cos(zpl_f32 radians) { return cosf(radians); };
-zpl_f32 zpl_tan(zpl_f32 radians) { return tanf(radians); };
-zpl_f32 zpl_arcsin(zpl_f32 a) { return asinf(a); };
-zpl_f32 zpl_arccos(zpl_f32 a) { return acosf(a); };
-zpl_f32 zpl_arctan(zpl_f32 a) { return atanf(a); };
-zpl_f32 zpl_arctan2(zpl_f32 y, zpl_f32 x) { return atan2f(y, x); };
+zpl_f32 zpl_rsqrt(zpl_f32 a)                { return 1.0f / sqrtf(a); }
+zpl_f32 zpl_sqrt(zpl_f32 a)                 { return sqrtf(a); };
+zpl_f32 zpl_sin(zpl_f32 radians)            { return sinf(radians); };
+zpl_f32 zpl_cos(zpl_f32 radians)            { return cosf(radians); };
+zpl_f32 zpl_tan(zpl_f32 radians)            { return tanf(radians); };
+zpl_f32 zpl_arcsin(zpl_f32 a)               { return asinf(a); };
+zpl_f32 zpl_arccos(zpl_f32 a)               { return acosf(a); };
+zpl_f32 zpl_arctan(zpl_f32 a)               { return atanf(a); };
+zpl_f32 zpl_arctan2(zpl_f32 y, zpl_f32 x)   { return atan2f(y, x); };
 
-zpl_f32 zpl_exp(zpl_f32 x) { return expf(x); }
-zpl_f32 zpl_log(zpl_f32 x) { return logf(x); }
+zpl_f32 zpl_exp(zpl_f32 x)            { return expf(x); }
+zpl_f32 zpl_log(zpl_f32 x)            { return logf(x); }
 zpl_f32 zpl_pow(zpl_f32 x, zpl_f32 y) { return powf(x, y); }
 #endif
 
@@ -653,8 +643,8 @@ zpl_f32 zpl_fast_exp(zpl_f32 x) {
 zpl_f32 zpl_fast_exp2(zpl_f32 x) { return zpl_fast_exp(ZPL_LOG_TWO * x); }
 
 zpl_f32 zpl_round(zpl_f32 x) { return (float)((x >= 0.0f) ? zpl_floor(x + 0.5f) : zpl_ceil(x - 0.5f)); }
-zpl_f32 zpl_floor(zpl_f32 x) { return (float)((x >= 0.0f) ? (int)x : (int)(x - 0.9999999999999999f)); }
-zpl_f32 zpl_ceil(zpl_f32 x) { return (float)((x < 0) ? (int)x : ((int)x) + 1); }
+zpl_f32 zpl_floor(zpl_f32 x) { return (float)((x >= 0.0f) ? (int)x              : (int)(x - 0.9999999999999999f)); }
+zpl_f32 zpl_ceil(zpl_f32 x)  { return (float)((x <  0.0f) ? (int)x              : ((int)x) + 1); }
 
 zpl_f32 zpl_half_to_float(zpl_half value) {
     union {
@@ -749,53 +739,35 @@ zpl_half zpl_float_to_half(zpl_f32 value) {
     }
 }
 
-#define ZPL_VEC2_2OP(a, c, post)                                                                                       \
-\
-a->x = c.x post;                                                                                                   \
-\
-a->y = c.y post;
+#define ZPL_VEC2_2OP(a, c, post) \
+    a->x = c.x post;             \
+    a->y = c.y post;
 
-#define ZPL_VEC2_3OP(a, b, op, c, post)                                                                                \
-\
-a->x = b.x op c.x post;                                                                                            \
-\
-a->y = b.y op c.y post;
+#define ZPL_VEC2_3OP(a, b, op, c, post) \
+    a->x = b.x op c.x post;             \
+    a->y = b.y op c.y post;
 
-#define ZPL_VEC3_2OP(a, c, post)                                                                                       \
-\
-a->x = c.x post;                                                                                                   \
-\
-a->y = c.y post;                                                                                                   \
-\
-a->z = c.z post;
+#define ZPL_VEC3_2OP(a, c, post) \
+    a->x = c.x post;             \
+    a->y = c.y post;             \
+    a->z = c.z post;
 
-#define ZPL_VEC3_3OP(a, b, op, c, post)                                                                                \
-\
-a->x = b.x op c.x post;                                                                                            \
-\
-a->y = b.y op c.y post;                                                                                            \
-\
-a->z = b.z op c.z post;
+#define ZPL_VEC3_3OP(a, b, op, c, post) \
+    a->x = b.x op c.x post;             \
+    a->y = b.y op c.y post;             \
+    a->z = b.z op c.z post;
 
-#define ZPL_VEC4_2OP(a, c, post)                                                                                       \
-\
-a->x = c.x post;                                                                                                   \
-\
-a->y = c.y post;                                                                                                   \
-\
-a->z = c.z post;                                                                                                   \
-\
-a->w = c.w post;
+#define ZPL_VEC4_2OP(a, c, post) \
+    a->x = c.x post;             \
+    a->y = c.y post;             \
+    a->z = c.z post;             \
+    a->w = c.w post;
 
-#define ZPL_VEC4_3OP(a, b, op, c, post)                                                                                \
-\
-a->x = b.x op c.x post;                                                                                            \
-\
-a->y = b.y op c.y post;                                                                                            \
-\
-a->z = b.z op c.z post;                                                                                            \
-\
-a->w = b.w op c.w post;
+#define ZPL_VEC4_3OP(a, b, op, c, post) \
+    a->x = b.x op c.x post;             \
+    a->y = b.y op c.y post;             \
+    a->z = b.z op c.z post;             \
+    a->w = b.w op c.w post;
 
 zpl_vec2 zpl_vec2f_zero(void) {
     zpl_vec2 v = { 0, 0 };
@@ -856,33 +828,33 @@ zpl_vec4 zpl_vec4fv(zpl_f32 x[4]) {
 
 void zpl_vec2_add(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, +, v1, +0); }
 void zpl_vec2_sub(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, -, v1, +0); }
-void zpl_vec2_mul(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s) { ZPL_VEC2_2OP(d, v, *s); }
-void zpl_vec2_div(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s) { ZPL_VEC2_2OP(d, v, / s); }
+void zpl_vec2_mul(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, *s); }
+void zpl_vec2_div(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, / s); }
 
 void zpl_vec3_add(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, +, v1, +0); }
 void zpl_vec3_sub(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, -, v1, +0); }
-void zpl_vec3_mul(zpl_vec3 *d, zpl_vec3 v, zpl_f32 s) { ZPL_VEC3_2OP(d, v, *s); }
-void zpl_vec3_div(zpl_vec3 *d, zpl_vec3 v, zpl_f32 s) { ZPL_VEC3_2OP(d, v, / s); }
+void zpl_vec3_mul(zpl_vec3 *d, zpl_vec3 v, zpl_f32 s)    { ZPL_VEC3_2OP(d, v, *s); }
+void zpl_vec3_div(zpl_vec3 *d, zpl_vec3 v, zpl_f32 s)    { ZPL_VEC3_2OP(d, v, / s); }
 
 void zpl_vec4_add(zpl_vec4 *d, zpl_vec4 v0, zpl_vec4 v1) { ZPL_VEC4_3OP(d, v0, +, v1, +0); }
 void zpl_vec4_sub(zpl_vec4 *d, zpl_vec4 v0, zpl_vec4 v1) { ZPL_VEC4_3OP(d, v0, -, v1, +0); }
-void zpl_vec4_mul(zpl_vec4 *d, zpl_vec4 v, zpl_f32 s) { ZPL_VEC4_2OP(d, v, *s); }
-void zpl_vec4_div(zpl_vec4 *d, zpl_vec4 v, zpl_f32 s) { ZPL_VEC4_2OP(d, v, / s); }
+void zpl_vec4_mul(zpl_vec4 *d, zpl_vec4 v, zpl_f32 s)    { ZPL_VEC4_2OP(d, v, *s); }
+void zpl_vec4_div(zpl_vec4 *d, zpl_vec4 v, zpl_f32 s)    { ZPL_VEC4_2OP(d, v, / s); }
 
 void zpl_vec2_addeq(zpl_vec2 *d, zpl_vec2 v) { ZPL_VEC2_3OP(d, (*d), +, v, +0); }
 void zpl_vec2_subeq(zpl_vec2 *d, zpl_vec2 v) { ZPL_VEC2_3OP(d, (*d), -, v, +0); }
-void zpl_vec2_muleq(zpl_vec2 *d, zpl_f32 s) { ZPL_VEC2_2OP(d, (*d), *s); }
-void zpl_vec2_diveq(zpl_vec2 *d, zpl_f32 s) { ZPL_VEC2_2OP(d, (*d), / s); }
+void zpl_vec2_muleq(zpl_vec2 *d, zpl_f32 s)  { ZPL_VEC2_2OP(d, (*d), *s); }
+void zpl_vec2_diveq(zpl_vec2 *d, zpl_f32 s)  { ZPL_VEC2_2OP(d, (*d), / s); }
 
 void zpl_vec3_addeq(zpl_vec3 *d, zpl_vec3 v) { ZPL_VEC3_3OP(d, (*d), +, v, +0); }
 void zpl_vec3_subeq(zpl_vec3 *d, zpl_vec3 v) { ZPL_VEC3_3OP(d, (*d), -, v, +0); }
-void zpl_vec3_muleq(zpl_vec3 *d, zpl_f32 s) { ZPL_VEC3_2OP(d, (*d), *s); }
-void zpl_vec3_diveq(zpl_vec3 *d, zpl_f32 s) { ZPL_VEC3_2OP(d, (*d), / s); }
+void zpl_vec3_muleq(zpl_vec3 *d, zpl_f32 s)  { ZPL_VEC3_2OP(d, (*d), *s); }
+void zpl_vec3_diveq(zpl_vec3 *d, zpl_f32 s)  { ZPL_VEC3_2OP(d, (*d), / s); }
 
 void zpl_vec4_addeq(zpl_vec4 *d, zpl_vec4 v) { ZPL_VEC4_3OP(d, (*d), +, v, +0); }
 void zpl_vec4_subeq(zpl_vec4 *d, zpl_vec4 v) { ZPL_VEC4_3OP(d, (*d), -, v, +0); }
-void zpl_vec4_muleq(zpl_vec4 *d, zpl_f32 s) { ZPL_VEC4_2OP(d, (*d), *s); }
-void zpl_vec4_diveq(zpl_vec4 *d, zpl_f32 s) { ZPL_VEC4_2OP(d, (*d), / s); }
+void zpl_vec4_muleq(zpl_vec4 *d, zpl_f32 s)  { ZPL_VEC4_2OP(d, (*d), *s); }
+void zpl_vec4_diveq(zpl_vec4 *d, zpl_f32 s)  { ZPL_VEC4_2OP(d, (*d), / s); }
 
 #undef ZPL_VEC2_2OP
 #undef ZPL_VEC2_3OP
@@ -999,12 +971,12 @@ void zpl_float22_identity(zpl_f32 m[2][2]) {
 
 void zpl_mat2_mul_vec2(zpl_vec2 *out, zpl_mat2 *m, zpl_vec2 in) { zpl_float22_mul_vec2(out, zpl_float22_m(m), in); }
 
-zpl_mat2 *zpl_mat2_v(zpl_vec2 m[2]) { return (zpl_mat2 *)m; }
+zpl_mat2 *zpl_mat2_v(zpl_vec2 m[2])   { return (zpl_mat2 *)m; }
 zpl_mat2 *zpl_mat2_f(zpl_f32 m[2][2]) { return (zpl_mat2 *)m; }
 
-zpl_float2 *zpl_float22_m(zpl_mat2 *m) { return (zpl_float2 *)m; }
+zpl_float2 *zpl_float22_m(zpl_mat2 *m)   { return (zpl_float2 *)m; }
 zpl_float2 *zpl_float22_v(zpl_vec2 m[2]) { return (zpl_float2 *)m; }
-zpl_float2 *zpl_float22_4(zpl_f32 m[4]) { return (zpl_float2 *)m; }
+zpl_float2 *zpl_float22_4(zpl_f32 m[4])  { return (zpl_float2 *)m; }
 
 void zpl_float22_transpose(zpl_f32 (*vec)[2]) {
     int i, j;
@@ -1056,7 +1028,8 @@ void zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in) {
 }
 
 void zpl_mat3_transpose(zpl_mat3 *m) { zpl_float33_transpose(zpl_float33_m(m)); }
-void zpl_mat3_identity(zpl_mat3 *m) { zpl_float33_identity(zpl_float33_m(m)); }
+void zpl_mat3_identity(zpl_mat3 *m)  { zpl_float33_identity(zpl_float33_m(m)); }
+
 void zpl_mat3_mul(zpl_mat3 *out, zpl_mat3 *m1, zpl_mat3 *m2) {
     zpl_float33_mul(zpl_float33_m(out), zpl_float33_m(m1), zpl_float33_m(m2));
 }
@@ -1075,12 +1048,12 @@ void zpl_float33_identity(zpl_f32 m[3][3]) {
 
 void zpl_mat3_mul_vec3(zpl_vec3 *out, zpl_mat3 *m, zpl_vec3 in) { zpl_float33_mul_vec3(out, zpl_float33_m(m), in); }
 
-zpl_mat3 *zpl_mat3_v(zpl_vec3 m[3]) { return (zpl_mat3 *)m; }
+zpl_mat3 *zpl_mat3_v(zpl_vec3 m[3])   { return (zpl_mat3 *)m; }
 zpl_mat3 *zpl_mat3_f(zpl_f32 m[3][3]) { return (zpl_mat3 *)m; }
 
-zpl_float3 *zpl_float33_m(zpl_mat3 *m) { return (zpl_float3 *)m; }
+zpl_float3 *zpl_float33_m(zpl_mat3 *m)   { return (zpl_float3 *)m; }
 zpl_float3 *zpl_float33_v(zpl_vec3 m[3]) { return (zpl_float3 *)m; }
-zpl_float3 *zpl_float33_9(zpl_f32 m[9]) { return (zpl_float3 *)m; }
+zpl_float3 *zpl_float33_9(zpl_f32 m[9])  { return (zpl_float3 *)m; }
 
 void zpl_float33_transpose(zpl_f32 (*vec)[3]) {
     int i, j;
@@ -1119,8 +1092,10 @@ void zpl_float33_mul_vec3(zpl_vec3 *out, zpl_f32 m[3][3], zpl_vec3 v) {
 
 zpl_f32 zpl_mat3_determinate(zpl_mat3 *m) {
     zpl_float3 *e = zpl_float33_m(m);
-    zpl_f32 d = +e[0][0] * (e[1][1] * e[2][2] - e[1][2] * e[2][1]) - e[0][1] * (e[1][0] * e[2][2] - e[1][2] * e[2][0]) +
-        e[0][2] * (e[1][0] * e[2][1] - e[1][1] * e[2][0]);
+    zpl_f32 d = 
+        +e[0][0] * (e[1][1] * e[2][2] - e[1][2] * e[2][1]) 
+        -e[0][1] * (e[1][0] * e[2][2] - e[1][2] * e[2][0]) 
+        +e[0][2] * (e[1][0] * e[2][1] - e[1][1] * e[2][0]);
     return d;
 }
 
@@ -1142,7 +1117,8 @@ void zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in) {
 }
 
 void zpl_mat4_transpose(zpl_mat4 *m) { zpl_float44_transpose(zpl_float44_m(m)); }
-void zpl_mat4_identity(zpl_mat4 *m) { zpl_float44_identity(zpl_float44_m(m)); }
+void zpl_mat4_identity(zpl_mat4 *m)  { zpl_float44_identity(zpl_float44_m(m)); }
+
 void zpl_mat4_mul(zpl_mat4 *out, zpl_mat4 *m1, zpl_mat4 *m2) {
     zpl_float44_mul(zpl_float44_m(out), zpl_float44_m(m1), zpl_float44_m(m2));
 }
@@ -1168,11 +1144,11 @@ void zpl_float44_identity(zpl_f32 m[4][4]) {
 
 void zpl_mat4_mul_vec4(zpl_vec4 *out, zpl_mat4 *m, zpl_vec4 in) { zpl_float44_mul_vec4(out, zpl_float44_m(m), in); }
 
-zpl_mat4 *zpl_mat4_v(zpl_vec4 m[4]) { return (zpl_mat4 *)m; }
+zpl_mat4 *zpl_mat4_v(zpl_vec4 m[4])   { return (zpl_mat4 *)m; }
 zpl_mat4 *zpl_mat4_f(zpl_f32 m[4][4]) { return (zpl_mat4 *)m; }
 
-zpl_float4 *zpl_float44_m(zpl_mat4 *m) { return (zpl_float4 *)m; }
-zpl_float4 *zpl_float44_v(zpl_vec4 m[4]) { return (zpl_float4 *)m; }
+zpl_float4 *zpl_float44_m(zpl_mat4 *m)    { return (zpl_float4 *)m; }
+zpl_float4 *zpl_float44_v(zpl_vec4 m[4])  { return (zpl_float4 *)m; }
 zpl_float4 *zpl_float44_16(zpl_f32 m[16]) { return (zpl_float4 *)m; }
 
 void zpl_float44_transpose(zpl_f32 (*vec)[4]) {
@@ -1211,7 +1187,8 @@ void zpl_float44_mul(zpl_f32 (*out)[4], zpl_f32 (*mat1)[4], zpl_f32 (*mat2)[4]) 
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++) {
             out[j][i] =
-                mat1[0][i] * mat2[j][0] + mat1[1][i] * mat2[j][1] + mat1[2][i] * mat2[j][2] + mat1[3][i] * mat2[j][3];
+                mat1[0][i] * mat2[j][0] + mat1[1][i] * mat2[j][1] 
+               +mat1[2][i] * mat2[j][2] + mat1[3][i] * mat2[j][3];
         }
     }
 }
@@ -1271,22 +1248,10 @@ void zpl_mat4_inverse(zpl_mat4 *out, zpl_mat4 *in) {
     
     ood = 1.0f / (m[0][0] * o[0][0] + m[0][1] * o[1][0] + m[0][2] * o[2][0] + m[0][3] * o[3][0]);
     
-    o[0][0] *= ood;
-    o[0][1] *= ood;
-    o[0][2] *= ood;
-    o[0][3] *= ood;
-    o[1][0] *= ood;
-    o[1][1] *= ood;
-    o[1][2] *= ood;
-    o[1][3] *= ood;
-    o[2][0] *= ood;
-    o[2][1] *= ood;
-    o[2][2] *= ood;
-    o[2][3] *= ood;
-    o[3][0] *= ood;
-    o[3][1] *= ood;
-    o[3][2] *= ood;
-    o[3][3] *= ood;
+    o[0][0] *= ood; o[1][0] *= ood; o[2][0] *= ood; o[3][0] *= ood;
+    o[0][1] *= ood; o[1][1] *= ood; o[2][1] *= ood; o[3][1] *= ood;
+    o[0][2] *= ood; o[1][2] *= ood; o[2][2] *= ood; o[3][2] *= ood;
+    o[0][3] *= ood; o[1][3] *= ood; o[2][3] *= ood; o[3][3] *= ood;
 }
 
 void zpl_mat4_translate(zpl_mat4 *out, zpl_vec3 v) {
@@ -1327,15 +1292,15 @@ void zpl_mat4_rotate(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians) {
 
 void zpl_mat4_scale(zpl_mat4 *out, zpl_vec3 v) {
     zpl_mat4_identity(out);
-    out->e[0] = v.x;
-    out->e[5] = v.y;
+    out->e[0]  = v.x;
+    out->e[5]  = v.y;
     out->e[10] = v.z;
 }
 
 void zpl_mat4_scalef(zpl_mat4 *out, zpl_f32 s) {
     zpl_mat4_identity(out);
-    out->e[0] = s;
-    out->e[5] = s;
+    out->e[0]  = s;
+    out->e[5]  = s;
     out->e[10] = s;
 }
 
@@ -1506,6 +1471,7 @@ zpl_f32 zpl_quat_mag(zpl_quat q) {
 }
 
 void zpl_quat_norm(zpl_quat *d, zpl_quat q) { zpl_quat_divf(d, q, zpl_quat_mag(q)); }
+
 void zpl_quat_conj(zpl_quat *d, zpl_quat q) {
     d->xyz = zpl_vec3f(-q.x, -q.y, -q.z);
     d->w = q.w;
@@ -1522,8 +1488,8 @@ void zpl_quat_axis(zpl_vec3 *axis, zpl_quat q) {
 }
 
 zpl_f32 zpl_quat_angle(zpl_quat q) {
-    zpl_f32 mag = zpl_quat_mag(q);
-    zpl_f32 c = q.w * (1.0f / mag);
+    zpl_f32 mag   = zpl_quat_mag(q);
+    zpl_f32 c     = q.w * (1.0f / mag);
     zpl_f32 angle = 2.0f * zpl_arccos(c);
     return angle;
 }
@@ -1616,32 +1582,29 @@ void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *mat) {
     
     switch (biggest_index) {
         case 0:
-        out->w = biggest_value;
-        out->x = (m[1][2] - m[2][1]) * mult;
-        out->y = (m[2][0] - m[0][2]) * mult;
-        out->z = (m[0][1] - m[1][0]) * mult;
-        break;
+            out->w = biggest_value;
+            out->x = (m[1][2] - m[2][1]) * mult;
+            out->y = (m[2][0] - m[0][2]) * mult;
+            out->z = (m[0][1] - m[1][0]) * mult;
+            break;
         case 1:
-        out->w = (m[1][2] - m[2][1]) * mult;
-        out->x = biggest_value;
-        out->y = (m[0][1] + m[1][0]) * mult;
-        out->z = (m[2][0] + m[0][2]) * mult;
-        break;
+            out->w = (m[1][2] - m[2][1]) * mult;
+            out->x = biggest_value;
+            out->y = (m[0][1] + m[1][0]) * mult;
+            out->z = (m[2][0] + m[0][2]) * mult;
+            break;
         case 2:
-        out->w = (m[2][0] - m[0][2]) * mult;
-        out->x = (m[0][1] + m[1][0]) * mult;
-        out->y = biggest_value;
-        out->z = (m[1][2] + m[2][1]) * mult;
-        break;
+            out->w = (m[2][0] - m[0][2]) * mult;
+            out->x = (m[0][1] + m[1][0]) * mult;
+            out->y = biggest_value;
+            out->z = (m[1][2] + m[2][1]) * mult;
+            break;
         case 3:
-        out->w = (m[0][1] - m[1][0]) * mult;
-        out->x = (m[2][0] + m[0][2]) * mult;
-        out->y = (m[1][2] + m[2][1]) * mult;
-        out->z = biggest_value;
-        break;
-        default:
-        /* NOTE: This shouldn't fucking happen!!! */
-        break;
+            out->w = (m[0][1] - m[1][0]) * mult;
+            out->x = (m[2][0] + m[0][2]) * mult;
+            out->y = (m[1][2] + m[2][1]) * mult;
+            out->z = biggest_value;
+            break;
     }
 }
 
@@ -1656,15 +1619,12 @@ zpl_f32 zpl_smoother_step(zpl_f32 a, zpl_f32 b, zpl_f32 t) {
     return x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
 }
 
-#define ZPL_VEC_LERPN(N, d, a, b, t)                                                                                   \
-\
-zpl_vec##N db;                                                                                                 \
-\
-zpl_vec##N##_sub(&db, b, a);                                                                                       \
-\
-zpl_vec##N##_muleq(&db, t);                                                                                        \
-\
-zpl_vec##N##_add(d, a, db)
+#define ZPL_VEC_LERPN(N, d, a, b, t)     \
+    zpl_vec##N db;                       \
+    zpl_vec##N##_sub(&db, b, a);         \
+    zpl_vec##N##_muleq(&db, t);          \
+    zpl_vec##N##_add(d, a, db)
+
 void zpl_vec2_lerp(zpl_vec2 *d, zpl_vec2 a, zpl_vec2 b, zpl_f32 t) { ZPL_VEC_LERPN(2, d, a, b, t); }
 void zpl_vec3_lerp(zpl_vec3 *d, zpl_vec3 a, zpl_vec3 b, zpl_f32 t) { ZPL_VEC_LERPN(3, d, a, b, t); }
 void zpl_vec4_lerp(zpl_vec4 *d, zpl_vec4 a, zpl_vec4 b, zpl_f32 t) { ZPL_VEC_LERPN(4, d, a, b, t); }
@@ -1809,7 +1769,7 @@ int zpl_rect2_contains(zpl_rect2 a, zpl_f32 x, zpl_f32 y) {
     zpl_f32 max_x = zpl_max(a.pos.x, a.pos.x + a.dim.x);
     zpl_f32 min_y = zpl_min(a.pos.y, a.pos.y + a.dim.y);
     zpl_f32 max_y = zpl_max(a.pos.y, a.pos.y + a.dim.y);
-    int result = (x >= min_x) & (x < max_x) & (y >= min_y) & (y < max_y);
+    int result    =        (x >= min_x) & (x < max_x) & (y >= min_y) & (y < max_y);
     return result;
 }
 

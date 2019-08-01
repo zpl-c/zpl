@@ -38,38 +38,38 @@ typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(
 #endif
 
 ZPL_DEF zpl_i32  zpl_atomic32_load            (zpl_atomic32 const volatile *a);
-ZPL_DEF void zpl_atomic32_store           (zpl_atomic32 volatile *a, zpl_i32 value);
+ZPL_DEF void     zpl_atomic32_store           (zpl_atomic32 volatile *a, zpl_i32 value);
 ZPL_DEF zpl_i32  zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, zpl_i32 expected, zpl_i32 desired);
-ZPL_DEF zpl_i32  zpl_atomic32_exchange       (zpl_atomic32 volatile *a, zpl_i32 desired);
+ZPL_DEF zpl_i32  zpl_atomic32_exchange        (zpl_atomic32 volatile *a, zpl_i32 desired);
 ZPL_DEF zpl_i32  zpl_atomic32_fetch_add       (zpl_atomic32 volatile *a, zpl_i32 operand);
 ZPL_DEF zpl_i32  zpl_atomic32_fetch_and       (zpl_atomic32 volatile *a, zpl_i32 operand);
 ZPL_DEF zpl_i32  zpl_atomic32_fetch_or        (zpl_atomic32 volatile *a, zpl_i32 operand);
 ZPL_DEF zpl_b32  zpl_atomic32_spin_lock       (zpl_atomic32 volatile *a, zpl_isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void zpl_atomic32_spin_unlock     (zpl_atomic32 volatile *a);
+ZPL_DEF void     zpl_atomic32_spin_unlock     (zpl_atomic32 volatile *a);
 ZPL_DEF zpl_b32  zpl_atomic32_try_acquire_lock(zpl_atomic32 volatile *a);
 
 
 ZPL_DEF zpl_i64  zpl_atomic64_load            (zpl_atomic64 const volatile *a);
-ZPL_DEF void zpl_atomic64_store           (zpl_atomic64 volatile *a, zpl_i64 value);
+ZPL_DEF void     zpl_atomic64_store           (zpl_atomic64 volatile *a, zpl_i64 value);
 ZPL_DEF zpl_i64  zpl_atomic64_compare_exchange(zpl_atomic64 volatile *a, zpl_i64 expected, zpl_i64 desired);
-ZPL_DEF zpl_i64  zpl_atomic64_exchange       (zpl_atomic64 volatile *a, zpl_i64 desired);
+ZPL_DEF zpl_i64  zpl_atomic64_exchange        (zpl_atomic64 volatile *a, zpl_i64 desired);
 ZPL_DEF zpl_i64  zpl_atomic64_fetch_add       (zpl_atomic64 volatile *a, zpl_i64 operand);
 ZPL_DEF zpl_i64  zpl_atomic64_fetch_and       (zpl_atomic64 volatile *a, zpl_i64 operand);
 ZPL_DEF zpl_i64  zpl_atomic64_fetch_or        (zpl_atomic64 volatile *a, zpl_i64 operand);
 ZPL_DEF zpl_b32  zpl_atomic64_spin_lock       (zpl_atomic64 volatile *a, zpl_isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void zpl_atomic64_spin_unlock     (zpl_atomic64 volatile *a);
+ZPL_DEF void     zpl_atomic64_spin_unlock     (zpl_atomic64 volatile *a);
 ZPL_DEF zpl_b32  zpl_atomic64_try_acquire_lock(zpl_atomic64 volatile *a);
 
 
-ZPL_DEF void *zpl_atomic_ptr_load            (zpl_atomic_ptr const volatile *a);
-ZPL_DEF void  zpl_atomic_ptr_store           (zpl_atomic_ptr volatile *a, void *value);
-ZPL_DEF void *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired);
-ZPL_DEF void *zpl_atomic_ptr_exchange       (zpl_atomic_ptr volatile *a, void *desired);
-ZPL_DEF void *zpl_atomic_ptr_fetch_add       (zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF void *zpl_atomic_ptr_fetch_and       (zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF void *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr volatile *a, void *operand);
+ZPL_DEF void     *zpl_atomic_ptr_load            (zpl_atomic_ptr const volatile *a);
+ZPL_DEF void      zpl_atomic_ptr_store           (zpl_atomic_ptr volatile *a, void *value);
+ZPL_DEF void     *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, void *expected, void *desired);
+ZPL_DEF void     *zpl_atomic_ptr_exchange        (zpl_atomic_ptr volatile *a, void *desired);
+ZPL_DEF void     *zpl_atomic_ptr_fetch_add       (zpl_atomic_ptr volatile *a, void *operand);
+ZPL_DEF void     *zpl_atomic_ptr_fetch_and       (zpl_atomic_ptr volatile *a, void *operand);
+ZPL_DEF voi      *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF zpl_b32   zpl_atomic_ptr_spin_lock       (zpl_atomic_ptr volatile *a, zpl_isize time_out); // NOTE: time_out = -1 as default
-ZPL_DEF void  zpl_atomic_ptr_spin_unlock     (zpl_atomic_ptr volatile *a);
+ZPL_DEF void      zpl_atomic_ptr_spin_unlock     (zpl_atomic_ptr volatile *a);
 ZPL_DEF zpl_b32   zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a);
 
 
@@ -110,11 +110,11 @@ typedef struct zpl_mutex {
 #endif
 } zpl_mutex;
 
-ZPL_DEF void zpl_mutex_init    (zpl_mutex *m);
-ZPL_DEF void zpl_mutex_destroy (zpl_mutex *m);
-ZPL_DEF void zpl_mutex_lock    (zpl_mutex *m);
+ZPL_DEF void     zpl_mutex_init    (zpl_mutex *m);
+ZPL_DEF void     zpl_mutex_destroy (zpl_mutex *m);
+ZPL_DEF void     zpl_mutex_lock    (zpl_mutex *m);
 ZPL_DEF zpl_b32  zpl_mutex_try_lock(zpl_mutex *m);
-ZPL_DEF void zpl_mutex_unlock  (zpl_mutex *m);
+ZPL_DEF void     zpl_mutex_unlock  (zpl_mutex *m);
 
 struct zpl_thread;
 
@@ -158,14 +158,14 @@ typedef struct zpl_thread {
     zpl_b32              is_running;
 } zpl_thread;
 
-ZPL_DEF void zpl_thread_init            (zpl_thread *t);
-ZPL_DEF void zpl_thread_destroy         (zpl_thread *t);
-ZPL_DEF void zpl_thread_start           (zpl_thread *t, zpl_thread_proc proc, void *data);
-ZPL_DEF void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *data, zpl_isize stack_size);
-ZPL_DEF void zpl_thread_join            (zpl_thread *t);
+ZPL_DEF void     zpl_thread_init            (zpl_thread *t);
+ZPL_DEF void     zpl_thread_destroy         (zpl_thread *t);
+ZPL_DEF void     zpl_thread_start           (zpl_thread *t, zpl_thread_proc proc, void *data);
+ZPL_DEF void     zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *data, zpl_isize stack_size);
+ZPL_DEF void     zpl_thread_join            (zpl_thread *t);
 ZPL_DEF zpl_b32  zpl_thread_is_running      (zpl_thread const *t);
 ZPL_DEF zpl_u32  zpl_thread_current_id      (void);
-ZPL_DEF void zpl_thread_set_name        (zpl_thread *t, char const *name);
+ZPL_DEF void     zpl_thread_set_name        (zpl_thread *t, char const *name);
 
 
 // NOTE: Thread Merge Operation
@@ -181,12 +181,12 @@ typedef struct zpl_sync {
     zpl_semaphore release;
 } zpl_sync;
 
-ZPL_DEF void zpl_sync_init          (zpl_sync *s);
-ZPL_DEF void zpl_sync_destroy       (zpl_sync *s);
-ZPL_DEF void zpl_sync_set_target    (zpl_sync *s, zpl_i32 count);
-ZPL_DEF void zpl_sync_release       (zpl_sync *s);
+ZPL_DEF void     zpl_sync_init          (zpl_sync *s);
+ZPL_DEF void     zpl_sync_destroy       (zpl_sync *s);
+ZPL_DEF void     zpl_sync_set_target    (zpl_sync *s, zpl_i32 count);
+ZPL_DEF void     zpl_sync_release       (zpl_sync *s);
 ZPL_DEF zpl_i32  zpl_sync_reach         (zpl_sync *s);
-ZPL_DEF void zpl_sync_reach_and_wait(zpl_sync *s);
+ZPL_DEF void     zpl_sync_reach_and_wait(zpl_sync *s);
 
 
 
@@ -223,8 +223,8 @@ typedef struct zpl_affinity {
 #error TODO: Unknown system
 #endif
 
-ZPL_DEF void  zpl_affinity_init   (zpl_affinity *a);
-ZPL_DEF void  zpl_affinity_destroy(zpl_affinity *a);
+ZPL_DEF void      zpl_affinity_init   (zpl_affinity *a);
+ZPL_DEF void      zpl_affinity_destroy(zpl_affinity *a);
 ZPL_DEF zpl_b32   zpl_affinity_set    (zpl_affinity *a, zpl_isize core, zpl_isize thread);
 ZPL_DEF zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core);
 
@@ -244,7 +244,7 @@ ZPL_DEF zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize 
 
 #if defined(ZPL_COMPILER_MSVC) && !defined(ZPL_COMPILER_CLANG)
 zpl_inline zpl_i32  zpl_atomic32_load (zpl_atomic32 const volatile *a)      { return a->value;  }
-zpl_inline void zpl_atomic32_store(zpl_atomic32 volatile *a, zpl_i32 value) { a->value = value; }
+zpl_inline void     zpl_atomic32_store(zpl_atomic32 volatile *a, zpl_i32 value) { a->value = value; }
 
 zpl_inline zpl_i32 zpl_atomic32_compare_exchange(zpl_atomic32 volatile *a, zpl_i32 expected, zpl_i32 desired) {
     return _InterlockedCompareExchange(cast(long volatile *)a, desired, expected);
