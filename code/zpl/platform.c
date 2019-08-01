@@ -34,7 +34,7 @@
 #define ZPL_MAX_GAME_CONTROLLER_COUNT 4
 #endif
 
-typedef enum zplKeyType {
+typedef enum zpl_key_type {
     ZPL_KEY_UNKNOWN = 0, // Unhandled key
     
     // NOTE(bill): Allow the basic printable keys to be aliased with their chars
@@ -148,18 +148,18 @@ typedef enum zplKeyType {
     ZPL_KEY_PAUSE,       // PAUSE
     
     ZPL_KEY_COUNT,
-} zplKeyType;
+} zpl_key_type;
 
-typedef zpl_u8 zplKeyState;
-typedef enum zplKeyStateFlag {
+typedef zpl_u8 zpl_key_state;
+typedef enum zpl_key_state_flag {
     ZPL_KEY_STATE_DOWN     = ZPL_BIT(0),
     ZPL_KEY_STATE_PRESSED  = ZPL_BIT(1),
     ZPL_KEY_STATE_RELEASED = ZPL_BIT(2)
-} zplKeyStateFlag;
+} zpl_key_state_flag;
 
-ZPL_DEF void zpl_key_state_update(zplKeyState *s, zpl_b32 is_down);
+ZPL_DEF void zpl_key_state_update(zpl_key_state *s, zpl_b32 is_down);
 
-typedef enum zplMouseButtonType {
+typedef enum zpl_mouse_button_type {
     ZPL_MOUSEBUTTON_LEFT,
     ZPL_MOUSEBUTTON_MIDDLE,
     ZPL_MOUSEBUTTON_RIGHT,
@@ -167,9 +167,9 @@ typedef enum zplMouseButtonType {
     ZPL_MOUSEBUTTON_X2,
     
     ZPL_MOUSEBUTTON_COUNT
-} zplMouseButtonType;
+} zpl_mouse_button_type;
 
-typedef enum zplControllerAxisType {
+typedef enum zpl_controller_axis_type {
     ZPL_CONTROLLER_AXIS_LEFTX,
     ZPL_CONTROLLER_AXIS_LEFTY,
     ZPL_CONTROLLER_AXIS_RIGHTX,
@@ -178,9 +178,9 @@ typedef enum zplControllerAxisType {
     ZPL_CONTROLLER_AXIS_RIGHTTRIGGER,
     
     ZPL_CONTROLLER_AXIS_COUNT
-} zplControllerAxisType;
+} zpl_controller_axis_type;
 
-typedef enum zplControllerButtonType {
+typedef enum zpl_controller_button_type {
     ZPL_CONTROLLER_BUTTON_UP,
     ZPL_CONTROLLER_BUTTON_DOWN,
     ZPL_CONTROLLER_BUTTON_LEFT,
@@ -197,13 +197,13 @@ typedef enum zplControllerButtonType {
     ZPL_CONTROLLER_BUTTON_RIGHTTHUMB,
     
     zplControllerButton_Count
-} zplControllerButtonType;
+} zpl_controller_button_type;
 
 typedef struct zpl_game_controller {
     zpl_b16 is_connected, is_analog;
     
     zpl_f32 axes[ZPL_CONTROLLER_AXIS_COUNT];
-    zplKeyState buttons[zplControllerButton_Count];
+    zpl_key_state buttons[zplControllerButton_Count];
 } zpl_game_controller;
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -218,7 +218,7 @@ typedef ZPL_XINPUT_GET_STATE(zpl_xinput_get_state_proc);
 typedef ZPL_XINPUT_SET_STATE(zpl_xinput_set_state_proc);
 #endif
 
-typedef enum zplWindowFlag {
+typedef enum zpl_window_flag {
     ZPL_WINDOW_FULLSCREEN        = ZPL_BIT(0),
     ZPL_WINDOW_HIDDEN            = ZPL_BIT(1),
     ZPL_WINDOW_BORDERLESS        = ZPL_BIT(2),
@@ -226,14 +226,14 @@ typedef enum zplWindowFlag {
     ZPL_WINDOW_MINIMIZED         = ZPL_BIT(4),
     ZPL_WINDOW_MAXIMIZED         = ZPL_BIT(5),
     ZPL_WINDOW_FULLSCREENDESKTOP = ZPL_WINDOW_FULLSCREEN | ZPL_WINDOW_BORDERLESS,
-} zplWindowFlag;
+} zpl_window_flag;
 
-typedef enum zplRendererType {
+typedef enum zpl_renderer_type {
     ZPL_RENDERER_OPENGL,
     ZPL_RENDERER_SOFTWARE,
     
     ZPL_RENDERER_COUNT,
-} zplRendererType;
+} zpl_renderer_type;
 
 #if defined(ZPL_SYSTEM_WINDOWS) && !defined(_WINDOWS_)
 typedef struct tagBITMAPINFOHEADER {
@@ -279,7 +279,7 @@ typedef struct zpl_platform {
     void *osx_autorelease_pool; 
 #endif
     
-    zplRendererType renderer_type;
+    zpl_renderer_type renderer_type;
     union {
         struct {
             void *context;
@@ -301,11 +301,11 @@ typedef struct zpl_platform {
         } sw_framebuffer;
     };
     
-    zplKeyState keys[ZPL_KEY_COUNT];
+    zpl_key_state keys[ZPL_KEY_COUNT];
     struct {
-        zplKeyState control;
-        zplKeyState alt;
-        zplKeyState shift;
+        zpl_key_state control;
+        zpl_key_state alt;
+        zpl_key_state shift;
     } key_modifiers;
     
     zpl_rune char_buffer[256];
@@ -323,7 +323,7 @@ typedef struct zpl_platform {
     zpl_i32 mouse_raw_dx, mouse_raw_dy;
 
     zpl_f32 mouse_wheel_delta;
-    zplKeyState mouse_buttons[ZPL_MOUSEBUTTON_COUNT];
+    zpl_key_state mouse_buttons[ZPL_MOUSEBUTTON_COUNT];
     
     zpl_game_controller game_controllers[ZPL_MAX_GAME_CONTROLLER_COUNT];
     
@@ -370,7 +370,7 @@ ZPL_DEF void    zpl_platform_set_controller_vibration(zpl_platform *p, zpl_isize
 ZPL_DEF zpl_b32 zpl_platform_has_clipboard_text(zpl_platform *p);
 ZPL_DEF void    zpl_platform_set_clipboard_text(zpl_platform *p, char const *str);
 ZPL_DEF char   *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a);
-ZPL_DEF zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key);
+ZPL_DEF zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zpl_key_type key);
 ZPL_DEF void    zpl_platform_set_window_position(zpl_platform *p, zpl_i32 x, zpl_i32 y);
 ZPL_DEF void    zpl_platform_set_window_title(zpl_platform *p, char const *title, ...) ZPL_PRINTF_ARGS(2);
 ZPL_DEF void    zpl_platform_toggle_fullscreen(zpl_platform *p, zpl_b32 fullscreen_desktop);
@@ -392,7 +392,7 @@ ZPL_DEF void    zpl_platform_hide_window(zpl_platform *p);
 
 #if defined(ZPL_PLATFORM)
 
-zpl_inline void zpl_key_state_update(zplKeyState *s, zpl_b32 is_down) {
+zpl_inline void zpl_key_state_update(zpl_key_state *s, zpl_b32 is_down) {
     zpl_b32 was_down = (*s & ZPL_KEY_STATE_DOWN) != 0;
     is_down = is_down != 0; // NOTE(bill): Make sure it's a boolean
     ZPL_MASK_SET(*s, is_down, ZPL_KEY_STATE_DOWN);
@@ -462,10 +462,10 @@ zpl_internal void zpl__platform_resize_dib_section(zpl_platform *p, zpl_i32 widt
     }
 }
 
-zpl_internal zplKeyType zpl__win32_from_vk(unsigned int key) {
+zpl_internal zpl_key_type zpl__win32_from_vk(unsigned int key) {
     // NOTE(bill): Letters and numbers are defined the same for VK_* and ZPL_*
-    if (key >= 'A' && key < 'Z') return cast(zplKeyType) key;
-    if (key >= '0' && key < '9') return cast(zplKeyType) key;
+    if (key >= 'A' && key < 'Z') return cast(zpl_key_type) key;
+    if (key >= '0' && key < '9') return cast(zpl_key_type) key;
     switch (key) {
         case VK_ESCAPE: return ZPL_KEY_ESCAPE;
         
@@ -713,7 +713,7 @@ LRESULT CALLBACK zpl__win32_window_callback(HWND hWnd, UINT msg, WPARAM wParam, 
 
 typedef void *wglCreateContextAttribsARB_Proc(void *hDC, void *hshareContext, int const *attribList);
 
-zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
+zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zpl_renderer_type type,
                        zpl_u32 window_flags) {
     WNDCLASSEXW wc = { zpl_size_of(WNDCLASSEXW) };
     DWORD ex_style = 0, style = 0;
@@ -1382,7 +1382,7 @@ char *zpl_platform_get_clipboard_text(zpl_platform *p, zpl_allocator a) {
     return text;
 }
 
-zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zplKeyType key) {
+zpl_u32 zpl_platform_get_scancode(zpl_platform *p, zpl_key_type key) {
     zpl_u32 vk = p->keys[key];
     
     zpl_u32 scancode = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
@@ -1457,7 +1457,7 @@ zpl_internal void zpl__osx_window_did_become_key(id self, SEL _sel, id notificat
     }
 }
 
-zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zplRendererType type,
+zpl_b32 zpl__platform_init(zpl_platform *p, char const *window_title, zpl_video_mode mode, zpl_renderer_type type,
                        zpl_u32 window_flags) {
     if (p->is_initialized) { return true; }
     // Init Platform
@@ -1665,7 +1665,7 @@ zpl_b32 zpl_platform_init_with_opengl(zpl_platform *p, char const *window_title,
 }
 
 // NOTE(bill): Reverse engineering can be fun!!!
-zpl_internal zplKeyType zpl__osx_from_key_code(zpl_u16 key_code) {
+zpl_internal zpl_key_type zpl__osx_from_key_code(zpl_u16 key_code) {
     switch (key_code) {
         default: return zplKey_Unknown;
         // NOTE(bill): WHO THE FUCK DESIGNED THIS VIRTUAL KEY CODE SYSTEM?!

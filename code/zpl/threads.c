@@ -67,7 +67,7 @@ ZPL_DEF void     *zpl_atomic_ptr_compare_exchange(zpl_atomic_ptr volatile *a, vo
 ZPL_DEF void     *zpl_atomic_ptr_exchange        (zpl_atomic_ptr volatile *a, void *desired);
 ZPL_DEF void     *zpl_atomic_ptr_fetch_add       (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF void     *zpl_atomic_ptr_fetch_and       (zpl_atomic_ptr volatile *a, void *operand);
-ZPL_DEF voi      *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr volatile *a, void *operand);
+ZPL_DEF void     *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr volatile *a, void *operand);
 ZPL_DEF zpl_b32   zpl_atomic_ptr_spin_lock       (zpl_atomic_ptr volatile *a, zpl_isize time_out); // NOTE: time_out = -1 as default
 ZPL_DEF void      zpl_atomic_ptr_spin_unlock     (zpl_atomic_ptr volatile *a);
 ZPL_DEF zpl_b32   zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr volatile *a);
