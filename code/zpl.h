@@ -11060,7 +11060,7 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
                 else
                     zpl_fprintf(f, "%lld.%lld", (long long)node->base, (long long)node->base2);
             } else {
-                zpl_fprintf(f, "%llf", node->real);
+                zpl_fprintf(f, "%f", node->real);
             }
         } break;
         
@@ -11885,7 +11885,7 @@ zpl_inline void *zpl__pr_open_handle(zpl_u8 type, const char *mode, void **handl
     return NULL;
 #else
     ZPL_ASSERT(!"Not Implemented");
-    return -1;
+    return NULL;
 #endif
 }
 
@@ -11896,20 +11896,22 @@ zpl_inline zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize a
 #ifdef ZPL_SYSTEM_WINDOWS
     zpl_string cli, env;
     zpl_b32 c_env=false;
-    STARTUPINFOA psi = {0};
+    STARTUPINFOW psi = {0};
     PROCESS_INFORMATION pi = {0};
+    zpl_i32 err_code = 0;
+    zpl_allocator a = zpl_heap();
     const zpl_u32 use_std_handles   = 0x00000100;
 
     psi.cb = zpl_size_of(psi);
     psi.dwFlags = use_std_handles | si.flags;
 
     if (options & ZPL_PR_OPTS_CUSTOM_ENV) {
-        env = zpl_string_join(zpl_heap(), cast(const char**)si.env, si.env_count, "\0");
+        env = zpl_string_join(zpl_heap(), cast(const char**)si.env, si.env_count, "\0\0");
         env = zpl_string_appendc(env, "\0");
         c_env = true;
     }
     else if (!(options & ZPL_PR_OPTS_INHERIT_ENV)) {
-        env = "\0\0";
+        env = "\0\0\0\0";
     } else {
         env = NULL;
     }
@@ -11935,38 +11937,41 @@ zpl_inline zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize a
     psi.dwFillAttribute = si.fill_attr;
     psi.wShowWindow = si.show_window;
 
-    if (!CreateProcessA(
+    wchar_t *w_cli = zpl__alloc_utf8_to_ucs2(a, cli, NULL);
+    wchar_t *w_workdir = zpl__alloc_utf8_to_ucs2(a, si.workdir, NULL);
+
+    if (!CreateProcessW(
         NULL,
-        cli,
+        w_cli,
         NULL,
         NULL,
         1,
         0,
         env,
-        si.workdir,
-        cast(LPSTARTUPINFOA)&psi,
+        w_workdir,
+        cast(LPSTARTUPINFOW)&psi,
         cast(LPPROCESS_INFORMATION)&pi
     )) {
-        zpl_string_free(cli);
-
-        if (c_env)
-            zpl_string_free(env);
-
-        return -1;
+        err_code = -1;
+        goto pr_free_data;
     }
 
     process->win32_handle = pi.hProcess;
     CloseHandle(pi.hThread);
-    zpl_string_free(cli);
-
-    if (c_env)
-            zpl_string_free(env);
 
     zpl_file_connect_handle(&process->in, process->f_stdin);
     zpl_file_connect_handle(&process->out, process->f_stdout);
     zpl_file_connect_handle(&process->err, process->f_stderr);
 
-    return 0;
+pr_free_data:
+    zpl_string_free(cli);
+    zpl_free(a, w_cli);
+    zpl_free(a, w_workdir);
+
+    if (c_env)
+            zpl_string_free(env);
+
+    return err_code;
  
 #else
     ZPL_ASSERT(!"Not Implemented");
@@ -11987,7 +11992,12 @@ zpl_inline void zpl__pr_close_file_handles(zpl_pr *process) {
     zpl__pr_close_file_handle(&process->err);
 
     process->f_stdin = process->f_stdout = process->f_stderr = NULL;
+
+#ifdef ZPL_SYSTEM_WINDOWS
     process->win32_handle = NULL;
+#else
+    ZPL_ASSERT(!"Not Implemented");
+#endif
 }
 
 zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
@@ -12002,11 +12012,12 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
 
     WaitForSingleObject(process->win32_handle, INFINITE);
 
-    zpl__pr_close_file_handles(process);
-
     if (!GetExitCodeProcess(process->win32_handle, &ret_code)) {
+        zpl_pr_destroy(process);
         return -1;
     }
+
+    zpl_pr_destroy(process);
 
     return ret_code;
 #else
@@ -12034,7 +12045,6 @@ zpl_inline void zpl_pr_destroy(zpl_pr *process) {
     zpl__pr_close_file_handles(process);
 #else
     ZPL_ASSERT(!"Not Implemented");
-    return -1;
 #endif
 }
 
@@ -12046,7 +12056,6 @@ zpl_inline void zpl_pr_terminate(zpl_pr *process, zpl_i32 err_code) {
     zpl_pr_destroy(process);
 #else
     ZPL_ASSERT(!"Not Implemented");
-    return -1;
 #endif
 }
 

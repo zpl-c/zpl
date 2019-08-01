@@ -406,7 +406,7 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
                 else
                     zpl_fprintf(f, "%lld.%lld", (long long)node->base, (long long)node->base2);
             } else {
-                zpl_fprintf(f, "%llf", node->real);
+                zpl_fprintf(f, "%f", node->real);
             }
         } break;
         
