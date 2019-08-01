@@ -128,7 +128,8 @@ typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_COUNT,
 } zpl_file_standard_type;
 
-ZPL_DEF zpl_file *zpl_file_get_standard(zpl_file_standard_type std);
+ZPL_DEF zpl_file    *zpl_file_get_standard(zpl_file_standard_type std);
+ZPL_DEF void        zpl_file_connect_handle(zpl_file *file, void *handle);
 
 ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
 ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
@@ -665,6 +666,17 @@ zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     }
     return &zpl__std_files[std];
 }
+
+zpl_inline void zpl_file_connect_handle(zpl_file *file, void *handle) {
+    ZPL_ASSERT_NOT_NULL(file);
+    ZPL_ASSERT_NOT_NULL(handle);
+
+    zpl_zero_item(file);
+
+    file->fd.p = handle;
+    file->ops = zpl_default_file_operations;
+}
+
 
 zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
     LARGE_INTEGER size;

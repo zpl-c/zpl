@@ -722,7 +722,7 @@ extern "C" {
 
     ZPLGL_DEF void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height);
     ZPLGL_DEF void zplgl_bs_set_resolution(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height);
-    ZPLGL_DEF void zplgl_bs_begin(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height);
+    ZPLGL_DEF void zplgl_bs_begin(zplgl_basic_state *bs);
     ZPLGL_DEF void zplgl_bs_end(zplgl_basic_state *bs);
 
     ZPLGL_DEF void zplgl_bs_draw_textured_rect(zplgl_basic_state *bs, zplgl_texture *tex, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zpl_b32 v_up);
@@ -2122,10 +2122,9 @@ zpl_inline void zplgl_bs_set_resolution(zplgl_basic_state *bs, zpl_i32 window_wi
     bs->ortho_mat[15] = 1.0f;
 }
 
-zpl_inline void zplgl_bs_begin(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height) {
+zpl_inline void zplgl_bs_begin(zplgl_basic_state *bs) {
     glBindVertexArray(bs->vao);
     glDisable(GL_SCISSOR_TEST);
-    zplgl_bs_set_resolution(bs, window_width, window_height);
 }
 
 zpl_inline void zplgl_bs_end(zplgl_basic_state *bs) {

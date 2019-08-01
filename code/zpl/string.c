@@ -210,6 +210,7 @@ ZPL_DEF void zpl_string_clear(zpl_string str);
 ZPL_DEF zpl_string zpl_string_append(zpl_string str, zpl_string const other);
 ZPL_DEF zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize num_bytes);
 ZPL_DEF zpl_string zpl_string_appendc(zpl_string str, const char *other);
+ZPL_DEF zpl_string zpl_string_join(zpl_allocator a, const char **parts, zpl_isize count, const char *glue);
 ZPL_DEF zpl_string zpl_string_set(zpl_string str, const char *cstr);
 ZPL_DEF zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len);
 ZPL_DEF zpl_isize zpl_string_allocation_size(zpl_string const str);
@@ -847,6 +848,23 @@ zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize
 
 zpl_inline zpl_string zpl_string_appendc(zpl_string str, const char *other) {
     return zpl_string_append_length(str, other, zpl_strlen(other));
+}
+
+zpl_inline zpl_string zpl_string_join(zpl_allocator a, const char **parts, zpl_isize count, const char *glue) {
+    zpl_string ret;
+    zpl_isize i;
+
+    ret = zpl_string_make(a, NULL);
+
+    for (i=0; i<count; ++i) {
+        ret = zpl_string_appendc(ret, parts[i]);
+
+        if ((i+1) < count) {
+            ret = zpl_string_appendc(ret, glue);
+        }
+    }
+
+    return ret;
 }
 
 zpl_string zpl_string_set(zpl_string str, const char *cstr) {
