@@ -60,7 +60,6 @@ ZPL consists of the following modules:
 These are modules that work either as a standalone library or didn't fit into the ZPL library itself:
 * **zpl_glgen.py** - A Python script which fetches `glcorearb.h` to generate `zpl_glgen.h` which acts as an OpenGL extension wrangler.
 * **zpl_image.h** - Image manipulation methods and simple GIF reading API.
-* **zpl_cull.h** - Graph 2D/3D culling library.
 
 This repository also contains third-party libraries which were either included or modified to be used by some of these ZPL external modules.
 
