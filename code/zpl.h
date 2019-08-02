@@ -16180,6 +16180,8 @@ ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
 /// 
 /// 
 
+#ifdef ZPL_OPENGL
+
 #ifndef ZPL_GLGEN_IMPLEMENTATION
 #define ZPL_GLGEN_IMPLEMENTATION  
 #include "zpl_glgen.h"
@@ -16201,9 +16203,6 @@ ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
     #include "stb_truetype.h"
     #endif
 #endif
-
-
-#ifdef ZPL_OPENGL
 
 zpl_inline zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a) {
     zplgl_color result;
