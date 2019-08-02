@@ -15,8 +15,8 @@ Dependencies:
   Make sure you properly include them!
 
 Optional switches:
-  ZPLE_NO_GIF
-  ZPLE_NO_IMAGE_OPS
+  ZPLI_NO_GIF
+  ZPLI_NO_IMAGE_OPS
 
 Credits:
   Read AUTHORS.md
@@ -25,11 +25,11 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
-  2.0.0 -- New syntax
+  2.0.0 - New syntax
 
-  1.0.2 -- Switch fixes
-  1.0.1 -- Got rid of unused switches and fixes
-  1.0.0 -- Initial version
+  1.0.2 - Switch fixes
+  1.0.1 - Got rid of unused switches and fixes
+  1.0.0 - Initial version
   
       
 
@@ -89,7 +89,6 @@ extern "C" {
       struct { u8 r, g, b;};
   } zpli_rgb_colour;
 
-#define zpli_hsv_colour_t   zpli_hsv_colour
   typedef struct zpli_hsv_colour {
       u32 colour;
       struct { u8 h, s, v; };
@@ -104,8 +103,8 @@ extern "C" {
   // Uses stb_image.h for loading gif frames.
   //
 
-#ifndef ZPLE_NO_GIF
-#define zpli_gif_result_t   zpli_gif_result
+#ifndef ZPLI_NO_GIF
+
   typedef struct zpli_gif_result {
       i32 delay;
       u8 *data;
@@ -113,7 +112,7 @@ extern "C" {
   } zpli_gif_result;
 
   ZPL_DEF zpli_gif_result *zpli_gif_load(char const *filename, i32 *x, i32 *y, i32 *frames);
-  ZPL_DEF void          zpli_gif_free(zpli_gif_result *gif, b32 aligned);
+  ZPL_DEF void             zpli_gif_free(zpli_gif_result *gif, b32 aligned);
 #endif
 
   ////////////////////////////////////////////////////////////////
@@ -121,7 +120,7 @@ extern "C" {
   // Image Operations
   //
 
-#ifndef ZPLE_NO_IMAGE_OPS
+#ifndef ZPLI_NO_IMAGE_OPS
   // NOTE(ZaKlaus): This is not sRGB aware!
   ZPL_DEF void zpli_rgb_resize(u32 *source, i32 source_w, i32 source_h,
                                     u32 *dest, i32 dest_w, i32 dest_h,
@@ -138,8 +137,8 @@ extern "C" {
   ZPL_DEF zpli_rgb_colour zpli_lin_to_srgb    (u8 *table, f64 vals[3]);
   */
 
-  ZPL_DEF zpli_hsv_colour zpli_rgb_to_hsv     (zpli_rgb_colour colour);
-  ZPL_DEF zpli_rgb_colour zpli_hsv_to_rgb     (zpli_hsv_colour colour);
+  ZPL_DEF zpli_hsv_colour zpli_rgb_to_hsv (zpli_rgb_colour colour);
+  ZPL_DEF zpli_rgb_colour zpli_hsv_to_rgb (zpli_hsv_colour colour);
 #endif
 
 #if defined(__cplusplus)
