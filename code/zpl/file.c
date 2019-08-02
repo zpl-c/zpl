@@ -109,7 +109,6 @@ typedef struct zpl_file {
 
 #ifdef ZPL_THREADING
 
-
 typedef struct zpl_async_file {
     zpl_file handle;
     zpl_isize size;
@@ -981,28 +980,36 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
     zpl_isize new_len = 0;
     zpl_isize new_len1 = 0;
     char *new_path = 0;
+
     w_path = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator( ), path, NULL);
     if (w_path == NULL) { return NULL; }
+    
     w_len = GetFullPathNameW(w_path, 0, NULL, NULL);
     if (w_len == 0) { return NULL; }
+    
     w_fullpath = zpl_alloc_array(zpl_heap_allocator( ), wchar_t, w_len + 1);
     GetFullPathNameW(w_path, cast(int) w_len, w_fullpath, NULL);
     w_fullpath[w_len] = 0;
+    
     zpl_free(zpl_heap_allocator( ), w_path);
     
     new_len = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, NULL, 0, NULL, NULL);
+    
     if (new_len == 0) {
         zpl_free(zpl_heap_allocator( ), w_fullpath);
         return NULL;
     }
+    
     new_path = zpl_alloc_array(a, char, new_len1);
     new_len1 = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, new_path,
                                    cast(int) new_len, NULL, NULL);
+    
     if (new_len1 == 0) {
         zpl_free(zpl_heap_allocator( ), w_fullpath);
         zpl_free(a, new_path);
         return NULL;
     }
+    
     new_path[new_len] = 0;
     return new_path;
 #else

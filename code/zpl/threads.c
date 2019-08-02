@@ -30,11 +30,11 @@ typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #endif
 
 
-typedef struct zpl_atomic32  { zpl_i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
+typedef struct zpl_atomic32   { zpl_i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
 
-typedef struct zpl_atomic64  { zpl_i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
+typedef struct zpl_atomic64   { zpl_i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
 
-typedef struct zpl_atomic_ptr { void *volatile value; } __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
+typedef struct zpl_atomic_ptr { void *volatile value; }     __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 
 ZPL_DEF zpl_i32  zpl_atomic32_load            (zpl_atomic32 const volatile *a);

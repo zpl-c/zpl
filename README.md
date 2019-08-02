@@ -149,7 +149,8 @@ int main(int argc, char **argv) {
         return -2;
     }
 
-    printf("Delta: %fms\nNo. of nodes: %lld\nError code: %d\nFile size: %lld bytes\n", delta*1000, zpl_array_count(root.nodes), err, fc.size);
+    printf("Delta: %fms\nNo. of nodes: %lld\nError code: %d\nFile size: %lldbytes\n", delta*1000, 
+            zpl_array_count(root.nodes), err, fc.size);
 
     zpl_json_free(&root);
     zpl_file_free_contents(&fc);
