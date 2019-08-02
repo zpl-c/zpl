@@ -26,6 +26,7 @@ GitHub:
   https://github.com/zpl-c/zpl
   
 Version History: 
+  9.7.0 - Added co-routine module
   9.6.0 - Added process module for creation and manipulation
   9.5.2 - zpl_printf family now prints (null) on NULL string arguments
   9.5.1 - Fixed JSON5 real number export support + indentation fixes
@@ -324,6 +325,7 @@ extern "C" {
 //<<opts.c>>
 //<<process.c>>
 //<<threadpool.c>>
+//<<coroutines.c>>
 //<<math.c>>
 //<<platform.c>>
 

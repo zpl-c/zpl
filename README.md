@@ -50,6 +50,7 @@ ZPL consists of the following modules:
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
 * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
 * **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
+* **Co-routines** - This module implements co-routines feature for C99.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
