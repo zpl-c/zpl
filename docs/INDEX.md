@@ -143,7 +143,8 @@ Have fun!
 
 **What led you to the creation of this library?**
 
-I personally found it rather cumbersome to re-implement commonly used features in C language. I used to use others' libraries to rely on those features. However, I once started extending those libraries by my own modules, breaking the style the original libraries were made. Thanks to FOSS, I've decided to fork @gingerBill's library and adjusted it to my personal style and needs, while also returning bugfixes and some features back. ZPL later became independent and its own thing.
+I personally found it rather cumbersome to re-implement commonly used features in C language. I used to use others' libraries to rely on those features. However, I once started extending those libraries by my own modules, breaking the style the original libraries were made. Thanks to FOSS, I've decided to fork [@gingerBill](https://github.com/gingerBill)'s library and adjusted it to my personal style and needs, while also returning bugfixes and some features back. ZPL later became independent and its own thing, adding new features,
+code structure and QoL changes.
 
 **Can I contribute to the project?**
 
