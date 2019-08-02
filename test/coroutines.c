@@ -14,6 +14,8 @@ void send_req(zpl_co *co) {
 
     printf_safe("step 1: %d\n", d->x);
 
+    zpl_sleep_ms(500);
+
     // wait until main thread resumes the execution
     zpl_co_yield(co);
     
@@ -25,6 +27,8 @@ void send_req(zpl_co *co) {
     printf_safe("step 2: guest val %d\n", r->x);
 
     zpl_co_yield(co);
+
+    zpl_sleep_ms(500);
 
     d = cast(some_data*)co->data;
 
