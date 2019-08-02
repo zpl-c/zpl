@@ -16219,7 +16219,7 @@ zpl_inline zplgl_color zplgl_color_opacity(zplgl_color color, zpl_f32 alpha)
 {
     zplgl_color result;
     result = color;
-    result.a = cast(zpl_u8)(alpha / 255.0f);
+    result.a = cast(zpl_u8)(zplgl_clamp01(alpha) * 255.0f);
     return result;
 }
 
@@ -17429,6 +17429,9 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
         out vec4 o_colour;
         
         void main(void) {
+            if (u_colour.a <= 0)
+                discard;
+
             o_colour = u_colour * texture2D(u_tex, v_tex_coord).r;
         })
     );
@@ -18024,8 +18027,7 @@ zpl_isize zplgl_bs_draw_substring(zplgl_basic_state *bs, zplgl_font *font, zpl_f
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bs->font_ebo);
 
             glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glDrawElements(GL_TRIANGLES, (GLsizei)(glyph_count * 6), GL_UNSIGNED_SHORT, NULL);
 
         }
