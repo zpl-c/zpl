@@ -2,7 +2,8 @@
 @brief Process creation and manipulation methods
 @defgroup process Process creation and manipulation methods
 
-Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
+Gives you the ability to create a new process, wait for it to end or terminate it. 
+It also exposes standard I/O with configurable options.
 
 @{
 */
