@@ -81,7 +81,7 @@ zpl_isize zpl__co_runner(struct zpl_thread *t) {
             break;
 
         while (!lock) {
-            //zpl_yield_thread();
+            zpl_yield_thread();
             lock = zpl_mutex_try_lock(&zpl__co_internals.is_processing);
 
             if (zpl_atomic32_load(&zpl__co_internals.request_term))
