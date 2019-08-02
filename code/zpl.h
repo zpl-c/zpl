@@ -12298,7 +12298,7 @@ zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
 
 #if ZPL_THREADING
 
-struct {
+zpl_global struct {
     zpl_b32 is_ready;
     zpl_thread_pool coroutines;
     zpl_thread runner;
