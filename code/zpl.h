@@ -3393,7 +3393,7 @@ ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);
 @brief Coroutines module
 @defgroup misc Coroutines module
 
- This module implements a co-routines feature for C99.
+ This module implements co-routines feature for C99.
  
  @{
  */
@@ -12371,27 +12371,32 @@ zpl_inline zpl_co zpl_co_make(zpl_co_proc f) {
 zpl_inline void zpl_co_resume(zpl_co *co, void *data) {
     ZPL_ASSERT_NOT_NULL(co);
 
-    zpl_atomic32_store(&co->push_arg, 1);
-    co->data_stack[co->data_write_idx++] = data;
-    zpl_atomic32_spin_unlock(&co->push_arg);
-    zpl_mfence();
+    if (data != NULL) {
+        zpl_atomic32_store(&co->push_arg, 1);
+        co->data_stack[co->data_write_idx++] = data;
+        zpl_atomic32_spin_unlock(&co->push_arg);
+        zpl_mfence();
+    }
 
     zpl_i32 status = zpl_atomic32_load(&co->status);
 
     // Initialize a job
     if (status == ZPL_CO_READY) {
-        co->data = co->data_stack[co->data_read_idx++];
+        
+        if (data)
+            co->data = co->data_stack[co->data_read_idx++];
+
         zpl_atomic32_store(&co->status, ZPL_CO_ENQUEUED);
+        zpl_mfence();
+
         zpl_mutex_lock(&zpl__co_internals.is_processing);
         zpl_jobs_enqueue(&zpl__co_internals.coroutines, zpl__co_job, cast(void *)co);
         zpl_mutex_unlock(&zpl__co_internals.is_processing);
-        zpl_mfence();
     }
     else {
         zpl_atomic32_fetch_add(&co->resume, 1);
+        zpl_mfence();
     }
-
-    zpl_mfence();
 }
 
 zpl_inline void zpl_co_yield(zpl_co *co) {
@@ -12410,6 +12415,12 @@ zpl_inline void zpl_co_yield(zpl_co *co) {
 
     zpl_atomic32_spin_lock(&co->push_arg, -1);
     co->data = co->data_stack[co->data_read_idx++];
+
+    // null pointer is present, no arg is found, so return back by 1 index
+    if (co->data == NULL) {
+        co->data_read_idx--;
+    }
+
     zpl_atomic32_spin_unlock(&co->push_arg);
 
     zpl_atomic32_store(&co->status, ZPL_CO_RUNNING);
@@ -12425,8 +12436,7 @@ zpl_inline zpl_b32 zpl_co_finished(zpl_co *co) {
 }
 
 zpl_inline zpl_b32 zpl_co_waiting(zpl_co *co) {
-    zpl_i32 value = zpl_atomic32_load(&co->status);
-    return  (value == ZPL_CO_DEAD) || (value == ZPL_CO_WAITING);
+    return zpl_atomic32_load(&co->resume) == 0;
 }
 
 #endif

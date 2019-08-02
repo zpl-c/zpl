@@ -14,9 +14,6 @@ void send_req(zpl_co *co) {
 
     printf_safe("step 1: %d\n", d->x);
 
-    // let's sleep here for a while
-    zpl_sleep_ms(500);
-
     // wait until main thread resumes the execution
     zpl_co_yield(co);
     
@@ -25,9 +22,9 @@ void send_req(zpl_co *co) {
 
     r->x = 21;
 
-    zpl_co_yield(co);
+    printf_safe("step 2: guest val %d\n", r->x);
 
-    zpl_sleep_ms(500);
+    zpl_co_yield(co);
 
     d = cast(some_data*)co->data;
 
@@ -52,21 +49,22 @@ int main (void) {
     printf_safe("resume step 1\n");
     zpl_co_resume(&w1, cast(void*)&d);
 
+    do {} while (!zpl_co_waiting(&w1));
+
     // step 2 - resume its execution, read data back
     printf_safe("resume step 2\n");
     zpl_co_resume(&w1, cast(void*)&r);
 
-    // wait for it to process data, then read data back
+    do {} while (!zpl_co_waiting(&w1));
+    
+    // step 3 - resume its execution again, pass data
+    printf_safe("resume step 3\n");
+    zpl_co_resume(&w1, cast(void*)&d2);
+
     do {} while (!zpl_co_waiting(&w1));
 
     d2.x = r.x * 3;
     printf_safe("r:%d,d:%d,d2:%d\n", r.x, d.x, d2.x);
-
-    do {} while (!zpl_co_waiting(&w1));
-
-    // step 3 - resume its execution again, pass data
-    printf_safe("resume step 3\n");
-    zpl_co_resume(&w1, cast(void*)&d2);
 
     // wait until co-routine finishes its execution
     do {} while(!zpl_co_finished(&w1));
