@@ -35,6 +35,7 @@ Options:
   ZPL_PLATFORM - enables platform layer module.
   ZPL_OPENGL - enables OpenGL module.
     ZPLGL_NO_FONTS - disables font rendering support for OpenGL module.
+    ZPLGL_NO_BASIC_STATE - disables basic state API (contains useful 2D rendering methods as well as font rendering)
   
   
 Credits:
