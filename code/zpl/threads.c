@@ -14,26 +14,21 @@ This module features common threading and blocking principles. It contains threa
 // e.g. relaxed, acquire, release, acquire_release
 
 #if defined(ZPL_COMPILER_MSVC)
-
-typedef struct zpl_atomic32  { zpl_i32   volatile value; } zpl_atomic32;
-
-typedef struct zpl_atomic64  { zpl_i64   volatile value; } zpl_atomic64;
-
-typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
+    typedef struct zpl_atomic32  { zpl_i32   volatile value; } zpl_atomic32;
+    typedef struct zpl_atomic64  { zpl_i64   volatile value; } zpl_atomic64;
+    typedef struct zpl_atomic_ptr { void *volatile value; } zpl_atomic_ptr;
 #else
-#if defined(ZPL_ARCH_32_BIT)
-#define ZPL_ATOMIC_PTR_ALIGNMENT 4
-#elif defined(ZPL_ARCH_64_BIT)
-#define ZPL_ATOMIC_PTR_ALIGNMENT 8
-#else
-#error Unknown architecture
-#endif
+    #if defined(ZPL_ARCH_32_BIT)
+        #define ZPL_ATOMIC_PTR_ALIGNMENT 4
+    #elif defined(ZPL_ARCH_64_BIT)
+        #define ZPL_ATOMIC_PTR_ALIGNMENT 8
+    #else
+        #error Unknown architecture
+    #endif
 
 
 typedef struct zpl_atomic32   { zpl_i32   volatile value; } __attribute__ ((aligned(4))) zpl_atomic32;
-
 typedef struct zpl_atomic64   { zpl_i64   volatile value; } __attribute__ ((aligned(8))) zpl_atomic64;
-
 typedef struct zpl_atomic_ptr { void *volatile value; }     __attribute__ ((aligned(ZPL_ATOMIC_PTR_ALIGNMENT))) zpl_atomic_ptr;
 #endif
 
@@ -81,16 +76,13 @@ ZPL_DEF void zpl_lfence      (void);
 
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-
-typedef struct zpl_semaphore { void *win32_handle; }     zpl_semaphore;
+    typedef struct zpl_semaphore { void *win32_handle; }     zpl_semaphore;
 #elif defined(ZPL_SYSTEM_OSX)
-
-typedef struct zpl_semaphore { semaphore_t osx_handle; } zpl_semaphore;
+    typedef struct zpl_semaphore { semaphore_t osx_handle; } zpl_semaphore;
 #elif defined(ZPL_SYSTEM_UNIX)
-
-typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
+    typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
 #else
-#error
+    #error
 #endif
 
 ZPL_DEF void zpl_semaphore_init   (zpl_semaphore *s);
@@ -122,25 +114,6 @@ typedef zpl_isize (*zpl_thread_proc)(struct zpl_thread *thread);
 
 zpl_isize zpl__async_handler(struct zpl_thread *thread);
 
-// TODO(ZaKlaus): @fixme
-#ifndef zpl_async
-typedef void (*zpl_async_cb)(void *data);
-
-typedef struct {
-    void *data;
-    zpl_async_cb work;
-    zpl_async_cb cb;
-} zpl_async_ctl;
-#define zpl_async(data, work, cb) do {                            \
-    zpl_thread td = {0};                                          \
-    zpl_thread_init(&td);                                         \
-    zpl_async_ctl  ctl_ = {data, work, cb};                       \
-    zpl_async_ctl *ctl = zpl_malloc(zpl_size_of(zpl_async_ctl));  \
-    *ctl = ctl_;                                                  \
-    zpl_thread_start(&td, zpl__async_handler, ctl);} while (0)
-#endif
-
-
 typedef struct zpl_thread {
 #if defined(ZPL_SYSTEM_WINDOWS)
     void *        win32_handle;
@@ -150,12 +123,12 @@ typedef struct zpl_thread {
     
     zpl_thread_proc  proc;
     void *           user_data;
-    zpl_isize            user_index;
-    zpl_isize            return_value;
+    zpl_isize        user_index;
+    zpl_isize        return_value;
     
     zpl_semaphore    semaphore;
-    zpl_isize            stack_size;
-    zpl_b32              is_running;
+    zpl_isize        stack_size;
+    zpl_b32          is_running;
 } zpl_thread;
 
 ZPL_DEF void     zpl_thread_init            (zpl_thread *t);
@@ -805,21 +778,6 @@ zpl_inline void zpl_mutex_unlock(zpl_mutex *m) {
 #endif
 }
 
-
-
-zpl_isize zpl__async_handler(struct zpl_thread *thread) {
-    zpl_async_ctl *ctl = cast(zpl_async_ctl *)thread->user_data;
-    
-    ctl->work(ctl->data);
-    ctl->cb(ctl->data);
-    
-    zpl_mfree(ctl);
-    
-    return true;
-}
-
-
-
 void zpl_thread_init(zpl_thread *t) {
     zpl_zero_item(t);
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -835,7 +793,6 @@ void zpl_thread_destroy(zpl_thread *t) {
     zpl_semaphore_destroy(&t->semaphore);
 }
 
-
 zpl_inline void zpl__thread_run(zpl_thread *t) {
     zpl_semaphore_release(&t->semaphore);
     t->return_value = t->proc(t);
@@ -849,7 +806,7 @@ zpl_inline DWORD __stdcall zpl__thread_proc(void *arg) {
     return 0;
 }
 #else
-zpl_inline void *          zpl__thread_proc(void *arg) {
+zpl_inline void *zpl__thread_proc(void *arg) {
     zpl_thread *t = cast(zpl_thread *)arg;
     zpl__thread_run(t);
     t->is_running = false;
@@ -1031,11 +988,6 @@ void zpl_sync_reach_and_wait(zpl_sync *s) {
         zpl_mutex_unlock(&s->mutex);
     }
 }
-
-
-
-
-
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 void zpl_affinity_init(zpl_affinity *a) {
@@ -1253,7 +1205,7 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
 #elif defined(ZPL_SYSTEM_EMSCRIPTEN)
 // no code 4 u :(
 #else
-#error TODO: Unknown system
+    #error TODO: Unknown system
 #endif
 
 #endif // ZPL_THREADING

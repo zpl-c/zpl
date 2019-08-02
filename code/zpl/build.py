@@ -75,7 +75,7 @@ with open(TPL_PATH, 'r') as loader:
         fn = m[1]
         repl = ""
 
-        with open(wd + "/" + fn, 'r') as fi:
+        with open(wd + "/" + fn, 'r', errors='backslashreplace') as fi:
             c = fi.read()
 
             p = c.split("//$$")

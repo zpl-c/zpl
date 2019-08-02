@@ -107,18 +107,6 @@ typedef struct zpl_file {
     zpl_dir_entry *dir;
 } zpl_file;
 
-#ifdef ZPL_THREADING
-
-typedef struct zpl_async_file {
-    zpl_file handle;
-    zpl_isize size;
-    void *data;
-} zpl_async_file;
-
-typedef void (*zpl_async_file_cb)(zpl_async_file *file);
-
-#endif // ZPL_THREADING
-
 #define zplFileStandardType zpl_file_standard_type
 typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_INPUT,
@@ -157,11 +145,6 @@ ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file);
 
 //! Refresh dirinfo of specified file
 ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
-
-#ifdef ZPL_THREADING
-ZPL_DEF void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc);
-ZPL_DEF void zpl_async_file_write(zpl_file *file, void const *buffer, zpl_isize size, zpl_async_file_cb proc);
-#endif
 
 zpl_file_error zpl_file_temp(zpl_file *file);
 
@@ -553,103 +536,6 @@ zpl_inline zpl_b32 zpl_file_has_changed(zpl_file *f) {
     }
     return result;
 }
-
-#ifdef ZPL_THREADING
-
-typedef struct {
-    zpl_async_file *f;
-    zpl_async_file_cb proc;
-    void *data;
-    zpl_isize data_size;
-} zpl__async_file_ctl;
-
-zpl_isize zpl__async_file_read_proc(struct zpl_thread *thread) {
-    zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
-    
-    zpl_async_file *f = afops->f;
-    
-    zpl_i64 file_size = zpl_file_size(&f->handle);
-    void *file_contents = zpl_malloc((zpl_isize)file_size);
-    zpl_file_read(&f->handle, file_contents, (zpl_isize)file_size);
-    
-    f->size = (zpl_isize)file_size;
-    f->data = file_contents;
-    
-    afops->proc(f);
-    
-    zpl_free(zpl_heap_allocator( ), afops->f);
-    zpl_free(zpl_heap_allocator( ), afops);
-    
-    return 0;
-}
-
-zpl_isize zpl__async_file_write_proc(struct zpl_thread *thread) {
-    zpl__async_file_ctl *afops = cast(zpl__async_file_ctl *) thread->user_data;
-    
-    zpl_async_file *f = afops->f;
-    
-    zpl_i64 file_size = afops->data_size;
-    void *file_contents = afops->data;
-    zpl_file_write(&f->handle, file_contents, (zpl_isize)file_size);
-    
-    f->size = (zpl_isize)file_size;
-    f->data = file_contents;
-    
-    afops->proc(f);
-    
-    zpl_free(zpl_heap_allocator( ), afops->f);
-    zpl_free(zpl_heap_allocator( ), afops);
-    
-    return 0;
-}
-
-void zpl_async_file_read(zpl_file *file, zpl_async_file_cb proc) {
-    ZPL_ASSERT(file && proc);
-    
-    zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
-    zpl_async_file a_ = { 0 };
-    *a = a_;
-    
-    a->handle = *file;
-    
-    zpl_thread td = { 0 };
-    zpl_thread_init(&td);
-    
-    zpl__async_file_ctl *afops = (zpl__async_file_ctl *)zpl_malloc(sizeof(zpl__async_file_ctl));
-    zpl__async_file_ctl afops_ = { 0 };
-    *afops = afops_;
-    
-    afops->f = a;
-    afops->proc = proc;
-    
-    zpl_thread_start(&td, zpl__async_file_read_proc, cast(void *) afops);
-}
-
-void zpl_async_file_write(zpl_file *file, void const *buffer, zpl_isize size, zpl_async_file_cb proc) {
-    ZPL_ASSERT(file && proc && buffer);
-    
-    zpl_async_file *a = (zpl_async_file *)zpl_malloc(sizeof(zpl_async_file));
-    zpl_async_file a_ = { 0 };
-    *a = a_;
-    
-    a->handle = *file;
-    
-    zpl_thread td = { 0 };
-    zpl_thread_init(&td);
-    
-    zpl__async_file_ctl *afops = (zpl__async_file_ctl *)zpl_malloc(sizeof(zpl__async_file_ctl));
-    zpl__async_file_ctl afops_ = { 0 };
-    *afops = afops_;
-    
-    afops->f = a;
-    afops->proc = proc;
-    afops->data = cast(void *) buffer;
-    afops->data_size = size;
-    
-    zpl_thread_start(&td, zpl__async_file_write_proc, cast(void *) afops);
-}
-
-#endif // ZPL_THREADING
 
 // TODO: Is this a bad idea?
 zpl_global zpl_b32 zpl__std_file_set = false;

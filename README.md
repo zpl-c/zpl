@@ -53,11 +53,11 @@ ZPL consists of the following modules:
 * **Co-routines** - This module implements co-routines feature for C99.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
+* **OpenGL** - Offers OpenGL helper methods as well as basic 2D sprite and font rendering.
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
 
 ## External modules
 These are modules that work either as a standalone library or didn't fit into the ZPL library itself:
-* **zpl_opengl.h** - Offers OpenGL helper methods as well as basic 2D sprite and font rendering.
 * **zpl_glgen.py** - A Python script which fetches `glcorearb.h` to generate `zpl_glgen.h` which acts as an OpenGL extension wrangler.
 * **zpl_image.h** - Image manipulation methods and simple GIF reading API.
 * **zpl_cull.h** - Graph 2D/3D culling library.
