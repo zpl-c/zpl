@@ -1,17 +1,9 @@
 #ifdef TEST_OPENGL
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_RECT_PACK_IMPLEMENTATION
-#define STB_TRUETYPE_IMPLEMENTATION
+
 #define ZPL_PLATFORM
+#define ZPL_OPENGL
 #define ZPL_IMPLEMENTATION
-#define ZPL_GLGEN_IMPLEMENTATION
-#define ZPLGL_IMPLEMENTATION
 #include "zpl.h"
-#include "stb_image.h"
-#include "stb_rect_pack.h"
-#include "stb_truetype.h"
-#include "zpl_glgen.h"
-#include "zpl_opengl.h"
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
