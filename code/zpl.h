@@ -2567,7 +2567,7 @@ typedef enum zpl_file_mode_flag {
     ZPL_FILE_MODE_APPEND = ZPL_BIT(2),
     ZPL_FILE_MODE_RW     = ZPL_BIT(3),
 
-    zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
+    ZPL_FILE_MODES       = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
 } zpl_file_mode_flag;
 
 // NOTE: Only used internally and for the file operations
@@ -2610,6 +2610,7 @@ zpl_b32 name(zpl_file_descriptor fd, void *buffer, zpl_isize size, zpl_i64 offse
 zpl_b32 name(zpl_file_descriptor fd, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written)
 #define ZPL_FILE_SEEK_PROC(name) zpl_b32 name(zpl_file_descriptor fd, zpl_i64 offset, zpl_seek_whence_type whence, zpl_i64 *new_offset)
 #define ZPL_FILE_CLOSE_PROC(name) void name(zpl_file_descriptor fd)
+
 typedef ZPL_FILE_OPEN_PROC(zpl_file_open_proc);
 typedef ZPL_FILE_READ_AT_PROC(zpl_file_read_proc);
 typedef ZPL_FILE_WRITE_AT_PROC(zpl_file_write_proc);
@@ -2667,36 +2668,177 @@ typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_COUNT,
 } zpl_file_standard_type;
 
+/**
+ * Get standard file I/O.
+ * @param  std Check zpl_file_standard_type
+ * @return     File handle to standard I/O
+ */
 ZPL_DEF zpl_file    *zpl_file_get_standard(zpl_file_standard_type std);
+
+/**
+ * Connects a system handle to a ZPL file.
+ * @param  file   Pointer to ZPL file
+ * @param  handle Low-level OS handle to connect
+ */
 ZPL_DEF void         zpl_file_connect_handle(zpl_file *file, void *handle);
 
+/**
+ * Creates a new file
+ * @param  file
+ * @param  filename
+ */
 ZPL_DEF zpl_file_error zpl_file_create(zpl_file *file, char const *filename);
+
+/**
+ * Opens a file
+ * @param  file
+ * @param  filename
+ */
 ZPL_DEF zpl_file_error zpl_file_open(zpl_file *file, char const *filename);
+
+/**
+ * Opens a file using a specified mode
+ * @param  file
+ * @param  mode     Access mode to use
+ * @param  filename
+ */
 ZPL_DEF zpl_file_error zpl_file_open_mode(zpl_file *file, zpl_file_mode mode, char const *filename);
+
+/**
+ * Constructs a new file from data
+ * @param  file
+ * @param  fd       Low-level file descriptor to use
+ * @param  ops      File operations to rely upon
+ * @param  filename
+ */
 ZPL_DEF zpl_file_error zpl_file_new(zpl_file *file, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename);
 
+/**
+ * Reads file safely
+ * @param  file
+ * @param  buffer     Buffer to read to
+ * @param  size       Size to read
+ * @param  offset     Offset to read from
+ * @param  bytes_read How much data we've actually read
+ */
 ZPL_DEF zpl_b32        zpl_file_read_at_check(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read);
+
+/**
+ * Writes to file safely
+ * @param  file
+ * @param  buffer        Buffer to read from
+ * @param  size          Size to write
+ * @param  offset        Offset to write to
+ * @param  bytes_written How much data we've actually written
+ */
 ZPL_DEF zpl_b32        zpl_file_write_at_check(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written);
+
+
+/**
+ * Reads file at a specific offset
+ * @param  file
+ * @param  buffer     Buffer to read to
+ * @param  size       Size to read
+ * @param  offset     Offset to read from
+ * @param  bytes_read How much data we've actually read
+ */
 ZPL_DEF zpl_b32        zpl_file_read_at(zpl_file *file, void *buffer, zpl_isize size, zpl_i64 offset);
+
+/**
+ * Writes to file at a specific offset
+ * @param  file
+ * @param  buffer        Buffer to read from
+ * @param  size          Size to write
+ * @param  offset        Offset to write to
+ * @param  bytes_written How much data we've actually written
+ */
 ZPL_DEF zpl_b32        zpl_file_write_at(zpl_file *file, void const *buffer, zpl_isize size, zpl_i64 offset);
+
+/**
+ * Seeks the file cursor from the beginning of file to a specific position
+ * @param  file
+ * @param  offset Offset to seek to
+ */
 ZPL_DEF zpl_i64        zpl_file_seek(zpl_file *file, zpl_i64 offset);
+
+/**
+ * Seeks the file cursor to the end of the file
+ * @param  file
+ */
 ZPL_DEF zpl_i64        zpl_file_seek_to_end(zpl_file *file);
+
+/**
+ * Skips N bytes at the current position
+ * @param  file
+ * @param  bytes Bytes to skip
+ */
 ZPL_DEF zpl_i64        zpl_file_skip(zpl_file *file, zpl_i64 bytes); // NOTE: Skips a certain amount of bytes
+
+/**
+ * Returns the length from the beginning of the file we've read so far
+ * @param  file
+ * @return      Our current position in file
+ */
 ZPL_DEF zpl_i64        zpl_file_tell(zpl_file *file);
+
+/**
+ * Closes the file
+ * @param  file
+ */
 ZPL_DEF zpl_file_error zpl_file_close(zpl_file *file);
 
-ZPL_DEF zpl_b32 zpl_file_read(zpl_file *file, void *buffer, zpl_isize size);
-ZPL_DEF zpl_b32 zpl_file_write(zpl_file *file, void const *buffer, zpl_isize size);
-ZPL_DEF zpl_i64 zpl_file_size(zpl_file *file);
+/**
+ * Reads from a file
+ * @param  file
+ * @param  buffer Buffer to read to
+ * @param  size   Size to read
+ */
+ZPL_DEF zpl_b32        zpl_file_read(zpl_file *file, void *buffer, zpl_isize size);
+
+/**
+ * Writes to a file
+ * @param  file
+ * @param  buffer Buffer to read from
+ * @param  size   Size to read
+ */
+ZPL_DEF zpl_b32        zpl_file_write(zpl_file *file, void const *buffer, zpl_isize size);
+
+/**
+ * Returns a size of the file
+ * @param  file
+ * @return      File size
+ */
+ZPL_DEF zpl_i64        zpl_file_size(zpl_file *file);
+
+/**
+ * Returns the currently opened file's name
+ * @param  file
+ */
 ZPL_DEF char const    *zpl_file_name(zpl_file *file);
+
+/**
+ * Truncates the file by a specified size
+ * @param  file
+ * @param  size Size to truncate
+ */
 ZPL_DEF zpl_file_error zpl_file_truncate(zpl_file *file, zpl_i64 size);
 
-// NOTE: Changed since lasted checked
+/**
+ * Checks whether a file's been changed since the last check
+ * @param  file
+ */
 ZPL_DEF zpl_b32 zpl_file_has_changed(zpl_file *file);
 
-//! Refresh dirinfo of specified file
+/**
+ * Retrieves a directory listing relative to the file
+ * @param file
+ */
 ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
 
+/**
+ * Creates a temporary file
+ * @param  file
+ */
 zpl_file_error zpl_file_temp(zpl_file *file);
 
 typedef struct zpl_file_contents {
@@ -2705,18 +2847,71 @@ typedef struct zpl_file_contents {
     zpl_isize size;
 } zpl_file_contents;
 
+/**
+ * Reads the whole file contents
+ * @param  a              Allocator to use
+ * @param  zero_terminate End the read data with null terminator
+ * @param  filepath       Path to the file
+ * @return                File contents data
+ */
 ZPL_DEF zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_terminate, char const *filepath);
+
+/**
+ * Frees the file content data previously read
+ * @param  fc
+ */
 ZPL_DEF void              zpl_file_free_contents(zpl_file_contents *fc);
 
-//! Make sure you free both the returned buffer and the lines (zpl_array)
+/**
+ * Reads the file as array of lines
+ *
+ * Make sure you free both the returned buffer and the lines (zpl_array)
+ * @param  alloc            Allocator to use
+ * @param  lines            Reference to zpl_array container we store lines to
+ * @param  filename         Path to the file
+ * @param  strip_whitespace Strip whitespace when we split to lines?
+ * @return                  File content we've read itself
+ */
 ZPL_DEF char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *) * lines, char const *filename,
                                   zpl_b32 strip_whitespace);
 
+/**
+ * Checks if file/directory exists
+ * @param  filepath
+ */
 ZPL_DEF zpl_b32       zpl_fs_exists(char const *filepath);
+
+/**
+ * Retrieves node's type (file, folder, ...)
+ * @param  path
+ */
 ZPL_DEF zpl_u8        zpl_fs_get_type(char const *path);
+
+/**
+ * Retrieves file's last write time
+ * @param  filepath
+ */
 ZPL_DEF zpl_file_time zpl_fs_last_write_time(char const *filepath);
+
+/**
+ * Copies the file to a directory
+ * @param  existing_filename
+ * @param  new_filename
+ * @param  fail_if_exists
+ */
 ZPL_DEF zpl_b32       zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists);
+
+/**
+ * Moves the file to a directory
+ * @param  existing_filename
+ * @param  new_filename
+ */
 ZPL_DEF zpl_b32       zpl_fs_move(char const *existing_filename, char const *new_filename);
+
+/**
+ * Removes a file from a directory
+ * @param  filename
+ */
 ZPL_DEF zpl_b32       zpl_fs_remove(char const *filename);
 
 #ifndef ZPL_PATH_SEPARATOR
@@ -2739,14 +2934,27 @@ ZPL_DEF char       *zpl_path_get_full_name(zpl_allocator a, char const *path);
 ZPL_DEF zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode);
 ZPL_DEF zpl_file_error zpl_path_rmdir(char const *path);
 
-//! Returns file paths terminated by newline (\n)
+/**
+ * Returns file paths terminated by newline (\n)
+ * @param  alloc   [description]
+ * @param  dirname [description]
+ * @param  recurse [description]
+ * @return         [description]
+ */
 ZPL_DEF zpl_string zpl_path_dirlist(zpl_allocator alloc, char const *dirname, zpl_b32 recurse);
 
-//! Initialize dirinfo from specified path
+/**
+ * Initialize dirinfo from specified path
+ * @param dir  [description]
+ * @param path [description]
+ */
 ZPL_DEF void zpl_dirinfo_init(zpl_dir_info *dir, char const *path);
 ZPL_DEF void zpl_dirinfo_free(zpl_dir_info *dir);
 
-//! Analyze the entry's dirinfo
+/**
+ * Analyze the entry's dirinfo
+ * @param dir_entry [description]
+ */
 ZPL_DEF void zpl_dirinfo_step(zpl_dir_entry *dir_entry);
 
 //! @}
@@ -3170,8 +3378,8 @@ typedef struct {
 
 typedef struct {
     zpl_allocator    alloc;
-    zpl_opts_entry  *entries; ///< zpl_array
-    zpl_opts_err    *errors; ///< zpl_array
+    zpl_opts_entry  *entries;   ///< zpl_array
+    zpl_opts_err    *errors;    ///< zpl_array
     zpl_opts_entry **positioned; ///< zpl_array
     char const      *appname;
 } zpl_opts;
