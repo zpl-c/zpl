@@ -86,7 +86,7 @@ zpl_inline void *zpl__pr_open_handle(zpl_u8 type, const char *mode, void **handl
 
     return NULL;
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
     return NULL;
 #endif
 }
@@ -176,7 +176,7 @@ pr_free_data:
     return err_code;
 
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
     return -1;
 #endif
 }
@@ -198,7 +198,7 @@ zpl_inline void zpl__pr_close_file_handles(zpl_pr *process) {
 #ifdef ZPL_SYSTEM_WINDOWS
     process->win32_handle = NULL;
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
 #endif
 }
 
@@ -223,7 +223,7 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
 
     return ret_code;
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
     return -1;
 #endif
 }
@@ -246,7 +246,7 @@ zpl_inline void zpl_pr_destroy(zpl_pr *process) {
 
     zpl__pr_close_file_handles(process);
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
 #endif
 }
 
@@ -257,6 +257,6 @@ zpl_inline void zpl_pr_terminate(zpl_pr *process, zpl_i32 err_code) {
     TerminateProcess(process->win32_handle, cast(UINT)err_code);
     zpl_pr_destroy(process);
 #else
-    ZPL_ASSERT(!"Not Implemented");
+    ZPL_NOT_IMPLEMENTED;
 #endif
 }
