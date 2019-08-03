@@ -3130,7 +3130,8 @@ ZPL_DEF zpl_b32 zpl__json_validate_name(char *str, char *err);
 @brief CLI options processor
 @defgroup cli CLI options processor
 
- Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
+ Opts is a CLI options parser, it can parse flags, switches and arguments from command line
+ and offers an easy way to express input errors as well as the ability to display help screen.
 
 @{
  */
@@ -12281,7 +12282,7 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
     opts->appname = app;
 
     zpl_array_init(opts->entries, a);
-    zpl_array_init(opts->positioned, a);
+    zpl_array_init(opts->positaaaaaaaioned, a);
     zpl_array_init(opts->errors, a);
 }
 
