@@ -77,23 +77,23 @@ m.css is available as submodule, so make sure you clone this repo recursively to
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
 
-First, I recommend looking at zpl.h header file, which describes how to use the library. Now you know, that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE** including the zpl.h file itself to successfully embed it.
+First, I recommend looking at [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) header file, which describes how to use the library. Now you know, that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE** including the zpl.h file itself to successfully embed it.
 
-Afterwards, we need to deal with file loading, this time, we can either search for file module inside of zpl.h (not recommended), or we can navigate to `code/zpl/` to see the original form of the ZPL library. 
+Afterwards, we need to deal with file loading, this time, we can either search for file module inside of [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) (not recommended), or we can navigate to [code/zpl/](https://github.com/zpl-c/zpl/blob/master/code/zpl/) to see the original form of the ZPL library.
 
-As you can see, each module is contained within its own source file. There's also a Python script called `build.py` which generates a new zpl.h file, combining all these modules together. 
+As you can see, each module is contained within its own source file. There's also a Python script called [build.py](https://github.com/zpl-c/zpl/blob/master/code/zpl/build.py) which generates a new [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) file, combining all these modules together.
 
-Here we need `_file.c`, which contains necessary file i/o operations. Write a code to read `test.json5` file (you can use zpl_file_read_contents) and try to print its content (either use libc's printf or methods from `_print.c`) Check test folder for code examples.
+Here we need [file.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/file.c), which contains necessary file i/o operations. Write a code to read `test.json5` file (you can use zpl_file_read_contents) and try to print its content (either use libc's printf or methods from [print.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/print.c)) Check test folder for code examples.
 
-Done? Great! Now we need to parse this file, but how? Well guess what, `_json.c` is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
+Done? Great! Now we need to parse this file, but how? Well guess what, [json.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/json.c) is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
 
-But what use is it for a benchmark tool if it doesn't even let you know how long the process took? It is time (pun intended) to visit `_time.c` file now, capture 2 timestamps, one before, another after the operation and the difference is your time you can display to user. Or just check out code examples in test folder.
+But what use is it for a benchmark tool if it doesn't even let you know how long the process took? It is time (pun intended) to visit [time.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/time.c) file now, capture 2 timestamps, one before, another after the operation happened and the difference is your time you can display to user. Or just check out code examples in test folder.
 
-What's left? We can read a specific JSON5 file, parse it and display the time it took to do so. Did I say.. specific? How about we let the user customise the options on the command line? 
+What's left? We can read a specific JSON5 file, parse it and display the time it took to do so. Did I say.. specific? How about we let the user customise the options on the command line?
 
-Visit `_opts.c` and get to know it. As always, test folder can be useful in this case. 
+Visit [opts.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/opts.c) and get to know it. As always, test folder can be useful in this case.
 
-Actually, the following snippet comes from the `json_benchmark.c` test file:
+Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/test/json_benchmark.c) test file:
 
 ```c
 #define ZPL_IMPLEMENTATION
