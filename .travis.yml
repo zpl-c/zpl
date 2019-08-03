@@ -1,11 +1,11 @@
 language: c
 
 after_failure:
-    - curl -v -H User-Agent:bot -H Content-Type:application/json -d '{"content":"**zpl** started the fire! :negative_squared_cross_mark: https://youtu.be/_qxZOB9GxQM?t=209"}' https://discordapp.com/api/webhooks/$DISCORD_WEBHOOK_CHANNEL_ID/$DISCORD_WEBHOOK_TOKEN
+    - curl -v -H User-Agent:bot -H Content-Type:application/json -d '{"content":"**zpl** started the fire! <https://youtu.be/_qxZOB9GxQM?t=209>"}' https://discordapp.com/api/webhooks/$DISCORD_WEBHOOK_CHANNEL_ID/$DISCORD_WEBHOOK_TOKEN
 
 after_success:
-    - curl -v -H User-Agent:bot -H Content-Type:application/json -d '{"content":"**zpl** build went fine! :white_check_mark: https://youtu.be/oN5gFLK96Sg?t=85"}' https://discordapp.com/api/webhooks/$DISCORD_WEBHOOK_CHANNEL_ID/$DISCORD_WEBHOOK_TOKEN
-    - curl -s https://codecov.io/bash
+    - curl -v -H User-Agent:bot -H Content-Type:application/json -d '{"content":"**zpl** build went fine! <https://youtu.be/oN5gFLK96Sg?t=85>"}' https://discordapp.com/api/webhooks/$DISCORD_WEBHOOK_CHANNEL_ID/$DISCORD_WEBHOOK_TOKEN
+    - bash <(curl -s https://codecov.io/bash)
 
 script:
     - mkdir -p build
