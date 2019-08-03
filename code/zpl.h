@@ -973,6 +973,10 @@ do {                                                                            
 #define ZPL_PANIC(msg, ...) ZPL_ASSERT_MSG(0, msg, ##__VA_ARGS__)
 #endif
 
+#ifndef ZPL_NOT_IMPLEMENTED
+#define ZPL_NOT_IMPLEMENTED ZPL_PANIC("not implemented")
+#endif
+
 ZPL_DEF void    zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...);
 ZPL_DEF zpl_i32 zpl_assert_crash(char const *condition);
 
