@@ -5,16 +5,12 @@ after_failure:
 
 after_success:
     - curl -v -H User-Agent:bot -H Content-Type:application/json -d '{"content":"**zpl** build went fine! <https://youtu.be/oN5gFLK96Sg?t=85>"}' https://discordapp.com/api/webhooks/$DISCORD_WEBHOOK_CHANNEL_ID/$DISCORD_WEBHOOK_TOKEN
-    - bash <(curl -s https://codecov.io/bash)
 
 script:
     - mkdir -p build
     - export INCLUDES="-Icode"
     - export LINKER="-pthread -lm -ldl"
+    - gcc -g -std=c99 -I../code build-test.c $LINKER -o build/test-gcc
     - clang -g -std=c99 $INCLUDES test/build-test.c $LINKER -o build/test-clang
     - g++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-gpp-cpp.o
     - clang++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-clang-cpp.o
-    - cd test
-    - gcc -coverage -O0 -std=c99 -I../code build-test.c $LINKER -o build-test
-    - ./build-test
-    - gcov build-test.c
