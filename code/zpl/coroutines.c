@@ -133,10 +133,10 @@ struct {
 
 zpl_isize zpl__co_runner(struct zpl_thread *t) {
     do {
-        zpl_b32 lock = zpl_mutex_try_lock(&zpl__co_internals.is_processing);
-
         if (zpl_atomic32_load(&zpl__co_internals.request_term))
             break;
+        
+        zpl_b32 lock = zpl_mutex_try_lock(&zpl__co_internals.is_processing);
 
         while (!lock) {
             zpl_yield_thread();
@@ -150,7 +150,7 @@ zpl_isize zpl__co_runner(struct zpl_thread *t) {
 
         zpl_jobs_process(&zpl__co_internals.coroutines);
         zpl_mutex_unlock(&zpl__co_internals.is_processing);
-    } while (!zpl_atomic32_load(&zpl__co_internals.request_term));
+    } while (1);
 
     return 0;
 }
