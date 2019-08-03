@@ -12282,7 +12282,7 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
     opts->appname = app;
 
     zpl_array_init(opts->entries, a);
-    zpl_array_init(opts->positaaaaaaaioned, a);
+    zpl_array_init(opts->positioned, a);
     zpl_array_init(opts->errors, a);
 }
 
