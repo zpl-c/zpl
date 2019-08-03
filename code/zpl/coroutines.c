@@ -131,6 +131,8 @@ struct {
     zpl_mutex is_processing;
 } zpl__co_internals;
 
+zpl_thread_local zpl_u8 zpl__co_yield_barrier;
+
 zpl_isize zpl__co_runner(struct zpl_thread *t) {
     do {
         if (zpl_atomic32_load(&zpl__co_internals.request_term))
@@ -172,6 +174,9 @@ zpl_inline void zpl_co_init(zpl_allocator a, zpl_u32 max_threads) {
         zpl_thread_start(&zpl__co_internals.runner, zpl__co_runner, NULL);
         zpl_atomic32_store(&zpl__co_internals.request_term, 0);
         zpl__co_internals.is_ready = 1;
+
+        // Set up a barrier so that we won't let user call zpl_co_yield in a main thread.
+        zpl__co_yield_barrier = 1;
     }
 }
 
@@ -229,6 +234,7 @@ zpl_inline void zpl_co_resume(zpl_co *co, void *data) {
 zpl_inline void zpl_co_yield(zpl_co *co) {
     zpl_i32 value;
     ZPL_ASSERT_NOT_NULL(co);
+    ZPL_ASSERT_MSG((!zpl__co_yield_barrier), "zpl_co_yield can only be called inside of coroutines!");
 
     zpl_atomic32_store(&co->status, ZPL_CO_WAITING);
 
