@@ -3,7 +3,7 @@
 @defgroup misc Various other stuff
 
  Methods that don't belong anywhere but are still very useful in many occasions.
- 
+
  @{
  */
 
@@ -61,11 +61,11 @@ zpl_internal zpl_u32 zpl__get_noise_from_time(void) {
     zpl_u32 accum = 0;
     zpl_f64 start, remaining, end, curr = 0;
     zpl_u64 interval = 100000ll;
-    
+
     start     = zpl_time_now();
     remaining = (interval - cast(zpl_u64)(interval*start)%interval) / cast(zpl_f64)interval;
     end       = start + remaining;
-    
+
     do {
         curr = zpl_time_now();
         accum += cast(zpl_u32)curr;
@@ -99,7 +99,7 @@ void zpl_random_init(zpl_random *r) {
     zpl_isize i, j;
     zpl_u32 x = 0;
     r->value = 0;
-    
+
     r->offsets[0] = zpl__get_noise_from_time();
 #ifdef ZPL_THREADING
     r->offsets[1] = zpl_atomic32_fetch_add(&zpl__random_shared_counter, 1);
@@ -116,7 +116,7 @@ void zpl_random_init(zpl_random *r) {
     r->offsets[6] = zpl__get_noise_from_time();
     tick = zpl_rdtsc();
     r->offsets[7] = cast(zpl_u32)(tick ^ (tick >> 32));
-    
+
     for (j = 0; j < 4; j++) {
         for (i = 0; i < zpl_count_of(r->offsets); i++) {
             r->offsets[i] = x = zpl__permute_with_offset(x, r->offsets[i]);
@@ -134,7 +134,7 @@ zpl_u32 zpl_random_gen_u32(zpl_random *r) {
             carry = ++r->offsets[i] ? 0 : 1;
         }
     }
-    
+
     r->value = x;
     return x;
 }
@@ -146,7 +146,7 @@ zpl_u32 zpl_random_gen_u32_unique(zpl_random *r) {
     for (i = 0; i < zpl_count_of(r->offsets); i++) {
         x = zpl__permute_with_offset(x, r->offsets[i]);
     }
-    
+
     return x;
 }
 
@@ -294,15 +294,15 @@ zpl_inline zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len,
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else
-    
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     FILE *handle = _popen(command, "r");
 #else
     FILE *handle =  popen(command, "r");
 #endif
-    
+
     if(!handle) return 0;
-    
+
     char c;
     zpl_usize i=0;
     while ((c = getc(handle)) != EOF && i++ < buffer_len) {
@@ -313,7 +313,7 @@ zpl_inline zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len,
 #else
     pclose(handle);
 #endif
-    
+
 #endif
     return 1;
 }
@@ -322,31 +322,31 @@ zpl_inline zpl_string zpl_system_command_str(const char *command, zpl_allocator 
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_system_command not supported");
 #else
-    
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     FILE *handle = _popen(command, "r");
 #else
     FILE *handle =  popen(command, "r");
 #endif
-    
+
     if(!handle) return NULL;
-    
+
     zpl_string output = zpl_string_make_reserve(backing, 4);
-    
+
     char c;
     while ((c = getc(handle)) != EOF) {
         char ins[2] = {c,0};
         output = zpl_string_appendc(output, ins);
     }
-    
-    
-    
+
+
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     _pclose(handle);
 #else
     pclose(handle);
 #endif
-    
+
 #endif
     return output;
 }

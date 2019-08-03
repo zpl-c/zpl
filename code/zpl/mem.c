@@ -3,7 +3,7 @@
 @defgroup memman Memory management
 
  Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
- 
+
  @{
  */
 
@@ -349,7 +349,7 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc);
 
 typedef struct zpl_stack_memory {
     zpl_allocator backing;
-    
+
     void *physical_start;
     zpl_usize total_size;
     zpl_usize allocated;
@@ -384,9 +384,9 @@ zpl_b32 zpl_is_power_of_two(zpl_isize x) {
 
 zpl_inline void *zpl_align_forward(void *ptr, zpl_isize alignment) {
     zpl_uintptr p;
-    
+
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
-    
+
     p = cast(zpl_uintptr) ptr;
     return cast(void *)((p + (alignment - 1)) & ~(alignment - 1));
 }
@@ -411,9 +411,9 @@ zpl_inline void zpl_zero_size(void *ptr, zpl_isize size) { zpl_memset(ptr, 0, si
 
 zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
     if (dest == NULL) { return NULL; }
-    
+
     return memcpy(dest, source, n);
-    
+
     // TODO: Re-work the whole method
 #if 0
 #if defined(_MSC_VER)
@@ -428,9 +428,9 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
     zpl_u8 *d = cast(zpl_u8 *) dest;
     zpl_u8 const *s = cast(zpl_u8 const *) source;
     zpl_u32 w, x;
-    
+
     for (; cast(zpl_uintptr) s % 4 && n; n--) *d++ = *s++;
-    
+
     if (cast(zpl_uintptr) d % 4 == 0) {
         for (; n >= 16; s += 16, d += 16, n -= 16) {
             *cast(zpl_u32 *)(d + 0) = *cast(zpl_u32 *)(s + 0);
@@ -456,7 +456,7 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
         if (n & 1) { *d = *s; }
         return dest;
     }
-    
+
     if (n >= 32) {
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define LS <<
@@ -481,7 +481,7 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
                     *cast(zpl_u32 *)(d + 8) = (w LS 24) | (x RS 8);
                     w = *cast(zpl_u32 *)(s + 13);
                     *cast(zpl_u32 *)(d + 12) = (x LS 24) | (w RS 8);
-                    
+
                     s += 16;
                     d += 16;
                     n -= 16;
@@ -501,7 +501,7 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
                     *cast(zpl_u32 *)(d + 8) = (w LS 16) | (x RS 16);
                     w = *cast(zpl_u32 *)(s + 14);
                     *cast(zpl_u32 *)(d + 12) = (x LS 16) | (w RS 16);
-                    
+
                     s += 16;
                     d += 16;
                     n -= 16;
@@ -520,7 +520,7 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
                     *cast(zpl_u32 *)(d + 8) = (w LS 8) | (x RS 24);
                     w = *cast(zpl_u32 *)(s + 15);
                     *cast(zpl_u32 *)(d + 12) = (x LS 8) | (w RS 24);
-                    
+
                     s += 16;
                     d += 16;
                     n -= 16;
@@ -570,23 +570,23 @@ zpl_inline void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
         }
         if (n & 1) { *d = *s; }
     }
-    
+
 #endif
 #endif
-    
+
     return dest;
 }
 
 zpl_inline void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
     if (dest == NULL) { return NULL; }
-    
+
     zpl_u8 *d = cast(zpl_u8 *) dest;
     zpl_u8 const *s = cast(zpl_u8 const *) source;
-    
+
     if (d == s) return d;
     if (s + n <= d || d + n <= s) // NOTE: Non-overlapping
         return zpl_memcopy(d, s, n);
-    
+
     if (d < s) {
         if (cast(zpl_uintptr) s % zpl_size_of(zpl_isize) == cast(zpl_uintptr) d % zpl_size_of(zpl_isize)) {
             while (cast(zpl_uintptr) d % zpl_size_of(zpl_isize)) {
@@ -614,17 +614,17 @@ zpl_inline void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
         }
         while (n) n--, d[n] = s[n];
     }
-    
+
     return dest;
 }
 
 zpl_inline void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     if (dest == NULL) { return NULL; }
-    
+
     zpl_u8 *s = cast(zpl_u8 *) dest;
     zpl_isize k;
     zpl_u32 c32 = ((zpl_u32)-1) / 255 * c;
-    
+
     if (n == 0) return dest;
     s[0] = s[n - 1] = c;
     if (n < 3) return dest;
@@ -633,12 +633,12 @@ zpl_inline void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     if (n < 7) return dest;
     s[3] = s[n - 4] = c;
     if (n < 9) return dest;
-    
+
     k = -cast(zpl_intptr) s & 3;
     s += k;
     n -= k;
     n &= -4;
-    
+
     *cast(zpl_u32 *)(s + 0) = c32;
     *cast(zpl_u32 *)(s + n - 4) = c32;
     if (n < 9) return dest;
@@ -655,11 +655,11 @@ zpl_inline void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     *cast(zpl_u32 *)(s + n - 24) = c32;
     *cast(zpl_u32 *)(s + n - 20) = c32;
     *cast(zpl_u32 *)(s + n - 16) = c32;
-    
+
     k = 24 + (cast(zpl_uintptr) s & 4);
     s += k;
     n -= k;
-    
+
     {
         zpl_u64 c64 = (cast(zpl_u64) c32 << 32) | c32;
         while (n > 31) {
@@ -667,21 +667,21 @@ zpl_inline void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
             *cast(zpl_u64 *)(s + 8) = c64;
             *cast(zpl_u64 *)(s + 16) = c64;
             *cast(zpl_u64 *)(s + 24) = c64;
-            
+
             n -= 32;
             s += 32;
         }
     }
-    
+
     return dest;
 }
 
 zpl_inline zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size) {
     zpl_u8 const *s1p8 = cast(zpl_u8 const *) s1;
     zpl_u8 const *s2p8 = cast(zpl_u8 const *) s2;
-    
+
     if (s1 == NULL || s2 == NULL) { return 0; }
-    
+
     while (size--) {
         zpl_isize d;
         if ((d = (*s1p8++ - *s2p8++)) != 0) return cast(zpl_i32) d;
@@ -691,7 +691,7 @@ zpl_inline zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size
 
 void zpl_memswap(void *i, void *j, zpl_isize size) {
     if (i == j) return;
-    
+
     if (size == 4) {
         zpl_swap(zpl_u32, *cast(zpl_u32 *) i, *cast(zpl_u32 *) j);
     } else if (size == 8) {
@@ -704,14 +704,14 @@ void zpl_memswap(void *i, void *j, zpl_isize size) {
         }
     } else {
         char buffer[256];
-        
+
         while (size > zpl_size_of(buffer)) {
             zpl_memswap(i, j, zpl_size_of(buffer));
             i = zpl_pointer_add(i, zpl_size_of(buffer));
             j = zpl_pointer_add(j, zpl_size_of(buffer));
             size -= zpl_size_of(buffer);
         }
-        
+
         zpl_memcopy(buffer, i, size);
         zpl_memcopy(i, j, size);
         zpl_memcopy(j, buffer, size);
@@ -742,7 +742,7 @@ void const *zpl_memchr(void const *data, zpl_u8 c, zpl_isize n) {
             n--;
         }
     }
-    
+
     return n ? cast(void const *) s : NULL;
 }
 
@@ -795,9 +795,9 @@ zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_
     zpl_virtual_memory new_vm = { 0 };
     void *ptr;
     ZPL_ASSERT(vm.size >= lead_size + size);
-    
+
     ptr = zpl_pointer_add(vm.data, lead_size);
-    
+
     zpl_vm_free(vm);
     new_vm = zpl_vm_alloc(ptr, size);
     if (new_vm.data == ptr) return new_vm;
@@ -841,10 +841,10 @@ zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_
     void *ptr;
     zpl_isize trail_size;
     ZPL_ASSERT(vm.size >= lead_size + size);
-    
+
     ptr = zpl_pointer_add(vm.data, lead_size);
     trail_size = vm.size - lead_size - size;
-    
+
     if (lead_size != 0) zpl_vm_free(zpl_vm(vm.data, lead_size));
     if (trail_size != 0) zpl_vm_free(zpl_vm(ptr, trail_size));
     return zpl_vm(ptr, size);
@@ -902,14 +902,14 @@ zpl_inline char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize l
 zpl_inline void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl_isize old_size, zpl_isize new_size,
                                           zpl_isize alignment) {
     if (!old_memory) return zpl_alloc_align(a, new_size, alignment);
-    
+
     if (new_size == 0) {
         zpl_free(a, old_memory);
         return NULL;
     }
-    
+
     if (new_size < old_size) new_size = old_size;
-    
+
     if (old_size == new_size) {
         return old_memory;
     } else {
@@ -951,18 +951,18 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         break;
         case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
         case ZPL_ALLOCATION_RESIZE: ptr = _aligned_realloc(old_memory, size, alignment); break;
-        
+
 #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
         case ZPL_ALLOCATION_ALLOC: {
             ptr = aligned_alloc(alignment, size);
-            
+
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
         } break;
-        
+
         case ZPL_ALLOCATION_FREE: {
             free(old_memory);
         } break;
-        
+
         case ZPL_ALLOCATION_RESIZE: {
             zpl_allocator a = zpl_heap_allocator( );
             ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
@@ -970,23 +970,23 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
 #else
         case ZPL_ALLOCATION_ALLOC: {
             posix_memalign(&ptr, alignment, size);
-            
+
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
         } break;
-        
+
         case ZPL_ALLOCATION_FREE: {
             free(old_memory);
         } break;
-        
+
         case ZPL_ALLOCATION_RESIZE: {
             zpl_allocator a = zpl_heap_allocator( );
             ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
         } break;
 #endif
-        
+
         case ZPL_ALLOCATION_FREE_ALL: break;
     }
-    
+
     return ptr;
 }
 
@@ -1025,12 +1025,12 @@ zpl_inline void zpl_arena_free(zpl_arena *arena) {
 zpl_inline zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment) {
     zpl_isize alignment_offset, result_pointer, mask;
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
-    
+
     alignment_offset = 0;
     result_pointer = cast(zpl_isize) arena->physical_start + arena->total_allocated;
     mask = alignment - 1;
     if (result_pointer & mask) alignment_offset = alignment - (result_pointer & mask);
-    
+
     return alignment_offset;
 }
 
@@ -1051,32 +1051,32 @@ zpl_inline zpl_allocator zpl_arena_allocator(zpl_arena *arena) {
 ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
     zpl_arena *arena = cast(zpl_arena *) allocator_data;
     void *ptr = NULL;
-    
+
     zpl_unused(old_size);
-    
+
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
             zpl_isize total_size = size + alignment;
-            
+
             // NOTE: Out of memory
             if (arena->total_allocated + total_size > cast(zpl_isize) arena->total_size) {
                 zpl_printf_err("Arena out of memory\n");
                 return NULL;
             }
-            
+
             ptr = zpl_align_forward(end, alignment);
             arena->total_allocated += total_size;
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
         } break;
-        
+
         case ZPL_ALLOCATION_FREE:
         // NOTE: Free all at once
         // Use Temp_Arena_Memory if you want to free a block
         break;
-        
+
         case ZPL_ALLOCATION_FREE_ALL: arena->total_allocated = 0; break;
-        
+
         case ZPL_ALLOCATION_RESIZE: {
             // TODO: Check if ptr is on top of stack and just extend
             zpl_allocator a = zpl_arena_allocator(arena);
@@ -1113,18 +1113,18 @@ void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_bl
     zpl_isize actual_block_size, pool_size, block_index;
     void *data, *curr;
     zpl_uintptr *end;
-    
+
     zpl_zero_item(pool);
-    
+
     pool->backing = backing;
     pool->block_size = block_size;
     pool->block_align = block_align;
-    
+
     actual_block_size = block_size + block_align;
     pool_size = num_blocks * actual_block_size;
-    
+
     data = zpl_alloc_align(backing, pool_size, block_align);
-    
+
     // NOTE: Init intrusive freelist
     curr = data;
     for (block_index = 0; block_index < num_blocks - 1; block_index++) {
@@ -1132,10 +1132,10 @@ void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_bl
         *next = cast(zpl_uintptr) curr + actual_block_size;
         curr = zpl_pointer_add(curr, actual_block_size);
     }
-    
+
     end = cast(zpl_uintptr *) curr;
     *end = cast(zpl_uintptr) NULL;
-    
+
     pool->physical_start = data;
     pool->free_list = data;
 }
@@ -1153,43 +1153,43 @@ zpl_inline zpl_allocator zpl_pool_allocator(zpl_pool *pool) {
 ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
     zpl_pool *pool = cast(zpl_pool *) allocator_data;
     void *ptr = NULL;
-    
+
     zpl_unused(old_size);
-    
+
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             zpl_uintptr next_free;
             ZPL_ASSERT(size == pool->block_size);
             ZPL_ASSERT(alignment == pool->block_align);
             ZPL_ASSERT(pool->free_list != NULL);
-            
+
             next_free = *cast(zpl_uintptr *) pool->free_list;
             ptr = pool->free_list;
             pool->free_list = cast(void *) next_free;
             pool->total_size += pool->block_size;
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
         } break;
-        
+
         case ZPL_ALLOCATION_FREE: {
             zpl_uintptr *next;
             if (old_memory == NULL) return NULL;
-            
+
             next = cast(zpl_uintptr *) old_memory;
             *next = cast(zpl_uintptr) pool->free_list;
             pool->free_list = old_memory;
             pool->total_size -= pool->block_size;
         } break;
-        
+
         case ZPL_ALLOCATION_FREE_ALL:
         // TODO:
         break;
-        
+
         case ZPL_ALLOCATION_RESIZE:
         // NOTE: Cannot resize
         ZPL_PANIC("You cannot resize something allocated by with a pool.");
         break;
     }
-    
+
     return ptr;
 }
 
@@ -1234,18 +1234,18 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
     zpl_scratch_memory *s = cast(zpl_scratch_memory *) allocator_data;
     void *ptr = NULL;
     ZPL_ASSERT_NOT_NULL(s);
-    
+
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             void *pt = s->alloc_point;
             zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *) pt;
             void *data = zpl_align_forward(header + 1, alignment);
             void *end = zpl_pointer_add(s->physical_start, s->total_size);
-            
+
             ZPL_ASSERT(alignment % 4 == 0);
             size = ((size + 3) / 4) * 4;
             pt = zpl_pointer_add(pt, size);
-            
+
             // NOTE: Wrap around
             if (pt > end) {
                 header->size = zpl_pointer_diff(header, end) | ZPL_ISIZE_HIGH_BIT;
@@ -1254,16 +1254,16 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
                 data = zpl_align_forward(header + 1, alignment);
                 pt = zpl_pointer_add(pt, size);
             }
-            
+
             if (!zpl_scratch_memory_is_in_use(s, pt)) {
                 zpl_allocation_header_fill(header, pt, zpl_pointer_diff(header, pt));
                 s->alloc_point = cast(zpl_u8 *) pt;
                 ptr = data;
             }
-            
+
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
         } break;
-        
+
         case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 void *end = zpl_pointer_add(s->physical_start, s->total_size);
@@ -1274,28 +1274,28 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
                     zpl_allocation_header_ev *h = zpl_allocation_header(old_memory);
                     ZPL_ASSERT((h->size & ZPL_ISIZE_HIGH_BIT) == 0);
                     h->size = h->size | ZPL_ISIZE_HIGH_BIT;
-                    
+
                     while (s->free_point != s->alloc_point) {
                         zpl_allocation_header_ev *header = cast(zpl_allocation_header_ev *) s->free_point;
                         if ((header->size & ZPL_ISIZE_HIGH_BIT) == 0) break;
-                        
+
                         s->free_point = zpl_pointer_add(s->free_point, h->size & (~ZPL_ISIZE_HIGH_BIT));
                         if (s->free_point == end) s->free_point = s->physical_start;
                     }
                 }
             }
         } break;
-        
+
         case ZPL_ALLOCATION_FREE_ALL:
         s->alloc_point = s->physical_start;
         s->free_point = s->physical_start;
         break;
-        
+
         case ZPL_ALLOCATION_RESIZE:
         ptr = zpl_default_resize_align(zpl_scratch_allocator(s), old_memory, old_size, size, alignment);
         break;
     }
-    
+
     return ptr;
 }
 
@@ -1321,9 +1321,9 @@ zpl_inline void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing
 
 zpl_inline zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
     if (s->allocated == 0) return false;
-    
+
     if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) { return true; }
-    
+
     return false;
 }
 
@@ -1347,15 +1347,15 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
     ZPL_ASSERT_NOT_NULL(s);
     zpl_unused(old_size);
     zpl_unused(flags);
-    
+
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             size += ZPL_STACK_ALLOC_OFFSET;
             zpl_u64 alloc_offset = s->allocated;
-            
+
             void *curr =
                 cast(zpl_u64 *) zpl_align_forward(cast(zpl_u64 *) zpl_pointer_add(s->physical_start, s->allocated), alignment);
-            
+
             if (cast(zpl_u64 *) zpl_pointer_add(curr, size) > cast(zpl_u64 *) zpl_pointer_add(s->physical_start, s->total_size)) {
                 if (s->backing.proc) {
                     void *old_start = s->physical_start;
@@ -1368,29 +1368,29 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
                     ZPL_PANIC("Can not resize stack's memory! Allocator not defined!");
                 }
             }
-            
+
             s->allocated = zpl_pointer_diff(s->physical_start, curr) + size;
-            
+
             *(zpl_u64 *)curr = alloc_offset;
             curr = zpl_pointer_add(curr, ZPL_STACK_ALLOC_OFFSET);
-            
+
             ptr = curr;
         } break;
-        
+
         case ZPL_ALLOCATION_FREE: {
             if (old_memory) {
                 void *curr = old_memory;
                 curr = zpl_pointer_sub(curr, ZPL_STACK_ALLOC_OFFSET);
-                
+
                 zpl_u64 alloc_offset = *(zpl_u64 *)curr;
                 s->allocated = (zpl_usize)alloc_offset;
             }
         } break;
-        
+
         case ZPL_ALLOCATION_FREE_ALL: {
             s->allocated = 0;
         } break;
-        
+
         case ZPL_ALLOCATION_RESIZE: {
             ZPL_PANIC("You cannot resize something allocated by a stack.");
         } break;

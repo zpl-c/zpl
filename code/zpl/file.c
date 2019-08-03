@@ -15,7 +15,7 @@ typedef enum zpl_file_mode_flag {
     ZPL_FILE_MODE_WRITE  = ZPL_BIT(1),
     ZPL_FILE_MODE_APPEND = ZPL_BIT(2),
     ZPL_FILE_MODE_RW     = ZPL_BIT(3),
-    
+
     zpl_file_mode_modes_ev = ZPL_FILE_MODE_READ | ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW,
 } zpl_file_mode_flag;
 
@@ -112,7 +112,7 @@ typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_INPUT,
     ZPL_FILE_STANDARD_OUTPUT,
     ZPL_FILE_STANDARD_ERROR,
-    
+
     ZPL_FILE_STANDARD_COUNT,
 } zpl_file_standard_type;
 
@@ -242,7 +242,7 @@ zpl_internal ZPL_FILE_SEEK_PROC(zpl__win32_file_seek) {
     LARGE_INTEGER li_offset;
     li_offset.QuadPart = offset;
     if (!SetFilePointerEx(fd.p, li_offset, &li_offset, whence)) { return false; }
-    
+
     if (new_offset) *new_offset = li_offset.QuadPart;
     return true;
 }
@@ -257,7 +257,7 @@ zpl_internal ZPL_FILE_READ_AT_PROC(zpl__win32_file_read) {
         if (bytes_read) *bytes_read = bytes_read_;
         result = true;
     }
-    
+
     return result;
 }
 
@@ -282,7 +282,7 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
     DWORD creation_disposition;
     void *handle;
     wchar_t *w_text;
-    
+
     switch (mode & zpl_file_mode_modes_ev) {
         case ZPL_FILE_MODE_READ:
         desired_access = GENERIC_READ;
@@ -310,13 +310,13 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
         break;
         default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
-    
+
     w_text = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator( ), filename, NULL);
     handle = CreateFileW(w_text, desired_access, FILE_SHARE_READ | FILE_SHARE_DELETE, NULL, creation_disposition,
                          FILE_ATTRIBUTE_NORMAL, NULL);
-    
+
     zpl_free(zpl_heap_allocator( ), w_text);
-    
+
     if (handle == INVALID_HANDLE_VALUE) {
         DWORD err = GetLastError( );
         switch (err) {
@@ -327,7 +327,7 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
         }
         return ZPL_FILE_ERROR_INVALID;
     }
-    
+
     if (mode & ZPL_FILE_MODE_APPEND) {
         LARGE_INTEGER offset = { 0 };
         if (!SetFilePointerEx(handle, offset, NULL, ZPL_SEEK_WHENCE_END)) {
@@ -335,7 +335,7 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
             return ZPL_FILE_ERROR_INVALID;
         }
     }
-    
+
     fd->p = handle;
     *ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
@@ -392,13 +392,13 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
         case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW: os_mode = O_RDWR | O_APPEND | O_CREAT; break;
         default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
-    
+
     fd->i = open(filename, os_mode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     if (fd->i < 0) {
         // TODO: More file errors
         return ZPL_FILE_ERROR_INVALID;
     }
-    
+
     *ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
 }
@@ -408,13 +408,13 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
 zpl_file_error zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operations ops, char const *filename) {
     zpl_file_error err = ZPL_FILE_ERROR_NONE;
     zpl_isize len = zpl_strlen(filename);
-    
+
     f->ops = ops;
     f->fd = fd;
     f->filename = zpl_alloc_array(zpl_heap_allocator( ), char, len + 1);
     zpl_memcopy(cast(char *) f->filename, cast(char *) filename, len + 1);
     f->last_write_time = zpl_fs_last_write_time(f->filename);
-    
+
     return err;
 }
 
@@ -435,15 +435,15 @@ zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry);
 
 zpl_file_error zpl_file_close(zpl_file *f) {
     if (!f) return ZPL_FILE_ERROR_INVALID;
-    
+
     if (f->filename) zpl_free(zpl_heap_allocator( ), cast(char *) f->filename);
-    
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     if (f->fd.p == INVALID_HANDLE_VALUE) return ZPL_FILE_ERROR_INVALID;
 #else
     if (f->fd.i < 0) return ZPL_FILE_ERROR_INVALID;
 #endif
-    
+
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.close(f->fd);
 
@@ -452,7 +452,7 @@ zpl_file_error zpl_file_close(zpl_file *f) {
         zpl_mfree(f->dir);
         f->dir = NULL;
     }
-    
+
     return ZPL_FILE_ERROR_NONE;
 }
 
@@ -589,7 +589,7 @@ zpl_b32 zpl_fs_exists(char const *name) {
     void *handle;
     zpl_b32 found = false;
     zpl_allocator a = zpl_heap_allocator( );
-    
+
     w_text = zpl__alloc_utf8_to_ucs2(a, name, NULL);
     if (w_text == NULL) { return false; }
     handle = FindFirstFileW(w_text, &data);
@@ -641,7 +641,7 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 #else
     zpl_zero_item(file);
     FILE *fd = NULL;
-    
+
 #if ZPL_SYSTEM_WINDOWS && !defined(ZPL_COMPILER_GCC)
     errno_t errcode = tmpfile_s(&fd);
 
@@ -651,9 +651,9 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 #else
     fd = tmpfile();
 #endif
-    
+
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
-    
+
     file->fd.p = fd;
     file->ops = zpl_default_file_operations;
 #endif
@@ -666,13 +666,13 @@ zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     FILETIME last_write_time = { 0 };
     WIN32_FILE_ATTRIBUTE_DATA data = { 0 };
     zpl_allocator a = zpl_heap_allocator( );
-    
+
     wchar_t *w_text = zpl__alloc_utf8_to_ucs2(a, filepath, NULL);
     if (w_text == NULL) { return 0; }
     if (GetFileAttributesExW(w_text, GetFileExInfoStandard, &data)) last_write_time = data.ftLastWriteTime;
-    
+
     zpl_free(a, w_text);
-    
+
     li.LowPart = last_write_time.dwLowDateTime;
     li.HighPart = last_write_time.dwHighDateTime;
     return cast(zpl_file_time) li.QuadPart;
@@ -681,13 +681,13 @@ zpl_file_time zpl_fs_last_write_time(char const *filepath) {
 zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-    
+
     wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
     if (w_old == NULL) { return false; }
-    
+
     wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
     if (w_new != NULL) { result = CopyFileW(w_old, w_new, fail_if_exists); }
-    
+
     zpl_free(a, w_old);
     zpl_free(a, w_new);
     return result;
@@ -696,13 +696,13 @@ zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_fi
 zpl_inline zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-    
+
     wchar_t *w_old = zpl__alloc_utf8_to_ucs2(a, existing_filename, NULL);
     if (w_old == NULL) { return false; }
-    
+
     wchar_t *w_new = zpl__alloc_utf8_to_ucs2(a, new_filename, NULL);
     if (w_new != NULL) { result = MoveFileW(w_old, w_new); }
-    
+
     zpl_free(a, w_old);
     zpl_free(a, w_new);
     return result;
@@ -711,12 +711,12 @@ zpl_inline zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_fi
 zpl_inline zpl_b32 zpl_fs_remove(char const *filename) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
-    
+
     wchar_t *w_filename = zpl__alloc_utf8_to_ucs2(a, filename, NULL);
     if (w_filename == NULL) { return false; }
-    
+
     result = DeleteFileW(w_filename);
-    
+
     zpl_free(a, w_filename);
     return result;
 }
@@ -726,9 +726,9 @@ zpl_inline zpl_b32 zpl_fs_remove(char const *filename) {
 zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     time_t result = 0;
     struct stat file_stat;
-    
+
     if (stat(filepath, &file_stat)) result = file_stat.st_mtime;
-    
+
     return cast(zpl_file_time) result;
 }
 
@@ -740,15 +740,15 @@ zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_fi
     zpl_isize size;
     int existing_fd = open(existing_filename, O_RDONLY, 0);
     int new_fd = open(new_filename, O_WRONLY | O_CREAT, 0666);
-    
+
     struct stat stat_existing;
     fstat(existing_fd, &stat_existing);
-    
+
     size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size);
-    
+
     close(new_fd);
     close(existing_fd);
-    
+
     return size == stat_existing.st_size;
 #endif
 }
@@ -771,9 +771,9 @@ zpl_inline zpl_b32 zpl_fs_remove(char const *filename) {
 zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_terminate, char const *filepath) {
     zpl_file_contents result = { 0 };
     zpl_file file = { 0 };
-    
+
     result.allocator = a;
-    
+
     if (zpl_file_open(&file, filepath) == ZPL_FILE_ERROR_NONE) {
         zpl_isize file_size = cast(zpl_isize) zpl_file_size(&file);
         if (file_size > 0) {
@@ -787,7 +787,7 @@ zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_terminate
         }
         zpl_file_close(&file);
     }
-    
+
     return result;
 }
 
@@ -795,13 +795,13 @@ char *zpl_file_read_lines(zpl_allocator alloc, char ***lines, char const *filena
     zpl_file f = { 0 };
     zpl_file_open(&f, filename);
     zpl_isize fsize = (zpl_isize)zpl_file_size(&f);
-    
+
     char *contents = (char *)zpl_alloc(alloc, fsize + 1);
     zpl_file_read(&f, contents, fsize);
     contents[fsize] = 0;
     *lines = zpl_str_split_lines(alloc, contents, strip_whitespace);
     zpl_file_close(&f);
-    
+
     return contents;
 }
 
@@ -869,33 +869,33 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
 
     w_path = zpl__alloc_utf8_to_ucs2(zpl_heap_allocator( ), path, NULL);
     if (w_path == NULL) { return NULL; }
-    
+
     w_len = GetFullPathNameW(w_path, 0, NULL, NULL);
     if (w_len == 0) { return NULL; }
-    
+
     w_fullpath = zpl_alloc_array(zpl_heap_allocator( ), wchar_t, w_len + 1);
     GetFullPathNameW(w_path, cast(int) w_len, w_fullpath, NULL);
     w_fullpath[w_len] = 0;
-    
+
     zpl_free(zpl_heap_allocator( ), w_path);
-    
+
     new_len = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, NULL, 0, NULL, NULL);
-    
+
     if (new_len == 0) {
         zpl_free(zpl_heap_allocator( ), w_fullpath);
         return NULL;
     }
-    
+
     new_path = zpl_alloc_array(a, char, new_len1);
     new_len1 = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, new_path,
                                    cast(int) new_len, NULL, NULL);
-    
+
     if (new_len1 == 0) {
         zpl_free(zpl_heap_allocator( ), w_fullpath);
         zpl_free(a, new_path);
         return NULL;
     }
-    
+
     new_path[new_len] = 0;
     return new_path;
 #else
@@ -907,14 +907,14 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
         // NOTE(bill): File does not exist
         fullpath = cast(char *) path;
     }
-    
+
     len = zpl_strlen(fullpath);
-    
+
     result = zpl_alloc_array(a, char, len + 1);
     zpl_memmove(result, fullpath, len);
     result[len] = 0;
     zpl_free(a, p);
-    
+
     return result;
 #endif
 }
@@ -926,16 +926,16 @@ zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode) {
 #else
     error = mkdir(path, (mode_t)mode);
 #endif
-    
+
     if (error == 0) { return ZPL_FILE_ERROR_NONE; }
-    
+
     switch (errno) {
         case EPERM:
         case EACCES: return ZPL_FILE_ERROR_PERMISSION;
         case EEXIST: return ZPL_FILE_ERROR_EXISTS;
         case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
     }
-    
+
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
@@ -946,9 +946,9 @@ zpl_file_error zpl_path_rmdir(char const *path) {
 #else
     error = rmdir(path);
 #endif
-    
+
     if (error == 0) { return ZPL_FILE_ERROR_NONE; }
-    
+
     switch (errno) {
         case EPERM:
         case EACCES: return ZPL_FILE_ERROR_PERMISSION;
@@ -956,7 +956,7 @@ zpl_file_error zpl_path_rmdir(char const *path) {
         case ENOTEMPTY: return ZPL_FILE_ERROR_NOT_EMPTY;
         case ENAMETOOLONG: return ZPL_FILE_ERROR_NAME_TOO_LONG;
     }
-    
+
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
@@ -965,19 +965,19 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     DIR *d, *cd;
     struct dirent *dir;
     d = opendir(dirname);
-    
+
     if (d) {
         while ((dir = readdir(d))) {
             if (!zpl_strncmp(dir->d_name, "..", 2)) continue;
             if (dir->d_name[0] == '.' && dir->d_name[1] == 0) continue;
-            
+
             zpl_string dirpath = zpl_string_make(alloc, dirname);
             dirpath = zpl_string_appendc(dirpath, "/");
             dirpath = zpl_string_appendc(dirpath, dir->d_name);
-            
+
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
-            
+
             if (recurse && (cd = opendir(dirpath)) != NULL) { zpl__file_direntry(alloc, dirpath, output, recurse); }
             zpl_string_free(dirpath);
         }
@@ -986,41 +986,41 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     zpl_usize length = zpl_strlen(dirname);
     struct _wfinddata_t data;
     zpl_intptr findhandle;
-    
+
     char directory[MAX_PATH] = { 0 };
     zpl_strncpy(directory, dirname, length);
-    
+
     // keeping it native
     for (zpl_usize i = 0; i < length; i++) {
         if (directory[i] == '/') directory[i] = '\\';
     }
-    
+
     // remove trailing slashses
     if (directory[length - 1] == '\\') { directory[length - 1] = '\0'; }
-    
+
     // attach search parttern
     zpl_string findpath = zpl_string_make(alloc, directory);
     findpath = zpl_string_appendc(findpath, "\\");
     findpath = zpl_string_appendc(findpath, "*");
-    
+
     findhandle = _wfindfirst((const wchar_t *)zpl_utf8_to_ucs2_buf((const zpl_u8 *)findpath), &data);
     zpl_string_free(findpath);
-    
+
     if (findhandle != -1) {
         do {
             char *filename = (char *)zpl_ucs2_to_utf8_buf((const zpl_u16 *)data.name);
             if (!zpl_strncmp(filename, "..", 2)) continue;
             if (filename[0] == '.' && filename[1] == 0) continue;
-            
+
             zpl_string dirpath = zpl_string_make(alloc, directory);
             dirpath = zpl_string_appendc(dirpath, "\\");
             dirpath = zpl_string_appendc(dirpath, filename);
-            
+
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
-            
+
             if (recurse && (data.attrib & _A_SUBDIR)) { zpl__file_direntry(alloc, dirpath, output, recurse); }
-            
+
             zpl_string_free(dirpath);
         } while (_wfindnext(findhandle, &data) != -1);
         _findclose(findhandle);
@@ -1043,7 +1043,7 @@ void zpl_dirinfo_init(zpl_dir_info *dir, char const *path) {
     *dir = dir_;
     dir->fullpath = (char const*)zpl_malloc(zpl_strlen(path));
     zpl_strcpy((char *)dir->fullpath, path);
-    
+
 
     zpl_string dirlist = zpl_path_dirlist(zpl_heap(), path, false);
     char **files=zpl_str_split_lines(zpl_heap(), dirlist, false);
@@ -1051,7 +1051,7 @@ void zpl_dirinfo_init(zpl_dir_info *dir, char const *path) {
     dir->buf = dirlist;
 
     zpl_array_init(dir->entries, zpl_heap());
-    
+
     for (zpl_i32 i=0; i<zpl_array_count(files); ++i) {
         zpl_dir_entry entry = {0};
         entry.filename = files[i];
@@ -1089,7 +1089,7 @@ zpl_u8 zpl_fs_get_type(char const *path) {
 
     if (attrs == INVALID_FILE_ATTRIBUTES) {
         return ZPL_DIR_TYPE_UNKNOWN;
-    } 
+    }
 
     if (attrs & FILE_ATTRIBUTE_DIRECTORY) {
         return ZPL_DIR_TYPE_FOLDER;
@@ -1150,7 +1150,7 @@ void zpl_file_dirinfo_refresh(zpl_file *file) {
     *file->dir = dir_;
     file->dir->filename = file->filename;
     file->dir->type = ZPL_DIR_TYPE_FILE;
-    
+
     zpl_dirinfo_step(file->dir);
 }
 
@@ -1161,7 +1161,7 @@ void zpl_path_fix_slashes(char *path) {
     while (*p != '\0') {
         if (*p == '/')
             *p = '\\';
-        
+
         ++p;
     }
 #endif

@@ -1,15 +1,15 @@
 /*
 
   ZPL - Global module
-  
+
 Usage:
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
-  
+
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
-  
+
   To make use of platform layer, define ZPL_PLATFORM, like:
-  
+
   #define ZPL_PLATFORM
   #include "zpl.h"
 
@@ -27,7 +27,7 @@ Usage:
       - stb_truetype.h
 
       unless ZPLGL_NO_FONTS is defined
-  
+
 Options:
 
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
@@ -36,15 +36,15 @@ Options:
   ZPL_OPENGL - enables OpenGL module.
     ZPLGL_NO_FONTS - disables font rendering support for OpenGL module.
     ZPLGL_NO_BASIC_STATE - disables basic state API (contains useful 2D rendering methods as well as font rendering)
-  
-  
+
+
 Credits:
   Read AUTHORS.md
-  
+
 GitHub:
   https://github.com/zpl-c/zpl
-  
-Version History: 
+
+Version History:
   9.8.0 - Incorporated OpenGL into ZPL core as an optional module
   9.7.0 - Added co-routine module
   9.6.0 - Added process module for creation and manipulation
@@ -80,13 +80,13 @@ Version History:
   8.12.0 - Added helper constructors for containers
   8.11.2 - Fix bug in opts module
   8.11.1 - Small code improvements
-  8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it 
+  8.11.0 - Ported regex processor from https://github.com/gingerBill/gb/ and applied fixes on top of it
   8.10.2 - Fix zpl_strtok
   8.10.1 - Replace zpl_strchr by zpl_char_last_occurence
   8.10.0 - Added zpl_strchr
   8.9.0  - API improvements for JSON5 parser
   8.8.4  - Add support for SJSON formatting http://bitsquid.blogspot.com/2009/10/simplified-json-notation.html
-  
+
   6.8.3  - JSON5 exp fix
   6.8.2  - Bugfixes applied from gb
   6.8.1  - Performance improvements for JSON5 parser
@@ -106,7 +106,7 @@ Version History:
   6.0.2  - Fixed warnings for json5 i64 printfs
   6.0.1  - Fixed warnings for particual win compiler in dirlist method
   6.0.0  - New build, include/ was renamed to code/
-  
+
   5.8.3  - Naming fixes
   5.8.2  - Job system now supports prioritized tasks
   5.8.1  - Renames zpl_pad to zpl_ring
@@ -134,7 +134,7 @@ Version History:
   5.0.2  - Fix segfault when using zpl_stack_memory
   5.0.1  - Small code improvements
   5.0.0  - Project structure changes
-  
+
   4.7.2  - Got rid of size arg for zpl_str_split_lines
   4.7.1  - Added an example
   4.7.0  - Added zpl_path_dirlist
@@ -159,7 +159,7 @@ Version History:
   4.0.2  - Warning fix for _LARGEFILE64_SOURCE
   4.0.1  - include stdlib.h for getenv (temp)
   4.0.0  - ARM support, coding style changes and various improvements
-  
+
   3.4.1  - zpl_memcopy now uses memcpy for ARM arch-family
   3.4.0  - Removed obsolete code
   3.3.4  - Added Travis CI config
@@ -180,7 +180,7 @@ Version History:
   3.0.2  - Fixed linux part, and removed trailing spaces
   3.0.1  - Small bugfix in zpl_file_open
   3.0.0  - Added several fixes and features
-  
+
   2.4.0  - Added remove to hash table
   2.3.3  - Removed redundant code
   2.3.2  - Eliminated extra warnings
@@ -193,23 +193,23 @@ Version History:
   2.0.8  - Small adjustments
   2.0.7  - MinGW related fixes
   2.0.0  - New NPM based version
-  
+
   1.2.2  - Small fix
   1.2.1  - Macro fixes
   1.2.0  - Added zpl_async macro
   1.1.0  - Added timer feature
   1.0.0  - Initial version
-  
+
   This Software is dual licensed under the following licenses:
-  
+
   Unlicense
   This is free and unencumbered software released into the public domain.
-  
+
   Anyone is free to copy, modify, publish, use, compile, sell, or
   distribute this software, either in source code form or as a compiled
   binary, for any purpose, commercial or non-commercial, and by any
   means.
-  
+
   In jurisdictions that recognize copyright laws, the author or authors
   of this software dedicate any and all copyright interest in the
   software to the public domain. We make this dedication for the benefit
@@ -217,7 +217,7 @@ Version History:
   successors. We intend this dedication to be an overt act of
   relinquishment in perpetuity of all present and future rights to this
   software under copyright law.
-  
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -225,23 +225,23 @@ Version History:
   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.
-  
+
   For more information, please refer to <http://unlicense.org/>
-  
+
   Apache 2.0
   Copyright 2017-2019 Dominik Madarász <zaklaus@outlook.com>
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
-      
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. 
-  
+  limitations under the License.
+
 */
 
 //
@@ -271,9 +271,9 @@ Version History:
 #if defined(__cplusplus)
 extern "C" {
 #endif
-    
+
     //<#head>
-    
+
 #if defined(__cplusplus)
 }
 #endif
@@ -309,9 +309,9 @@ extern "C" {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-    
+
     //<#source>
-    
+
 #if defined(__cplusplus)
 }
 #endif

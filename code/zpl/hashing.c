@@ -43,9 +43,9 @@ zpl_u32 zpl_adler32(void const *data, zpl_isize len) {
     zpl_u32 a = 1, b = 0;
     zpl_isize i, block_len;
     zpl_u8 const *bytes = cast(zpl_u8 const *) data;
-    
+
     block_len = len % 5552;
-    
+
     while (len) {
         for (i = 0; i + 7 < block_len; i += 8) {
             a += bytes[0], b += a;
@@ -56,16 +56,16 @@ zpl_u32 zpl_adler32(void const *data, zpl_isize len) {
             a += bytes[5], b += a;
             a += bytes[6], b += a;
             a += bytes[7], b += a;
-            
+
             bytes += 8;
         }
         for (; i < block_len; i++) a += *bytes++, b += a;
-        
+
         a %= MOD_ALDER, b %= MOD_ALDER;
         len -= block_len;
         block_len = 5552;
     }
-    
+
     return (b << 16) | a;
 }
 
@@ -176,9 +176,9 @@ zpl_u32 zpl_fnv32(void const *data, zpl_isize len) {
     zpl_isize i;
     zpl_u32 h = 0x811c9dc5;
     zpl_u8 const *c = cast(zpl_u8 const *) data;
-    
+
     for (i = 0; i < len; i++) h = (h * 0x01000193) ^ c[i];
-    
+
     return h;
 }
 
@@ -186,9 +186,9 @@ zpl_u64 zpl_fnv64(void const *data, zpl_isize len) {
     zpl_isize i;
     zpl_u64 h = 0xcbf29ce484222325ull;
     zpl_u8 const *c = cast(zpl_u8 const *) data;
-    
+
     for (i = 0; i < len; i++) h = (h * 0x100000001b3ll) ^ c[i];
-    
+
     return h;
 }
 
@@ -196,9 +196,9 @@ zpl_u32 zpl_fnv32a(void const *data, zpl_isize len) {
     zpl_isize i;
     zpl_u32 h = 0x811c9dc5;
     zpl_u8 const *c = cast(zpl_u8 const *) data;
-    
+
     for (i = 0; i < len; i++) h = (h ^ c[i]) * 0x01000193;
-    
+
     return h;
 }
 
@@ -206,9 +206,9 @@ zpl_u64 zpl_fnv64a(void const *data, zpl_isize len) {
     zpl_isize i;
     zpl_u64 h = 0xcbf29ce484222325ull;
     zpl_u8 const *c = cast(zpl_u8 const *) data;
-    
+
     for (i = 0; i < len; i++) h = (h ^ c[i]) * 0x100000001b3ll;
-    
+
     return h;
 }
 
@@ -231,7 +231,7 @@ void zpl__base64_decode_table() {
 }
 #endif
 /* === */
-zpl_global zpl_i32 zpl__base64_dec_table[] = { 
+zpl_global zpl_i32 zpl__base64_dec_table[] = {
     62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58,
 	59, 60, 61, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, 5,
 	6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -283,7 +283,7 @@ zpl_b32 zpl__base64_valid_char(zpl_u8 c) {
         return true;
     if (c == '+' || c == '/' || c == '=')
         return true;
-    
+
     return false;
 }
 
@@ -317,7 +317,7 @@ zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len) {
             ret[j+3] = zpl__base64_chars[v & 0x3F];
 
         else ret[j+3] = '=';
-        
+
     }
 
     return ret;
@@ -372,41 +372,41 @@ zpl_u32 zpl_murmur32_seed(void const *data, zpl_isize len, zpl_u32 seed) {
     zpl_u32 const r2 = 13;
     zpl_u32 const m = 5;
     zpl_u32 const n = 0xe6546b64;
-    
+
     zpl_isize i, nblocks = len / 4;
     zpl_u32 hash = seed, k1 = 0;
     zpl_u32 const *blocks = cast(zpl_u32 const *) data;
     zpl_u8 const *tail = cast(zpl_u8 const *)(data) + nblocks * 4;
-    
+
     for (i = 0; i < nblocks; i++) {
         zpl_u32 k = blocks[i];
         k *= c1;
         k = (k << r1) | (k >> (32 - r1));
         k *= c2;
-        
+
         hash ^= k;
         hash = ((hash << r2) | (hash >> (32 - r2))) * m + n;
     }
-    
+
     switch (len & 3) {
         case 3: k1 ^= tail[2] << 16;
         case 2: k1 ^= tail[1] << 8;
         case 1:
         k1 ^= tail[0];
-        
+
         k1 *= c1;
         k1 = (k1 << r1) | (k1 >> (32 - r1));
         k1 *= c2;
         hash ^= k1;
     }
-    
+
     hash ^= len;
     hash ^= (hash >> 16);
     hash *= 0x85ebca6b;
     hash ^= (hash >> 13);
     hash *= 0xc2b2ae35;
     hash ^= (hash >> 16);
-    
+
     return hash;
 }
 
@@ -414,24 +414,24 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
 #if defined(ZPL_ARCH_64_BIT)
     zpl_u64 const m = 0xc6a4a7935bd1e995ULL;
     zpl_i32 const r = 47;
-    
+
     zpl_u64 h = seed ^ (len * m);
-    
+
     zpl_u64 const *data = cast(zpl_u64 const *) data_;
     zpl_u8 const *data2 = cast(zpl_u8 const *) data_;
     zpl_u64 const *end = data + (len / 8);
-    
+
     while (data != end) {
         zpl_u64 k = *data++;
-        
+
         k *= m;
         k ^= k >> r;
         k *= m;
-        
+
         h ^= k;
         h *= m;
     }
-    
+
     switch (len & 7) {
         case 7: h ^= cast(zpl_u64)(data2[6]) << 48;
         case 6: h ^= cast(zpl_u64)(data2[5]) << 40;
@@ -441,22 +441,22 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
         case 2: h ^= cast(zpl_u64)(data2[1]) << 8;
         case 1: h ^= cast(zpl_u64)(data2[0]); h *= m;
     };
-    
+
     h ^= h >> r;
     h *= m;
     h ^= h >> r;
-    
+
     return h;
 #else
     zpl_u64 h;
     zpl_u32 const m = 0x5bd1e995;
     zpl_i32 const r = 24;
-    
+
     zpl_u32 h1 = cast(zpl_u32)(seed) ^ cast(zpl_u32)(len);
     zpl_u32 h2 = cast(zpl_u32)(seed >> 32);
-    
+
     zpl_u32 const *data = cast(zpl_u32 const *) data_;
-    
+
     while (len >= 8) {
         zpl_u32 k1, k2;
         k1 = *data++;
@@ -466,7 +466,7 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
         h1 *= m;
         h1 ^= k1;
         len -= 4;
-        
+
         k2 = *data++;
         k2 *= m;
         k2 ^= k2 >> r;
@@ -475,7 +475,7 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
         h2 ^= k2;
         len -= 4;
     }
-    
+
     if (len >= 4) {
         zpl_u32 k1 = *data++;
         k1 *= m;
@@ -485,13 +485,13 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
         h1 ^= k1;
         len -= 4;
     }
-    
+
     switch (len) {
         case 3: h2 ^= (cast(zpl_u8 const *) data)[2] << 16;
         case 2: h2 ^= (cast(zpl_u8 const *) data)[1] << 8;
         case 1: h2 ^= (cast(zpl_u8 const *) data)[0] << 0; h2 *= m;
     };
-    
+
     h1 ^= h2 >> 18;
     h1 *= m;
     h2 ^= h1 >> 22;
@@ -500,10 +500,10 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
     h1 *= m;
     h2 ^= h1 >> 19;
     h2 *= m;
-    
+
     h = h1;
     h = (h << 32) | h2;
-    
+
     return h;
 #endif
 }

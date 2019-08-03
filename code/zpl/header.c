@@ -3,7 +3,7 @@
 @defgroup header Macro helpers and symbols
 
  This module contains many useful macros helpful for debugging as well as development itself.
- 
+
  @{
  */
 
@@ -719,6 +719,6 @@ void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, c
 
 zpl_i32 zpl_assert_crash(char const *condition) {
     ZPL_PANIC(condition);
-    
+
     return 0;
 }

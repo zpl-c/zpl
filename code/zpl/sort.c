@@ -133,22 +133,22 @@ void zpl_sort(void *base_, zpl_isize count, zpl_isize size, zpl_compare_proc cmp
     zpl_u8 *base = cast(zpl_u8 *) base_;
     zpl_u8 *limit = base + count * size;
     zpl_isize threshold = zpl__SORT_INSERT_SORT_TRESHOLD * size;
-    
+
     // NOTE: Prepare the stack
     zpl_u8 *stack[ZPL__SORT_STACK_SIZE] = { 0 };
     zpl_u8 **stack_ptr = stack;
-    
+
     for (;;) {
         if ((limit - base) > threshold) {
             // NOTE: Quick sort
             i = base + size;
             j = limit - size;
-            
+
             zpl_memswap(((limit - base) / size / 2) * size + base, base, size);
             if (cmp(i, j) > 0) zpl_memswap(i, j, size);
             if (cmp(base, j) > 0) zpl_memswap(base, j, size);
             if (cmp(i, base) > 0) zpl_memswap(i, base, size);
-            
+
             for (;;) {
                 do
                     i += size;
@@ -159,9 +159,9 @@ void zpl_sort(void *base_, zpl_isize count, zpl_isize size, zpl_compare_proc cmp
                 if (i > j) break;
                 zpl_memswap(i, j, size);
             }
-            
+
             zpl_memswap(base, j, size);
-            
+
             if (j - base > limit - i) {
                 ZPL__SORT_PUSH(base, j);
                 base = i;
@@ -177,7 +177,7 @@ void zpl_sort(void *base_, zpl_isize count, zpl_isize size, zpl_compare_proc cmp
                     if (j == base) break;
                 }
             }
-            
+
             if (stack_ptr == stack) break; // NOTE: Sorting is done!
             ZPL__SORT_POP(base, limit);
         }
@@ -226,7 +226,7 @@ zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_is
                                    zpl_compare_proc compare_proc) {
     zpl_isize start = 0;
     zpl_isize end = count;
-    
+
     while (start < end) {
         zpl_isize mid = start + (end - start) / 2;
         zpl_isize result = compare_proc(key, cast(zpl_u8 *) base + mid * size);
@@ -237,7 +237,7 @@ zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_is
         else
             return mid;
     }
-    
+
     return -1;
 }
 
@@ -246,7 +246,7 @@ void zpl_shuffle(void *base, zpl_isize count, zpl_isize size) {
     zpl_isize i, j;
     zpl_random random;
     zpl_random_init(&random);
-    
+
     a = cast(zpl_u8 *) base + (count - 1) * size;
     for (i = count; i > 1; i--) {
         j = zpl_random_gen_isize(&random) % i;

@@ -95,53 +95,53 @@ ZPL_DEF zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r);
 //
 /*
     Reasoning:
-    
+
     By default, strings in C are null terminated which means you have to count
     the number of character up to the null character to calculate the length.
     Many "better" C string libraries will create a struct for a string.
     i.e.
-    
+
     struct String {
     Allocator allocator;
     size_t    length;
     size_t    capacity;
     char *    cstring;
     };
-    
+
     This library tries to augment normal C strings in a better way that is still
     compatible with C-style strings.
-    
+
     +--------+-----------------------+-----------------+
     | Header | Binary C-style String | Null Terminator |
     +--------+-----------------------+-----------------+
     |
     +-> Pointer returned by functions
-    
+
     Due to the meta-data being stored before the string pointer and every zpl string
     having an implicit null terminator, zpl strings are full compatible with c-style
     strings and read-only functions.
-    
+
     Advantages:
-    
+
     * zpl strings can be passed to C-style string functions without accessing a struct
     member of calling a function, i.e.
-    
+
     zpl_printf("%s\n", zpl_str);
-    
+
     Many other libraries do either of these:
-    
+
     zpl_printf("%s\n", string->cstr);
     zpl_printf("%s\n", get_cstring(string));
-    
+
     * You can access each character just like a C-style string:
-    
+
     zpl_printf("%c %c\n", str[0], str[13]);
-    
+
     * zpl strings are singularly allocated. The meta-data is next to the character
     array which is better for the cache.
-    
+
     Disadvantages:
-    
+
     * In the C version of these functions, many return the new string. i.e.
     str = zpl_string_appendc(str, "another string");
     This could be changed to zpl_string_appendc(&str, "another string"); but I'm still not sure.
@@ -155,28 +155,28 @@ int main(int argc, char **argv) {
     zpl_string other_str = zpl_string_make_length(", ", 2);
     str = zpl_string_append(str, other_str);
     str = zpl_string_appendc(str, "world!");
-    
+
     zpl_printf("%s\n", str); // Hello, world!
-    
+
     zpl_printf("str length = %d\n", zpl_string_length(str));
-    
+
     str = zpl_string_set(str, "Potato soup");
     zpl_printf("%s\n", str); // Potato soup
-    
+
     str = zpl_string_set(str, "Hello");
     other_str = zpl_string_set(other_str, "Pizza");
     if (zpl_strings_are_equal(str, other_str))
         zpl_printf("Not called\n");
     else
         zpl_printf("Called\n");
-    
+
     str = zpl_string_set(str, "Ab.;!...AHello World       ??");
     str = zpl_string_trim(str, "Ab.;!. ?");
     zpl_printf("%s\n", str); // "Hello World"
-    
+
     zpl_string_free(str);
     zpl_string_free(other_str);
-    
+
     return 0;
 }
 #endif
@@ -299,7 +299,7 @@ zpl_inline void zpl_str_to_upper(char *str) {
 
 zpl_inline zpl_isize zpl_strlen(const char *str) {
     if (str == NULL) { return 0; }
-    
+
     const char *begin = str;
     zpl_isize const *w;
     while (cast(zpl_uintptr) str % sizeof(zpl_usize)) {
@@ -334,7 +334,7 @@ zpl_inline zpl_isize zpl_utf8_strlen(zpl_u8 const *str) {
             inc = 4;
         else
             return -1;
-        
+
         str += inc;
     }
     return count;
@@ -355,7 +355,7 @@ zpl_inline zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len) {
             inc = 4;
         else
             return -1;
-        
+
         str += inc;
         max_len -= inc;
     }
@@ -382,7 +382,7 @@ zpl_inline char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len) {
     char *dest = cast(char *) zpl_alloc(a, max_len);
     zpl_memset(dest + len, 0, max_len - len);
     zpl_strncpy(dest, src, max_len);
-    
+
     return dest;
 }
 
@@ -416,7 +416,7 @@ zpl_inline zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len) 
             *str++ = '\0';
             len--;
         }
-        
+
         result = source - source_start;
     }
     return result;
@@ -446,7 +446,7 @@ zpl_inline zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len) {
 
 zpl_inline const char *zpl_strtok(char *output, const char *src, const char *delimit) {
     while (*src && zpl_char_first_occurence(delimit, *src) == NULL) *output++ = *src++;
-    
+
     *output = 0;
     return *src ? src + 1 : src;
 }
@@ -454,7 +454,7 @@ zpl_inline const char *zpl_strtok(char *output, const char *src, const char *del
 zpl_inline char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace) {
     char **lines = NULL, *p = source, *pd = p;
     zpl_array_init(lines, alloc);
-    
+
     while (*p) {
         if (*pd == '\n') {
             *pd = 0;
@@ -498,7 +498,7 @@ zpl_inline const char *zpl_char_last_occurence(const char *s, char c) {
     do {
         if (*s == c) result = s;
     } while (*s++);
-    
+
     return result;
 }
 
@@ -527,14 +527,14 @@ zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64
     const char *text_begin = text;
     zpl_i64 result = 0;
     zpl_b32 negative = false;
-    
+
     if (*text == '-') {
         negative = true;
         text++;
     }
-    
+
     if (base == 16 && zpl_strncmp(text, "0x", 2) == 0) text += 2;
-    
+
     for (;;) {
         zpl_i64 v;
         if (zpl_char_is_digit(*text))
@@ -543,26 +543,26 @@ zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64
             v = zpl_hex_digit_to_int(*text);
         else
             break;
-        
+
         result *= base;
         result += v;
         text++;
     }
-    
+
     if (value) {
         if (negative) result = -result;
         *value = result;
     }
-    
+
     return (text - text_begin);
 }
 
 zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64 *value) {
     const char *text_begin = text;
     zpl_u64 result = 0;
-    
+
     if (base == 16 && zpl_strncmp(text, "0x", 2) == 0) text += 2;
-    
+
     for (;;) {
         zpl_u64 v;
         if (zpl_char_is_digit(*text))
@@ -572,14 +572,14 @@ zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64
         else {
             break;
         }
-        
+
         result *= base;
         result += v;
         text++;
     }
-    
+
     if (value) *value = result;
-    
+
     return (text - text_begin);
 }
 
@@ -587,14 +587,14 @@ zpl_internal zpl_isize zpl__scan_zpl_u64(const char *text, zpl_i32 base, zpl_u64
 zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_u64 value = 0;
-    
+
     if (!base) {
         if ((zpl_strlen(str) > 2) && (zpl_strncmp(str, "0x", 2) == 0))
             base = 16;
         else
             base = 10;
     }
-    
+
     len = zpl__scan_zpl_u64(str, base, &value);
     if (end_ptr) *end_ptr = (char *)str + len;
     return value;
@@ -603,14 +603,14 @@ zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base) {
 zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base) {
     zpl_isize len;
     zpl_i64 value;
-    
+
     if (!base) {
         if ((zpl_strlen(str) > 2) && (zpl_strncmp(str, "0x", 2) == 0))
             base = 16;
         else
             base = 10;
     }
-    
+
     len = zpl__scan_zpl_i64(str, base, &value);
     if (end_ptr) *end_ptr = (char *)str + len;
     return value;
@@ -626,12 +626,12 @@ zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     char *buf = string;
     zpl_b32 negative = false;
     zpl_u64 v;
-    
+
     if (value < 0) {
         negative = true;
         value = -value;
     }
-    
+
     v = cast(zpl_u64) value;
     if (v != 0) {
         while (v > 0) {
@@ -648,7 +648,7 @@ zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
 
 zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     char *buf = string;
-    
+
     if (value) {
         while (value > 0) {
             *buf++ = zpl__num_to_char_table[value % base];
@@ -658,7 +658,7 @@ zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
         *buf++ = '0';
     }
     *buf = '\0';
-    
+
     zpl_strrev(string);
 }
 
@@ -671,9 +671,9 @@ zpl_inline zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
 zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     zpl_f64 result, value, sign, scale;
     zpl_i32 frac;
-    
+
     while (zpl_char_is_space(*str)) { str++; }
-    
+
     sign = 1.0;
     if (*str == '-') {
         sign = -1.0;
@@ -681,9 +681,9 @@ zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     } else if (*str == '+') {
         str++;
     }
-    
+
     for (value = 0.0; zpl_char_is_digit(*str); str++) { value = value * 10.0 + (*str - '0'); }
-    
+
     if (*str == '.') {
         zpl_f64 pow10 = 10.0;
         str++;
@@ -693,12 +693,12 @@ zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
             str++;
         }
     }
-    
+
     frac = 0;
     scale = 1.0;
     if ((*str == 'e') || (*str == 'E')) {
         zpl_u32 exp;
-        
+
         str++;
         if (*str == '-') {
             frac = 1;
@@ -706,10 +706,10 @@ zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
         } else if (*str == '+') {
             str++;
         }
-        
+
         for (exp = 0; zpl_char_is_digit(*str); str++) { exp = exp * 10 + (*str - '0'); }
         if (exp > 308) exp = 308;
-        
+
         while (exp >= 50) {
             scale *= 1e50;
             exp -= 50;
@@ -723,11 +723,11 @@ zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
             exp -= 1;
         }
     }
-    
+
     result = sign * (frac ? (value / scale) : (value * scale));
-    
+
     if (end_ptr) *end_ptr = cast(char *) str;
-    
+
     return result;
 }
 
@@ -737,20 +737,20 @@ zpl_inline void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_ST
 zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity) {
     zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + capacity + 1);
-    
+
     zpl_string str;
     zpl_string_header *header;
-    
+
     if (ptr == NULL) return NULL;
     zpl_zero_size(ptr, header_size + capacity + 1);
-    
+
     str = cast(char *) ptr + header_size;
     header = ZPL_STRING_HEADER(str);
     header->allocator = a;
     header->length = 0;
     header->capacity = capacity;
     str[capacity] = '\0';
-    
+
     return str;
 }
 
@@ -762,13 +762,13 @@ zpl_inline zpl_string zpl_string_make(zpl_allocator a, const char *str) {
 zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, zpl_isize num_bytes) {
     zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + num_bytes + 1);
-    
+
     zpl_string str;
     zpl_string_header *header;
-    
+
     if (ptr == NULL) return NULL;
     if (!init_str) zpl_zero_size(ptr, header_size + num_bytes + 1);
-    
+
     str = cast(char *) ptr + header_size;
     header = ZPL_STRING_HEADER(str);
     header->allocator = a;
@@ -776,7 +776,7 @@ zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, zpl_isi
     header->capacity = num_bytes;
     if (num_bytes && init_str) zpl_memcopy(str, init_str, num_bytes);
     str[num_bytes] = '\0';
-    
+
     return str;
 }
 
@@ -786,7 +786,7 @@ zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt, ...) {
     va_start(va, fmt);
     zpl_snprintf_va(buf, 4096, fmt, va);
     va_end(va);
-    
+
     return zpl_string_make(a, buf);
 }
 
@@ -795,7 +795,7 @@ zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, zpl_isize num_bytes, c
     va_start(va, fmt);
     zpl_snprintf_va(buf, num_bytes, fmt, va);
     va_end(va);
-    
+
     return zpl_string_make(a, buf);
 }
 
@@ -831,10 +831,10 @@ zpl_inline zpl_string zpl_string_append(zpl_string str, zpl_string const other) 
 zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize other_len) {
     if (other_len > 0) {
         zpl_isize curr_len = zpl_string_length(str);
-        
+
         str = zpl_string_make_space_for(str, other_len);
         if (str == NULL) return NULL;
-        
+
         zpl_memcopy(str + curr_len, other, other_len);
         str[curr_len + other_len] = '\0';
         zpl__set_string_length(str, curr_len + other_len);
@@ -869,17 +869,17 @@ zpl_string zpl_string_set(zpl_string str, const char *cstr) {
         str = zpl_string_make_space_for(str, len - zpl_string_length(str));
         if (str == NULL) return NULL;
     }
-    
+
     zpl_memcopy(str, cstr, len);
     str[len] = '\0';
     zpl__set_string_length(str, len);
-    
+
     return str;
 }
 
 zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len) {
     zpl_isize available = zpl_string_available_space(str);
-    
+
     // NOTE: Return if there is enough space left
     if (available >= add_len) {
         return str;
@@ -888,21 +888,21 @@ zpl_string zpl_string_make_space_for(zpl_string str, zpl_isize add_len) {
         void *ptr, *new_ptr;
         zpl_allocator a = ZPL_STRING_HEADER(str)->allocator;
         zpl_string_header *header;
-        
+
         new_len = zpl_string_length(str) + add_len;
         ptr = ZPL_STRING_HEADER(str);
         old_size = zpl_size_of(zpl_string_header) + zpl_string_length(str) + 1;
         new_size = zpl_size_of(zpl_string_header) + new_len + 1;
-        
+
         new_ptr = zpl_resize(a, ptr, old_size, new_size);
         if (new_ptr == NULL) return NULL;
-        
+
         header = cast(zpl_string_header *) new_ptr;
         header->allocator = a;
-        
+
         str = cast(zpl_string)(header + 1);
         zpl__set_string_capacity(str, new_len);
-        
+
         return str;
     }
 }
@@ -917,31 +917,31 @@ zpl_inline zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const r
     lhs_len = zpl_string_length(lhs);
     rhs_len = zpl_string_length(rhs);
     if (lhs_len != rhs_len) return false;
-    
+
     for (i = 0; i < lhs_len; i++) {
         if (lhs[i] != rhs[i]) return false;
     }
-    
+
     return true;
 }
 
 zpl_string zpl_string_trim(zpl_string str, const char *cut_set) {
     char *start, *end, *start_pos, *end_pos;
     zpl_isize len;
-    
+
     start_pos = start = str;
     end_pos = end = str + zpl_string_length(str) - 1;
-    
+
     while (start_pos <= end && zpl_char_first_occurence(cut_set, *start_pos)) start_pos++;
     while (end_pos > start_pos && zpl_char_first_occurence(cut_set, *end_pos)) end_pos--;
-    
+
     len = cast(zpl_isize)((start_pos > end_pos) ? 0 : ((end_pos - start_pos) + 1));
-    
+
     if (str != start_pos) zpl_memmove(str, start_pos, len);
     str[len] = '\0';
-    
+
     zpl__set_string_length(str, len);
-    
+
     return str;
 }
 
@@ -953,7 +953,7 @@ zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r) {
         zpl_isize len = zpl_utf8_encode_rune(buf, r);
         return zpl_string_append_length(str, buf, len);
     }
-    
+
     return str;
 }
 
@@ -1097,10 +1097,10 @@ zpl_global zpl_utf8_accept_range const zpl__utf8_accept_ranges[] = {
 };
 
 zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepoint_out) {
-    
+
     zpl_isize width = 0;
     zpl_rune codepoint = ZPL_RUNE_INVALID;
-    
+
     if (str_len > 0) {
         zpl_u8 s0 = str[0];
         zpl_u8 x = zpl__utf8_first[s0], sz;
@@ -1117,42 +1117,42 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepo
             width = 1;
             goto end;
         }
-        
+
         sz = x & 7;
         accept = zpl__utf8_accept_ranges[x >> 4];
         if (str_len < zpl_size_of(sz)) goto invalid_codepoint;
-        
+
         b1 = str[1];
         if (b1 < accept.lo || accept.hi < b1) goto invalid_codepoint;
-        
+
         if (sz == 2) {
             codepoint = (cast(zpl_rune) s0 & 0x1f) << 6 | (cast(zpl_rune) b1 & 0x3f);
             width = 2;
             goto end;
         }
-        
+
         b2 = str[2];
         if (!zpl_is_between(b2, 0x80, 0xbf)) goto invalid_codepoint;
-        
+
         if (sz == 3) {
             codepoint = (cast(zpl_rune) s0 & 0x1f) << 12 | (cast(zpl_rune) b1 & 0x3f) << 6 | (cast(zpl_rune) b2 & 0x3f);
             width = 3;
             goto end;
         }
-        
+
         b3 = str[3];
         if (!zpl_is_between(b3, 0x80, 0xbf)) goto invalid_codepoint;
-        
+
         codepoint = (cast(zpl_rune) s0 & 0x07) << 18 | (cast(zpl_rune) b1 & 0x3f) << 12 | (cast(zpl_rune) b2 & 0x3f) << 6 |
             (cast(zpl_rune) b3 & 0x3f);
         width = 4;
         goto end;
-        
+
         invalid_codepoint:
         codepoint = ZPL_RUNE_INVALID;
         width = 1;
     }
-    
+
     end:
     if (codepoint_out) *codepoint_out = codepoint;
     return width;
@@ -1178,24 +1178,24 @@ zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r) {
         buf[1] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 2;
     }
-    
+
     // Invalid or Surrogate range
     if (i > ZPL_RUNE_MAX || zpl_is_between(i, 0xd800, 0xdfff)) {
         r = ZPL_RUNE_INVALID;
-        
+
         buf[0] = 0xe0 | cast(zpl_u8)(r >> 12);
         buf[1] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);
         buf[2] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 3;
     }
-    
+
     if (i <= (1 << 16) - 1) {
         buf[0] = 0xe0 | cast(zpl_u8)(r >> 12);
         buf[1] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);
         buf[2] = 0x80 | (cast(zpl_u8)(r) & mask);
         return 3;
     }
-    
+
     buf[0] = 0xf0 | cast(zpl_u8)(r >> 18);
     buf[1] = 0x80 | (cast(zpl_u8)(r >> 12) & mask);
     buf[2] = 0x80 | (cast(zpl_u8)(r >> 6) & mask);

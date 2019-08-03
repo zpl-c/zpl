@@ -99,23 +99,23 @@ int main(void)
     zpl_list s, *head, *cursor;
     zpl_list_init(&s, "it is optional to call init: ");
     head = cursor = &s;
-    
+
     // since we can construct an element implicitly this way
     // the second field gets overwritten once we add it to a list.
     zpl_list a = {"hello"};
     cursor = zpl_list_add(cursor, &a);
-    
+
     zpl_list b = {"world"};
     cursor = zpl_list_add(cursor, &b);
-    
+
     zpl_list c = {"!!! OK"};
     cursor = zpl_list_add(cursor, &c);
-    
+
     for (zpl_list *l=head; l; l=l->next) {
         zpl_printf("%s ", cast(char *)l->ptr);
     }
     zpl_printf("\n");
-    
+
     return 0;
 }
 #endif
@@ -160,26 +160,26 @@ void foo(void) {
     int test_values[] = {4, 2, 1, 7};
     zpl_allocator a = zpl_heap_allocator();
     zpl_array(int) items;
-    
+
     zpl_array_init(items, a);
-    
+
     zpl_array_append(items, 1);
     zpl_array_append(items, 4);
     zpl_array_append(items, 9);
     zpl_array_append(items, 16);
-    
+
     items[1] = 3; // Manually set value
     // NOTE: No array bounds checking
-    
+
     for (i = 0; i < items.count; i++)
         zpl_printf("%d\n", items[i]);
     // 1
     // 3
     // 9
     // 16
-    
+
     zpl_array_clear(items);
-    
+
     zpl_array_appendv(items, test_values, zpl_count_of(test_values));
     for (i = 0; i < items.count; i++)
         zpl_printf("%d\n", items[i]);
@@ -187,7 +187,7 @@ void foo(void) {
     // 2
     // 1
     // 7
-    
+
     zpl_array_free(items);
 }
 #endif
@@ -328,13 +328,13 @@ int main()
     zpl_ring_zpl_u32_append(&pad, 1);
     zpl_ring_zpl_u32_append(&pad, 2);
     zpl_ring_zpl_u32_append(&pad, 3);
-    
+
     while (!zpl_ring_zpl_u32_empty(&pad)) {
         zpl_printf("Result is %d\n", *zpl_ring_zpl_u32_get(&pad));
     }
-    
+
     zpl_ring_zpl_u32_free(&pad);
-    
+
     return 0;
 }
 */
@@ -424,9 +424,9 @@ zpl_inline void zpl_list_init(zpl_list *list, void const *ptr) {
 
 zpl_inline zpl_list *zpl_list_add(zpl_list *list, zpl_list *item) {
     item->next = NULL;
-    
+
     if (list->next) { item->next = list->next; }
-    
+
     list->next = item;
     item->prev = list;
     return item;
@@ -434,7 +434,7 @@ zpl_inline zpl_list *zpl_list_add(zpl_list *list, zpl_list *item) {
 
 zpl_inline zpl_list *zpl_list_remove(zpl_list *list) {
     if (list->prev) { list->prev->next = list->next; }
-    
+
     return list->next;
 }
 
@@ -446,11 +446,11 @@ zpl_inline zpl_list *zpl_list_remove(zpl_list *list) {
 
 zpl_no_inline void *zpl__array_set_capacity(void *array, zpl_isize capacity, zpl_isize element_size) {
     zpl_array_header *h = ZPL_ARRAY_HEADER(array);
-    
+
     ZPL_ASSERT(element_size > 0);
-    
+
     if (capacity == h->capacity) return array;
-    
+
     if (capacity < h->count) {
         if (h->capacity < capacity) {
             zpl_isize new_capacity = ZPL_ARRAY_GROW_FORMULA(h->capacity);
@@ -459,7 +459,7 @@ zpl_no_inline void *zpl__array_set_capacity(void *array, zpl_isize capacity, zpl
         }
         h->count = capacity;
     }
-    
+
     {
         zpl_isize size = zpl_size_of(zpl_array_header) + element_size * capacity;
         zpl_array_header *nh = cast(zpl_array_header *) zpl_alloc(h->allocator, size);

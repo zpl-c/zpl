@@ -3,7 +3,7 @@
 @defgroup opengl OpenGL helpers
 
  Offers OpenGL helper methods as well as basic 2D graphics and font rendering.
- 
+
  @{
  */
 
@@ -232,7 +232,7 @@
     ZPL_DEF zpl_u32 zplgl_make_ebo(void const *data, zpl_isize size, zpl_i32 usage_hint);
     ZPL_DEF zpl_u32 zplgl_make_ssbo(void const *data, zpl_isize size, zpl_i32 ssbo_usage_hint);
     ZPL_DEF zpl_u32 zplgl_make_vao(void);
-    
+
     ZPL_DEF zplgl_tbo zplgl_make_tbo(zplgl_buffer_data_type data_type, zpl_i32 channel_count, void const *data, zpl_isize size, zpl_i32 usage_hint);
 
     ZPL_DEF void zplgl_vbo_copy(zpl_u32 vbo_handle, void *const data, zpl_isize size, zpl_isize offset);
@@ -676,13 +676,13 @@
 ///////////////////////////////////////////////////
 ///
 /// OpenGL
-/// 
-/// 
+///
+///
 
 #ifdef ZPL_OPENGL
 
 #ifndef ZPL_GLGEN_IMPLEMENTATION
-#define ZPL_GLGEN_IMPLEMENTATION  
+#define ZPL_GLGEN_IMPLEMENTATION
 #include "zpl_glgen.h"
 #endif
 
@@ -1847,7 +1847,7 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
 
     zplgl_load_shader_from_memory_vf(&bs->ortho_tex_shader,
         ZPL_MULTILINE(#version 420 core\n
-        
+
         layout (location = 0) in vec4 a_position;
         layout (location = 1) in vec2 a_tex_coord;
 
@@ -1868,7 +1868,7 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
         layout (binding = 0) uniform sampler2D u_tex;
 
         out vec4 o_colour;
-        
+
         void main(void) {
             o_colour = texture2D(u_tex, v_tex_coord);
         })
@@ -1878,21 +1878,21 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
         ZPL_MULTILINE(#version 420 core\n
 
         precision mediump float;
-        
+
         layout (location = 0) in vec4 a_position;
-        
+
         uniform mat4 u_ortho_mat;
-        
+
         void main(void) {
             gl_Position = u_ortho_mat * a_position;
         }),
 
         ZPL_MULTILINE(#version 420 core\n
-        
+
         uniform vec4 u_colour;
-        
+
         out vec4 o_colour;
-        
+
         void main(void) {
             o_colour = u_colour;
         })
@@ -1902,29 +1902,29 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
 #if !defined(ZPLGL_NO_FONTS)
     zplgl_load_shader_from_memory_vf(&bs->font_shader,
         ZPL_MULTILINE(#version 420 core\n
-        
+
         layout (location = 0) in vec4 a_position;
         layout (location = 1) in vec2 a_tex_coord;
-        
+
         uniform mat4 u_ortho_mat;
-        
+
         out vec2 v_tex_coord;
-        
+
         void main(void) {
             gl_Position = u_ortho_mat * a_position;
             v_tex_coord = a_tex_coord;
         }),
 
         ZPL_MULTILINE(#version 420 core\n
-        
+
         in vec2 v_tex_coord;
-        
+
         uniform vec4 u_colour;
-        
+
         layout (binding = 0) uniform sampler2D u_tex;
-        
+
         out vec4 o_colour;
-        
+
         void main(void) {
             if (u_colour.a <= 0)
                 discard;

@@ -2,7 +2,7 @@
 @brief Process creation and manipulation methods
 @defgroup process Process creation and manipulation methods
 
-Gives you the ability to create a new process, wait for it to end or terminate it. 
+Gives you the ability to create a new process, wait for it to end or terminate it.
 It also exposes standard I/O with configurable options.
 
 @{
@@ -117,7 +117,7 @@ zpl_inline zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize a
     } else {
         env = NULL;
     }
-    
+
     process->f_stdin  = zpl__pr_open_handle(ZPL_PR_HANDLE_MODE_WRITE, "wb", &psi.hStdInput);
     process->f_stdout = zpl__pr_open_handle(ZPL_PR_HANDLE_MODE_READ, "rb", &psi.hStdOutput);
 
@@ -174,7 +174,7 @@ pr_free_data:
             zpl_string_free(env);
 
     return err_code;
- 
+
 #else
     ZPL_ASSERT(!"Not Implemented");
     return -1;

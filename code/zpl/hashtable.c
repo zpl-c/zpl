@@ -1,6 +1,6 @@
 /** @file hashtable.c
 @brief Instantiated hash table
-@defgroup hashtable Instantiated hash table 
+@defgroup hashtable Instantiated hash table
 
 @n
 @n This is an attempt to implement a templated hash table
@@ -21,7 +21,7 @@
 @n tablename_grow(NAME * h);
 @n tablename_rehash(NAME * h, zpl_isize new_count);
 @n tablename_remove(NAME * h, zpl_u64 key);
- 
+
  @{
 */
 

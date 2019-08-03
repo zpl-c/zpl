@@ -85,7 +85,7 @@ with open(TPL_PATH, 'r') as loader:
 
     tpl = tpl.replace("//<#head>", head)
     tpl = tpl.replace("//<#source>", source)
-    
+
     with open(BUILD_PATH, "w+") as output:
         output.write(tpl)
 

@@ -3,7 +3,7 @@
 @defgroup misc Coroutines module
 
  This module implements co-routines feature for C99.
- 
+
  @{
  */
 /*
@@ -69,10 +69,10 @@ ZPL_DEF zpl_co  zpl_co_make(zpl_co_proc f);
  * Starts/Resumes a coroutine execution.
  *
  * IMPORTANT: Data you pass is stored in a stack of up to ZPL_CO_ARG_STACK_CAPACITY.
- * This means that you can cause stack corruption if you 
+ * This means that you can cause stack corruption if you
  * call 'zpl_co_resume' with data passed (ZPL_CO_ARG_STACK_CAPACITY+1) times.
  * Raise the number by defining ZPL_CO_ARG_STACK_CAPACITY if required.
- * 
+ *
  * @param  co   Coroutine
  * @param  data Data we want to pass (or NULL)
  */
@@ -81,26 +81,26 @@ ZPL_DEF void    zpl_co_resume(zpl_co *co, void *data);
 /**
  * Is a coroutine running at the moment?
  * @param  co Coroutine
- * @return    
+ * @return
  */
 ZPL_DEF zpl_b32 zpl_co_running(zpl_co *co);
 
 /**
  * Is a coroutine already finished?
  * @param  co Coroutine
- * @return    
+ * @return
  */
 ZPL_DEF zpl_b32 zpl_co_finished(zpl_co *co);
 
 /**
  * Is coroutine waiting? (in yield state)
  * @param  co Coroutine
- * @return    
+ * @return
  */
 ZPL_DEF zpl_b32 zpl_co_waiting(zpl_co *co);
 
 // This method is used by the co-routine to await execution
-// 
+//
 
 /**
  * Yield the coroutine.
@@ -214,7 +214,7 @@ zpl_inline void zpl_co_resume(zpl_co *co, void *data) {
 
     // Initialize a job
     if (status == ZPL_CO_READY) {
-        
+
         if (data)
             co->data = co->data_stack[co->data_read_idx++];
 
@@ -243,7 +243,7 @@ zpl_inline void zpl_co_yield(zpl_co *co) {
     while (value == 0) {
         zpl_yield_thread();
         value = zpl_atomic32_load(&co->resume);
-        zpl_mfence();        
+        zpl_mfence();
     }
 
     zpl_atomic32_spin_lock(&co->push_arg, -1);

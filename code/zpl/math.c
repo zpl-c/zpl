@@ -21,7 +21,7 @@ typedef union zpl_vec3 {
     struct {
         zpl_f32 r, g, b;
     };
-    
+
     zpl_vec2 xy;
     zpl_f32 e[3];
 } zpl_vec3;
@@ -421,7 +421,7 @@ zpl_f32 zpl_copy_sign(zpl_f32 x, zpl_f32 y) {
     int ix, iy;
     ix = *(int *)&x;
     iy = *(int *)&y;
-    
+
     ix &= 0x7fffffff;
     ix |= iy & 0x80000000;
     return *(zpl_f32 *)&ix;
@@ -441,7 +441,7 @@ zpl_f64 zpl_copy_sign64(zpl_f64 x, zpl_f64 y) {
     zpl_i64 ix, iy;
     ix = *(zpl_i64 *)&x;
     iy = *(zpl_i64 *)&y;
-    
+
     ix &= 0x7fffffffffffffff;
     ix |= iy & 0x8000000000000000;
     return *cast(zpl_f64 *) & ix;
@@ -469,13 +469,13 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
     } t;
     zpl_f32 x2;
     zpl_f32 const three_halfs = 1.5f;
-    
+
     x2 = a * 0.5f;
     t.f = a;
     t.i = 0x5f375a86 - (t.i >> 1);                /* What the fuck? */
     t.f = t.f * (three_halfs - (x2 * t.f * t.f)); /* 1st iteration */
     t.f = t.f * (three_halfs - (x2 * t.f * t.f)); /* 2nd iteration, this can be removed */
-    
+
     return t.f;
 }
 
@@ -581,16 +581,16 @@ zpl_f32 zpl_pow(zpl_f32 a, zpl_f32 b) {
         flipped = 1;
         b = -b;
     }
-    
+
     e = (int)b;
     f = zpl_exp(b - e);
-    
+
     while (e) {
         if (e & 1) r *= a;
         a *= a;
         e >>= 1;
     }
-    
+
     r *= f;
     return flipped ? 1.0f / r : r;
 }
@@ -654,7 +654,7 @@ zpl_f32 zpl_half_to_float(zpl_half value) {
     int s = (value >> 15) & 0x001;
     int e = (value >> 10) & 0x01f;
     int m = value & 0x3ff;
-    
+
     if (e == 0) {
         if (m == 0) {
             /* Plus or minus zero */
@@ -666,7 +666,7 @@ zpl_f32 zpl_half_to_float(zpl_half value) {
                 m <<= 1;
                 e -= 1;
             }
-            
+
             e += 1;
             m &= ~0x00000400;
         }
@@ -681,10 +681,10 @@ zpl_f32 zpl_half_to_float(zpl_half value) {
             return result.f;
         }
     }
-    
+
     e = e + (127 - 15);
     m = m << 13;
-    
+
     result.i = (unsigned int)((s << 31) | (e << 23) | m);
     return result.f;
 }
@@ -695,20 +695,20 @@ zpl_half zpl_float_to_half(zpl_f32 value) {
         zpl_f32 f;
     } v;
     int i, s, e, m;
-    
+
     v.f = value;
     i = (int)v.i;
-    
+
     s = (i >> 16) & 0x00008000;
     e = ((i >> 23) & 0x000000ff) - (127 - 15);
     m = i & 0x007fffff;
-    
+
     if (e <= 0) {
         if (e < -10) return (zpl_half)s;
         m = (m | 0x00800000) >> (1 - e);
-        
+
         if (m & 0x00001000) m += 0x00002000;
-        
+
         return (zpl_half)(s | (m >> 13));
     } else if (e == 0xff - (127 - 15)) {
         if (m == 0) {
@@ -726,15 +726,15 @@ zpl_half zpl_float_to_half(zpl_f32 value) {
                 e += 1;
             }
         }
-        
+
         if (e > 30) {
             zpl_f32 volatile f = 1e12f;
             int j;
             for (j = 0; j < 10; j++) f *= f; /* NOTE: Cause overflow */
-            
+
             return (zpl_half)(s | 0x7c00);
         }
-        
+
         return (zpl_half)(s | (e << 10) | (m >> 13));
     }
 }
@@ -933,7 +933,7 @@ void zpl_vec3_reflect(zpl_vec3 *d, zpl_vec3 i, zpl_vec3 n) {
 void zpl_vec2_refract(zpl_vec2 *d, zpl_vec2 i, zpl_vec2 n, zpl_f32 eta) {
     zpl_vec2 a, b;
     zpl_f32 dv, k;
-    
+
     dv = zpl_vec2_dot(n, i);
     k = 1.0f - eta * eta * (1.0f - dv * dv);
     zpl_vec2_mul(&a, i, eta);
@@ -945,7 +945,7 @@ void zpl_vec2_refract(zpl_vec2 *d, zpl_vec2 i, zpl_vec2 n, zpl_f32 eta) {
 void zpl_vec3_refract(zpl_vec3 *d, zpl_vec3 i, zpl_vec3 n, zpl_f32 eta) {
     zpl_vec3 a, b;
     zpl_f32 dv, k;
-    
+
     dv = zpl_vec3_dot(n, i);
     k = 1.0f - eta * eta * (1.0f - dv * dv);
     zpl_vec3_mul(&a, i, eta);
@@ -1018,9 +1018,9 @@ zpl_f32 zpl_mat2_determinate(zpl_mat2 *m) {
 void zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in) {
     zpl_float2 *o = zpl_float22_m(out);
     zpl_float2 *i = zpl_float22_m(in);
-    
+
     zpl_f32 ood = 1.0f / zpl_mat2_determinate(in);
-    
+
     o[0][0] = +i[1][1] * ood;
     o[0][1] = -i[0][1] * ood;
     o[1][0] = -i[1][0] * ood;
@@ -1092,9 +1092,9 @@ void zpl_float33_mul_vec3(zpl_vec3 *out, zpl_f32 m[3][3], zpl_vec3 v) {
 
 zpl_f32 zpl_mat3_determinate(zpl_mat3 *m) {
     zpl_float3 *e = zpl_float33_m(m);
-    zpl_f32 d = 
-        +e[0][0] * (e[1][1] * e[2][2] - e[1][2] * e[2][1]) 
-        -e[0][1] * (e[1][0] * e[2][2] - e[1][2] * e[2][0]) 
+    zpl_f32 d =
+        +e[0][0] * (e[1][1] * e[2][2] - e[1][2] * e[2][1])
+        -e[0][1] * (e[1][0] * e[2][2] - e[1][2] * e[2][0])
         +e[0][2] * (e[1][0] * e[2][1] - e[1][1] * e[2][0]);
     return d;
 }
@@ -1102,9 +1102,9 @@ zpl_f32 zpl_mat3_determinate(zpl_mat3 *m) {
 void zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in) {
     zpl_float3 *o = zpl_float33_m(out);
     zpl_float3 *i = zpl_float33_m(in);
-    
+
     zpl_f32 ood = 1.0f / zpl_mat3_determinate(in);
-    
+
     o[0][0] = +(i[1][1] * i[2][2] - i[2][1] * i[1][2]) * ood;
     o[0][1] = -(i[1][0] * i[2][2] - i[2][0] * i[1][2]) * ood;
     o[0][2] = +(i[1][0] * i[2][1] - i[2][0] * i[1][1]) * ood;
@@ -1187,7 +1187,7 @@ void zpl_float44_mul(zpl_f32 (*out)[4], zpl_f32 (*mat1)[4], zpl_f32 (*mat2)[4]) 
     for (j = 0; j < 4; j++) {
         for (i = 0; i < 4; i++) {
             out[j][i] =
-                mat1[0][i] * mat2[j][0] + mat1[1][i] * mat2[j][1] 
+                mat1[0][i] * mat2[j][0] + mat1[1][i] * mat2[j][1]
                +mat1[2][i] * mat2[j][2] + mat1[3][i] * mat2[j][3];
         }
     }
@@ -1203,9 +1203,9 @@ void zpl_float44_mul_vec4(zpl_vec4 *out, zpl_f32 m[4][4], zpl_vec4 v) {
 void zpl_mat4_inverse(zpl_mat4 *out, zpl_mat4 *in) {
     zpl_float4 *o = zpl_float44_m(out);
     zpl_float4 *m = zpl_float44_m(in);
-    
+
     zpl_f32 ood;
-    
+
     zpl_f32 sf00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
     zpl_f32 sf01 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
     zpl_f32 sf02 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
@@ -1225,29 +1225,29 @@ void zpl_mat4_inverse(zpl_mat4 *out, zpl_mat4 *in) {
     zpl_f32 sf16 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
     zpl_f32 sf17 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
     zpl_f32 sf18 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
-    
+
     o[0][0] = +(m[1][1] * sf00 - m[1][2] * sf01 + m[1][3] * sf02);
     o[1][0] = -(m[1][0] * sf00 - m[1][2] * sf03 + m[1][3] * sf04);
     o[2][0] = +(m[1][0] * sf01 - m[1][1] * sf03 + m[1][3] * sf05);
     o[3][0] = -(m[1][0] * sf02 - m[1][1] * sf04 + m[1][2] * sf05);
-    
+
     o[0][1] = -(m[0][1] * sf00 - m[0][2] * sf01 + m[0][3] * sf02);
     o[1][1] = +(m[0][0] * sf00 - m[0][2] * sf03 + m[0][3] * sf04);
     o[2][1] = -(m[0][0] * sf01 - m[0][1] * sf03 + m[0][3] * sf05);
     o[3][1] = +(m[0][0] * sf02 - m[0][1] * sf04 + m[0][2] * sf05);
-    
+
     o[0][2] = +(m[0][1] * sf06 - m[0][2] * sf07 + m[0][3] * sf08);
     o[1][2] = -(m[0][0] * sf06 - m[0][2] * sf09 + m[0][3] * sf10);
     o[2][2] = +(m[0][0] * sf11 - m[0][1] * sf09 + m[0][3] * sf12);
     o[3][2] = -(m[0][0] * sf08 - m[0][1] * sf10 + m[0][2] * sf12);
-    
+
     o[0][3] = -(m[0][1] * sf13 - m[0][2] * sf14 + m[0][3] * sf15);
     o[1][3] = +(m[0][0] * sf13 - m[0][2] * sf16 + m[0][3] * sf17);
     o[2][3] = -(m[0][0] * sf14 - m[0][1] * sf16 + m[0][3] * sf18);
     o[3][3] = +(m[0][0] * sf15 - m[0][1] * sf17 + m[0][2] * sf18);
-    
+
     ood = 1.0f / (m[0][0] * o[0][0] + m[0][1] * o[1][0] + m[0][2] * o[2][0] + m[0][3] * o[3][0]);
-    
+
     o[0][0] *= ood; o[1][0] *= ood; o[2][0] *= ood; o[3][0] *= ood;
     o[0][1] *= ood; o[1][1] *= ood; o[2][1] *= ood; o[3][1] *= ood;
     o[0][2] *= ood; o[1][2] *= ood; o[2][2] *= ood; o[3][2] *= ood;
@@ -1264,26 +1264,26 @@ void zpl_mat4_rotate(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians) {
     zpl_f32 c, s;
     zpl_vec3 axis, t;
     zpl_float4 *rot;
-    
+
     c = zpl_cos(angle_radians);
     s = zpl_sin(angle_radians);
-    
+
     zpl_vec3_norm(&axis, v);
     zpl_vec3_mul(&t, axis, 1.0f - c);
-    
+
     zpl_mat4_identity(out);
     rot = zpl_float44_m(out);
-    
+
     rot[0][0] = c + t.x * axis.x;
     rot[0][1] = 0 + t.x * axis.y + s * axis.z;
     rot[0][2] = 0 + t.x * axis.z - s * axis.y;
     rot[0][3] = 0;
-    
+
     rot[1][0] = 0 + t.y * axis.x - s * axis.z;
     rot[1][1] = c + t.y * axis.y;
     rot[1][2] = 0 + t.y * axis.z + s * axis.x;
     rot[1][3] = 0;
-    
+
     rot[2][0] = 0 + t.z * axis.x + s * axis.y;
     rot[2][1] = 0 + t.z * axis.y - s * axis.x;
     rot[2][2] = c + t.z * axis.z;
@@ -1308,7 +1308,7 @@ void zpl_mat4_ortho2d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom
     zpl_float4 *m;
     zpl_mat4_identity(out);
     m = zpl_float44_m(out);
-    
+
     m[0][0] = 2.0f / (right - left);
     m[1][1] = 2.0f / (top - bottom);
     m[2][2] = -1.0f;
@@ -1320,7 +1320,7 @@ void zpl_mat4_ortho3d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom
     zpl_float4 *m;
     zpl_mat4_identity(out);
     m = zpl_float44_m(out);
-    
+
     m[0][0] = +2.0f / (right - left);
     m[1][1] = +2.0f / (top - bottom);
     m[2][2] = -2.0f / (z_far - z_near);
@@ -1334,7 +1334,7 @@ void zpl_mat4_perspective(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, zpl_f32 z
     zpl_mat4 zero_mat = { 0 };
     zpl_float4 *m = zpl_float44_m(out);
     *out = zero_mat;
-    
+
     m[0][0] = 1.0f / (aspect * tan_half_fovy);
     m[1][1] = 1.0f / (tan_half_fovy);
     m[2][2] = -(z_far + z_near) / (z_far - z_near);
@@ -1351,7 +1351,7 @@ void zpl_mat4_infinite_perspective(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, 
     zpl_mat4 zero_mat = { 0 };
     zpl_float4 *m = zpl_float44_m(out);
     *out = zero_mat;
-    
+
     m[0][0] = (2.0f * z_near) / (right - left);
     m[1][1] = (2.0f * z_near) / (top - bottom);
     m[2][2] = -1.0f;
@@ -1362,30 +1362,30 @@ void zpl_mat4_infinite_perspective(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, 
 void zpl_mat4_look_at(zpl_mat4 *out, zpl_vec3 eye, zpl_vec3 centre, zpl_vec3 up) {
     zpl_vec3 f, s, u;
     zpl_float4 *m;
-    
+
     zpl_vec3_sub(&f, centre, eye);
     zpl_vec3_norm(&f, f);
-    
+
     zpl_vec3_cross(&s, f, up);
     zpl_vec3_norm(&s, s);
-    
+
     zpl_vec3_cross(&u, s, f);
-    
+
     zpl_mat4_identity(out);
     m = zpl_float44_m(out);
-    
+
     m[0][0] = +s.x;
     m[1][0] = +s.y;
     m[2][0] = +s.z;
-    
+
     m[0][1] = +u.x;
     m[1][1] = +u.y;
     m[2][1] = +u.z;
-    
+
     m[0][2] = -f.x;
     m[1][2] = -f.y;
     m[2][2] = -f.z;
-    
+
     m[3][0] = -zpl_vec3_dot(s, eye);
     m[3][1] = -zpl_vec3_dot(u, eye);
     m[3][2] = +zpl_vec3_dot(f, eye);
@@ -1422,10 +1422,10 @@ zpl_quat zpl_quat_euler_angles(zpl_f32 pitch, zpl_f32 yaw, zpl_f32 roll) {
     p = zpl_quat_axis_angle(zpl_vec3f(1, 0, 0), pitch);
     y = zpl_quat_axis_angle(zpl_vec3f(0, 1, 0), yaw);
     r = zpl_quat_axis_angle(zpl_vec3f(0, 0, 1), roll);
-    
+
     zpl_quat_mul(&q, y, p);
     zpl_quat_muleq(&q, r);
-    
+
     return q;
 }
 
@@ -1509,9 +1509,9 @@ void zpl_quat_rotate_vec3(zpl_vec3 *d, zpl_quat q, zpl_vec3 v) {
     zpl_vec3 t, p;
     zpl_vec3_cross(&t, q.xyz, v);
     zpl_vec3_muleq(&t, 2.0f);
-    
+
     zpl_vec3_cross(&p, q.xyz, t);
-    
+
     zpl_vec3_mul(d, t, q.w);
     zpl_vec3_addeq(d, v);
     zpl_vec3_addeq(d, p);
@@ -1521,7 +1521,7 @@ void zpl_mat4_from_quat(zpl_mat4 *out, zpl_quat q) {
     zpl_float4 *m;
     zpl_quat a;
     zpl_f32 xx, yy, zz, xy, xz, yz, wx, wy, wz;
-    
+
     zpl_quat_norm(&a, q);
     xx = a.x * a.x;
     yy = a.y * a.y;
@@ -1532,18 +1532,18 @@ void zpl_mat4_from_quat(zpl_mat4 *out, zpl_quat q) {
     wx = a.w * a.x;
     wy = a.w * a.y;
     wz = a.w * a.z;
-    
+
     zpl_mat4_identity(out);
     m = zpl_float44_m(out);
-    
+
     m[0][0] = 1.0f - 2.0f * (yy + zz);
     m[0][1] = 2.0f * (xy + wz);
     m[0][2] = 2.0f * (xz - wy);
-    
+
     m[1][0] = 2.0f * (xy - wz);
     m[1][1] = 1.0f - 2.0f * (xx + zz);
     m[1][2] = 2.0f * (yz + wx);
-    
+
     m[2][0] = 2.0f * (xz + wy);
     m[2][1] = 2.0f * (yz - wx);
     m[2][2] = 1.0f - 2.0f * (xx + yy);
@@ -1555,14 +1555,14 @@ void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *mat) {
     four_biggest_squared_minus_1;
     int biggest_index = 0;
     zpl_f32 biggest_value, mult;
-    
+
     m = zpl_float44_m(mat);
-    
+
     four_x_squared_minus_1 = m[0][0] - m[1][1] - m[2][2];
     four_y_squared_minus_1 = m[1][1] - m[0][0] - m[2][2];
     four_z_squared_minus_1 = m[2][2] - m[0][0] - m[1][1];
     four_w_squared_minus_1 = m[0][0] + m[1][1] + m[2][2];
-    
+
     four_biggest_squared_minus_1 = four_w_squared_minus_1;
     if (four_x_squared_minus_1 > four_biggest_squared_minus_1) {
         four_biggest_squared_minus_1 = four_x_squared_minus_1;
@@ -1576,10 +1576,10 @@ void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *mat) {
         four_biggest_squared_minus_1 = four_z_squared_minus_1;
         biggest_index = 3;
     }
-    
+
     biggest_value = zpl_sqrt(four_biggest_squared_minus_1 + 1.0f) * 0.5f;
     mult = 0.25f / biggest_value;
-    
+
     switch (biggest_index) {
         case 0:
             out->w = biggest_value;
@@ -1635,12 +1635,12 @@ void zpl_vec2_cslerp(zpl_vec2 *d, zpl_vec2 a, zpl_vec2 v0, zpl_vec2 b, zpl_vec2 
     zpl_f32 t2 = t * t;
     zpl_f32 ti = (t - 1);
     zpl_f32 ti2 = ti * ti;
-    
+
     zpl_f32 h00 = (1 + 2 * t) * ti2;
     zpl_f32 h10 = t * ti2;
     zpl_f32 h01 = t2 * (3 - 2 * t);
     zpl_f32 h11 = t2 * ti;
-    
+
     d->x = h00 * a.x + h10 * v0.x + h01 * b.x + h11 * v1.x;
     d->y = h00 * a.y + h10 * v0.y + h01 * b.y + h11 * v1.y;
 }
@@ -1649,12 +1649,12 @@ void zpl_vec3_cslerp(zpl_vec3 *d, zpl_vec3 a, zpl_vec3 v0, zpl_vec3 b, zpl_vec3 
     zpl_f32 t2 = t * t;
     zpl_f32 ti = (t - 1);
     zpl_f32 ti2 = ti * ti;
-    
+
     zpl_f32 h00 = (1 + 2 * t) * ti2;
     zpl_f32 h10 = t * ti2;
     zpl_f32 h01 = t2 * (3 - 2 * t);
     zpl_f32 h11 = t2 * ti;
-    
+
     d->x = h00 * a.x + h10 * v0.x + h01 * b.x + h11 * v1.x;
     d->y = h00 * a.y + h10 * v0.y + h01 * b.y + h11 * v1.y;
     d->z = h00 * a.z + h10 * v0.z + h01 * b.z + h11 * v1.z;
@@ -1662,24 +1662,24 @@ void zpl_vec3_cslerp(zpl_vec3 *d, zpl_vec3 a, zpl_vec3 v0, zpl_vec3 b, zpl_vec3 
 
 void zpl_vec2_dcslerp(zpl_vec2 *d, zpl_vec2 a, zpl_vec2 v0, zpl_vec2 b, zpl_vec2 v1, zpl_f32 t) {
     zpl_f32 t2 = t * t;
-    
+
     zpl_f32 dh00 = 6 * t2 - 6 * t;
     zpl_f32 dh10 = 3 * t2 - 4 * t + 1;
     zpl_f32 dh01 = -6 * t2 + 6 * t;
     zpl_f32 dh11 = 3 * t2 - 2 * t;
-    
+
     d->x = dh00 * a.x + dh10 * v0.x + dh01 * b.x + dh11 * v1.x;
     d->y = dh00 * a.y + dh10 * v0.y + dh01 * b.y + dh11 * v1.y;
 }
 
 void zpl_vec3_dcslerp(zpl_vec3 *d, zpl_vec3 a, zpl_vec3 v0, zpl_vec3 b, zpl_vec3 v1, zpl_f32 t) {
     zpl_f32 t2 = t * t;
-    
+
     zpl_f32 dh00 = 6 * t2 - 6 * t;
     zpl_f32 dh10 = 3 * t2 - 4 * t + 1;
     zpl_f32 dh01 = -6 * t2 + 6 * t;
     zpl_f32 dh11 = 3 * t2 - 2 * t;
-    
+
     d->x = dh00 * a.x + dh10 * v0.x + dh01 * b.x + dh11 * v1.x;
     d->y = dh00 * a.y + dh10 * v0.y + dh01 * b.y + dh11 * v1.y;
     d->z = dh00 * a.z + dh10 * v0.z + dh01 * b.z + dh11 * v1.z;
@@ -1695,22 +1695,22 @@ void zpl_quat_slerp(zpl_quat *d, zpl_quat a, zpl_quat b, zpl_f32 t) {
     zpl_quat x, y, z;
     zpl_f32 cos_theta, angle;
     zpl_f32 s1, s0, is;
-    
+
     z = b;
     cos_theta = zpl_quat_dot(a, b);
-    
+
     if (cos_theta < 0.0f) {
         z = zpl_quatf(-b.x, -b.y, -b.z, -b.w);
         cos_theta = -cos_theta;
     }
-    
+
     if (cos_theta > 1.0f) {
         /* NOTE: Use lerp not nlerp as it's not a real angle or they are not normalized */
         zpl_quat_lerp(d, a, b, t);
     }
-    
+
     angle = zpl_arccos(cos_theta);
-    
+
     s1 = zpl_sin((1.0f - t) * angle);
     s0 = zpl_sin(t * angle);
     is = 1.0f / zpl_sin(angle);
@@ -1785,17 +1785,17 @@ int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersect
     zpl_f32 a_max_x = zpl_max(a.pos.x, a.pos.x + a.dim.x);
     zpl_f32 a_min_y = zpl_min(a.pos.y, a.pos.y + a.dim.y);
     zpl_f32 a_max_y = zpl_max(a.pos.y, a.pos.y + a.dim.y);
-    
+
     zpl_f32 b_min_x = zpl_min(b.pos.x, b.pos.x + b.dim.x);
     zpl_f32 b_max_x = zpl_max(b.pos.x, b.pos.x + b.dim.x);
     zpl_f32 b_min_y = zpl_min(b.pos.y, b.pos.y + b.dim.y);
     zpl_f32 b_max_y = zpl_max(b.pos.y, b.pos.y + b.dim.y);
-    
+
     zpl_f32 x0 = zpl_max(a_min_x, b_min_x);
     zpl_f32 y0 = zpl_max(a_min_y, b_min_y);
     zpl_f32 x1 = zpl_min(a_max_x, b_max_x);
     zpl_f32 y1 = zpl_min(a_max_y, b_max_y);
-    
+
     if ((x0 < x1) && (y0 < y1)) {
         zpl_rect2 r = zpl_rect2f(zpl_vec2f(x0, y0), zpl_vec2f(x1 - x0, y1 - y0));
         *intersection = r;

@@ -120,12 +120,12 @@ typedef struct zpl_thread {
 #else
     pthread_t     posix_handle;
 #endif
-    
+
     zpl_thread_proc  proc;
     void *           user_data;
     zpl_isize        user_index;
     zpl_isize        return_value;
-    
+
     zpl_semaphore    semaphore;
     zpl_isize        stack_size;
     zpl_b32          is_running;
@@ -148,7 +148,7 @@ typedef struct zpl_sync {
     zpl_i32 target;  // Target Number of threads
     zpl_i32 current; // Threads to hit
     zpl_i32 waiting; // Threads waiting
-    
+
     zpl_mutex start;
     zpl_mutex mutex;
     zpl_semaphore release;
@@ -172,7 +172,7 @@ typedef struct zpl_affinity {
     zpl_isize thread_count;
 #define ZPL_WIN32_MAX_THREADS (8 * zpl_size_of(zpl_usize))
     zpl_usize core_masks[ZPL_WIN32_MAX_THREADS];
-    
+
 } zpl_affinity;
 
 #elif defined(ZPL_SYSTEM_OSX)
@@ -822,7 +822,7 @@ zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc,
     t->proc = proc;
     t->user_data = user_data;
     t->stack_size = stack_size;
-    
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     t->win32_handle = CreateThread(NULL, stack_size, zpl__thread_proc, t, 0, NULL);
     ZPL_ASSERT_MSG(t->win32_handle != NULL, "CreateThread: GetLastError");
@@ -837,14 +837,14 @@ zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc,
         pthread_attr_destroy(&attr);
     }
 #endif
-    
+
     t->is_running = true;
     zpl_semaphore_wait(&t->semaphore);
 }
 
 zpl_inline void zpl_thread_join(zpl_thread *t) {
     if (!t->is_running) return;
-    
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     WaitForSingleObject(t->win32_handle, INFINITE);
     CloseHandle(t->win32_handle);
@@ -868,7 +868,7 @@ zpl_inline zpl_u32 zpl_thread_current_id(void) {
 #else
     thread_id = GetCurrentThreadId();
 #endif
-    
+
 #elif defined(ZPL_SYSTEM_OSX) && defined(ZPL_ARCH_64_BIT)
     thread_id = pthread_mach_thread_np(pthread_self());
 #elif defined(ZPL_ARCH_32_BIT) && defined(ZPL_CPU_X86)
@@ -878,7 +878,7 @@ zpl_inline zpl_u32 zpl_thread_current_id(void) {
 #else
 #error Unsupported architecture for zpl_thread_current_id()
 #endif
-    
+
     return thread_id;
 }
 
@@ -899,12 +899,12 @@ void zpl_thread_set_name(zpl_thread *t, char const *name) {
     tn.name  = name;
     tn.id    = GetThreadId(cast(HANDLE)t->win32_handle);
     tn.flags = 0;
-    
+
     __try {
         RaiseException(0x406d1388, 0, zpl_size_of(tn)/4, cast(ULONG_PTR *)&tn);
     } __except(1 /*EXCEPTION_EXECUTE_HANDLER*/) {
     }
-    
+
 #elif defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_MSVC)
     zpl_unused(t);
     zpl_unused(name);
@@ -932,7 +932,7 @@ void zpl_sync_destroy(zpl_sync *s) {
     if (s->waiting) {
         ZPL_PANIC("Cannot destroy while threads are waiting!");
     }
-    
+
     zpl_mutex_destroy(&s->mutex);
     zpl_mutex_destroy(&s->start);
     zpl_semaphore_destroy(&s->release);
@@ -940,7 +940,7 @@ void zpl_sync_destroy(zpl_sync *s) {
 
 void zpl_sync_set_target(zpl_sync *s, zpl_i32 count) {
     zpl_mutex_lock(&s->start);
-    
+
     zpl_mutex_lock(&s->mutex);
     ZPL_ASSERT(s->target == 0);
     s->target = count;
@@ -979,9 +979,9 @@ void zpl_sync_reach_and_wait(zpl_sync *s) {
     } else {
         s->waiting++;                   // NOTE: Waiting, so one more waiter
         zpl_mutex_unlock(&s->mutex);     // NOTE: Release the mutex to other threads
-        
+
         zpl_semaphore_wait(&s->release); // NOTE: Wait for merge completion
-        
+
         zpl_mutex_lock(&s->mutex);       // NOTE: On merge completion, lock mutex
         s->waiting--;                   // NOTE: Done waiting
         zpl_sync_release(s);             // NOTE: Restart the next waiter
@@ -994,20 +994,20 @@ void zpl_affinity_init(zpl_affinity *a) {
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION *start_processor_info = NULL;
     DWORD length = 0;
     zpl_b32 result  = GetLogicalProcessorInformation(NULL, &length);
-    
+
     zpl_zero_item(a);
-    
+
     if (!result && GetLastError() == 122l /*ERROR_INSUFFICIENT_BUFFER*/ && length > 0) {
         start_processor_info = cast(SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)zpl_alloc(zpl_heap_allocator(), length);
         result = GetLogicalProcessorInformation(start_processor_info, &length);
         if (result) {
             SYSTEM_LOGICAL_PROCESSOR_INFORMATION *end_processor_info, *processor_info;
-            
+
             a->is_accurate  = true;
             a->core_count   = 0;
             a->thread_count = 0;
             end_processor_info = cast(SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)zpl_pointer_add(start_processor_info, length);
-            
+
             for (processor_info = start_processor_info;
                  processor_info < end_processor_info;
                  processor_info++) {
@@ -1026,10 +1026,10 @@ void zpl_affinity_init(zpl_affinity *a) {
                 }
             }
         }
-        
+
         zpl_free(zpl_heap_allocator(), start_processor_info);
     }
-    
+
     ZPL_ASSERT(a->core_count <= a->thread_count);
     if (a->thread_count == 0) {
         a->is_accurate   = false;
@@ -1037,7 +1037,7 @@ void zpl_affinity_init(zpl_affinity *a) {
         a->thread_count  = 1;
         a->core_masks[0] = 1;
     }
-    
+
 }
 void zpl_affinity_destroy(zpl_affinity *a) {
     zpl_unused(a);
@@ -1047,7 +1047,7 @@ void zpl_affinity_destroy(zpl_affinity *a) {
 zpl_b32 zpl_affinity_set(zpl_affinity *a, zpl_isize core, zpl_isize thread) {
     zpl_usize available_mask, check_mask = 1;
     ZPL_ASSERT(thread < zpl_affinity_thread_count_for_core(a, core));
-    
+
     available_mask = a->core_masks[core];
     for (;;) {
         if ((available_mask & check_mask) != 0) {
@@ -1068,12 +1068,12 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
 #elif defined(ZPL_SYSTEM_OSX)
 void zpl_affinity_init(zpl_affinity *a) {
     zpl_usize count, count_size = zpl_size_of(count);
-    
+
     a->is_accurate      = false;
     a->thread_count     = 1;
     a->core_count       = 1;
     a->threads_per_core = 1;
-    
+
     if (sysctlbyname("hw.logicalcpu", &count, &count_size, NULL, 0) == 0) {
         if (count > 0) {
             a->thread_count = count;
@@ -1090,7 +1090,7 @@ void zpl_affinity_init(zpl_affinity *a) {
             }
         }
     }
-    
+
 }
 
 void zpl_affinity_destroy(zpl_affinity *a) {
@@ -1102,10 +1102,10 @@ zpl_b32 zpl_affinity_set(zpl_affinity *a, zpl_isize core, zpl_isize thread_index
     thread_t thread;
     thread_affinity_policy_data_t info;
     kern_return_t result;
-    
+
     ZPL_ASSERT(core < a->core_count);
     ZPL_ASSERT(thread_index < a->threads_per_core);
-    
+
     index = core * a->threads_per_core + thread_index;
     thread = mach_thread_self();
     info.affinity_tag = cast(integer_t)index;
@@ -1126,17 +1126,17 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
 void zpl_affinity_init(zpl_affinity *a) {
     zpl_b32   accurate = true;
     zpl_isize threads = 0;
-    
+
     a->thread_count     = 1;
     a->core_count       = sysconf(_SC_NPROCESSORS_ONLN);
     a->threads_per_core = 1;
-    
-    
+
+
     if(a->core_count <= 0) {
         a->core_count = 1;
         accurate = false;
     }
-    
+
     // Parsing /proc/cpuinfo to get the number of threads per core.
     // NOTE(zangent): This calls the CPU's threads "cores", although the wording
     // is kind of weird. This should be right, though.
@@ -1146,7 +1146,7 @@ void zpl_affinity_init(zpl_affinity *a) {
             // The 'temporary char'. Everything goes into this char,
             // so that we can check against EOF at the end of this loop.
             char c;
-            
+
 #define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
             if (AF__CHECK('c') && AF__CHECK('p') && AF__CHECK('u') && AF__CHECK(' ') &&
                 AF__CHECK('c') && AF__CHECK('o') && AF__CHECK('r') && AF__CHECK('e') && AF__CHECK('s')) {
@@ -1172,19 +1172,19 @@ void zpl_affinity_init(zpl_affinity *a) {
             }
 #undef AF__CHECK
         }
-        
+
         fclose(cpu_info);
     }
-    
+
     if (threads == 0) {
         threads  = 1;
         accurate = false;
     }
-    
+
     a->threads_per_core = threads;
     a->thread_count = a->threads_per_core * a->core_count;
     a->is_accurate = accurate;
-    
+
 }
 
 void zpl_affinity_destroy(zpl_affinity *a) {

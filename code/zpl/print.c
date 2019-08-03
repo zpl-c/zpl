@@ -104,7 +104,7 @@ enum {
     ZPL_FMT_ALT   = ZPL_BIT(2),
     ZPL_FMT_SPACE = ZPL_BIT(3),
     ZPL_FMT_ZERO  = ZPL_BIT(4),
-    
+
     ZPL_FMT_CHAR   = ZPL_BIT(5),
     ZPL_FMT_SHORT  = ZPL_BIT(6),
     ZPL_FMT_INT    = ZPL_BIT(7),
@@ -112,15 +112,15 @@ enum {
     ZPL_FMT_LLONG  = ZPL_BIT(9),
     ZPL_FMT_SIZE   = ZPL_BIT(10),
     ZPL_FMT_INTPTR = ZPL_BIT(11),
-    
+
     ZPL_FMT_UNSIGNED = ZPL_BIT(12),
     ZPL_FMT_LOWER    = ZPL_BIT(13),
     ZPL_FMT_UPPER    = ZPL_BIT(14),
-    
+
     ZPL_FMT_DONE = ZPL_BIT(30),
-    
+
     ZPL_FMT_INTS =
-        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT  | 
+        ZPL_FMT_CHAR | ZPL_FMT_SHORT | ZPL_FMT_INT  |
         ZPL_FMT_LONG | ZPL_FMT_LLONG | ZPL_FMT_SIZE | ZPL_FMT_INTPTR
 };
 
@@ -141,17 +141,17 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
         res += zpl_strlcpy(text, "(null)", 6);
         return 6;
     }
-    
+
     if (info && info->precision >= 0)
         len = zpl_strnlen(str, info->precision);
     else
         len = zpl_strlen(str);
-    
+
     if (info && (info->width == 0 || info->flags & ZPL_FMT_MINUS)) {
         if (info->precision > 0) len = info->precision < len ? info->precision : len;
-        
+
         res += zpl_strlcpy(text, str, len);
-        
+
         if (info->width > res) {
             zpl_isize padding = info->width - len;
             char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
@@ -163,17 +163,17 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
             char pad = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
             while (padding-- > 0 && remaining-- > 0) *text++ = pad, res++;
         }
-        
+
         res += zpl_strlcpy(text, str, len);
     }
-    
+
     if (info) {
         if (info->flags & ZPL_FMT_UPPER)
             zpl_str_to_upper(text);
         else if (info->flags & ZPL_FMT_LOWER)
             zpl_str_to_lower(text);
     }
-    
+
     return res;
 }
 
@@ -199,7 +199,7 @@ zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format
     // TODO: Handle exponent notation
     zpl_isize width, len, remaining = max_len;
     char *text_begin = text;
-    
+
     if (arg) {
         zpl_u64 value;
         if (arg < 0) {
@@ -210,19 +210,19 @@ zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format
             if (remaining > 1) *text = '+', remaining--;
             text++;
         }
-        
+
         value = cast(zpl_u64) arg;
         len = zpl__print_u64(text, remaining, NULL, value);
         text += len;
-        
+
         if (len >= remaining)
             remaining = zpl_min(remaining, 1);
         else
             remaining -= len;
         arg -= value;
-        
+
         if (info->precision < 0) info->precision = 6;
-        
+
         if ((info->flags & ZPL_FMT_ALT) || info->precision > 0) {
             zpl_i64 mult = 10;
             if (remaining > 1) *text = '.', remaining--;
@@ -247,43 +247,43 @@ zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format
             text++;
         }
     }
-    
+
     width = info->width - (text - text_begin);
     if (width > 0) {
         char fill = (info->flags & ZPL_FMT_ZERO) ? '0' : ' ';
         char *end = text + remaining - 1;
         len = (text - text_begin);
-        
+
         for (len = (text - text_begin); len--;) {
             if ((text_begin + len + width) < end) *(text_begin + len + width) = *(text_begin + len);
         }
-        
+
         len = width;
         text += len;
         if (len >= remaining)
             remaining = zpl_min(remaining, 1);
         else
             remaining -= len;
-        
+
         while (len--) {
             if (text_begin + len < end) text_begin[len] = fill;
         }
     }
-    
+
     return (text - text_begin);
 }
 
 zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char const *fmt, va_list va) {
     char const *text_begin = text;
     zpl_isize remaining = max_len, res;
-    
+
     while (*fmt) {
         zpl__format_info info = { 0 };
         zpl_isize len = 0;
         info.precision = -1;
-        
+
         while (*fmt && *fmt != '%' && remaining) *text++ = *fmt++;
-        
+
         if (*fmt == '%') {
             do {
                 switch (*++fmt) {
@@ -296,7 +296,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                 }
             } while (!(info.flags & ZPL_FMT_DONE));
         }
-        
+
         // NOTE: Optional Width
         if (*fmt == '*') {
             int width = va_arg(va, int);
@@ -310,7 +310,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
         } else {
             info.width = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
         }
-        
+
         // NOTE: Optional Precision
         if (*fmt == '.') {
             fmt++;
@@ -322,7 +322,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
             }
             info.flags &= ~ZPL_FMT_ZERO;
         }
-        
+
         switch (*fmt++) {
             case 'h':
             if (*fmt == 'h') { // hh => char
@@ -332,7 +332,7 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                 info.flags |= ZPL_FMT_SHORT;
             }
             break;
-            
+
             case 'l':
             if (*fmt == 'l') { // ll => long long
                 info.flags |= ZPL_FMT_LLONG;
@@ -341,64 +341,64 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                 info.flags |= ZPL_FMT_LONG;
             }
             break;
-            
+
             break;
-            
+
             case 'z': // NOTE: zpl_usize
                 info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 't': // NOTE: zpl_isize
                 info.flags |= ZPL_FMT_SIZE;
                 break;
-            
+
             default: fmt--; break;
         }
-        
+
         switch (*fmt) {
             case 'u':
                 info.flags |= ZPL_FMT_UNSIGNED;
                 // fallthrough
             case 'd':
             case 'i': info.base = 10; break;
-            
+
             case 'o': info.base = 8; break;
-            
+
             case 'x':
                 info.base = 16;
                 info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_LOWER);
                 break;
-            
+
             case 'X':
                 info.base = 16;
                 info.flags |= (ZPL_FMT_UNSIGNED | ZPL_FMT_UPPER);
                 break;
-            
+
             case 'f':
             case 'F':
             case 'g':
             case 'G': len = zpl__print_f64(text, remaining, &info, va_arg(va, zpl_f64)); break;
-            
+
             case 'a':
             case 'A':
                 // TODO:
                 break;
-            
+
             case 'c': len = zpl__print_char(text, remaining, &info, cast(char) va_arg(va, int)); break;
-            
+
             case 's': len = zpl__print_string(text, remaining, &info, va_arg(va, char *)); break;
-            
+
             case 'p':
                 info.base = 16;
                 info.flags |= (ZPL_FMT_LOWER | ZPL_FMT_UNSIGNED | ZPL_FMT_ALT | ZPL_FMT_INTPTR);
                 break;
-            
+
             case '%': len = zpl__print_char(text, remaining, &info, '%'); break;
-            
+
             default: fmt--; break;
         }
-        
+
         fmt++;
-        
+
         if (info.base != 0) {
             if (info.flags & ZPL_FMT_UNSIGNED) {
                 zpl_u64 value = 0;
@@ -411,9 +411,9 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                     case ZPL_FMT_INTPTR: value = cast(zpl_u64) va_arg(va, zpl_uintptr); break;
                     default: value             = cast(zpl_u64) va_arg(va, unsigned int); break;
                 }
-                
+
                 len = zpl__print_u64(text, remaining, &info, value);
-                
+
             } else {
                 zpl_i64 value = 0;
                 switch (info.flags & ZPL_FMT_INTS) {
@@ -425,18 +425,18 @@ zpl_no_inline zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char cons
                     case ZPL_FMT_INTPTR: value = cast(zpl_i64) va_arg(va, zpl_uintptr); break;
                     default: value             = cast(zpl_i64) va_arg(va, int); break;
                 }
-                
+
                 len = zpl__print_i64(text, remaining, &info, value);
             }
         }
-        
+
         text += len;
         if (len >= remaining)
             remaining = zpl_min(remaining, 1);
         else
             remaining -= len;
     }
-    
+
     *text++ = '\0';
     res = (text - text_begin);
     return (res >= max_len || res < 0) ? -1 : res;
