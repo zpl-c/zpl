@@ -42,9 +42,9 @@ typedef struct {
 
 typedef struct {
     zpl_allocator    alloc;
-    zpl_opts_entry  *entries; ///< zpl_array
-    zpl_opts_err    *errors; ///< zpl_array
-    zpl_opts_entry **positioned; ///< zpl_array
+    zpl_opts_entry  *entries;       ///< zpl_array
+    zpl_opts_err    *errors;        ///< zpl_array
+    zpl_opts_entry **positioned;     ///< zpl_array
     char const      *appname;
 } zpl_opts;
 
