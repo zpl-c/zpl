@@ -491,7 +491,7 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
     void *handle;
     wchar_t *w_text;
 
-    switch (mode & zpl_file_mode_modes_ev) {
+    switch (mode & ZPL_FILE_MODES) {
         case ZPL_FILE_MODE_READ:
         desired_access = GENERIC_READ;
         creation_disposition = OPEN_EXISTING;
@@ -591,7 +591,7 @@ zpl_file_operations const zpl_default_file_operations = { zpl__posix_file_read, 
 
 zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__posix_file_open) {
     zpl_i32 os_mode;
-    switch (mode & zpl_file_mode_modes_ev) {
+    switch (mode & ZPL_FILE_MODES) {
         case ZPL_FILE_MODE_READ: os_mode = O_RDONLY; break;
         case ZPL_FILE_MODE_WRITE: os_mode = O_WRONLY | O_CREAT | O_TRUNC; break;
         case ZPL_FILE_MODE_APPEND: os_mode = O_WRONLY | O_APPEND | O_CREAT; break;
