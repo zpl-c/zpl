@@ -38,18 +38,76 @@ typedef struct zpl_co {
 } zpl_co;
 
 // These methods are used to initialize the co-routine subsystem
+
+/**
+ * Initializes the coroutines subsystem
+ * @param  a           Memory allocator to be used
+ * @param  max_threads Maximum amount of threads to use for coroutines execution
+ */
 ZPL_DEF void   zpl_co_init(zpl_allocator a, zpl_u32 max_threads);
+
+/**
+ * Destroys the coroutines subsystem
+ *
+ * IMPORTANT: This is a blocking method that waits until all the coroutines are finished.
+ * Please, make sure your coroutines are correctly designed, so that you
+ * won't end up in an infinite loop.
+ */
 ZPL_DEF void   zpl_co_destroy(void);
 
 // These methods are used by the host to create and run/resume co-routines
 // Make sure the co-routine subsystem is initialized first!
+
+/**
+ * Create a paused coroutine
+ * @param  f Coroutine method
+ * @return   Paused coroutine
+ */
 ZPL_DEF zpl_co  zpl_co_make(zpl_co_proc f);
+
+/**
+ * Starts/Resumes a coroutine execution.
+ *
+ * IMPORTANT: Data you pass is stored in a stack of up to ZPL_CO_ARG_STACK_CAPACITY.
+ * This means that you can cause stack corruption if you 
+ * call 'zpl_co_resume' with data passed (ZPL_CO_ARG_STACK_CAPACITY+1) times.
+ * Raise the number by defining ZPL_CO_ARG_STACK_CAPACITY if required.
+ * 
+ * @param  co   Coroutine
+ * @param  data Data we want to pass (or NULL)
+ */
 ZPL_DEF void    zpl_co_resume(zpl_co *co, void *data);
+
+/**
+ * Is a coroutine running at the moment?
+ * @param  co Coroutine
+ * @return    
+ */
 ZPL_DEF zpl_b32 zpl_co_running(zpl_co *co);
+
+/**
+ * Is a coroutine already finished?
+ * @param  co Coroutine
+ * @return    
+ */
 ZPL_DEF zpl_b32 zpl_co_finished(zpl_co *co);
+
+/**
+ * Is coroutine waiting? (in yield state)
+ * @param  co Coroutine
+ * @return    
+ */
 ZPL_DEF zpl_b32 zpl_co_waiting(zpl_co *co);
 
 // This method is used by the co-routine to await execution
+// 
+
+/**
+ * Yield the coroutine.
+ *
+ * IMPORTANT: Only to be used by the coroutine!!
+ * @param  co Coroutine
+ */
 ZPL_DEF void   zpl_co_yield(zpl_co *co);
 
 #endif
@@ -71,7 +129,7 @@ struct {
     zpl_thread runner;
     zpl_atomic32 request_term;
     zpl_mutex is_processing;
-} zpl__co_internals = {0};
+} zpl__co_internals;
 
 zpl_isize zpl__co_runner(struct zpl_thread *t) {
     do {
@@ -107,6 +165,7 @@ void zpl__co_job(void *data) {
 
 zpl_inline void zpl_co_init(zpl_allocator a, zpl_u32 max_threads) {
     if (!zpl__co_internals.is_ready) {
+        zpl_zero_item(&zpl__co_internals);
         zpl_mutex_init(&zpl__co_internals.is_processing);
         zpl_jobs_init(&zpl__co_internals.coroutines, a, max_threads);
         zpl_thread_init(&zpl__co_internals.runner);
