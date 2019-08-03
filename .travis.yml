@@ -12,7 +12,8 @@ script:
     - export INCLUDES="-Icode"
     - export LINKER="-pthread -lm -ldl"
     - gcc -g -std=c99 $INCLUDES test/build-test.c $LINKER -o build/test-gcc-c.o
-    - clang -coverage -g -std=c99 $INCLUDES test/build-test.c $LINKER -o build/test-clang-c.o
+    - clang -coverage -g -std=c99 $INCLUDES test/build-test.c $LINKER -o build/test-clang
     - g++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-gpp-cpp.o
     - clang++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-clang-cpp.o
+    - ./build/test-clang
     - gcov test/build-test.c
