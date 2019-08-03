@@ -14,6 +14,7 @@ script:
     - clang -g -std=c99 $INCLUDES test/build-test.c $LINKER -o build/test-clang
     - g++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-gpp-cpp.o
     - clang++ -g -std=c++11 $INCLUDES test/build-test.cpp $LINKER -o build/test-clang-cpp.o
-    - gcc -coverage -O0 -std=c99 $INCLUDES test/build-test.c $LINKER -o test/build-test
-    - ./test/build-test
-    - gcov test/build-test.c
+    - cd test
+    - gcc -coverage -O0 -std=c99 -I../code build-test.c $LINKER -o build-test
+    - ./build-test
+    - gcov build-test.c
