@@ -209,12 +209,12 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
 
 #ifdef ZPL_SYSTEM_WINDOWS
     if (process->f_stdin) {
-        fclose(process->f_stdin);
+        fclose(cast(FILE *)process->f_stdin);
     }
 
     WaitForSingleObject(process->win32_handle, INFINITE);
 
-    if (!GetExitCodeProcess(process->win32_handle, &ret_code)) {
+    if (!GetExitCodeProcess(process->win32_handle, cast(LPDWORD)&ret_code)) {
         zpl_pr_destroy(process);
         return -1;
     }
@@ -233,13 +233,13 @@ zpl_inline void zpl_pr_destroy(zpl_pr *process) {
 
 #ifdef ZPL_SYSTEM_WINDOWS
     if (process->f_stdin) {
-        fclose(process->f_stdin);
+        fclose(cast(FILE *)process->f_stdin);
     }
 
-    fclose(process->f_stdout);
+    fclose(cast(FILE *)process->f_stdout);
 
     if (process->f_stderr != process->f_stdout) {
-        fclose(process->f_stderr);
+        fclose(cast(FILE *)process->f_stderr);
     }
 
     CloseHandle(process->win32_handle);

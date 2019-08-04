@@ -225,11 +225,13 @@ zpl_inline const char *zpl_get_env_buf(const char *name) {
     zpl_local_persist wchar_t wbuffer[32767] = {0};
     zpl_local_persist char buffer[32767] = {0};
 
-    if (!GetEnvironmentVariableW(cast(LPCWSTR)zpl_utf8_to_ucs2_buf(name), cast(LPWSTR)wbuffer, 32767)) {
+    if (!GetEnvironmentVariableW(
+            cast(LPCWSTR)zpl_utf8_to_ucs2_buf(cast(const zpl_u8 *)name),
+            cast(LPWSTR)wbuffer, 32767)) {
         return NULL;
     }
 
-    zpl_ucs2_to_utf8(buffer, 32767, cast(wchar_t*)wbuffer);
+    zpl_ucs2_to_utf8(cast(zpl_u8*)buffer, 32767, cast(const zpl_u16*)wbuffer);
 
     return (const char *)buffer;
 #else

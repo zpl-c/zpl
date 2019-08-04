@@ -18,7 +18,7 @@ void send_req(zpl_co *co) {
 
     // wait until main thread resumes the execution
     zpl_co_yield(co);
-    
+
     some_data *r = cast(some_data*)co->data;
     printf_safe("step 2: no data, we pass some back\n");
 
@@ -60,7 +60,7 @@ int main (void) {
     zpl_co_resume(&w1, cast(void*)&r);
 
     do {} while (!zpl_co_waiting(&w1));
-    
+
     // step 3 - resume its execution again, pass data
     printf_safe("resume step 3\n");
     zpl_co_resume(&w1, cast(void*)&d2);

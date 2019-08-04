@@ -45,6 +45,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.1 - Fix several C++ type casting quirks
   9.8.0 - Incorporated OpenGL into ZPL core as an optional module
   9.7.0 - Added co-routine module
   9.6.0 - Added process module for creation and manipulation
@@ -11581,11 +11582,13 @@ zpl_inline const char *zpl_get_env_buf(const char *name) {
     zpl_local_persist wchar_t wbuffer[32767] = {0};
     zpl_local_persist char buffer[32767] = {0};
 
-    if (!GetEnvironmentVariableW(cast(LPCWSTR)zpl_utf8_to_ucs2_buf(name), cast(LPWSTR)wbuffer, 32767)) {
+    if (!GetEnvironmentVariableW(
+            cast(LPCWSTR)zpl_utf8_to_ucs2_buf(cast(const zpl_u8 *)name),
+            cast(LPWSTR)wbuffer, 32767)) {
         return NULL;
     }
 
-    zpl_ucs2_to_utf8(buffer, 32767, cast(wchar_t*)wbuffer);
+    zpl_ucs2_to_utf8(cast(zpl_u8*)buffer, 32767, cast(const zpl_u16*)wbuffer);
 
     return (const char *)buffer;
 #else
@@ -12884,12 +12887,12 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
 
 #ifdef ZPL_SYSTEM_WINDOWS
     if (process->f_stdin) {
-        fclose(process->f_stdin);
+        fclose(cast(FILE *)process->f_stdin);
     }
 
     WaitForSingleObject(process->win32_handle, INFINITE);
 
-    if (!GetExitCodeProcess(process->win32_handle, &ret_code)) {
+    if (!GetExitCodeProcess(process->win32_handle, cast(LPDWORD)&ret_code)) {
         zpl_pr_destroy(process);
         return -1;
     }
@@ -12908,13 +12911,13 @@ zpl_inline void zpl_pr_destroy(zpl_pr *process) {
 
 #ifdef ZPL_SYSTEM_WINDOWS
     if (process->f_stdin) {
-        fclose(process->f_stdin);
+        fclose(cast(FILE *)process->f_stdin);
     }
 
-    fclose(process->f_stdout);
+    fclose(cast(FILE *)process->f_stdout);
 
     if (process->f_stderr != process->f_stdout) {
-        fclose(process->f_stderr);
+        fclose(cast(FILE *)process->f_stderr);
     }
 
     CloseHandle(process->win32_handle);
