@@ -9794,29 +9794,29 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
 
     switch (mode & ZPL_FILE_MODES) {
         case ZPL_FILE_MODE_READ:
-        desired_access = GENERIC_READ;
-        creation_disposition = OPEN_EXISTING;
-        break;
+            desired_access = GENERIC_READ;
+            creation_disposition = OPEN_EXISTING;
+            break;
         case ZPL_FILE_MODE_WRITE:
-        desired_access = GENERIC_WRITE;
-        creation_disposition = CREATE_ALWAYS;
-        break;
+            desired_access = GENERIC_WRITE;
+            creation_disposition = CREATE_ALWAYS;
+            break;
         case ZPL_FILE_MODE_APPEND:
-        desired_access = GENERIC_WRITE;
-        creation_disposition = OPEN_ALWAYS;
-        break;
+            desired_access = GENERIC_WRITE;
+            creation_disposition = OPEN_ALWAYS;
+            break;
         case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = OPEN_EXISTING;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = OPEN_EXISTING;
         break;
         case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = CREATE_ALWAYS;
-        break;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = CREATE_ALWAYS;
+            break;
         case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = OPEN_ALWAYS;
-        break;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = OPEN_ALWAYS;
+            break;
         default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
 
@@ -11578,10 +11578,15 @@ zpl_inline const char *zpl_get_env(const char *name) {
 
 zpl_inline const char *zpl_get_env_buf(const char *name) {
 #ifdef ZPL_SYSTEM_WINDOWS
+    zpl_local_persist wchar_t wbuffer[32767] = {0};
     zpl_local_persist char buffer[32767] = {0};
-    if (!GetEnvironmentVariable(name, buffer, 32767)) {
+
+    if (!GetEnvironmentVariableW(cast(LPCWSTR)zpl_utf8_to_ucs2_buf(name), cast(LPWSTR)wbuffer, 32767)) {
         return NULL;
     }
+
+    zpl_ucs2_to_utf8(buffer, 32767, cast(wchar_t*)wbuffer);
+
     return (const char *)buffer;
 #else
     return (const char *)getenv(name);

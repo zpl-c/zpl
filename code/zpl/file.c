@@ -493,29 +493,29 @@ zpl_no_inline ZPL_FILE_OPEN_PROC(zpl__win32_file_open) {
 
     switch (mode & ZPL_FILE_MODES) {
         case ZPL_FILE_MODE_READ:
-        desired_access = GENERIC_READ;
-        creation_disposition = OPEN_EXISTING;
-        break;
+            desired_access = GENERIC_READ;
+            creation_disposition = OPEN_EXISTING;
+            break;
         case ZPL_FILE_MODE_WRITE:
-        desired_access = GENERIC_WRITE;
-        creation_disposition = CREATE_ALWAYS;
-        break;
+            desired_access = GENERIC_WRITE;
+            creation_disposition = CREATE_ALWAYS;
+            break;
         case ZPL_FILE_MODE_APPEND:
-        desired_access = GENERIC_WRITE;
-        creation_disposition = OPEN_ALWAYS;
-        break;
+            desired_access = GENERIC_WRITE;
+            creation_disposition = OPEN_ALWAYS;
+            break;
         case ZPL_FILE_MODE_READ | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = OPEN_EXISTING;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = OPEN_EXISTING;
         break;
         case ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = CREATE_ALWAYS;
-        break;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = CREATE_ALWAYS;
+            break;
         case ZPL_FILE_MODE_APPEND | ZPL_FILE_MODE_RW:
-        desired_access = GENERIC_READ | GENERIC_WRITE;
-        creation_disposition = OPEN_ALWAYS;
-        break;
+            desired_access = GENERIC_READ | GENERIC_WRITE;
+            creation_disposition = OPEN_ALWAYS;
+            break;
         default: ZPL_PANIC("Invalid file mode"); return ZPL_FILE_ERROR_INVALID;
     }
 
