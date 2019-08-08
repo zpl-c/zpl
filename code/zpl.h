@@ -12791,9 +12791,9 @@ zpl_inline zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize a
         c_env = true;
     }
     else if (!(options & ZPL_PR_OPTS_INHERIT_ENV)) {
-        env = "\0\0\0\0";
+        env = (zpl_string)"\0\0\0\0";
     } else {
-        env = NULL;
+        env = (zpl_string)NULL;
     }
 
     process->f_stdin  = zpl__pr_open_handle(ZPL_PR_HANDLE_MODE_WRITE, "wb", &psi.hStdInput);
