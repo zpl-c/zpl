@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # This Software is dual licensed under the following licenses:
 
@@ -75,7 +77,7 @@ with open(TPL_PATH, 'r') as loader:
         fn = m[1]
         repl = ""
 
-        with open(wd + "/" + fn, 'r', errors='backslashreplace') as fi:
+        with open(wd + "/" + fn, 'r') as fi:
             c = fi.read()
 
             p = c.split("//$$")
