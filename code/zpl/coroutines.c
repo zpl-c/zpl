@@ -60,10 +60,10 @@ ZPL_DEF void   zpl_co_destroy(void);
 
 /**
  * Create a paused coroutine
- * @param  f Coroutine method
- * @return   Paused coroutine
+ * @param  co Coroutine reference
+ * @param  f  Coroutine method
  */
-ZPL_DEF zpl_co  zpl_co_make(zpl_co_proc f);
+ZPL_DEF void zpl_co_make(zpl_co *co, zpl_co_proc f);
 
 /**
  * Starts/Resumes a coroutine execution.
@@ -189,15 +189,13 @@ zpl_inline void zpl_co_destroy(void) {
     zpl_mfence();
 }
 
-zpl_inline zpl_co zpl_co_make(zpl_co_proc f) {
+zpl_inline void zpl_co_make(zpl_co *co, zpl_co_proc f) {
     ZPL_ASSERT_MSG(zpl__co_internals.is_ready, "Coroutines module is not initialized. Call zpl_co_init first!");
-    zpl_co co = {0};
+    ZPL_ASSERT_NOT_NULL(co);
 
-    co.f = f;
-    zpl_atomic32_store(&co.status, ZPL_CO_READY);
-    zpl_atomic32_store(&co.resume, 0);
-
-    return co;
+    co->f = f;
+    zpl_atomic32_store(&co->status, ZPL_CO_READY);
+    zpl_atomic32_store(&co->resume, 0);
 }
 
 zpl_inline void zpl_co_resume(zpl_co *co, void *data) {

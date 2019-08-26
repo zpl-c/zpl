@@ -45,6 +45,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.2 - Fix VS C4190 issue
   9.8.1 - Fix several C++ type casting quirks
   9.8.0 - Incorporated OpenGL into ZPL core as an optional module
   9.7.0 - Added co-routine module

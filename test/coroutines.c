@@ -42,7 +42,8 @@ int main (void) {
     zpl_co_init(zpl_heap(), 4);
 
     // form a new co-routine (be aware of its lifetime)
-    zpl_co w1 = zpl_co_make(send_req);
+    zpl_co w1;
+    zpl_co_make(&w1, send_req);
 
     // create our data
     some_data d = {42};
