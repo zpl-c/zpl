@@ -212,6 +212,11 @@ _In_ int nCmdShow)
     #define WC_ERR_INVALID_CHARS 0x0080
 #endif
 
+#if defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)
+    // assume we use mingw as a compiler
+    #define ZPL_COMPILER_MINGW
+#endif
+
 // include errno.h for MinGW
 #if defined(ZPL_COMPILER_GCC)
     #include <errno.h>
@@ -647,7 +652,7 @@ do {                                                                            
 #endif
 
 // NOTE: Some compilers support applying printf-style warnings to user functions.
-#if defined(__clang__) || defined(__GNUC__)
+#if !defined(ZPL_COMPILER_MINGW) && (defined(__clang__) || defined(__GNUC__))
 #define ZPL_PRINTF_ARGS(FMT) __attribute__((format(printf, FMT, (FMT + 1))))
 #else
 #define ZPL_PRINTF_ARGS(FMT)
