@@ -482,8 +482,8 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
 #if defined(ZPL_NO_MATH_H)
 #if defined(_MSC_VER)
 
-zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_zpl_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
-zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_zpl_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
+zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
+zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
 
 zpl_f32 zpl_sin(zpl_f32 a) {
     static zpl_f32 const a0 = +1.91059300966915117e-31f;
@@ -529,7 +529,7 @@ zpl_f32 zpl_tan(zpl_f32 radians) {
 }
 
 zpl_f32 zpl_arcsin(zpl_f32 a) { return zpl_arctan2(a, zpl_sqrt((1.0f + a) * (1.0f - a))); }
-zpl_f32 zpl_arccos(zpl_f32 a) { return zpl_arctan2(zpl_sqrt((1.0f + a) * (1.0 - a)), a); }
+zpl_f32 zpl_arccos(zpl_f32 a) { return zpl_arctan2(zpl_sqrt((1.0f + a) * (1.0f - a)), a); }
 
 zpl_f32 zpl_arctan(zpl_f32 a) {
     zpl_f32 u = a * a;

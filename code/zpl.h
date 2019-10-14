@@ -33,6 +33,7 @@ Options:
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
   ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
   ZPL_PLATFORM - enables platform layer module.
+  ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
   ZPL_OPENGL - enables OpenGL module.
     ZPLGL_NO_FONTS - disables font rendering support for OpenGL module.
     ZPLGL_NO_BASIC_STATE - disables basic state API (contains useful 2D rendering methods as well as font rendering)
@@ -45,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.4 - Fix MSVC ZPL_NO_MATH_H code branch using incorrect methods internally
   9.8.3 - Fix MinGW GCC related issue with zpl_printf %lld format
   9.8.2 - Fix VS C4190 issue
   9.8.1 - Fix several C++ type casting quirks
@@ -13353,8 +13355,8 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
 #if defined(ZPL_NO_MATH_H)
 #if defined(_MSC_VER)
 
-zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_zpl_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
-zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_zpl_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
+zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
+zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
 
 zpl_f32 zpl_sin(zpl_f32 a) {
     static zpl_f32 const a0 = +1.91059300966915117e-31f;
@@ -13400,7 +13402,7 @@ zpl_f32 zpl_tan(zpl_f32 radians) {
 }
 
 zpl_f32 zpl_arcsin(zpl_f32 a) { return zpl_arctan2(a, zpl_sqrt((1.0f + a) * (1.0f - a))); }
-zpl_f32 zpl_arccos(zpl_f32 a) { return zpl_arctan2(zpl_sqrt((1.0f + a) * (1.0 - a)), a); }
+zpl_f32 zpl_arccos(zpl_f32 a) { return zpl_arctan2(zpl_sqrt((1.0f + a) * (1.0f - a)), a); }
 
 zpl_f32 zpl_arctan(zpl_f32 a) {
     zpl_f32 u = a * a;

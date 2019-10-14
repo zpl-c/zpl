@@ -33,6 +33,7 @@ Options:
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
   ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
   ZPL_PLATFORM - enables platform layer module.
+  ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
   ZPL_OPENGL - enables OpenGL module.
     ZPLGL_NO_FONTS - disables font rendering support for OpenGL module.
     ZPLGL_NO_BASIC_STATE - disables basic state API (contains useful 2D rendering methods as well as font rendering)
@@ -45,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.4 - Fix MSVC ZPL_NO_MATH_H code branch using incorrect methods internally
   9.8.3 - Fix MinGW GCC related issue with zpl_printf %lld format
   9.8.2 - Fix VS C4190 issue
   9.8.1 - Fix several C++ type casting quirks
