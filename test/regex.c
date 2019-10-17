@@ -18,11 +18,11 @@ int main(void) {
 
     zpl_array_make(zpl_re_capture, captures, zpl_heap());
 
-    b32 ok = zpl_re_match_all(&re, str, zpl_strlen(str), 2, &captures);
+    zpl_re_match_all(&re, str, zpl_strlen(str), 2, &captures);
 
     for (isize i=0; i < zpl_array_count(captures); i++)
     {
-        zpl_printf("Group %lld: %.*s\n", i, (i32)captures[i].len, captures[i].str);
+        zpl_printf("Group %ld: %.*s\n", i, (i32)captures[i].len, captures[i].str);
     }
 
     return 0;
