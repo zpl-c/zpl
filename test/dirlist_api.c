@@ -1,7 +1,7 @@
 #define ZPL_IMPLEMENTATION
 #include <zpl.h>
 
-char *get_type(u8 type) {
+char const* get_type(u8 type) {
     switch (type) {
         case ZPL_DIR_TYPE_FILE:
             return "file";

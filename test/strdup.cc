@@ -3,7 +3,7 @@
 
 int main()
 {
-    char *foo = "hello world";
+    char const* foo = "hello world";
 
     //NOTE: length of a string + 1 extra byte for null terminator.
     isize len = strlen(foo) + 1;
