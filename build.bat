@@ -31,7 +31,7 @@ IF [%6] == [] set SUBSYSTEM=console
 set CPP_EXTRAS=%~7
 set LNK_EXTRAS=%~8
 
-ctime -begin build.ctm
+rem ctime -begin build.ctm
 cl ..\..\%1 %WARN% %OPTS% %CMN% %INCLUDEPATHS% %CPP_EXTRAS% /link %LIBPATHS% /NODEFAULTLIB:glfw3 /SUBSYSTEM:%SUBSYSTEM% %LNK_EXTRAS% %LIBS%
-ctime -end build.ctm
+rem ctime -end build.ctm
 popd
