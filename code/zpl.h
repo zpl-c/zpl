@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.5 - Fix incorrect usage of EOF and opts dependency on JSON5 module's methods
   9.8.4 - Fix MSVC ZPL_NO_MATH_H code branch using incorrect methods internally
   9.8.3 - Fix MinGW GCC related issue with zpl_printf %lld format
   9.8.2 - Fix VS C4190 issue
