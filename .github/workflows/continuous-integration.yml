@@ -5,11 +5,6 @@ on:
     #   - 'Code/*'
     #   - 'Vendors/*'
 
-
-language: python
-python:
-  - "2.7"
-
 jobs:
   build-win:
     name: Build Windows
