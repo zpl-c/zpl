@@ -1145,7 +1145,7 @@ void zpl_affinity_init(zpl_affinity *a) {
         for (;;) {
             // The 'temporary char'. Everything goes into this char,
             // so that we can check against EOF at the end of this loop.
-            char c;
+            int c;
 
 #define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
             if (AF__CHECK('c') && AF__CHECK('p') && AF__CHECK('u') && AF__CHECK(' ') &&

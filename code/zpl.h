@@ -1674,6 +1674,7 @@ ZPL_DEF void zpl_str_to_upper(char *str);
 
 ZPL_DEF char *zpl_str_trim(char *str, zpl_b32 skip_newline);
 ZPL_DEF char *zpl_str_skip(char *str, char c);
+ZPL_DEF char *zpl_str_control_skip(char *str, char c);
 
 ZPL_DEF zpl_isize   zpl_strlen(const char *str);
 ZPL_DEF zpl_isize   zpl_strnlen(const char *str, zpl_isize max_len);
@@ -1688,7 +1689,7 @@ ZPL_DEF const char *zpl_strtok(char *output, const char *src, const char *delimi
 
 // NOTE: This edits *source* string.
 // Returns: zpl_array
-ZPL_DEF char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace);
+ZPL_DEF char  **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace);
 
 #define zpl_str_expand(str) str, zpl_strlen(str)
 
@@ -3338,9 +3339,6 @@ ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_alloc
 ZPL_DEF char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 
-#define zpl__trim zpl_str_trim
-#define zpl__skip zpl__json_skip
-ZPL_DEF char   *zpl__json_skip(char *str, char c);
 ZPL_DEF zpl_b32 zpl__json_validate_name(char *str, char *err);
 
 //! @}
@@ -7172,7 +7170,7 @@ void zpl_affinity_init(zpl_affinity *a) {
         for (;;) {
             // The 'temporary char'. Everything goes into this char,
             // so that we can check against EOF at the end of this loop.
-            char c;
+            int c;
 
 #define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
             if (AF__CHECK('c') && AF__CHECK('p') && AF__CHECK('u') && AF__CHECK(' ') &&
@@ -7681,6 +7679,22 @@ zpl_inline char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32
     }
     return lines;
 }
+
+zpl_inline zpl_b32 zpl__is_control_char(char c) {
+    return !!zpl_strchr("\"\\/bfnrt", c);
+}
+
+zpl_inline zpl_b32 zpl__is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
+zpl_inline zpl_b32 zpl__is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
+zpl_inline zpl_b32 zpl__is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+
+
+zpl_inline char *zpl_str_control_skip(char *str, char c) {
+    while ((*str && *str != c) || (*(str - 1) == '\\' && *str == c && zpl__is_control_char(c))) { ++str; }
+
+    return str;
+}
+
 
 zpl_inline zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix) {
     while (*prefix) {
@@ -11676,7 +11690,7 @@ zpl_inline zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len,
 
     if(!handle) return 0;
 
-    char c;
+    int c;
     zpl_usize i=0;
     while ((c = getc(handle)) != EOF && i++ < buffer_len) {
         *buffer++ = c;
@@ -11706,7 +11720,7 @@ zpl_inline zpl_string zpl_system_command_str(const char *command, zpl_allocator 
 
     zpl_string output = zpl_string_make_reserve(backing, 4);
 
-    char c;
+    int c;
     while ((c = getc(handle)) != EOF) {
         char ins[2] = {c,0};
         output = zpl_string_appendc(output, ins);
@@ -12247,7 +12261,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
 
             char c = *p;
             b = ++p;
-            e = zpl__json_skip(b, c);
+            e = zpl_str_control_skip(b, c);
             node.name = b;
             *e = '\0';
 
@@ -12463,10 +12477,6 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 typ
     return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
 }
 
-zpl_inline zpl_b32 zpl__json_is_control_char(char c) {
-    return !!zpl_strchr("\"\\/bfnrt", c);
-}
-
 zpl_inline zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
 zpl_inline zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
 zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
@@ -12474,7 +12484,7 @@ zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n",
 #define jx(x) !zpl_char_is_hex_digit(str[x])
 zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
     while (*str) {
-        if ((str[0] == '\\' && !zpl__json_is_control_char(str[1])) &&
+        if ((str[0] == '\\' && !zpl__is_control_char(str[1])) &&
             (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
             *err = *str;
             return false;
@@ -12486,12 +12496,6 @@ zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
     return true;
 }
 #undef jx
-
-zpl_inline char *zpl__json_skip(char *str, char c) {
-    while ((*str && *str != c) || (*(str - 1) == '\\' && *str == c && zpl__json_is_control_char(c))) { ++str; }
-
-    return str;
-}
 
 
 ////////////////////////////////////////////////////////////////
@@ -12664,7 +12668,7 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
         char *p = argv[i];
 
         if (*p) {
-            p = zpl__trim(p, false);
+            p = zpl_str_trim(p, false);
             if (*p == '-') {
                 zpl_opts_entry *t = 0;
                 zpl_b32 checkln = false;
@@ -12716,7 +12720,7 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                         }
                     }
 
-                    e = zpl__skip(e, '\0');
+                    e = zpl_str_control_skip(e, '\0');
                     zpl__opts_set_value(opts, t, b);
                 } else {
                     zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_OPTION);

@@ -298,7 +298,7 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
         char *p = argv[i];
 
         if (*p) {
-            p = zpl__trim(p, false);
+            p = zpl_str_trim(p, false);
             if (*p == '-') {
                 zpl_opts_entry *t = 0;
                 zpl_b32 checkln = false;
@@ -350,7 +350,7 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
                         }
                     }
 
-                    e = zpl__skip(e, '\0');
+                    e = zpl_str_control_skip(e, '\0');
                     zpl__opts_set_value(opts, t, b);
                 } else {
                     zpl__opts_push_error(opts, b, ZPL_OPTS_ERR_OPTION);

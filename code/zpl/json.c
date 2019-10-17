@@ -176,9 +176,6 @@ ZPL_DEF char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_alloc
 ZPL_DEF char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 ZPL_DEF char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 
-#define zpl__trim zpl_str_trim
-#define zpl__skip zpl__json_skip
-ZPL_DEF char   *zpl__json_skip(char *str, char c);
 ZPL_DEF zpl_b32 zpl__json_validate_name(char *str, char *err);
 
 //! @}
@@ -706,7 +703,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
 
             char c = *p;
             b = ++p;
-            e = zpl__json_skip(b, c);
+            e = zpl_str_control_skip(b, c);
             node.name = b;
             *e = '\0';
 
@@ -922,10 +919,6 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 typ
     return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
 }
 
-zpl_inline zpl_b32 zpl__json_is_control_char(char c) {
-    return !!zpl_strchr("\"\\/bfnrt", c);
-}
-
 zpl_inline zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
 zpl_inline zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
 zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
@@ -933,7 +926,7 @@ zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n",
 #define jx(x) !zpl_char_is_hex_digit(str[x])
 zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
     while (*str) {
-        if ((str[0] == '\\' && !zpl__json_is_control_char(str[1])) &&
+        if ((str[0] == '\\' && !zpl__is_control_char(str[1])) &&
             (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
             *err = *str;
             return false;
@@ -945,9 +938,3 @@ zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
     return true;
 }
 #undef jx
-
-zpl_inline char *zpl__json_skip(char *str, char c) {
-    while ((*str && *str != c) || (*(str - 1) == '\\' && *str == c && zpl__json_is_control_char(c))) { ++str; }
-
-    return str;
-}

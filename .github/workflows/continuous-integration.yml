@@ -1,0 +1,25 @@
+name: continuous-integration
+on:
+  push:
+    # paths:
+    #   - 'Code/*'
+    #   - 'Vendors/*'
+
+jobs:
+  build-win:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run build on windows
+        run: razzle amd64 && build_tests.sh.bat
+
+  build-lin:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run build on Linux
+        run: build_tests.sh.bat

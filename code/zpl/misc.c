@@ -310,7 +310,7 @@ zpl_inline zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len,
 
     if(!handle) return 0;
 
-    char c;
+    int c;
     zpl_usize i=0;
     while ((c = getc(handle)) != EOF && i++ < buffer_len) {
         *buffer++ = c;
@@ -340,7 +340,7 @@ zpl_inline zpl_string zpl_system_command_str(const char *command, zpl_allocator 
 
     zpl_string output = zpl_string_make_reserve(backing, 4);
 
-    char c;
+    int c;
     while ((c = getc(handle)) != EOF) {
         char ins[2] = {c,0};
         output = zpl_string_appendc(output, ins);
