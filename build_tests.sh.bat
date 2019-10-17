@@ -1,9 +1,12 @@
 #/bin/bash 2>nul || goto :windows
 #./generate.sh.bat
+export INCLUDES="-Icode"
+export LINKER="-pthread -lm -ldl"
+export WARNINNGS="-Wall -Wextra -Wno-write-strings -Wno-implicit-fallthrough -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers"
 for f in test/*.*
 do
     echo Building ${f##*/}
-    ./build.sh $f
+    g++ -g -std=c++11 $WARNINGS $INCLUDES $f $LINKER
 done
 exit
 
