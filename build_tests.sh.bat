@@ -3,7 +3,7 @@
 for f in test/*.*
 do
     echo Building ${f##*/}
-    ../build.sh $f
+    ./build.sh $f
 done
 exit
 
