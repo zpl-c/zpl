@@ -342,7 +342,7 @@ zpl_inline zpl_string zpl_system_command_str(const char *command, zpl_allocator 
 
     int c;
     while ((c = getc(handle)) != EOF) {
-        char ins[2] = {c,0};
+        char ins[2] = {(char)c,0};
         output = zpl_string_appendc(output, ins);
     }
 
