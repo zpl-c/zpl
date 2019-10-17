@@ -224,7 +224,8 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
     return ret_code;
 #else
     ZPL_NOT_IMPLEMENTED;
-    return -1;
+    ret_code = -1;
+    return ret_code;
 #endif
 }
 

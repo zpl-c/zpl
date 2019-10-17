@@ -13,4 +13,9 @@ rem call ./generate.sh.bat
 for %%f in (test\*.*) do (
     echo %%~f
     call build.bat %%~f /Od "user32.lib winmm.lib kernel32.lib" "/I..\..\code"
+
+    if errorlevel 1 (
+       echo Failure Reason Given is %errorlevel%
+       exit /b %errorlevel%
+    )
 )
