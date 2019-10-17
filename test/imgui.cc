@@ -1,4 +1,6 @@
-﻿#define STB_IMAGE_IMPLEMENTATION
+﻿#ifdef TEST_OPENGL
+
+#define STB_IMAGE_IMPLEMENTATION
 #define ZPLGL_NO_FONTS
 #define ZPL_PLATFORM
 #define ZPL_IMPLEMENTATION
@@ -169,3 +171,9 @@ There are many variations of passages of Lorem Ipsum available, but the majority
 
     return ERROR_SUCCESS;
 }
+#else
+int main()
+{
+    return 0;
+}
+#endif //TEST_OPENGL
