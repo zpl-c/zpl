@@ -3,6 +3,7 @@ build
 build.*
 !build.bat
 !build.py
+!build.sh
 include/project.4coder
 include/build.sh
 include/quick.c
