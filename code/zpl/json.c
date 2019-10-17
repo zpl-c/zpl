@@ -180,16 +180,33 @@ ZPL_DEF zpl_b32 zpl__json_validate_name(char *str, char *err);
 
 //! @}
 //$$
+zpl_inline zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
+zpl_inline zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
+zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+
+#define jx(x) !zpl_char_is_hex_digit(str[x])
+zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
+    while (*str) {
+        if ((str[0] == '\\' && !zpl__is_control_char(str[1])) &&
+            (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
+            *err = *str;
+            return false;
+        }
+
+        ++str;
+    }
+
+    return true;
+}
+#undef jx
+
+//$$
 
 ////////////////////////////////////////////////////////////////
 //
 // JSON5 Parser
 //
 //
-
-zpl_b32 zpl__json_is_control_char(char c);
-zpl_b32 zpl__json_is_assign_char(char c);
-zpl_b32 zpl__json_is_delim_char(char c);
 
 void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *source, zpl_allocator a, zpl_b32 handle_comments,
                     zpl_u8 *err_code) {
@@ -918,23 +935,3 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 typ
 
     return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
 }
-
-zpl_inline zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
-zpl_inline zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
-zpl_inline zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
-
-#define jx(x) !zpl_char_is_hex_digit(str[x])
-zpl_inline zpl_b32 zpl__json_validate_name(char *str, char *err) {
-    while (*str) {
-        if ((str[0] == '\\' && !zpl__is_control_char(str[1])) &&
-            (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
-            *err = *str;
-            return false;
-        }
-
-        ++str;
-    }
-
-    return true;
-}
-#undef jx

@@ -409,6 +409,111 @@ ZPL_DEF void zpl_dirinfo_step(zpl_dir_entry *dir_entry);
 //! @}
 //$$
 
+zpl_inline zpl_b32 zpl_file_read_at_check(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read) {
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    return f->ops.read_at(f->fd, buffer, size, offset, bytes_read, false);
+}
+
+zpl_inline zpl_b32 zpl_file_write_at_check(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written) {
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    return f->ops.write_at(f->fd, buffer, size, offset, bytes_written);
+}
+
+zpl_inline zpl_b32 zpl_file_read_at(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset) {
+    return zpl_file_read_at_check(f, buffer, size, offset, NULL);
+}
+
+zpl_inline zpl_b32 zpl_file_write_at(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset) {
+    return zpl_file_write_at_check(f, buffer, size, offset, NULL);
+}
+
+zpl_inline zpl_i64 zpl_file_seek(zpl_file *f, zpl_i64 offset) {
+    zpl_i64 new_offset = 0;
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    f->ops.seek(f->fd, offset, ZPL_SEEK_WHENCE_BEGIN, &new_offset);
+    return new_offset;
+}
+
+zpl_inline zpl_i64 zpl_file_seek_to_end(zpl_file *f) {
+    zpl_i64 new_offset = 0;
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_END, &new_offset);
+    return new_offset;
+}
+
+// NOTE: Skips a certain amount of bytes
+zpl_inline zpl_i64 zpl_file_skip(zpl_file *f, zpl_i64 bytes) {
+    zpl_i64 new_offset = 0;
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    f->ops.seek(f->fd, bytes, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
+    return new_offset;
+}
+
+zpl_inline zpl_i64 zpl_file_tell(zpl_file *f) {
+    zpl_i64 new_offset = 0;
+    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
+    f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
+    return new_offset;
+}
+
+zpl_inline zpl_b32 zpl_file_read(zpl_file *f, void *buffer, zpl_isize size) {
+    zpl_i64 cur_offset = zpl_file_tell(f);
+    zpl_b32 result = zpl_file_read_at(f, buffer, size, zpl_file_tell(f));
+    zpl_file_seek(f, cur_offset + size);
+    return result;
+}
+
+zpl_inline zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isize size) {
+    zpl_i64 cur_offset = zpl_file_tell(f);
+    zpl_b32 result = zpl_file_write_at(f, buffer, size, zpl_file_tell(f));
+    zpl_file_seek(f, cur_offset + size);
+    return result;
+}
+
+zpl_inline zpl_b32 zpl_path_is_absolute(char const *path) {
+    zpl_b32 result = false;
+    ZPL_ASSERT_NOT_NULL(path);
+#if defined(ZPL_SYSTEM_WINDOWS)
+    result = (zpl_strlen(path) > 2) && zpl_char_is_alpha(path[0]) && (path[1] == ':' && path[2] == ZPL_PATH_SEPARATOR);
+#else
+    result = (zpl_strlen(path) > 0 && path[0] == ZPL_PATH_SEPARATOR);
+#endif
+    return result;
+}
+
+zpl_inline zpl_b32 zpl_path_is_relative(char const *path) { return !zpl_path_is_absolute(path); }
+
+zpl_inline zpl_b32 zpl_path_is_root(char const *path) {
+    zpl_b32 result = false;
+    ZPL_ASSERT_NOT_NULL(path);
+#if defined(ZPL_SYSTEM_WINDOWS)
+    result = zpl_path_is_absolute(path) && (zpl_strlen(path) == 3);
+#else
+    result = zpl_path_is_absolute(path) && (zpl_strlen(path) == 1);
+#endif
+    return result;
+}
+
+zpl_inline char const *zpl_path_base_name(char const *path) {
+    char const *ls;
+    ZPL_ASSERT_NOT_NULL(path);
+    zpl_path_fix_slashes((char *)path);
+    ls = zpl_char_last_occurence(path, ZPL_PATH_SEPARATOR);
+    return (ls == NULL) ? path : ls + 1;
+}
+
+zpl_inline char const *zpl_path_extension(char const *path) {
+    char const *ld;
+    ZPL_ASSERT_NOT_NULL(path);
+    ld = zpl_char_last_occurence(path, '.');
+    return (ld == NULL) ? NULL : ld + 1;
+}
+
+
+
+
+//$$
+
 ////////////////////////////////////////////////////////////////
 //
 // File Handling
@@ -664,66 +769,6 @@ zpl_file_error zpl_file_close(zpl_file *f) {
     return ZPL_FILE_ERROR_NONE;
 }
 
-zpl_inline zpl_b32 zpl_file_read_at_check(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read) {
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    return f->ops.read_at(f->fd, buffer, size, offset, bytes_read, false);
-}
-
-zpl_inline zpl_b32 zpl_file_write_at_check(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written) {
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    return f->ops.write_at(f->fd, buffer, size, offset, bytes_written);
-}
-
-zpl_inline zpl_b32 zpl_file_read_at(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset) {
-    return zpl_file_read_at_check(f, buffer, size, offset, NULL);
-}
-
-zpl_inline zpl_b32 zpl_file_write_at(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset) {
-    return zpl_file_write_at_check(f, buffer, size, offset, NULL);
-}
-
-zpl_inline zpl_i64 zpl_file_seek(zpl_file *f, zpl_i64 offset) {
-    zpl_i64 new_offset = 0;
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    f->ops.seek(f->fd, offset, ZPL_SEEK_WHENCE_BEGIN, &new_offset);
-    return new_offset;
-}
-
-zpl_inline zpl_i64 zpl_file_seek_to_end(zpl_file *f) {
-    zpl_i64 new_offset = 0;
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_END, &new_offset);
-    return new_offset;
-}
-
-// NOTE: Skips a certain amount of bytes
-zpl_inline zpl_i64 zpl_file_skip(zpl_file *f, zpl_i64 bytes) {
-    zpl_i64 new_offset = 0;
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    f->ops.seek(f->fd, bytes, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
-    return new_offset;
-}
-
-zpl_inline zpl_i64 zpl_file_tell(zpl_file *f) {
-    zpl_i64 new_offset = 0;
-    if (!f->ops.read_at) f->ops = zpl_default_file_operations;
-    f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
-    return new_offset;
-}
-
-zpl_inline zpl_b32 zpl_file_read(zpl_file *f, void *buffer, zpl_isize size) {
-    zpl_i64 cur_offset = zpl_file_tell(f);
-    zpl_b32 result = zpl_file_read_at(f, buffer, size, zpl_file_tell(f));
-    zpl_file_seek(f, cur_offset + size);
-    return result;
-}
-
-zpl_inline zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isize size) {
-    zpl_i64 cur_offset = zpl_file_tell(f);
-    zpl_b32 result = zpl_file_write_at(f, buffer, size, zpl_file_tell(f));
-    zpl_file_seek(f, cur_offset + size);
-    return result;
-}
 
 zpl_file_error zpl_file_create(zpl_file *f, char const *filename) {
     return zpl_file_open_mode(f, ZPL_FILE_MODE_WRITE | ZPL_FILE_MODE_RW, filename);
@@ -735,7 +780,7 @@ zpl_file_error zpl_file_open(zpl_file *f, char const *filename) {
 
 char const *zpl_file_name(zpl_file *f) { return f->filename ? f->filename : ""; }
 
-zpl_inline zpl_b32 zpl_file_has_changed(zpl_file *f) {
+zpl_b32 zpl_file_has_changed(zpl_file *f) {
     zpl_b32 result = false;
     zpl_file_time last_write_time = zpl_fs_last_write_time(f->filename);
     if (f->last_write_time != last_write_time) {
@@ -751,7 +796,7 @@ zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
-zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
+zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.p = v;                                                                                     \
@@ -765,7 +810,7 @@ zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     return &zpl__std_files[std];
 }
 
-zpl_inline void zpl_file_connect_handle(zpl_file *file, void *handle) {
+void zpl_file_connect_handle(zpl_file *file, void *handle) {
     ZPL_ASSERT_NOT_NULL(file);
     ZPL_ASSERT_NOT_NULL(handle);
 
@@ -776,7 +821,7 @@ zpl_inline void zpl_file_connect_handle(zpl_file *file, void *handle) {
 }
 
 
-zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
+zpl_i64 zpl_file_size(zpl_file *f) {
     LARGE_INTEGER size;
     GetFileSizeEx(f->fd.p, &size);
     return size.QuadPart;
@@ -809,7 +854,7 @@ zpl_b32 zpl_fs_exists(char const *name) {
 
 #else // POSIX
 
-zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
+zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
 #define ZPL__SET_STD_FILE(type, v)                                                                                     \
         zpl__std_files[type].fd.i = v;                                                                                     \
@@ -823,7 +868,7 @@ zpl_inline zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     return &zpl__std_files[std];
 }
 
-zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
+zpl_i64 zpl_file_size(zpl_file *f) {
     zpl_i64 size = 0;
     zpl_i64 prev_offset = zpl_file_tell(f);
     zpl_file_seek_to_end(f);
@@ -832,14 +877,14 @@ zpl_inline zpl_i64 zpl_file_size(zpl_file *f) {
     return size;
 }
 
-zpl_inline zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
+zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
     zpl_file_error err = ZPL_FILE_ERROR_NONE;
     int i = ftruncate(f->fd.i, size);
     if (i != 0) err = ZPL_FILE_ERROR_TRUNCATION_FAILURE;
     return err;
 }
 
-zpl_inline zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
+zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 
 #endif
 
@@ -886,7 +931,7 @@ zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     return cast(zpl_file_time) li.QuadPart;
 }
 
-zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
+zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
 
@@ -901,7 +946,7 @@ zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_fi
     return result;
 }
 
-zpl_inline zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
+zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
 
@@ -916,7 +961,7 @@ zpl_inline zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_fi
     return result;
 }
 
-zpl_inline zpl_b32 zpl_fs_remove(char const *filename) {
+zpl_b32 zpl_fs_remove(char const *filename) {
     zpl_b32 result = false;
     zpl_allocator a = zpl_heap_allocator( );
 
@@ -940,7 +985,7 @@ zpl_file_time zpl_fs_last_write_time(char const *filepath) {
     return cast(zpl_file_time) result;
 }
 
-zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
+zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
     zpl_unused(fail_if_exists);
 #if defined(ZPL_SYSTEM_OSX)
     return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
@@ -961,12 +1006,12 @@ zpl_inline zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_fi
 #endif
 }
 
-zpl_inline zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
+zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
     if (link(existing_filename, new_filename) == 0) { return (unlink(existing_filename) != -1); }
     return false;
 }
 
-zpl_inline zpl_b32 zpl_fs_remove(char const *filename) {
+zpl_b32 zpl_fs_remove(char const *filename) {
 #if defined(ZPL_SYSTEM_OSX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
     return (unlink(filename) != -1);
 #else
@@ -1018,45 +1063,6 @@ void zpl_file_free_contents(zpl_file_contents *fc) {
     zpl_free(fc->allocator, fc->data);
     fc->data = NULL;
     fc->size = 0;
-}
-
-zpl_inline zpl_b32 zpl_path_is_absolute(char const *path) {
-    zpl_b32 result = false;
-    ZPL_ASSERT_NOT_NULL(path);
-#if defined(ZPL_SYSTEM_WINDOWS)
-    result = (zpl_strlen(path) > 2) && zpl_char_is_alpha(path[0]) && (path[1] == ':' && path[2] == ZPL_PATH_SEPARATOR);
-#else
-    result = (zpl_strlen(path) > 0 && path[0] == ZPL_PATH_SEPARATOR);
-#endif
-    return result;
-}
-
-zpl_inline zpl_b32 zpl_path_is_relative(char const *path) { return !zpl_path_is_absolute(path); }
-
-zpl_inline zpl_b32 zpl_path_is_root(char const *path) {
-    zpl_b32 result = false;
-    ZPL_ASSERT_NOT_NULL(path);
-#if defined(ZPL_SYSTEM_WINDOWS)
-    result = zpl_path_is_absolute(path) && (zpl_strlen(path) == 3);
-#else
-    result = zpl_path_is_absolute(path) && (zpl_strlen(path) == 1);
-#endif
-    return result;
-}
-
-zpl_inline char const *zpl_path_base_name(char const *path) {
-    char const *ls;
-    ZPL_ASSERT_NOT_NULL(path);
-    zpl_path_fix_slashes((char *)path);
-    ls = zpl_char_last_occurence(path, ZPL_PATH_SEPARATOR);
-    return (ls == NULL) ? path : ls + 1;
-}
-
-zpl_inline char const *zpl_path_extension(char const *path) {
-    char const *ld;
-    ZPL_ASSERT_NOT_NULL(path);
-    ld = zpl_char_last_occurence(path, '.');
-    return (ld == NULL) ? NULL : ld + 1;
 }
 
 #if !defined(_WINDOWS_) && defined(ZPL_SYSTEM_WINDOWS)

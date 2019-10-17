@@ -67,7 +67,26 @@ ZPL_DEF void zpl_reverse(void *base, zpl_isize count, zpl_isize size);
 
 //! @}
 //$$
+zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
+                                   zpl_compare_proc compare_proc) {
+    zpl_isize start = 0;
+    zpl_isize end = count;
 
+    while (start < end) {
+        zpl_isize mid = start + (end - start) / 2;
+        zpl_isize result = compare_proc(key, cast(zpl_u8 *) base + mid * size);
+        if (result < 0)
+            end = mid;
+        else if (result > 0)
+            start = mid + 1;
+        else
+            return mid;
+    }
+
+    return -1;
+}
+
+//$$
 ////////////////////////////////////////////////////////////////
 //
 // Sorting
@@ -221,25 +240,6 @@ ZPL_RADIX_SORT_PROC_GEN(u8);
 ZPL_RADIX_SORT_PROC_GEN(u16);
 ZPL_RADIX_SORT_PROC_GEN(u32);
 ZPL_RADIX_SORT_PROC_GEN(u64);
-
-zpl_inline zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
-                                   zpl_compare_proc compare_proc) {
-    zpl_isize start = 0;
-    zpl_isize end = count;
-
-    while (start < end) {
-        zpl_isize mid = start + (end - start) / 2;
-        zpl_isize result = compare_proc(key, cast(zpl_u8 *) base + mid * size);
-        if (result < 0)
-            end = mid;
-        else if (result > 0)
-            start = mid + 1;
-        else
-            return mid;
-    }
-
-    return -1;
-}
 
 void zpl_shuffle(void *base, zpl_isize count, zpl_isize size) {
     zpl_u8 *a;

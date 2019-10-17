@@ -205,9 +205,6 @@ ZPL_DEF zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize 
 
 //! @}
 //$$
-
-#ifdef ZPL_THREADING
-
 ////////////////////////////////////////////////////////////////
 //
 // Concurrency
@@ -778,6 +775,12 @@ zpl_inline void zpl_mutex_unlock(zpl_mutex *m) {
 #endif
 }
 
+zpl_inline zpl_b32 zpl_thread_is_running(zpl_thread const *t) { return t->is_running != 0; }
+
+//$$
+#ifdef ZPL_THREADING
+
+
 void zpl_thread_init(zpl_thread *t) {
     zpl_zero_item(t);
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -793,20 +796,20 @@ void zpl_thread_destroy(zpl_thread *t) {
     zpl_semaphore_destroy(&t->semaphore);
 }
 
-zpl_inline void zpl__thread_run(zpl_thread *t) {
+void zpl__thread_run(zpl_thread *t) {
     zpl_semaphore_release(&t->semaphore);
     t->return_value = t->proc(t);
 }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-zpl_inline DWORD __stdcall zpl__thread_proc(void *arg) {
+DWORD __stdcall zpl__thread_proc(void *arg) {
     zpl_thread *t = cast(zpl_thread *)arg;
     zpl__thread_run(t);
     t->is_running = false;
     return 0;
 }
 #else
-zpl_inline void *zpl__thread_proc(void *arg) {
+void *zpl__thread_proc(void *arg) {
     zpl_thread *t = cast(zpl_thread *)arg;
     zpl__thread_run(t);
     t->is_running = false;
@@ -814,9 +817,9 @@ zpl_inline void *zpl__thread_proc(void *arg) {
 }
 #endif
 
-zpl_inline void zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
+void zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) { zpl_thread_start_with_stack(t, proc, user_data, 0); }
 
-zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, zpl_isize stack_size) {
+void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, zpl_isize stack_size) {
     ZPL_ASSERT(!t->is_running);
     ZPL_ASSERT(proc != NULL);
     t->proc = proc;
@@ -842,7 +845,7 @@ zpl_inline void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc,
     zpl_semaphore_wait(&t->semaphore);
 }
 
-zpl_inline void zpl_thread_join(zpl_thread *t) {
+void zpl_thread_join(zpl_thread *t) {
     if (!t->is_running) return;
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -856,9 +859,7 @@ zpl_inline void zpl_thread_join(zpl_thread *t) {
     t->is_running = false;
 }
 
-zpl_inline zpl_b32 zpl_thread_is_running(zpl_thread const *t) { return t->is_running != 0; }
-
-zpl_inline zpl_u32 zpl_thread_current_id(void) {
+zpl_u32 zpl_thread_current_id(void) {
     zpl_u32 thread_id;
 #if defined(ZPL_SYSTEM_WINDOWS)
 #if defined(ZPL_ARCH_32_BIT) && defined(ZPL_CPU_X86)

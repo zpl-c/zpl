@@ -438,6 +438,8 @@ zpl_inline zpl_list *zpl_list_remove(zpl_list *list) {
     return list->next;
 }
 
+//$$
+
 ////////////////////////////////////////////////////////////////
 //
 // zpl_array

@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.6 - WIP: Handle inlined methods properly
   9.8.5 - Fix incorrect usage of EOF and opts dependency on JSON5 module's methods
   9.8.4 - Fix MSVC ZPL_NO_MATH_H code branch using incorrect methods internally
   9.8.3 - Fix MinGW GCC related issue with zpl_printf %lld format
@@ -300,6 +301,8 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wattributes"
 #pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wno-write-strings"
+#pragma GCC diagnostic ignored "-Wno-implicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
@@ -311,6 +314,8 @@ extern "C" {
 #pragma warning(disable : 4201)
 #pragma warning(disable : 4127) // Conditional expression is constant
 #endif
+
+    //<#inline>
 
 #if defined(__cplusplus)
 extern "C" {

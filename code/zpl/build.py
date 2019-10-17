@@ -70,6 +70,7 @@ with open(TPL_PATH, 'r') as loader:
         exit()
 
     head = ""
+    inline = ""
     source = ""
 
     for m in l:
@@ -82,10 +83,12 @@ with open(TPL_PATH, 'r') as loader:
 
             p = c.split("//$$")
             head += p[0]
-            source += p[1]
+            inline += p[1]
+            source += p[2]
 
 
     tpl = tpl.replace("//<#head>", head)
+    tpl = tpl.replace("//<#inline>", inline)
     tpl = tpl.replace("//<#source>", source)
 
     with open(BUILD_PATH, "w+") as output:

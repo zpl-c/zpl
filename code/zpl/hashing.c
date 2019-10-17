@@ -32,6 +32,11 @@ ZPL_DEF zpl_u64 zpl_murmur64_seed(void const *data, zpl_isize len, zpl_u64 seed)
 //! @}
 //$$
 
+zpl_inline zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
+zpl_inline zpl_u64 zpl_murmur64(void const *data, zpl_isize len) { return zpl_murmur64_seed(data, len, 0x9747b28c); }
+
+//$$
+
 ////////////////////////////////////////////////////////////////
 //
 // Hashing functions
@@ -361,9 +366,6 @@ zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len) {
 
     return ret;
 }
-
-zpl_inline zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
-zpl_inline zpl_u64 zpl_murmur64(void const *data, zpl_isize len) { return zpl_murmur64_seed(data, len, 0x9747b28c); }
 
 zpl_u32 zpl_murmur32_seed(void const *data, zpl_isize len, zpl_u32 seed) {
     zpl_u32 const c1 = 0xcc9e2d51;

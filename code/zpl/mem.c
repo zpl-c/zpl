@@ -377,10 +377,9 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 //! @}
 //$$
 
-zpl_b32 zpl_is_power_of_two(zpl_isize x) {
-    if (x <= 0) return false;
-    return !(x & (x - 1));
-}
+#define ZPL__ONES (cast(zpl_usize) - 1 / ZPL_U8_MAX)
+#define ZPL__HIGHS (ZPL__ONES * (ZPL_U8_MAX / 2 + 1))
+#define ZPL__HAS_ZERO(x) (((x)-ZPL__ONES) & ~(x)&ZPL__HIGHS)
 
 zpl_inline void *zpl_align_forward(void *ptr, zpl_isize alignment) {
     zpl_uintptr p;
@@ -689,180 +688,6 @@ zpl_inline zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size
     return 0;
 }
 
-void zpl_memswap(void *i, void *j, zpl_isize size) {
-    if (i == j) return;
-
-    if (size == 4) {
-        zpl_swap(zpl_u32, *cast(zpl_u32 *) i, *cast(zpl_u32 *) j);
-    } else if (size == 8) {
-        zpl_swap(zpl_u64, *cast(zpl_u64 *) i, *cast(zpl_u64 *) j);
-    } else if (size < 8) {
-        zpl_u8 *a = cast(zpl_u8 *) i;
-        zpl_u8 *b = cast(zpl_u8 *) j;
-        if (a != b) {
-            while (size--) { zpl_swap(zpl_u8, *a++, *b++); }
-        }
-    } else {
-        char buffer[256];
-
-        while (size > zpl_size_of(buffer)) {
-            zpl_memswap(i, j, zpl_size_of(buffer));
-            i = zpl_pointer_add(i, zpl_size_of(buffer));
-            j = zpl_pointer_add(j, zpl_size_of(buffer));
-            size -= zpl_size_of(buffer);
-        }
-
-        zpl_memcopy(buffer, i, size);
-        zpl_memcopy(i, j, size);
-        zpl_memcopy(j, buffer, size);
-    }
-}
-
-#define ZPL__ONES (cast(zpl_usize) - 1 / ZPL_U8_MAX)
-#define ZPL__HIGHS (ZPL__ONES * (ZPL_U8_MAX / 2 + 1))
-#define ZPL__HAS_ZERO(x) (((x)-ZPL__ONES) & ~(x)&ZPL__HIGHS)
-
-void const *zpl_memchr(void const *data, zpl_u8 c, zpl_isize n) {
-    zpl_u8 const *s = cast(zpl_u8 const *) data;
-    while ((cast(zpl_uintptr) s & (sizeof(zpl_usize) - 1)) && n && *s != c) {
-        s++;
-        n--;
-    }
-    if (n && *s != c) {
-        zpl_isize const *w;
-        zpl_isize k = ZPL__ONES * c;
-        w = cast(zpl_isize const *) s;
-        while (n >= zpl_size_of(zpl_isize) && !ZPL__HAS_ZERO(*w ^ k)) {
-            w++;
-            n -= zpl_size_of(zpl_isize);
-        }
-        s = cast(zpl_u8 const *) w;
-        while (n && *s != c) {
-            s++;
-            n--;
-        }
-    }
-
-    return n ? cast(void const *) s : NULL;
-}
-
-void const *zpl_memrchr(void const *data, zpl_u8 c, zpl_isize n) {
-    zpl_u8 const *s = cast(zpl_u8 const *) data;
-    while (n--) {
-        if (s[n] == c) return cast(void const *)(s + n);
-    }
-    return NULL;
-}
-
-////////////////////////////////////////////////////////////////
-//
-// Virtual Memory
-//
-//
-
-zpl_virtual_memory zpl_vm(void *data, zpl_isize size) {
-    zpl_virtual_memory vm;
-    vm.data = data;
-    vm.size = size;
-    return vm;
-}
-
-#if defined(ZPL_SYSTEM_WINDOWS)
-zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
-    zpl_virtual_memory vm;
-    ZPL_ASSERT(size > 0);
-    vm.data = VirtualAlloc(addr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    vm.size = size;
-    return vm;
-}
-
-zpl_inline zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
-    MEMORY_BASIC_INFORMATION info;
-    while (vm.size > 0) {
-        if (VirtualQuery(vm.data, &info, zpl_size_of(info)) == 0) return false;
-        if (info.BaseAddress != vm.data || info.AllocationBase != vm.data || info.State != MEM_COMMIT ||
-            info.RegionSize > cast(zpl_usize) vm.size) {
-            return false;
-        }
-        if (VirtualFree(vm.data, 0, MEM_RELEASE) == 0) return false;
-        vm.data = zpl_pointer_add(vm.data, info.RegionSize);
-        vm.size -= info.RegionSize;
-    }
-    return true;
-}
-
-zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
-    zpl_virtual_memory new_vm = { 0 };
-    void *ptr;
-    ZPL_ASSERT(vm.size >= lead_size + size);
-
-    ptr = zpl_pointer_add(vm.data, lead_size);
-
-    zpl_vm_free(vm);
-    new_vm = zpl_vm_alloc(ptr, size);
-    if (new_vm.data == ptr) return new_vm;
-    if (new_vm.data) zpl_vm_free(new_vm);
-    return new_vm;
-}
-
-zpl_inline zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
-    VirtualAlloc(vm.data, vm.size, MEM_RESET, PAGE_READWRITE);
-    // NOTE: Can this really fail?
-    return true;
-}
-
-zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
-    SYSTEM_INFO info;
-    GetSystemInfo(&info);
-    if (alignment_out) *alignment_out = info.dwAllocationGranularity;
-    return info.dwPageSize;
-}
-
-#else
-
-#ifndef MAP_ANONYMOUS
-#define MAP_ANONYMOUS MAP_ANON
-#endif
-
-zpl_inline zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
-    zpl_virtual_memory vm;
-    ZPL_ASSERT(size > 0);
-    vm.data = mmap(addr, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-    vm.size = size;
-    return vm;
-}
-
-zpl_inline zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
-    munmap(vm.data, vm.size);
-    return true;
-}
-
-zpl_inline zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
-    void *ptr;
-    zpl_isize trail_size;
-    ZPL_ASSERT(vm.size >= lead_size + size);
-
-    ptr = zpl_pointer_add(vm.data, lead_size);
-    trail_size = vm.size - lead_size - size;
-
-    if (lead_size != 0) zpl_vm_free(zpl_vm(vm.data, lead_size));
-    if (trail_size != 0) zpl_vm_free(zpl_vm(ptr, trail_size));
-    return zpl_vm(ptr, size);
-}
-
-zpl_inline zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
-    int err = madvise(vm.data, vm.size, MADV_DONTNEED);
-    return err != 0;
-}
-
-zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
-    // TODO: Is this always true?
-    zpl_isize result = cast(zpl_isize) sysconf(_SC_PAGE_SIZE);
-    if (alignment_out) *alignment_out = result;
-    return result;
-}
-
-#endif
 
 zpl_inline void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment) {
     return a.proc(a.data, ZPL_ALLOCATION_ALLOC, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
@@ -921,12 +746,6 @@ zpl_inline void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl
     }
 }
 
-////////////////////////////////////////////////////////////////
-//
-// Custom Allocation
-//
-//
-
 //
 // Heap Allocator
 //
@@ -936,58 +755,6 @@ zpl_inline zpl_allocator zpl_heap_allocator(void) {
     a.proc = zpl_heap_allocator_proc;
     a.data = NULL;
     return a;
-}
-
-ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
-    void *ptr = NULL;
-    zpl_unused(allocator_data);
-    zpl_unused(old_size);
-    // TODO: Throughly test!
-    switch (type) {
-#if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
-        case ZPL_ALLOCATION_ALLOC:
-        ptr = _aligned_malloc(size, alignment);
-        if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
-        break;
-        case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
-        case ZPL_ALLOCATION_RESIZE: ptr = _aligned_realloc(old_memory, size, alignment); break;
-
-#elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
-        case ZPL_ALLOCATION_ALLOC: {
-            ptr = aligned_alloc(alignment, size);
-
-            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
-        } break;
-
-        case ZPL_ALLOCATION_FREE: {
-            free(old_memory);
-        } break;
-
-        case ZPL_ALLOCATION_RESIZE: {
-            zpl_allocator a = zpl_heap_allocator( );
-            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
-        } break;
-#else
-        case ZPL_ALLOCATION_ALLOC: {
-            posix_memalign(&ptr, alignment, size);
-
-            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
-        } break;
-
-        case ZPL_ALLOCATION_FREE: {
-            free(old_memory);
-        } break;
-
-        case ZPL_ALLOCATION_RESIZE: {
-            zpl_allocator a = zpl_heap_allocator( );
-            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
-        } break;
-#endif
-
-        case ZPL_ALLOCATION_FREE_ALL: break;
-    }
-
-    return ptr;
 }
 
 //
@@ -1048,6 +815,339 @@ zpl_inline zpl_allocator zpl_arena_allocator(zpl_arena *arena) {
     return allocator;
 }
 
+zpl_inline zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
+    zpl_temp_arena_memory tmp;
+    tmp.arena = arena;
+    tmp.original_count = arena->total_allocated;
+    arena->temp_count++;
+    return tmp;
+}
+
+zpl_inline void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
+    ZPL_ASSERT(tmp.arena->total_allocated >= tmp.original_count);
+    ZPL_ASSERT(tmp.arena->temp_count > 0);
+    tmp.arena->total_allocated = tmp.original_count;
+    tmp.arena->temp_count--;
+}
+
+//
+// Pool Allocator
+//
+
+zpl_inline void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size) {
+    zpl_pool_init_align(pool, backing, num_blocks, block_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
+}
+
+zpl_inline void zpl_pool_free(zpl_pool *pool) {
+    if (pool->backing.proc) { zpl_free(pool->backing, pool->physical_start); }
+}
+
+zpl_inline zpl_allocator zpl_pool_allocator(zpl_pool *pool) {
+    zpl_allocator allocator;
+    allocator.proc = zpl_pool_allocator_proc;
+    allocator.data = pool;
+    return allocator;
+}
+
+zpl_inline zpl_allocation_header_ev *zpl_allocation_header(void *data) {
+    zpl_isize *p = cast(zpl_isize *) data;
+    while (p[-1] == cast(zpl_isize)(-1)) p--;
+    return cast(zpl_allocation_header_ev *) p - 1;
+}
+
+zpl_inline void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size) {
+    zpl_isize *ptr;
+    header->size = size;
+    ptr = cast(zpl_isize *)(header + 1);
+    while (cast(void *) ptr < data) *ptr++ = cast(zpl_isize)(-1);
+}
+
+//
+// Stack Memory Allocator
+//
+
+#define ZPL_STACK_ALLOC_OFFSET sizeof(zpl_u64)
+ZPL_STATIC_ASSERT(ZPL_STACK_ALLOC_OFFSET == 8);
+
+zpl_inline void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size) {
+    s->physical_start = start;
+    s->total_size = size;
+    s->allocated = 0;
+}
+
+zpl_inline void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size) {
+    s->backing = backing;
+    s->physical_start = zpl_alloc(backing, size);
+    s->total_size = size;
+    s->allocated = 0;
+}
+
+zpl_inline zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
+    if (s->allocated == 0) return false;
+
+    if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) { return true; }
+
+    return false;
+}
+
+zpl_inline void zpl_stack_memory_free(zpl_stack_memory *s) {
+    if (s->backing.proc) {
+        zpl_free(s->backing, s->physical_start);
+        s->physical_start = NULL;
+    }
+}
+
+zpl_inline zpl_allocator zpl_stack_allocator(zpl_stack_memory *s) {
+    zpl_allocator a;
+    a.proc = zpl_stack_allocator_proc;
+    a.data = s;
+    return a;
+}
+
+//$$
+
+zpl_b32 zpl_is_power_of_two(zpl_isize x) {
+    if (x <= 0) return false;
+    return !(x & (x - 1));
+}
+
+void zpl_memswap(void *i, void *j, zpl_isize size) {
+    if (i == j) return;
+
+    if (size == 4) {
+        zpl_swap(zpl_u32, *cast(zpl_u32 *) i, *cast(zpl_u32 *) j);
+    } else if (size == 8) {
+        zpl_swap(zpl_u64, *cast(zpl_u64 *) i, *cast(zpl_u64 *) j);
+    } else if (size < 8) {
+        zpl_u8 *a = cast(zpl_u8 *) i;
+        zpl_u8 *b = cast(zpl_u8 *) j;
+        if (a != b) {
+            while (size--) { zpl_swap(zpl_u8, *a++, *b++); }
+        }
+    } else {
+        char buffer[256];
+
+        while (size > zpl_size_of(buffer)) {
+            zpl_memswap(i, j, zpl_size_of(buffer));
+            i = zpl_pointer_add(i, zpl_size_of(buffer));
+            j = zpl_pointer_add(j, zpl_size_of(buffer));
+            size -= zpl_size_of(buffer);
+        }
+
+        zpl_memcopy(buffer, i, size);
+        zpl_memcopy(i, j, size);
+        zpl_memcopy(j, buffer, size);
+    }
+}
+
+void const *zpl_memchr(void const *data, zpl_u8 c, zpl_isize n) {
+    zpl_u8 const *s = cast(zpl_u8 const *) data;
+    while ((cast(zpl_uintptr) s & (sizeof(zpl_usize) - 1)) && n && *s != c) {
+        s++;
+        n--;
+    }
+    if (n && *s != c) {
+        zpl_isize const *w;
+        zpl_isize k = ZPL__ONES * c;
+        w = cast(zpl_isize const *) s;
+        while (n >= zpl_size_of(zpl_isize) && !ZPL__HAS_ZERO(*w ^ k)) {
+            w++;
+            n -= zpl_size_of(zpl_isize);
+        }
+        s = cast(zpl_u8 const *) w;
+        while (n && *s != c) {
+            s++;
+            n--;
+        }
+    }
+
+    return n ? cast(void const *) s : NULL;
+}
+
+void const *zpl_memrchr(void const *data, zpl_u8 c, zpl_isize n) {
+    zpl_u8 const *s = cast(zpl_u8 const *) data;
+    while (n--) {
+        if (s[n] == c) return cast(void const *)(s + n);
+    }
+    return NULL;
+}
+
+////////////////////////////////////////////////////////////////
+//
+// Virtual Memory
+//
+//
+
+zpl_virtual_memory zpl_vm(void *data, zpl_isize size) {
+    zpl_virtual_memory vm;
+    vm.data = data;
+    vm.size = size;
+    return vm;
+}
+
+#if defined(ZPL_SYSTEM_WINDOWS)
+zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
+    zpl_virtual_memory vm;
+    ZPL_ASSERT(size > 0);
+    vm.data = VirtualAlloc(addr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    vm.size = size;
+    return vm;
+}
+
+zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
+    MEMORY_BASIC_INFORMATION info;
+    while (vm.size > 0) {
+        if (VirtualQuery(vm.data, &info, zpl_size_of(info)) == 0) return false;
+        if (info.BaseAddress != vm.data || info.AllocationBase != vm.data || info.State != MEM_COMMIT ||
+            info.RegionSize > cast(zpl_usize) vm.size) {
+            return false;
+        }
+        if (VirtualFree(vm.data, 0, MEM_RELEASE) == 0) return false;
+        vm.data = zpl_pointer_add(vm.data, info.RegionSize);
+        vm.size -= info.RegionSize;
+    }
+    return true;
+}
+
+zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
+    zpl_virtual_memory new_vm = { 0 };
+    void *ptr;
+    ZPL_ASSERT(vm.size >= lead_size + size);
+
+    ptr = zpl_pointer_add(vm.data, lead_size);
+
+    zpl_vm_free(vm);
+    new_vm = zpl_vm_alloc(ptr, size);
+    if (new_vm.data == ptr) return new_vm;
+    if (new_vm.data) zpl_vm_free(new_vm);
+    return new_vm;
+}
+
+zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
+    VirtualAlloc(vm.data, vm.size, MEM_RESET, PAGE_READWRITE);
+    // NOTE: Can this really fail?
+    return true;
+}
+
+zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
+    if (alignment_out) *alignment_out = info.dwAllocationGranularity;
+    return info.dwPageSize;
+}
+
+#else
+
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+
+zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
+    zpl_virtual_memory vm;
+    ZPL_ASSERT(size > 0);
+    vm.data = mmap(addr, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    vm.size = size;
+    return vm;
+}
+
+zpl_b32 zpl_vm_free(zpl_virtual_memory vm) {
+    munmap(vm.data, vm.size);
+    return true;
+}
+
+zpl_virtual_memory zpl_vm_trim(zpl_virtual_memory vm, zpl_isize lead_size, zpl_isize size) {
+    void *ptr;
+    zpl_isize trail_size;
+    ZPL_ASSERT(vm.size >= lead_size + size);
+
+    ptr = zpl_pointer_add(vm.data, lead_size);
+    trail_size = vm.size - lead_size - size;
+
+    if (lead_size != 0) zpl_vm_free(zpl_vm(vm.data, lead_size));
+    if (trail_size != 0) zpl_vm_free(zpl_vm(ptr, trail_size));
+    return zpl_vm(ptr, size);
+}
+
+zpl_b32 zpl_vm_purge(zpl_virtual_memory vm) {
+    int err = madvise(vm.data, vm.size, MADV_DONTNEED);
+    return err != 0;
+}
+
+zpl_isize zpl_virtual_memory_page_size(zpl_isize *alignment_out) {
+    // TODO: Is this always true?
+    zpl_isize result = cast(zpl_isize) sysconf(_SC_PAGE_SIZE);
+    if (alignment_out) *alignment_out = result;
+    return result;
+}
+
+#endif
+
+////////////////////////////////////////////////////////////////
+//
+// Custom Allocation
+//
+//
+
+//
+// Heap Allocator
+//
+
+ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
+    void *ptr = NULL;
+    zpl_unused(allocator_data);
+    zpl_unused(old_size);
+    // TODO: Throughly test!
+    switch (type) {
+#if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
+        case ZPL_ALLOCATION_ALLOC:
+        ptr = _aligned_malloc(size, alignment);
+        if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
+        break;
+        case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
+        case ZPL_ALLOCATION_RESIZE: ptr = _aligned_realloc(old_memory, size, alignment); break;
+
+#elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
+        case ZPL_ALLOCATION_ALLOC: {
+            ptr = aligned_alloc(alignment, size);
+
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
+        } break;
+
+        case ZPL_ALLOCATION_FREE: {
+            free(old_memory);
+        } break;
+
+        case ZPL_ALLOCATION_RESIZE: {
+            zpl_allocator a = zpl_heap_allocator( );
+            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
+        } break;
+#else
+        case ZPL_ALLOCATION_ALLOC: {
+            posix_memalign(&ptr, alignment, size);
+
+            if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
+        } break;
+
+        case ZPL_ALLOCATION_FREE: {
+            free(old_memory);
+        } break;
+
+        case ZPL_ALLOCATION_RESIZE: {
+            zpl_allocator a = zpl_heap_allocator( );
+            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
+        } break;
+#endif
+
+        case ZPL_ALLOCATION_FREE_ALL: break;
+    }
+
+    return ptr;
+}
+
+//
+// Arena Allocator
+//
+
 ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
     zpl_arena *arena = cast(zpl_arena *) allocator_data;
     void *ptr = NULL;
@@ -1086,28 +1186,9 @@ ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
     return ptr;
 }
 
-zpl_inline zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
-    zpl_temp_arena_memory tmp;
-    tmp.arena = arena;
-    tmp.original_count = arena->total_allocated;
-    arena->temp_count++;
-    return tmp;
-}
-
-zpl_inline void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
-    ZPL_ASSERT(tmp.arena->total_allocated >= tmp.original_count);
-    ZPL_ASSERT(tmp.arena->temp_count > 0);
-    tmp.arena->total_allocated = tmp.original_count;
-    tmp.arena->temp_count--;
-}
-
 //
 // Pool Allocator
 //
-
-zpl_inline void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size) {
-    zpl_pool_init_align(pool, backing, num_blocks, block_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
-}
 
 void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size, zpl_isize block_align) {
     zpl_isize actual_block_size, pool_size, block_index;
@@ -1140,16 +1221,6 @@ void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_bl
     pool->free_list = data;
 }
 
-zpl_inline void zpl_pool_free(zpl_pool *pool) {
-    if (pool->backing.proc) { zpl_free(pool->backing, pool->physical_start); }
-}
-
-zpl_inline zpl_allocator zpl_pool_allocator(zpl_pool *pool) {
-    zpl_allocator allocator;
-    allocator.proc = zpl_pool_allocator_proc;
-    allocator.data = pool;
-    return allocator;
-}
 ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
     zpl_pool *pool = cast(zpl_pool *) allocator_data;
     void *ptr = NULL;
@@ -1193,18 +1264,6 @@ ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
     return ptr;
 }
 
-zpl_inline zpl_allocation_header_ev *zpl_allocation_header(void *data) {
-    zpl_isize *p = cast(zpl_isize *) data;
-    while (p[-1] == cast(zpl_isize)(-1)) p--;
-    return cast(zpl_allocation_header_ev *) p - 1;
-}
-
-zpl_inline void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size) {
-    zpl_isize *ptr;
-    header->size = size;
-    ptr = cast(zpl_isize *)(header + 1);
-    while (cast(void *) ptr < data) *ptr++ = cast(zpl_isize)(-1);
-}
 
 //
 // Scratch Memory Allocator
@@ -1302,45 +1361,6 @@ ZPL_ALLOCATOR_PROC(zpl_scratch_allocator_proc) {
 //
 // Stack Memory Allocator
 //
-
-#define ZPL_STACK_ALLOC_OFFSET sizeof(zpl_u64)
-ZPL_STATIC_ASSERT(ZPL_STACK_ALLOC_OFFSET == 8);
-
-zpl_inline void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size) {
-    s->physical_start = start;
-    s->total_size = size;
-    s->allocated = 0;
-}
-
-zpl_inline void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size) {
-    s->backing = backing;
-    s->physical_start = zpl_alloc(backing, size);
-    s->total_size = size;
-    s->allocated = 0;
-}
-
-zpl_inline zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
-    if (s->allocated == 0) return false;
-
-    if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) { return true; }
-
-    return false;
-}
-
-zpl_inline void zpl_stack_memory_free(zpl_stack_memory *s) {
-    if (s->backing.proc) {
-        zpl_free(s->backing, s->physical_start);
-        s->physical_start = NULL;
-    }
-}
-
-zpl_inline zpl_allocator zpl_stack_allocator(zpl_stack_memory *s) {
-    zpl_allocator a;
-    a.proc = zpl_stack_allocator_proc;
-    a.data = s;
-    return a;
-}
-
 ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
     zpl_stack_memory *s = cast(zpl_stack_memory *) allocator_data;
     void *ptr = NULL;

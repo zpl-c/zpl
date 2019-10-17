@@ -128,6 +128,7 @@ ZPL_DEF zpl_b32 zpl_opts_positionals_filled(zpl_opts *opts);
 //! @}
 //$$
 
+//$$
 ////////////////////////////////////////////////////////////////
 //
 // CLI Options
@@ -146,7 +147,6 @@ void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
 }
 
 void zpl_opts_free(zpl_opts *opts) {
-
     for (zpl_i32 i = 0; i < zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e = opts->entries + i;
         if (e->type == ZPL_OPTS_STRING) {

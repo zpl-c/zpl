@@ -481,7 +481,7 @@ typedef zpl_i32 zpl_b32;
             #define zpl_inline __forceinline
         #endif
     #else
-        #define zpl_inline inline //__attribute__ ((__always_inline__)) inline
+        #define zpl_inline __attribute__ ((__always_inline__)) inline
     #endif
 #endif
 
@@ -712,6 +712,8 @@ ZPL_DEF void    zpl_assert_handler(char const *condition, char const *file, zpl_
 ZPL_DEF zpl_i32 zpl_assert_crash(char const *condition);
 
 //! @}
+//$$
+
 //$$
 
 void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...) {

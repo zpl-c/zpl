@@ -115,6 +115,20 @@ ZPL_DEF void   zpl_co_yield(zpl_co *co);
 //! @}
 //$$
 
+zpl_inline zpl_b32 zpl_co_running(zpl_co *co) {
+    return zpl_atomic32_load(&co->status) == ZPL_CO_RUNNING;
+}
+
+zpl_inline zpl_b32 zpl_co_finished(zpl_co *co) {
+    return zpl_atomic32_load(&co->status) == ZPL_CO_DEAD;
+}
+
+zpl_inline zpl_b32 zpl_co_waiting(zpl_co *co) {
+    return zpl_atomic32_load(&co->resume) == 0;
+}
+
+//$$
+
 ////////////////////////////////////////////////////////////////
 //
 // Coroutines
@@ -165,7 +179,7 @@ void zpl__co_job(void *data) {
     zpl_atomic32_store(&co->status, ZPL_CO_DEAD);
 }
 
-zpl_inline void zpl_co_init(zpl_allocator a, zpl_u32 max_threads) {
+void zpl_co_init(zpl_allocator a, zpl_u32 max_threads) {
     if (!zpl__co_internals.is_ready) {
         zpl_zero_item(&zpl__co_internals);
         zpl_mutex_init(&zpl__co_internals.is_processing);
@@ -180,7 +194,7 @@ zpl_inline void zpl_co_init(zpl_allocator a, zpl_u32 max_threads) {
     }
 }
 
-zpl_inline void zpl_co_destroy(void) {
+void zpl_co_destroy(void) {
     zpl_atomic32_exchange(&zpl__co_internals.request_term, 1);
     zpl_thread_destroy(&zpl__co_internals.runner);
     zpl_mutex_destroy(&zpl__co_internals.is_processing);
@@ -189,7 +203,7 @@ zpl_inline void zpl_co_destroy(void) {
     zpl_mfence();
 }
 
-zpl_inline void zpl_co_make(zpl_co *co, zpl_co_proc f) {
+void zpl_co_make(zpl_co *co, zpl_co_proc f) {
     ZPL_ASSERT_MSG(zpl__co_internals.is_ready, "Coroutines module is not initialized. Call zpl_co_init first!");
     ZPL_ASSERT_NOT_NULL(co);
 
@@ -198,7 +212,7 @@ zpl_inline void zpl_co_make(zpl_co *co, zpl_co_proc f) {
     zpl_atomic32_store(&co->resume, 0);
 }
 
-zpl_inline void zpl_co_resume(zpl_co *co, void *data) {
+void zpl_co_resume(zpl_co *co, void *data) {
     ZPL_ASSERT_NOT_NULL(co);
 
     if (data != NULL) {
@@ -229,7 +243,7 @@ zpl_inline void zpl_co_resume(zpl_co *co, void *data) {
     }
 }
 
-zpl_inline void zpl_co_yield(zpl_co *co) {
+void zpl_co_yield(zpl_co *co) {
     zpl_i32 value;
     ZPL_ASSERT_NOT_NULL(co);
     ZPL_ASSERT_MSG((!zpl__co_yield_barrier), "zpl_co_yield can only be called inside of coroutines!");
@@ -256,18 +270,6 @@ zpl_inline void zpl_co_yield(zpl_co *co) {
 
     zpl_atomic32_store(&co->status, ZPL_CO_RUNNING);
     zpl_atomic32_fetch_add(&co->resume, -1);
-}
-
-zpl_inline zpl_b32 zpl_co_running(zpl_co *co) {
-    return zpl_atomic32_load(&co->status) == ZPL_CO_RUNNING;
-}
-
-zpl_inline zpl_b32 zpl_co_finished(zpl_co *co) {
-    return zpl_atomic32_load(&co->status) == ZPL_CO_DEAD;
-}
-
-zpl_inline zpl_b32 zpl_co_waiting(zpl_co *co) {
-    return zpl_atomic32_load(&co->resume) == 0;
 }
 
 #endif

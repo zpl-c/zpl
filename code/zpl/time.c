@@ -63,7 +63,6 @@ ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
 
 //! @}
 //$$
-
 ////////////////////////////////////////////////////////////////
 //
 // Time
@@ -166,7 +165,7 @@ zpl_inline void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
 #else
 
 #if defined(ZPL_SYSTEM_LINUX)
-zpl_f64 zpl__unix_getime(void) {
+zpl_inline zpl_f64 zpl__unix_getime(void) {
     struct timespec t;
     zpl_f64 result;
 
@@ -229,13 +228,15 @@ zpl_inline void zpl_sleep_ms(zpl_u32 ms) {
 
 #endif
 
+
+//$$
 ////////////////////////////////////////////////////////////////
 //
 // Timer
 //
 //
 
-zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
+zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
 
     zpl_timer t = { 0 };
@@ -243,7 +244,7 @@ zpl_inline zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     return pool + (zpl_array_count(pool) - 1);
 }
 
-zpl_inline void zpl_timer_set(zpl_timer *t, zpl_f64 duration, zpl_i32 count, zpl_timer_cb cb) {
+void zpl_timer_set(zpl_timer *t, zpl_f64 duration, zpl_i32 count, zpl_timer_cb cb) {
     ZPL_ASSERT(t);
 
     t->duration = duration;
@@ -252,7 +253,7 @@ zpl_inline void zpl_timer_set(zpl_timer *t, zpl_f64 duration, zpl_i32 count, zpl
     t->enabled = false;
 }
 
-zpl_inline void zpl_timer_start(zpl_timer *t, zpl_f64 delay_start) {
+void zpl_timer_start(zpl_timer *t, zpl_f64 delay_start) {
     ZPL_ASSERT(t && !t->enabled);
 
     t->enabled = true;
@@ -260,13 +261,13 @@ zpl_inline void zpl_timer_start(zpl_timer *t, zpl_f64 delay_start) {
     t->next_call_ts = zpl_time_now( ) + delay_start;
 }
 
-zpl_inline void zpl_timer_stop(zpl_timer *t) {
+void zpl_timer_stop(zpl_timer *t) {
     ZPL_ASSERT(t && t->enabled);
 
     t->enabled = false;
 }
 
-zpl_inline void zpl_timer_update(zpl_timer_pool pool) {
+void zpl_timer_update(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
 
     zpl_f64 now = zpl_time_now( );

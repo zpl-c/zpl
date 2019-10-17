@@ -42,6 +42,8 @@ ZPL_DEF void    zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_
 //! @}
 //$$
 
+
+//$$
 ////////////////////////////////////////////////////////////////
 //
 // Event Handler
@@ -50,9 +52,9 @@ ZPL_DEF void    zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_
 
 ZPL_TABLE_DEFINE(zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
-zpl_inline void zpl_event_init(zpl_event_pool *pool, zpl_allocator alloc) { zpl_event_pool_init(pool, alloc); }
+void zpl_event_init(zpl_event_pool *pool, zpl_allocator alloc) { zpl_event_pool_init(pool, alloc); }
 
-zpl_inline void zpl_event_destroy(zpl_event_pool *pool) {
+void zpl_event_destroy(zpl_event_pool *pool) {
     for (zpl_isize i = 0; i < zpl_array_count(pool->entries); ++i) {
         zpl_event_block *block = &pool->entries[i].value;
 

@@ -220,7 +220,6 @@ ZPL_DEF zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...);
 
 //! @}
 //$$
-
 ////////////////////////////////////////////////////////////////
 //
 // Char things
@@ -539,6 +538,57 @@ zpl_inline void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a
         dest[src_a_len + src_b_len] = '\0';
     }
 }
+zpl_inline zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
+    zpl_f64 f = zpl_str_to_f64(str, end_ptr);
+    zpl_f32 r = cast(zpl_f32) f;
+    return r;
+}
+
+zpl_inline void zpl__set_string_length(zpl_string str, zpl_isize len) { ZPL_STRING_HEADER(str)->length = len; }
+zpl_inline void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
+zpl_inline zpl_string zpl_string_make(zpl_allocator a, const char *str) {
+    zpl_isize len = str ? zpl_strlen(str) : 0;
+    return zpl_string_make_length(a, str, len);
+}
+
+zpl_inline void zpl_string_free(zpl_string str) {
+    if (str) {
+        zpl_string_header *header = ZPL_STRING_HEADER(str);
+        zpl_free(header->allocator, header);
+    }
+}
+
+zpl_inline zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str) {
+    return zpl_string_make_length(a, str, zpl_string_length(str));
+}
+
+zpl_inline zpl_isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
+zpl_inline zpl_isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
+
+zpl_inline zpl_isize zpl_string_available_space(zpl_string const str) {
+    zpl_string_header *h = ZPL_STRING_HEADER(str);
+    if (h->capacity > h->length) return h->capacity - h->length;
+    return 0;
+}
+
+zpl_inline void zpl_string_clear(zpl_string str) {
+    zpl__set_string_length(str, 0);
+    str[0] = '\0';
+}
+
+zpl_inline zpl_string zpl_string_append(zpl_string str, zpl_string const other) {
+    return zpl_string_append_length(str, other, zpl_string_length(other));
+}
+
+zpl_inline zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
+
+//$$
+
+////////////////////////////////////////////////////////////////
+//
+// Char things
+//
+//
 
 zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64 *value) {
     const char *text_begin = text;
@@ -639,7 +689,7 @@ zpl_global const char zpl__num_to_char_table[] = "0123456789"
 "abcdefghijklmnopqrstuvwxyz"
 "@$";
 
-zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
+void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     char *buf = string;
     zpl_b32 negative = false;
     zpl_u64 v;
@@ -663,7 +713,7 @@ zpl_inline void zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
+void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     char *buf = string;
 
     if (value) {
@@ -679,13 +729,7 @@ zpl_inline void zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base) {
     zpl_strrev(string);
 }
 
-zpl_inline zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
-    zpl_f64 f = zpl_str_to_f64(str, end_ptr);
-    zpl_f32 r = cast(zpl_f32) f;
-    return r;
-}
-
-zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
+zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     zpl_f64 result, value, sign, scale;
     zpl_i32 frac;
 
@@ -748,10 +792,7 @@ zpl_inline zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr) {
     return result;
 }
 
-zpl_inline void zpl__set_string_length(zpl_string str, zpl_isize len) { ZPL_STRING_HEADER(str)->length = len; }
-zpl_inline void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
-
-zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity) {
+zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity) {
     zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + capacity + 1);
 
@@ -771,10 +812,6 @@ zpl_inline zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacit
     return str;
 }
 
-zpl_inline zpl_string zpl_string_make(zpl_allocator a, const char *str) {
-    zpl_isize len = str ? zpl_strlen(str) : 0;
-    return zpl_string_make_length(a, str, len);
-}
 
 zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, zpl_isize num_bytes) {
     zpl_isize header_size = zpl_size_of(zpl_string_header);
@@ -814,35 +851,6 @@ zpl_string zpl_string_sprintf(zpl_allocator a, char *buf, zpl_isize num_bytes, c
     va_end(va);
 
     return zpl_string_make(a, buf);
-}
-
-zpl_inline void zpl_string_free(zpl_string str) {
-    if (str) {
-        zpl_string_header *header = ZPL_STRING_HEADER(str);
-        zpl_free(header->allocator, header);
-    }
-}
-
-zpl_inline zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str) {
-    return zpl_string_make_length(a, str, zpl_string_length(str));
-}
-
-zpl_inline zpl_isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
-zpl_inline zpl_isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
-
-zpl_inline zpl_isize zpl_string_available_space(zpl_string const str) {
-    zpl_string_header *h = ZPL_STRING_HEADER(str);
-    if (h->capacity > h->length) return h->capacity - h->length;
-    return 0;
-}
-
-zpl_inline void zpl_string_clear(zpl_string str) {
-    zpl__set_string_length(str, 0);
-    str[0] = '\0';
-}
-
-zpl_inline zpl_string zpl_string_append(zpl_string str, zpl_string const other) {
-    return zpl_string_append_length(str, other, zpl_string_length(other));
 }
 
 zpl_string zpl_string_append_length(zpl_string str, void const *other, zpl_isize other_len) {
@@ -929,7 +937,7 @@ zpl_inline zpl_isize zpl_string_allocation_size(zpl_string const str) {
     return zpl_size_of(zpl_string_header) + cap;
 }
 
-zpl_inline zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs) {
+zpl_b32 zpl_string_are_equal(zpl_string const lhs, zpl_string const rhs) {
     zpl_isize lhs_len, rhs_len, i;
     lhs_len = zpl_string_length(lhs);
     rhs_len = zpl_string_length(rhs);
@@ -961,8 +969,6 @@ zpl_string zpl_string_trim(zpl_string str, const char *cut_set) {
 
     return str;
 }
-
-zpl_inline zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
 
 zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r) {
     if (r >= 0) {

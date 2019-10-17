@@ -48,7 +48,28 @@ ZPL_DEF zpl_i32 zpl_pr_join(zpl_pr *process);
 
 //! @}
 //$$
+zpl_inline void zpl__pr_close_file_handle(zpl_file *f) {
+    ZPL_ASSERT_NOT_NULL(f);
+    f->fd.p  = NULL;
+}
 
+zpl_inline void zpl__pr_close_file_handles(zpl_pr *process) {
+    ZPL_ASSERT_NOT_NULL(process);
+
+    zpl__pr_close_file_handle(&process->in);
+    zpl__pr_close_file_handle(&process->out);
+    zpl__pr_close_file_handle(&process->err);
+
+    process->f_stdin = process->f_stdout = process->f_stderr = NULL;
+
+#ifdef ZPL_SYSTEM_WINDOWS
+    process->win32_handle = NULL;
+#else
+    ZPL_NOT_IMPLEMENTED;
+#endif
+}
+
+//$$
 ////////////////////////////////////////////////////////////////
 //
 // Process creation and manipulation methods
@@ -61,7 +82,7 @@ enum {
     ZPL_PR_HANDLE_MODES,
 };
 
-zpl_inline void *zpl__pr_open_handle(zpl_u8 type, const char *mode, void **handle) {
+void *zpl__pr_open_handle(zpl_u8 type, const char *mode, void **handle) {
 #ifdef ZPL_SYSTEM_WINDOWS
     void *pipes[ZPL_PR_HANDLE_MODES];
     zpl_i32 fd;
@@ -91,7 +112,7 @@ zpl_inline void *zpl__pr_open_handle(zpl_u8 type, const char *mode, void **handl
 #endif
 }
 
-zpl_inline zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize argc, zpl_pr_si si, zpl_pr_opts options) {
+zpl_i32 zpl_pr_create(zpl_pr *process, const char **args, zpl_isize argc, zpl_pr_si si, zpl_pr_opts options) {
     ZPL_ASSERT_NOT_NULL(process);
     zpl_zero_item(process);
 
@@ -181,28 +202,8 @@ pr_free_data:
 #endif
 }
 
-zpl_inline void zpl__pr_close_file_handle(zpl_file *f) {
-    ZPL_ASSERT_NOT_NULL(f);
-    f->fd.p  = NULL;
-}
 
-zpl_inline void zpl__pr_close_file_handles(zpl_pr *process) {
-    ZPL_ASSERT_NOT_NULL(process);
-
-    zpl__pr_close_file_handle(&process->in);
-    zpl__pr_close_file_handle(&process->out);
-    zpl__pr_close_file_handle(&process->err);
-
-    process->f_stdin = process->f_stdout = process->f_stderr = NULL;
-
-#ifdef ZPL_SYSTEM_WINDOWS
-    process->win32_handle = NULL;
-#else
-    ZPL_NOT_IMPLEMENTED;
-#endif
-}
-
-zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
+zpl_i32 zpl_pr_join(zpl_pr *process) {
     zpl_i32 ret_code;
 
     ZPL_ASSERT_NOT_NULL(process);
@@ -229,7 +230,7 @@ zpl_inline zpl_i32 zpl_pr_join(zpl_pr *process) {
 #endif
 }
 
-zpl_inline void zpl_pr_destroy(zpl_pr *process) {
+void zpl_pr_destroy(zpl_pr *process) {
     ZPL_ASSERT_NOT_NULL(process);
 
 #ifdef ZPL_SYSTEM_WINDOWS
@@ -251,7 +252,7 @@ zpl_inline void zpl_pr_destroy(zpl_pr *process) {
 #endif
 }
 
-zpl_inline void zpl_pr_terminate(zpl_pr *process, zpl_i32 err_code) {
+void zpl_pr_terminate(zpl_pr *process, zpl_i32 err_code) {
     ZPL_ASSERT_NOT_NULL(process);
 
 #ifdef ZPL_SYSTEM_WINDOWS
