@@ -5,12 +5,14 @@ on:
     #   - 'Code/*'
     #   - 'Vendors/*'
 
+
+language: python
+python:
+  - "2.7"
+
 jobs:
   build-win:
     name: Build Windows
-    language: python
-    python:
-      - "2.7"
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
