@@ -293,16 +293,15 @@ extern "C" {
 #pragma GCC diagnostic pop
 #endif
 
-#if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
-#define ZPL_IMPLEMENTATION_DONE
+
 
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 #pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wunused-function"
-#pragma GCC diagnostic ignored "-Wno-write-strings"
-#pragma GCC diagnostic ignored "-Wno-implicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
@@ -315,13 +314,17 @@ extern "C" {
 #pragma warning(disable : 4127) // Conditional expression is constant
 #endif
 
-    //<#inline>
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-    //<#source>
+    //<#inline>
+
+    #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
+    #define ZPL_IMPLEMENTATION_DONE
+      //<#source>
+    #endif // ZPL_IMPLEMENTATION
 
 #if defined(__cplusplus)
 }
@@ -334,8 +337,6 @@ extern "C" {
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
-
-#endif // ZPL_IMPLEMENTATION
 
 //<<header.c>>
 //<<mem.c>>
