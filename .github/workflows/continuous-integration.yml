@@ -22,4 +22,4 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on Linux
-        run: ./build_tests.sh.bat
+        run: chmod +x ./build_tests.sh.bat && ./build_tests.sh.bat
