@@ -1122,7 +1122,6 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
 #elif defined(ZPL_SYSTEM_LINUX)
 // IMPORTANT TODO: This zpl_affinity stuff for linux needs be improved a lot!
 // NOTE(zangent): I have to read /proc/cpuinfo to get the number of threads per core.
-#include <stdio.h>
 
 void zpl_affinity_init(zpl_affinity *a) {
     zpl_b32   accurate = true;

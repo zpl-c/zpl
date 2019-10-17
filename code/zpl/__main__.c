@@ -301,7 +301,6 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wmissing-braces"
@@ -319,8 +318,17 @@ extern "C" {
 extern "C" {
 #endif
 
+    ///////////////////////////////////////////////
+    //
+    // Inline methods
+    //
+
     //<#inline>
 
+    ///////////////////////////////////////////////
+    //
+    // Implementation code
+    //
     #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
     #define ZPL_IMPLEMENTATION_DONE
       //<#source>

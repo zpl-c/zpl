@@ -250,6 +250,7 @@ _In_ int nCmdShow)
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #if !defined(ZPL_SYSTEM_ANDROID)
     #include <spawn.h>
