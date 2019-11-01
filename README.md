@@ -74,6 +74,20 @@ You can build the documentation using Doxygen 1.8.11 or later. We use modified v
 
 m.css is available as submodule, so make sure you clone this repo recursively to obtain it.
 
+# Support Me
+
+While ZPL is free and open source library, I use my spare time to develop features and bug fixes however. With financial support, I'll be able to invest more time in the project and deliver on more interesting features or experiments. Your support would be very appreciated!
+
+## Code Contribution
+
+If money donation is not possible, you can always contribute by reporting issues and improving the codebase. I am open to any suggested changes, improvements or design considerations.
+
+## Top Sponsors
+
+People that significantly improved the library either financially or by code contribution, thank you!
+
+* [Vladyslav Hrytsenko (inlife)](https://github.com/inlife)
+
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
 
