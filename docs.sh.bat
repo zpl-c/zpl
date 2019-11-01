@@ -20,6 +20,6 @@ pushd docs
 
 if exist export rmdir /Q /S export
 
-python mcss\doxygen\dox2html5.py --debug Doxyfile-mcss
+python3 mcss\doxygen\dox2html5.py --debug Doxyfile-mcss
 
 popd

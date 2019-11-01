@@ -64,6 +64,11 @@ These are modules that work either as a standalone library or didn't fit into th
 This repository also contains third-party libraries which were either included or modified to be used by some of these ZPL external modules.
 
 ## Documentation
+
+We plan to use [DuckDoc](https://duckdoc.io/) for documentation later on. The service is still under development, but we're looking forward to it.
+
+### Old format
+
 Documentation is available in its generated form at [zpl.madaraszd.net](https://zpl.madaraszd.net/).
 
 You can see all modules by accessing the **Modules** link.
@@ -77,16 +82,6 @@ m.css is available as submodule, so make sure you clone this repo recursively to
 # Support Me
 
 While ZPL is free and open source library, I use my spare time to develop features and bug fixes however. With financial support, I'll be able to invest more time in the project and deliver on more interesting features or experiments. Your support would be very appreciated!
-
-## Code Contribution
-
-If money donation is not possible, you can always contribute by reporting issues and improving the codebase. I am open to any suggested changes, improvements or design considerations.
-
-## Top Sponsors
-
-People that significantly improved the library either financially or by code contribution, thank you!
-
-* [Vladyslav Hrytsenko (inlife)](https://github.com/inlife)
 
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
