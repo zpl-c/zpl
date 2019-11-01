@@ -997,7 +997,11 @@ zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl
     struct stat stat_existing;
     fstat(existing_fd, &stat_existing);
 
+#if defined(ZPL_SYSTEM_FREEBSD)
+    size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size, NULL, 0, 0);
+#else
     size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size);
+#endif
 
     close(new_fd);
     close(existing_fd);

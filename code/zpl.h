@@ -520,7 +520,7 @@ _In_ int nCmdShow)
 #include <stdlib.h> // NOTE: malloc on linux
 #include <sys/mman.h>
 
-#if !defined(ZPL_SYSTEM_OSX)
+#if !defined(ZPL_SYSTEM_OSX) && !defined(ZPL_SYSTEM_FREEBSD)
     #include <sys/sendfile.h>
 #endif
 
@@ -528,6 +528,12 @@ _In_ int nCmdShow)
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+
+#if defined(ZPL_SYSTEM_FREEBSD)
+    #include <sys/socket.h>
+    #include <sys/uio.h>
+#endif
+
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
@@ -765,6 +771,11 @@ typedef zpl_i32 zpl_b32;
     #else
         #define zpl_inline __attribute__ ((__always_inline__)) inline
     #endif
+#endif
+
+#if defined(ZPL_SYSTEM_FREEBSD)
+    #undef zpl_inline
+    #define zpl_inline inline
 #endif
 
 #if !defined(zpl_no_inline)
@@ -1557,7 +1568,7 @@ typedef struct zpl_affinity {
     zpl_isize threads_per_core;
 } zpl_affinity;
 
-#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
 
 typedef struct zpl_affinity {
     zpl_b32   is_accurate;
@@ -6967,7 +6978,7 @@ zpl_inline void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
 
 #else
 
-#if defined(ZPL_SYSTEM_LINUX)
+#if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD)
 zpl_inline zpl_f64 zpl__unix_getime(void) {
     struct timespec t;
     zpl_f64 result;
@@ -8152,7 +8163,7 @@ zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core) {
     return a->threads_per_core;
 }
 
-#elif defined(ZPL_SYSTEM_LINUX)
+#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD)
 // IMPORTANT TODO: This zpl_affinity stuff for linux needs be improved a lot!
 // NOTE(zangent): I have to read /proc/cpuinfo to get the number of threads per core.
 
@@ -10816,7 +10827,11 @@ zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl
     struct stat stat_existing;
     fstat(existing_fd, &stat_existing);
 
+#if defined(ZPL_SYSTEM_FREEBSD)
+    size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size, NULL, 0, 0);
+#else
     size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size);
+#endif
 
     close(new_fd);
     close(existing_fd);

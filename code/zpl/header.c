@@ -239,7 +239,7 @@ _In_ int nCmdShow)
 #include <stdlib.h> // NOTE: malloc on linux
 #include <sys/mman.h>
 
-#if !defined(ZPL_SYSTEM_OSX)
+#if !defined(ZPL_SYSTEM_OSX) && !defined(ZPL_SYSTEM_FREEBSD)
     #include <sys/sendfile.h>
 #endif
 
@@ -247,6 +247,12 @@ _In_ int nCmdShow)
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+
+#if defined(ZPL_SYSTEM_FREEBSD)
+    #include <sys/socket.h>
+    #include <sys/uio.h>
+#endif
+
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
@@ -484,6 +490,11 @@ typedef zpl_i32 zpl_b32;
     #else
         #define zpl_inline __attribute__ ((__always_inline__)) inline
     #endif
+#endif
+
+#if defined(ZPL_SYSTEM_FREEBSD)
+    #undef zpl_inline
+    #define zpl_inline inline
 #endif
 
 #if !defined(zpl_no_inline)

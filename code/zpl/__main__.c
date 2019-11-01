@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.7 - Improve FreeBSD support
   9.8.6 - WIP: Handle inlined methods properly
   9.8.5 - Fix incorrect usage of EOF and opts dependency on JSON5 module's methods
   9.8.4 - Fix MSVC ZPL_NO_MATH_H code branch using incorrect methods internally

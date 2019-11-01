@@ -164,7 +164,7 @@ zpl_inline void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
 
 #else
 
-#if defined(ZPL_SYSTEM_LINUX)
+#if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD)
 zpl_inline zpl_f64 zpl__unix_getime(void) {
     struct timespec t;
     zpl_f64 result;
