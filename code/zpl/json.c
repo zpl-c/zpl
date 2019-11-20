@@ -839,13 +839,13 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
             else
                 continue;
         } else if (*p == '\0' || *p == '}' || *p == ']') {
-            if (starts_with_brace && *p != '}')
+            if (starts_with_brace && *(p-1) != '}')
             {
                 if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
                 return NULL;
             }
 
-            if (starts_with_bracket && *p != ']')
+            if (starts_with_bracket && *(p-1) != ']')
             {
                 if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
                 return NULL;
