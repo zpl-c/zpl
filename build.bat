@@ -18,7 +18,7 @@ IF [%3] == [] set LIBS=user32.lib gdi32.lib winmm.lib opengl32.lib kernel32.lib 
 
 set INCLUDEPATHS=%~4
 
-IF [%4] == [] set INCLUDEPATHS=/I..\..\code /IC:\VulkanSDK\1.1.82.1\Include /IC:\glfw\include
+IF [%4] == [] set INCLUDEPATHS=/I..\..\code /IW:\zpl\code /IC:\VulkanSDK\1.1.82.1\Include /IC:\glfw\include
 
 set LIBPATHS=%~5
 

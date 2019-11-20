@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.8 - Fixed an incorrect parsing of empty array nodes.
   9.8.7 - Improve FreeBSD support
   9.8.6 - WIP: Handle inlined methods properly
   9.8.5 - Fix incorrect usage of EOF and opts dependency on JSON5 module's methods
@@ -12363,7 +12364,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
         p = e;
     } else if (*p == '[') {
         p = zpl_str_trim(p + 1, false);
-        if (*p == ']') return p;
+        if (*p == ']') return p+1;
         p = zpl__json_parse_array(obj, p, a, err_code);
 
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }

@@ -674,7 +674,7 @@ char *zpl__json_parse_value(zpl_json_object *obj, char *base, zpl_allocator a, z
         p = e;
     } else if (*p == '[') {
         p = zpl_str_trim(p + 1, false);
-        if (*p == ']') return p;
+        if (*p == ']') return p+1;
         p = zpl__json_parse_array(obj, p, a, err_code);
 
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
