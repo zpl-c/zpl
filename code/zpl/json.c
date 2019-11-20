@@ -709,7 +709,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
     while (*p) {
         zpl_json_object node = { 0 };
         p = zpl_str_trim(p, false);
-        if (*p == '}') return p;
+        if (*p == '}' || *p == ']') return p;
 
         if (*p == '"' || *p == '\'') {
             if (*p == '"') {
@@ -834,18 +834,18 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
                 return NULL;
 
             p = zpl_str_trim(p + 1, false);
-            if (*p == '\0' || *p == '}')
+            if (*p == '\0' || *p == '}' || *p == ']')
                 return p;
             else
                 continue;
         } else if (*p == '\0' || *p == '}' || *p == ']') {
-            if (starts_with_brace && *(p-1) != '}')
+            if (starts_with_brace && *p != '}')
             {
                 if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
                 return NULL;
             }
 
-            if (starts_with_bracket && *(p-1) != ']')
+            if (starts_with_bracket && *p != ']')
             {
                 if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
                 return NULL;
