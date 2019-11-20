@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.9 - JSON document structured as array now properly recognizes the root object as array.
   9.8.8 - Fixed an incorrect parsing of empty array nodes.
   9.8.7 - Improve FreeBSD support
   9.8.6 - WIP: Handle inlined methods properly
@@ -11982,9 +11983,14 @@ void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *source, zp
 
     char *endp = zpl__json_parse_object(&root_, dest, a, err_code);
 
-    if (!root_.cfg_mode && endp == NULL)
-    {
+    if (!root_.cfg_mode && endp == NULL) {
         if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+    }
+
+    // Replace root node with its child if the JSON document is an array.
+    if ((endp != NULL) && (endp-source >= 2) && *(endp-1) == ']') {
+        zpl_json_object *replace = &root_;
+        *replace = root_.nodes[0];
     }
 
     *root = root_;

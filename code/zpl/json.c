@@ -292,9 +292,14 @@ void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *source, zp
 
     char *endp = zpl__json_parse_object(&root_, dest, a, err_code);
 
-    if (!root_.cfg_mode && endp == NULL)
-    {
+    if (!root_.cfg_mode && endp == NULL) {
         if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+    }
+
+    // Replace root node with its child if the JSON document is an array.
+    if ((endp != NULL) && (endp-source >= 2) && *(endp-1) == ']') {
+        zpl_json_object *replace = &root_;
+        *replace = root_.nodes[0];
     }
 
     *root = root_;
