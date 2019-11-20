@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on windows
-        run: razzle amd64; build_tests.sh.bat
+        run: razzle.bat amd64; build_tests.sh.bat
 
   build-lin:
     name: Build Linux
