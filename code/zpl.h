@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.10 - JSON fix array-based documents with objects
   9.8.9 - JSON document structured as array now properly recognizes the root object as array.
   9.8.8 - Fixed an incorrect parsing of empty array nodes.
   9.8.7 - Improve FreeBSD support
@@ -12516,7 +12517,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
         p = zpl_str_trim(p, true);
         zpl_u8 wl = cast(zpl_u8)(p-wp);
 
-        if (zpl__json_is_delim_char(*p) && *p == '\0') {
+        if (zpl__json_is_delim_char(*p) && *p || '\0') {
             zpl_json_object *n = zpl_array_end(obj->nodes);
 
             if (*p == '\n')
@@ -12524,6 +12525,9 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
             else if (*p == '|') {
                 n->delim_style = ZPL_JSON_DELIM_STYLE_LINE;
                 n->delim_line_width = wl;
+            }
+            else if (*p == '\0') {
+                return p;
             }
 
             p = zpl_str_trim(p + 1, false);

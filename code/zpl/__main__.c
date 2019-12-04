@@ -46,6 +46,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  9.8.10 - JSON fix array-based documents with objects
   9.8.9 - JSON document structured as array now properly recognizes the root object as array.
   9.8.8 - Fixed an incorrect parsing of empty array nodes.
   9.8.7 - Improve FreeBSD support

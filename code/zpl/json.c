@@ -825,7 +825,7 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
         p = zpl_str_trim(p, true);
         zpl_u8 wl = cast(zpl_u8)(p-wp);
 
-        if (zpl__json_is_delim_char(*p) && *p == '\0') {
+        if (zpl__json_is_delim_char(*p) && *p || '\0') {
             zpl_json_object *n = zpl_array_end(obj->nodes);
 
             if (*p == '\n')
@@ -833,6 +833,9 @@ char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, 
             else if (*p == '|') {
                 n->delim_style = ZPL_JSON_DELIM_STYLE_LINE;
                 n->delim_line_width = wl;
+            }
+            else if (*p == '\0') {
+                return p;
             }
 
             p = zpl_str_trim(p + 1, false);
