@@ -1,5 +1,25 @@
 #include "tester_framework.h"
 
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
+    #pragma GCC diagnostic ignored "-Wunused-value"
+    #pragma GCC diagnostic ignored "-Wignored-qualifiers"
+    #pragma GCC diagnostic ignored "-Wunused-variable"
+    #pragma GCC diagnostic ignored "-Wunused-function"
+    #pragma GCC diagnostic ignored "-Wwrite-strings"
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #pragma GCC diagnostic ignored "-Wmissing-braces"
+    #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4201)
+    #pragma warning(disable : 4127) // Conditional expression is constant
+#endif
+
 /* TEST CATEGORIES */
 #include "unit/json.h"
 #include "unit/print.h"
@@ -29,3 +49,11 @@ int main() {
 
     return -err;
 }
+
+#if defined(ZPL_COMPILER_MSVC)
+    #pragma warning(pop)
+#endif
+
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
