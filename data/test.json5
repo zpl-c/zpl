@@ -1,0 +1,58 @@
+/////////////////////////////////////////////////
+// This is an example JSON5 config
+// which is fun to write
+// and freakin' fast to read!
+// Config Mode: ON
+//
+
+$schema: 'http://json5.org'
+name: "Hello"
+"name2"  : "Lord"
+'name3'       : 'Sailor // no commentary\' here'
+name4    : "Peasant"
+multiline: "Hello \
+Darkness \
+my old friend."
+// this is a comment
+
+/* Block commentary
+    is allowed in
+    JSON5 :)
+*/
+blocker: "// this is a comment /* don't crash */ "
+
+// backtick multi-line strings (optional)
+backtick: `
+    function foo(bar) {
+        return bar*bar;
+    }
+`
+
+
+beyond: Infinity
+not_a_number: -NaN
+
+// Lua styled data
+world = 'small'
+happy = "sad"
+huge  = 2.3455050e2
+arr = [1, 2, 3, 4, 5]
+
+replace_me = 12345
+
+
+// table styled data
+
+foo   | "bar"                           |
+stars | 430                             |
+qwerty| 'Simple day in a simple life.'  |
+
+
+meta: {
+    a: 3
+    b: .4
+    val: 3.34e+12
+    hex: 0xDEADbeef
+    huge:  2.2239333e5
+    trailing_dot: 4.
+}
