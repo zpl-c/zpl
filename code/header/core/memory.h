@@ -58,7 +58,7 @@ ZPL_DEF_INLINE void *zpl_memset(void *data, zpl_u8 byte_value, zpl_isize size);
 ZPL_DEF_INLINE zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size);
 
 //! Swap memory contents between 2 locations with size.
-ZPL_DEF_INLINE void zpl_memswap(void *i, void *j, zpl_isize size);
+ZPL_DEF void zpl_memswap(void *i, void *j, zpl_isize size);
 
 //! Search for a constant value within the size limit at memory location.
 ZPL_DEF void const *zpl_memchr(void const *data, zpl_u8 byte_value, zpl_isize size);
