@@ -20,7 +20,7 @@ typedef struct {
     zpl_file in, out, err;
     void *f_stdin, *f_stdout, *f_stderr;
 #ifdef ZPL_SYSTEM_WINDOWS
-    HANDLE win32_handle;
+    void *win32_handle;
 #else
     // todo
 #endif

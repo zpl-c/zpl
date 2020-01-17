@@ -446,9 +446,11 @@ ZPL_BEGIN_C_DECLS
 
     #include "header/core/system.h"
 
-    #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-        #include <stdarg.h>
-        #include <stddef.h>
+    #include <stdarg.h>
+    #include <stddef.h>
+
+    #if defined(ZPL_SYSTEM_WINDOWS)
+        #include <intrin.h>
     #endif
 
     #include "header/core/types.h"
@@ -516,6 +518,25 @@ ZPL_BEGIN_C_DECLS
             #include <pthread.h>
         #endif
 
+        #if defined(ZPL_SYSTEM_WINDOWS)
+            #if !defined(ZPL_NO_WINDOWS_H)
+                #ifndef WIN32_LEAN_AND_MEAN
+                    #define NOMINMAX
+                    #define WIN32_LEAN_AND_MEAN
+                    #define WIN32_MEAN_AND_LEAN
+                    #define VC_EXTRALEAN
+                #endif
+                #include <windows.h>
+                #undef NOMINMAX
+                #undef WIN32_LEAN_AND_MEAN
+                #undef WIN32_MEAN_AND_LEAN
+                #undef VC_EXTRALEAN
+
+                /* prevent it from including later */
+                #define ZPL_NO_WINDOWS_H
+            #endif
+        #endif
+
         #if !defined(zpl_thread_local)
             #if defined(_MSC_VER) && _MSC_VER >= 1300
                 #define zpl_thread_local __declspec(thread)
@@ -556,10 +577,25 @@ ZPL_BEGIN_C_DECLS
 
     /* general purpose includes */
 
+    #include <stdio.h>
+
     #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
         #include <unistd.h>
         #include <errno.h>
-        #include <stdio.h>
+    #elif defined(ZPL_SYSTEM_WINDOWS)
+        #if !defined(ZPL_NO_WINDOWS_H)
+            #ifndef WIN32_LEAN_AND_MEAN
+                #define NOMINMAX
+                #define WIN32_LEAN_AND_MEAN
+                #define WIN32_MEAN_AND_LEAN
+                #define VC_EXTRALEAN
+            #endif
+            #include <windows.h>
+            #undef NOMINMAX
+            #undef WIN32_LEAN_AND_MEAN
+            #undef WIN32_MEAN_AND_LEAN
+            #undef VC_EXTRALEAN
+        #endif
     #endif
 
     #if defined(ZPL_MODULE_CORE)

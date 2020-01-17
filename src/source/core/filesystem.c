@@ -1,7 +1,14 @@
-#include <dirent.h>
+#if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
+    #include <dirent.h>
+#endif
 
-#if !defined(ZPL_SYSTEM_MACOS) && !defined(ZPL_SYSTEM_FREEBSD)
+#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD)
     #include <sys/sendfile.h>
+#endif
+
+#if defined(ZPL_SYSTEM_WINDOWS)
+    #include <io.h>
+    #include <direct.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)

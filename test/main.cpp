@@ -1,5 +1,6 @@
 #define ZPL_IMPL
-// #define ZPL_NANO
+//#define ZPL_NANO
+//#define ZPL_DISABLE_THREADING
 #include "zpl.h"
 
 int main(int argc, char const *argv[]) {
