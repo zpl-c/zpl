@@ -343,7 +343,7 @@ Version History:
         #undef ZPL_MODULE_COROUTINES
     #endif
 
-    /* zpl full distribtuion */
+    /* zpl full distribution */
     #if defined(ZPL_FULL)
         #define ZPL_MODULE_PLATFORM
         #define ZPL_MODULE_OPENGL
