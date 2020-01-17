@@ -1,23 +1,12 @@
 # project files & folders
-build
-build.*
-!build.bat
-!build.py
-!build.sh
-include/project.4coder
-include/build.sh
-include/quick.c
+build/
+src/
+test/
+
 
 # other
+.github/
 .DS_Store
 .swp
-tags
-
 .vscode
 .vs
-
-docs/export
-docs/_build
-docs/_static
-docs/_templates
-docs/mcss
