@@ -1,5 +1,5 @@
 #/bin/bash 2>nul || goto :windows
-cd -
+cd "$(dirname $0)"
 export INCLUDES="-I../code"
 export LINKER="-lm -ldl"
 export WARNINGS="-Wall -Wextra -Wno-write-strings -Wno-implicit-fallthrough -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers"
