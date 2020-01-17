@@ -32,6 +32,6 @@ set CPP_EXTRAS=%~7
 set LNK_EXTRAS=%~8
 
 rem ctime -begin build.ctm
-cl ..\..\%1 %WARN% %OPTS% %CMN% %INCLUDEPATHS% %CPP_EXTRAS% /link %LIBPATHS% /NODEFAULTLIB:glfw3 /SUBSYSTEM:%SUBSYSTEM% %LNK_EXTRAS% %LIBS%
+cl ..\..\..\%1 %WARN% %OPTS% %CMN% %INCLUDEPATHS% %CPP_EXTRAS% /link %LIBPATHS% /NODEFAULTLIB:glfw3 /SUBSYSTEM:%SUBSYSTEM% %LNK_EXTRAS% %LIBS%
 rem ctime -end build.ctm
 popd
