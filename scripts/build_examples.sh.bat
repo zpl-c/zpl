@@ -5,7 +5,7 @@ export WARNINGS="-Wall -Wextra -Wno-write-strings -Wno-implicit-fallthrough -Wno
 for f in ../examples/*.*
 do
     echo Building ${f##*/}
-    g++ -g -std=c++11 $WARNINGS $INCLUDES $f $LINKER
+    g++ -g -std=c++11 $WARNINGS $INCLUDES $f $LINKER -o ../build/${f##*/}
 done
 exit
 
