@@ -651,39 +651,39 @@ ZPL_BEGIN_C_DECLS
         #include "source/core/sort.c"
     #endif
 
-    #if defined(ZPL_CORE_TIMER)
+    #if defined(ZPL_MODULE_TIMER)
         #include "source/timer.c"
     #endif
 
-    #if defined(ZPL_CORE_HASHING)
+    #if defined(ZPL_MODULE_HASHING)
         #include "source/hashing.c"
     #endif
 
-    #if defined(ZPL_CORE_REGEX)
+    #if defined(ZPL_MODULE_REGEX)
         #include "source/regex.c"
     #endif
 
-    #if defined(ZPL_CORE_EVENT)
+    #if defined(ZPL_MODULE_EVENT)
         #include "source/event.c"
     #endif
 
-    #if defined(ZPL_CORE_DLL)
+    #if defined(ZPL_MODULE_DLL)
         #include "source/dll.c"
     #endif
 
-    #if defined(ZPL_CORE_OPTS)
+    #if defined(ZPL_MODULE_OPTS)
         #include "source/opts.c"
     #endif
 
-    #if defined(ZPL_CORE_PROCESS)
+    #if defined(ZPL_MODULE_PROCESS)
         #include "source/process.c"
     #endif
 
-    #if defined(ZPL_CORE_MATH)
+    #if defined(ZPL_MODULE_MATH)
         #include "source/math.c"
     #endif
 
-    #if defined(ZPL_CORE_JSON)
+    #if defined(ZPL_MODULE_JSON)
         #include "source/json.c"
     #endif
 
