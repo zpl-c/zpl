@@ -303,7 +303,7 @@ zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len) {
     }
 
     alen = zpl__base64_decoded_size(s);
-    ret = cast(zpl_u8 *)zpl_alloc_align(a, alen+1, 4);
+    ret = cast(zpl_u8 *)zpl_alloc(a, alen+1);
 
     ZPL_ASSERT_NOT_NULL(ret);
 
