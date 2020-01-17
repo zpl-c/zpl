@@ -135,7 +135,7 @@ typedef struct {
 zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__format_info *info, char const *str) {
     // TODO: Get precision and width to work correctly. How does it actually work?!
     // TODO: This looks very buggy indeed.
-    zpl_isize res = 0, len;
+    zpl_isize res = 0, len = 0;
     zpl_isize remaining = max_len;
 
     if (str == NULL && max_len >= 4) {

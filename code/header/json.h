@@ -104,6 +104,7 @@ typedef struct zpl_json_object {
             zpl_f64 real;
             zpl_i32 base;
             zpl_i32 base2;
+            zpl_i32 base2_offset;
             zpl_i32 exp;
             zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
