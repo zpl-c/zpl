@@ -1,5 +1,5 @@
 #define ZPL_IMPL
-#define ZPL_NANO
+// #define ZPL_NANO
 #include "zpl.h"
 
 int main(int argc, char const *argv[]) {

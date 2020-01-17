@@ -1,5 +1,7 @@
 #if defined(ZPL_SYSTEM_MACOS)
     #include <mach/thread_act.h>
+#elif defined(ZPL_SYSTEM_UNIX)
+    #include <semaphore.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)

@@ -1,5 +1,9 @@
 #include <dirent.h>
 
+#if !defined(ZPL_SYSTEM_MACOS) && !defined(ZPL_SYSTEM_FREEBSD)
+    #include <sys/sendfile.h>
+#endif
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     zpl_file_time zpl_fs_last_write_time(char const *filepath) {
         ULARGE_INTEGER li = { 0 };

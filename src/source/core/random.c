@@ -1,9 +1,7 @@
-#warning "TODO: fix zpl_threading"
-
-#if ZPL_THREADING
-zpl_global zpl_atomic32 zpl__random_shared_counter = {0};
+#if defined(ZPL_MODULE_THREADING)
+    zpl_global zpl_atomic32 zpl__random_shared_counter = {0};
 #else
-zpl_global zpl_i32 zpl__random_shared_counter = 0;
+    zpl_global zpl_i32 zpl__random_shared_counter = 0;
 #endif
 
 zpl_internal zpl_u32 zpl__get_noise_from_time(void) {
@@ -50,7 +48,7 @@ void zpl_random_init(zpl_random *r) {
     r->value = 0;
 
     r->offsets[0] = zpl__get_noise_from_time();
-#ifdef ZPL_THREADING
+#ifdef ZPL_MODULE_THREADING
     r->offsets[1] = zpl_atomic32_fetch_add(&zpl__random_shared_counter, 1);
     r->offsets[2] = zpl_thread_current_id();
     r->offsets[3] = zpl_thread_current_id() * 3 + 1;
@@ -108,8 +106,6 @@ zpl_isize zpl_random_gen_isize(zpl_random *r) {
     zpl_u64 u = zpl_random_gen_u64(r);
     return *cast(zpl_isize *)&u;
 }
-
-
 
 
 zpl_i64 zpl_random_range_i64(zpl_random *r, zpl_i64 lower_inc, zpl_i64 higher_inc) {
