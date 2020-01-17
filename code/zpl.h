@@ -7,14 +7,20 @@ Usage:
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
 
+  You can also use a freestanding version of ZPL by using ZPL_NANO, like:
+
+  #define ZPL_IMPLEMENTATION
+  #define ZPL_NANO
+  #include "zpl.h"
+
   To make use of platform layer, define ZPL_PLATFORM, like:
 
-  #define ZPL_PLATFORM
+  #define ZPL_MODULE_PLATFORM
   #include "zpl.h"
 
   To make use of OpenGL methods, define ZPL_OPENGL, like:
 
-  #define ZPL_OPENGL
+  #define ZPL_MODULE_OPENGL
   #include "zpl.h"
 
   Note that ZPL_OPENGL requires the presence of:
@@ -29,11 +35,12 @@ Usage:
 
 Options:
 
+  ZPL_EDITOR - This macro should be used by the IDE's Intellisense to parse ZPL correctly. It can NEVER be used for actual compilation of the library!
   ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
   ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
-  ZPL_PLATFORM - enables platform layer module.
+  ZPL_MODULE_PLATFORM - enables platform layer module.
   ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
-  ZPL_OPENGL - enables OpenGL module.
+  ZPL_MODULE_OPENGL - enables OpenGL module.
     ZPLGL_NO_FONTS - disables font rendering support for OpenGL module.
     ZPLGL_NO_BASIC_STATE - disables basic state API (contains useful 2D rendering methods as well as font rendering)
 
@@ -45,6 +52,8 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.0.0 - Major overhaul of the library
+
   9.8.10 - JSON fix array-based documents with objects
   9.8.9 - JSON document structured as array now properly recognizes the root object as array.
   9.8.8 - Fixed an incorrect parsing of empty array nodes.
