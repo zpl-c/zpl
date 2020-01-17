@@ -67,7 +67,7 @@ class Bumper extends Plugin {
 
         const [major, minor, patch] = version
             .split('.')
-            .map(parseInt)
+            .map(a => parseInt(a))
 
         versionSet(major, minor, patch)
     }
