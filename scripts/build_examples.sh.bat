@@ -1,5 +1,4 @@
 #/bin/bash 2>nul || goto :windows
-#./generate.sh.bat
 export INCLUDES="-I../code"
 export LINKER="-pthread -lm -ldl"
 export WARNINGS="-Wall -Wextra -Wno-write-strings -Wno-implicit-fallthrough -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers"
