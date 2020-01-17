@@ -256,7 +256,7 @@ void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, 
                 if (!node->lead_digit)
                     zpl_fprintf(f, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
                 else
-                    zpl_fprintf(f, "%lld.%0*d%lld", node->base2_offset, 0, (long long)node->base, (long long)node->base2);
+                    zpl_fprintf(f, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
             } else {
                 zpl_fprintf(f, "%f", node->real);
             }

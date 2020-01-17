@@ -15,7 +15,7 @@ int main(void) {
 
     if (replace != NULL)
     {
-        zpl_printf("Field was found! Current value: %ld\nReplacing with an array!\n", replace->integer);
+        zpl_printf("Field was found! Current value: %ld\nReplacing with an array!\n", (long)replace->integer);
 
         replace->type = ZPL_JSON_TYPE_ARRAY;
         zpl_array_init(replace->nodes, replace->backing);
