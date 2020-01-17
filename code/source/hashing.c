@@ -4,6 +4,10 @@
 //
 //
 
+#ifdef ZPL_EDITOR
+#include "../zpl.h"
+#endif
+
 zpl_u32 zpl_adler32(void const *data, zpl_isize len) {
     zpl_u32 const MOD_ALDER = 65521;
     zpl_u32 a = 1, b = 0;

@@ -7,6 +7,10 @@ Several hashing methods used by ZPL internally but possibly useful outside of it
 @{
 */
 
+#ifdef ZPL_EDITOR
+#include "../zpl.h"
+#endif
+
 ZPL_DEF zpl_u32 zpl_adler32(void const *data, zpl_isize len);
 
 ZPL_DEF zpl_u32 zpl_crc32(void const *data, zpl_isize len);

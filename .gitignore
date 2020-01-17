@@ -23,3 +23,11 @@ docs/_templates
 
 # workdir
 !work/.gitignore
+
+# qtcreator
+zpl.cflags
+zpl.config
+zpl.cxxflags
+zpl.includes
+zpl.files
+
