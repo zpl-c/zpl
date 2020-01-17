@@ -57,8 +57,6 @@ const embedIncludes = () => {
     fs.writeFileSync(path.join(workdir, 'zpl.h'), lines.join('\n'))
 }
 
-embedIncludes()
-
 class Bumper extends Plugin {
     getLatestVersion() {
         return versionGet()
@@ -75,8 +73,7 @@ class Bumper extends Plugin {
     }
 
     async beforeRelease() {
-
-
+        embedIncludes()
         console.log('done')
     }
 }
