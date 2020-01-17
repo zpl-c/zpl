@@ -10,6 +10,9 @@ We can parse JSON5 files in two different modes:
         on bigger JSON files. (+50MiB)
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 //! Debug mode
 

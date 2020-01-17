@@ -9,6 +9,9 @@
 /*
    See test/coroutines.c for an example usage
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifndef ZPL_CO_ARG_STACK_CAPACITY
 #define ZPL_CO_ARG_STACK_CAPACITY 128

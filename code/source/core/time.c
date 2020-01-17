@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 #if defined(ZPL_SYSTEM_MACOS) || ZPL_SYSTEM_UNIX
     #include <time.h>
 #endif

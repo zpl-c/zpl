@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 #if defined(ZPL_MODULE_THREADING)
     zpl_global zpl_atomic32 zpl__random_shared_counter = {0};
 #else

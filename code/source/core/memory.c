@@ -1,4 +1,7 @@
 #include <string.h>
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 void zpl_memswap(void *i, void *j, zpl_isize size) {
     if (i == j) return;

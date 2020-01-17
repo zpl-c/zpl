@@ -6,6 +6,9 @@ Offers methods for c-string manipulation, but also a string library based on gb_
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ////////////////////////////////////////////////////////////////
 //

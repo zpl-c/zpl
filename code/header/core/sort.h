@@ -6,6 +6,9 @@ Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #define ZPL_COMPARE_PROC(name) int name(void const *a, void const *b)
 typedef ZPL_COMPARE_PROC(zpl_compare_proc);

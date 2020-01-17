@@ -3,6 +3,9 @@
 // Char things
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64 *value) {
     const char *text_begin = text;

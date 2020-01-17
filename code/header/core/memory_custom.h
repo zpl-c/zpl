@@ -3,6 +3,9 @@
 // Custom Allocation
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef enum zplAllocationType {
     ZPL_ALLOCATION_ALLOC,

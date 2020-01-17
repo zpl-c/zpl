@@ -3,6 +3,9 @@
 // CLI Options
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
     zpl_opts opts_ = { 0 };

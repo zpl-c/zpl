@@ -1,4 +1,7 @@
 /* Platform architecture */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
 defined(__ppc64__) || defined(__aarch64__)

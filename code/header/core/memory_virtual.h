@@ -3,6 +3,9 @@
 // Virtual Memory
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 
 typedef struct zpl_virtual_memory {

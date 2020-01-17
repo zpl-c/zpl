@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 typedef enum zplreOp {
     ZPL_RE_OP_BEGIN_CAPTURE,
     ZPL_RE_OP_END_CAPTURE,

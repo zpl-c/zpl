@@ -1,4 +1,7 @@
 /* Various macro based helpers */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifndef cast
     #define cast(Type) (Type)

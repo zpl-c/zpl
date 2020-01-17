@@ -26,7 +26,9 @@
 
 @{
 */
-
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifndef ZPL_MAX_GAME_CONTROLLER_COUNT
 #define ZPL_MAX_GAME_CONTROLLER_COUNT 4

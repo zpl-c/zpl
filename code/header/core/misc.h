@@ -6,6 +6,9 @@
 
  @{
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ZPL_DEF void zpl_exit(zpl_u32 code);
 ZPL_DEF void zpl_yield(void);

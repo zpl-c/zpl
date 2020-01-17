@@ -575,7 +575,7 @@ _In_ int nCmdShow)
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX)
-    #include <semaphore.h>
+    #include <sem.h>
 #endif
 
 #if !defined(ZPL_SYSTEM_WINDOWS)

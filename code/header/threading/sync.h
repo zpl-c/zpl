@@ -1,5 +1,8 @@
 // NOTE: Thread Merge Operation
 // Based on Sean Barrett's stb_sync
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef struct zpl_sync {
     zpl_i32 target;  // Target Number of threads

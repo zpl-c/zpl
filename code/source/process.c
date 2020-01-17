@@ -3,6 +3,9 @@
 // Process creation and manipulation methods
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ZPL_ALWAYS_INLINE void zpl__pr_close_file_handle(zpl_file *f) {
     ZPL_ASSERT_NOT_NULL(f);

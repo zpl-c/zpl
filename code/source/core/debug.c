@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...) {
     zpl_printf_err("%s:(%d): Assert Failure: ", file, line);
 

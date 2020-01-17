@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 zpl_b32 zpl_thread_is_running(zpl_thread const *t) { return t->is_running != 0; }
 
 void zpl_thread_init(zpl_thread *t) {

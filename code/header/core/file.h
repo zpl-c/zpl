@@ -6,6 +6,9 @@ File I/O operations as well as path and folder structure manipulation methods. W
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef zpl_u32 zpl_file_mode;
 

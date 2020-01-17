@@ -4,6 +4,9 @@
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef void *zpl_dll_handle;
 typedef void (*zpl_dll_proc)(void);

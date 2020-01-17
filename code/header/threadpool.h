@@ -7,7 +7,9 @@
 
  @{
  */
-
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef void (*zpl_jobs_proc)(void *data);
 

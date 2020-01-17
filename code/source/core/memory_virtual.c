@@ -3,6 +3,9 @@
 // Virtual Memory
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 zpl_virtual_memory zpl_vm(void *data, zpl_isize size) {
     zpl_virtual_memory vm;

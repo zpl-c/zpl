@@ -1,4 +1,7 @@
 // Atomics
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 // TODO: Be specific with memory order?
 // e.g. relaxed, acquire, release, acquire_release

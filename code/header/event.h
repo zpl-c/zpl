@@ -22,6 +22,9 @@
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef void *zpl_event_data;
 typedef void (*zpl_event_cb)(zpl_event_data evt);

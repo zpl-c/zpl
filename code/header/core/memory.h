@@ -6,6 +6,9 @@
 
  @{
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 //! Checks if value is power of 2.
 ZPL_DEF_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x);

@@ -555,7 +555,7 @@ ZPL_BEGIN_C_DECLS
 
         #include "header/threading/atomic.h"
         #include "header/threading/fence.h"
-        #include "header/threading/semaphore.h"
+        #include "header/threading/sem.h"
         #include "header/threading/mutex.h"
         #include "header/threading/thread.h"
         #include "header/threading/sync.h"
@@ -690,7 +690,7 @@ ZPL_BEGIN_C_DECLS
     #if defined(ZPL_MODULE_THREADING)
         #include "source/threading/atomic.c"
         #include "source/threading/fence.c"
-        #include "source/threading/semaphore.c"
+        #include "source/threading/sem.c"
         #include "source/threading/mutex.c"
         #include "source/threading/thread.c"
         #include "source/threading/sync.c"

@@ -6,6 +6,9 @@
 
  @{
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 //! Return CPU timestamp.
 ZPL_DEF zpl_u64 zpl_rdtsc(void);

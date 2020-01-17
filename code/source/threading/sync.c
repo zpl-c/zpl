@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 void zpl_sync_init(zpl_sync *s) {
     zpl_zero_item(s);
     zpl_mutex_init(&s->mutex);

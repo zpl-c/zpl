@@ -1,4 +1,8 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#else
 struct zpl_thread;
+#endif
 
 typedef zpl_isize (*zpl_thread_proc)(struct zpl_thread *thread);
 

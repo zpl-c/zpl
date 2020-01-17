@@ -3,7 +3,10 @@
 // Platform
 //
 //
-
+#ifdef ZPL_EDITOR
+#define ZPL_MODULE_PLATFORM
+#include <zpl.h>
+#endif
 
 void zpl_key_state_update(zpl_key_state *s, zpl_b32 is_down) {
     zpl_b32 was_down = (*s & ZPL_KEY_STATE_DOWN) != 0;

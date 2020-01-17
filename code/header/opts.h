@@ -7,6 +7,9 @@
 
 @{
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef enum {
     ZPL_OPTS_STRING,

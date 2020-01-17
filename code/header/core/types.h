@@ -1,4 +1,7 @@
 /* Basic types */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #if defined(ZPL_COMPILER_MSVC)
     #if _MSC_VER < 1300

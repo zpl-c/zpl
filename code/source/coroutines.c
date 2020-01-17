@@ -3,6 +3,9 @@
 // Coroutines
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 struct {
     zpl_b32 is_ready;

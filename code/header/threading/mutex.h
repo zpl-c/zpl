@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 typedef struct zpl_mutex {
 #if defined(ZPL_SYSTEM_WINDOWS)
     CRITICAL_SECTION win32_critical_section;

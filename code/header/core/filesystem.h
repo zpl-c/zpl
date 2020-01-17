@@ -5,6 +5,9 @@
         #define ZPL_PATH_SEPARATOR '/'
     #endif
 #endif
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 /**
  * Checks if file/directory exists

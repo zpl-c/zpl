@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 char *zpl_alloc_str(zpl_allocator a, char const *str) {
     return zpl_alloc_str_len(a, str, zpl_strlen(str));

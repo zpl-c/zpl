@@ -24,6 +24,9 @@
 
  @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 
 typedef struct zpl_hash_table_find_result {

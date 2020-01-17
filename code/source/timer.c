@@ -1,9 +1,11 @@
-//$$
 ////////////////////////////////////////////////////////////////
 //
 // Timer
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);

@@ -1,4 +1,7 @@
 /* Debugging stuff */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifndef ZPL_DEBUG_TRAP
     #if defined(_MSC_VER)

@@ -5,6 +5,9 @@
 //
 
 #include <math.h> /* needed for INFINITY and NAN */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
 ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }

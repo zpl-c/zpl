@@ -94,6 +94,10 @@ int main(int argc, char **argv) {
 
 typedef char *zpl_string;
 
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 typedef struct zpl_string_header {
     zpl_allocator allocator;
     zpl_isize length;

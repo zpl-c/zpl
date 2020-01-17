@@ -3,6 +3,10 @@
 /// OpenGL
 ///
 ///
+#ifdef ZPL_EDITOR
+#define ZPL_MODULE_OPENGL
+#include <zpl.h>
+#endif
 
 #ifndef ZPL_GLGEN_IMPLEMENTATION
 #define ZPL_GLGEN_IMPLEMENTATION
@@ -26,7 +30,7 @@
     #endif
 #endif
 
-zpl_inline zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a) {
+zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a) {
     zplgl_color result;
     result.r = cast(zpl_u8)(zplgl_clamp01(r) * 255.0f);
     result.g = cast(zpl_u8)(zplgl_clamp01(g) * 255.0f);

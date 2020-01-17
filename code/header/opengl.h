@@ -6,6 +6,9 @@
 
  @{
  */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifndef ZPL_GLGEN_IMPLEMENTATION
 #include "zpl_glgen.h"

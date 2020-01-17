@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 void zpl_mutex_init(zpl_mutex *m) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         InitializeCriticalSection(&m->win32_critical_section);

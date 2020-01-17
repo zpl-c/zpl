@@ -6,6 +6,9 @@ OpenGL gamedev friendly library for math.
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef union zpl_vec2 {
     struct {

@@ -1,4 +1,7 @@
 #include <sys/stat.h>
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #ifdef ZPL_SYSTEM_MACOS
     #include <copyfile.h>

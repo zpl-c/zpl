@@ -1,3 +1,6 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
 zpl_global zpl_isize Type##__cmp_offset;                                                                         \

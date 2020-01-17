@@ -5,6 +5,9 @@
 Various printing methods.
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ZPL_DEF zpl_isize zpl_printf(char const *fmt, ...) ZPL_PRINTF_FORMAT(1, 2);
 ZPL_DEF zpl_isize zpl_printf_va(char const *fmt, va_list va);

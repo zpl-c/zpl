@@ -7,6 +7,9 @@ It also exposes standard I/O with configurable options.
 
 @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 // TODO(zaklaus): Add Linux support
 

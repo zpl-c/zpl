@@ -1,3 +1,7 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 typedef struct zpl_random {
     zpl_u32 offsets[8];
     zpl_u32 value;

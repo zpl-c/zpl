@@ -39,6 +39,9 @@ Supported Matching:
 
     @{
 */
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 typedef struct zpl_re {
     zpl_allocator backing;

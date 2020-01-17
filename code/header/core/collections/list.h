@@ -8,6 +8,9 @@
 // zpl_list_init
 // zpl_list_add
 // zpl_list_remove
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 #if 0
 #define ZPL_IMPLEMENTATION

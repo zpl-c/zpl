@@ -2,6 +2,10 @@
     #include <math.h>
 #endif
 
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
 ////////////////////////////////////////////////////////////////
 //
 // Math

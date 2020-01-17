@@ -3,6 +3,9 @@
 // Event Handler
 //
 //
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 ZPL_TABLE_DEFINE(zpl_event_pool, zpl_event_pool_, zpl_event_block);
 

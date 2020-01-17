@@ -1,4 +1,7 @@
 typedef void (*zpl_timer_cb)(void *data);
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
 
 //! Timer data structure
 typedef struct zpl_timer {
