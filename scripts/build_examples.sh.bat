@@ -1,11 +1,13 @@
 #/bin/bash 2>nul || goto :windows
+cd -
 export INCLUDES="-I../code"
 export LINKER="-pthread -lm -ldl"
 export WARNINGS="-Wall -Wextra -Wno-write-strings -Wno-implicit-fallthrough -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers"
 for f in ../examples/*.*
 do
-    echo Building ${f##*/}
-    g++ -g -std=c++11 $WARNINGS $INCLUDES $f $LINKER -o ../build/${f##*/}
+    s=${f##*/}
+    echo Building $s
+    g++ -g -std=c++11 $WARNINGS $INCLUDES $f $LINKER -o ../build/${s%.*}
 done
 exit
 
