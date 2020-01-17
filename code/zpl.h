@@ -1,8 +1,4 @@
-#ifndef ZPL_H
-#define ZPL_H
-
 /**
-
   ZPL - Global module
 
 Usage:
@@ -10,14 +6,6 @@ Usage:
 
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
-
- */
-
-#define ZPL_VERSION_MAJOR 10
-#define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 0
-
-/*
 
   To make use of platform layer, define ZPL_PLATFORM, like:
 
@@ -266,6 +254,13 @@ Version History:
 
 */
 
+#ifndef ZPL_H
+#define ZPL_H
+
+#define ZPL_VERSION_MAJOR 10
+#define ZPL_VERSION_MINOR 0
+#define ZPL_VERSION_PATCH 0
+
 #include "zpl_hedley.h"
 
 #define ZPL_VERSION ZPL_VERSION_ENCODE(ZPL_VERSION_MAJOR, ZPL_VERSION_MINOR, ZPL_VERSION_PATCH)
@@ -442,6 +437,17 @@ Version History:
 
 ZPL_BEGIN_C_DECLS
 
+    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wunused-function"
+    #endif
+
+    #if defined(_MSC_VER)
+        #pragma warning(push)
+        #pragma warning(disable : 4201)
+        #pragma warning(disable : 4127) // Conditional expression is constant
+    #endif
+
     /* general purpose includes */
 
     #include "header/core/system.h"
@@ -572,8 +578,38 @@ ZPL_BEGIN_C_DECLS
         #include "header/opengl.h"
     #endif
 
+    #if defined(ZPL_COMPILER_MSVC)
+        #pragma warning(pop)
+    #endif
+
+    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+        #pragma GCC diagnostic pop
+    #endif
+
+    ZPL_END_C_DECLS
+
 #if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
 #define ZPL_IMPLEMENTATION_DONE
+
+ZPL_BEGIN_C_DECLS
+
+    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wattributes"
+        #pragma GCC diagnostic ignored "-Wunused-value"
+        #pragma GCC diagnostic ignored "-Wunused-function"
+        #pragma GCC diagnostic ignored "-Wwrite-strings"
+        #pragma GCC diagnostic ignored "-Wunused-parameter"
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        #pragma GCC diagnostic ignored "-Wmissing-braces"
+        #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    #endif
+
+    #if defined(_MSC_VER)
+        #pragma warning(push)
+        #pragma warning(disable : 4201)
+        #pragma warning(disable : 4127) // Conditional expression is constant
+    #endif
 
     /* general purpose includes */
 
@@ -678,9 +714,17 @@ ZPL_BEGIN_C_DECLS
     #endif
 
 
-#endif // ZPL_IMPLEMENTATION
+    #if defined(ZPL_COMPILER_MSVC)
+        #pragma warning(pop)
+    #endif
+
+    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+        #pragma GCC diagnostic pop
+    #endif
 
 ZPL_END_C_DECLS
+
+#endif // ZPL_IMPLEMENTATION
 
 #if !defined(ZPL_PREFIX_TYPES)
     typedef zpl_u8 u8;
