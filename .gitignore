@@ -12,3 +12,12 @@ package-lock.json
 
 # workdir
 !work/.gitignore
+
+# qtcreator
+zpl.creator
+zpl.cflags
+zpl.config
+zpl.cxxflags
+zpl.includes
+zpl.files
+
