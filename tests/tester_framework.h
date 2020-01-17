@@ -30,8 +30,8 @@ static int _g_errors = 0;
     _errors += _lasterr; \
     printf("    TEST: %-80s: %s%s\n", desc, (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", _errstr);
 
-#define FAIL(a, b)                             { _errstr = zpl_bprintf("\n      Reason: %s:%d %s %s:%d\n", #a, a, (a == b)?"==":"!=", #b, b); _lasterr = 1; break; }
-#define STRFAIL(a, b)                          { _errstr = zpl_bprintf("\n      Reason: %s:%s %s %s:%s\n", #a, a, (!strcmp(a,b))?"==":"!=", #b, b); _lasterr = 1; break; }
+#define FAIL(a, b)                             { _errstr = zpl_bprintf("\n      Reason: %s:%d %s %s:%d\n", #a, (int)a, (a == b)?"==":"!=", #b, b); _lasterr = 1; break; }
+#define STRFAIL(a, b)                          { _errstr = zpl_bprintf("\n      Reason: %s:%s %s %s:%s\n", #a, (char *)a, (!strcmp(a,b))?"==":"!=", #b, b); _lasterr = 1; break; }
 #define EQUALS(a, b)        if (a != b)        { FAIL(a, b); }
 #define STREQUALS(a, b)     if (!!strcmp(a,b)) { STRFAIL(a, b); }
 #define STRNEQUALS(a, b)    if (!strcmp(a,b))  { STRFAIL(a, b); }
