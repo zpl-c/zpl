@@ -122,4 +122,25 @@ defined(__ppc64__) || defined(__aarch64__)
     #error Unknown CPU Type
 #endif
 
+// TODO(ZaKlaus): Find a better way to get this flag in MinGW.
+#if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
+    #define WC_ERR_INVALID_CHARS 0x0080
+#endif
+
+#if defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)
+    #ifndef ZPL_COMPILER_MINGW
+    #define ZPL_COMPILER_MINGW // assume we use mingw as a compiler
+    #endif
+#endif
+
+#if defined(ZPL_SYSTEM_UNIX)
+    #ifndef _GNU_SOURCE
+    #define _GNU_SOURCE
+    #endif
+
+    #ifndef _LARGEFILE64_SOURCE
+    #define _LARGEFILE64_SOURCE
+    #endif
+#endif
+
 ZPL_END_C_DECLS

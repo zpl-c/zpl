@@ -2,10 +2,21 @@
 #include <zpl.h>
 #endif
 
+#ifndef _IOSC11_SOURCE
+#define _IOSC11_SOURCE
+#endif
+
 #include <stdlib.h>
 
 #if defined(ZPL_SYSTEM_WINDOWS)
     #include <malloc.h>
+#endif
+
+#if defined(ZPL_COMPILER_MINGW)
+    #ifdef __MINGW32__
+    #define _aligned_malloc __mingw_aligned_malloc
+    #define _aligned_free  __mingw_aligned_free
+    #endif //MINGW
 #endif
 
 ZPL_BEGIN_C_DECLS
