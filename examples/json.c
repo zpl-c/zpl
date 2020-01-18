@@ -3,7 +3,7 @@
 
 int main(void) {
     zpl_file_contents fc;
-    fc = zpl_file_read_contents(zpl_heap(), true, "data/test.json5");
+    fc = zpl_file_read_contents(zpl_heap(), true, "misc/data/test.json5");
 
     zpl_json_object root = {0};
 
