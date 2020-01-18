@@ -1,25 +1,24 @@
 # project files & folders
-build
-build.*
-!build.bat
-!build.py
-!build.sh
-include/project.4coder
-include/build.sh
-include/quick.c
+build/
+node_modules/
+misc/deploy/
 
 # other
 .DS_Store
 .swp
-tags
-
 .vscode
 .vs
-
-docs/export
-docs/_build
-docs/_static
-docs/_templates
+package-lock.json
 
 # workdir
-!work/.gitignore
+work/
+
+# qtcreator
+zpl.creator
+zpl.creator.*
+zpl.cflags
+zpl.config
+zpl.cxxflags
+zpl.includes
+zpl.files
+
