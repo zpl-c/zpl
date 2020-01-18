@@ -14,7 +14,9 @@ foreach(example_source ${examples})
     # Setup the example
     add_executable(${example_name} ${example_source})
 
-    if (UNIX)
+    if (WIN32)
+        target_link_libraries(${example_name} winmm)
+    elseif (UNIX)
         target_link_libraries(${example_name} pthread m dl)
     endif()
 endforeach()
