@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/9026786/43263060-7c0a8b86-90e2-11e8-96e3-3e71e559f62a.png" alt="zpl" /></a>
+    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/72661667-9fd43500-39e5-11ea-98b2-14f3de66d389.png" alt="zpl" /></a>
 </div>
 
 <div align="center">
@@ -10,17 +10,17 @@
 
 <br />
 <div align="center">
-  C99 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
+  C11 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
 </div>
 
 <div align="center">
   <sub>
-    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>, 
+    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>,
      <a href="https://github.com/inlife">@inlife</a>,
     and <strong>contributors</strong>
   </sub>
 </div>
- 
+
 # Introduction
 It's been created to simplify development process under C/C++ language and offers commonly used set of features that C developers often re-invent or search libraries for. Apart from helper methods that replace/extend C standard library, this toolkit also consists of modules that are very helpful in specific areas of expertise, such as graph culling algorithms, JSON5 parser, OpenGL-friendly math library as well as OpenGL helper module and many more...
 
@@ -28,7 +28,7 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 
 ## Honorable users of this library
 
-* [librg](https://github.com/librg/librg) - Pure C99 game networking library for building simple and elegant cross-platform client-server solutions.
+* [librg](https://github.com/librg/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
 # Table of Contents
 ZPL consists of the following modules:
@@ -50,7 +50,7 @@ ZPL consists of the following modules:
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
 * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
 * **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
-* **Co-routines** - This module implements co-routines feature for C99.
+* **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
 * **OpenGL** - Offers OpenGL helper methods as well as basic 2D sprite and font rendering.
@@ -182,11 +182,10 @@ code structure and QoL changes.
 
 Yes, indeed. This project is dual-licensed according to LICENSE, you are free to fork it, contribute to it or even sell it as you see fit.
 
-**Why C99?**
+**Why C11?**
 
 Why not?
 
 **Can I submit suggestions?**
 
 Indeed, I'd also gladly discuss those with you on Discord, if possible.
- 
