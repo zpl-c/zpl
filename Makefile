@@ -10,9 +10,9 @@ else
 	endif
 endif
 
-DISABLED_WARNS = -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
-CFLAGS += -g -std=gnu11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
-CXXFLAGS += -g -std=c++11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
+WARNS = -Wal -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
+CFLAGS += -g -std=gnu11 -Icode $(WARNS)
+CXXFLAGS += -g -std=c++11 -Icode $(WARNS)
 
 EXAMPLES_SRCS += $(wildcard code/apps/examples/*.c)
 EXAMPLES_SRCS += $(wildcard code/apps/examples/*.cc)
