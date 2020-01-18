@@ -309,7 +309,7 @@ Version History:
     #define ZPL_MODULE_JOBS
     #define ZPL_MODULE_COROUTINES
 
-    /* zpl nano distribtuion */
+    /* zpl nano distribution */
     #if defined(ZPL_NANO)
         #undef ZPL_MODULE_TIMER
         #undef ZPL_MODULE_HASHING
