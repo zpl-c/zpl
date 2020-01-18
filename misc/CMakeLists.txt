@@ -15,7 +15,7 @@ foreach(example_source ${examples})
     add_executable(${example_name} ${example_source})
 
     if (UNIX)
-        target_link_libraries(${example_name} pthread m ln)
+        target_link_libraries(${example_name} pthread m dl)
     endif()
 endforeach()
 
