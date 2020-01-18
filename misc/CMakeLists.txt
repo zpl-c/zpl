@@ -20,3 +20,4 @@ foreach(example_source ${examples})
 endforeach()
 
 add_executable(zpl_unit ../code/apps/tests/tester.c)
+target_link_libraries(zpl_unit pthread m dl)
