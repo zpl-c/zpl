@@ -22,4 +22,9 @@ foreach(example_source ${examples})
 endforeach()
 
 add_executable(tester ../code/apps/tests/tester.c)
-target_link_libraries(tester pthread m dl)
+
+if (WIN32)
+    target_link_libraries(tester winmm)
+elseif (UNIX)
+    target_link_libraries(tester pthread m dl)
+endif()
