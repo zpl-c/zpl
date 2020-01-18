@@ -19,7 +19,7 @@ jobs:
         run: cd build ; cmake --build .
 
       - name: Run unit tests
-        run: cd build ; dir ; cd Debug ; dir
+        run: cd build ; .\Debug\tester.exe
 
   build-lin:
     name: Build Linux
