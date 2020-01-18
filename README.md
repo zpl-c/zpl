@@ -10,7 +10,7 @@
 
 <br />
 <div align="center">
-  C99 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
+  C11 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
 </div>
 
 <div align="center">
@@ -28,7 +28,7 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 
 ## Honorable users of this library
 
-* [librg](https://github.com/librg/librg) - Pure C99 game networking library for building simple and elegant cross-platform client-server solutions.
+* [librg](https://github.com/librg/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
 # Table of Contents
 ZPL consists of the following modules:
@@ -50,7 +50,7 @@ ZPL consists of the following modules:
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
 * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
 * **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
-* **Co-routines** - This module implements co-routines feature for C99.
+* **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
 * **OpenGL** - Offers OpenGL helper methods as well as basic 2D sprite and font rendering.
@@ -182,11 +182,10 @@ code structure and QoL changes.
 
 Yes, indeed. This project is dual-licensed according to LICENSE, you are free to fork it, contribute to it or even sell it as you see fit.
 
-**Why C99?**
+**Why C11?**
 
 Why not?
 
 **Can I submit suggestions?**
 
 Indeed, I'd also gladly discuss those with you on Discord, if possible.
- 
