@@ -105,7 +105,7 @@ do {                                                                            
 #define ZPL__HIGHS (ZPL__ONES * (ZPL_U8_MAX / 2 + 1))
 #define ZPL__HAS_ZERO(x) (((x)-ZPL__ONES) & ~(x)&ZPL__HIGHS)
 
-ZPL_INLINE void *zpl_align_forward(void *ptr, zpl_isize alignment) {
+ZPL_IMPL_INLINE void *zpl_align_forward(void *ptr, zpl_isize alignment) {
     zpl_uintptr p;
 
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
@@ -114,25 +114,25 @@ ZPL_INLINE void *zpl_align_forward(void *ptr, zpl_isize alignment) {
     return cast(void *)((p + (alignment - 1)) & ~(alignment - 1));
 }
 
-ZPL_INLINE void *zpl_pointer_add(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr + bytes); }
-ZPL_INLINE void *zpl_pointer_sub(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr - bytes); }
-ZPL_INLINE void const *zpl_pointer_add_const(void const *ptr, zpl_isize bytes) {
+ZPL_IMPL_INLINE void *zpl_pointer_add(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr + bytes); }
+ZPL_IMPL_INLINE void *zpl_pointer_sub(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr - bytes); }
+ZPL_IMPL_INLINE void const *zpl_pointer_add_const(void const *ptr, zpl_isize bytes) {
     return cast(void const *)(cast(zpl_u8 const *) ptr + bytes);
 }
-ZPL_INLINE void const *zpl_pointer_sub_const(void const *ptr, zpl_isize bytes) {
+ZPL_IMPL_INLINE void const *zpl_pointer_sub_const(void const *ptr, zpl_isize bytes) {
     return cast(void const *)(cast(zpl_u8 const *) ptr - bytes);
 }
-ZPL_INLINE zpl_isize zpl_pointer_diff(void const *begin, void const *end) {
+ZPL_IMPL_INLINE zpl_isize zpl_pointer_diff(void const *begin, void const *end) {
     return cast(zpl_isize)(cast(zpl_u8 const *) end - cast(zpl_u8 const *) begin);
 }
 
-ZPL_INLINE void zpl_zero_size(void *ptr, zpl_isize size) { zpl_memset(ptr, 0, size); }
+ZPL_IMPL_INLINE void zpl_zero_size(void *ptr, zpl_isize size) { zpl_memset(ptr, 0, size); }
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma intrinsic(__movsb)
 #endif
 
-ZPL_INLINE void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
+ZPL_IMPL_INLINE void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
     if (dest == NULL) { return NULL; }
 
     zpl_u8 *d = cast(zpl_u8 *) dest;
@@ -173,7 +173,7 @@ ZPL_INLINE void *zpl_memmove(void *dest, void const *source, zpl_isize n) {
     return dest;
 }
 
-ZPL_INLINE void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
+ZPL_IMPL_INLINE void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     if (dest == NULL) { return NULL; }
 
     zpl_u8 *s = cast(zpl_u8 *) dest;
@@ -231,7 +231,7 @@ ZPL_INLINE void *zpl_memset(void *dest, zpl_u8 c, zpl_isize n) {
     return dest;
 }
 
-ZPL_INLINE zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size) {
+ZPL_IMPL_INLINE zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size) {
     zpl_u8 const *s1p8 = cast(zpl_u8 const *) s1;
     zpl_u8 const *s2p8 = cast(zpl_u8 const *) s2;
 
@@ -244,7 +244,7 @@ ZPL_INLINE zpl_i32 zpl_memcompare(void const *s1, void const *s2, zpl_isize size
     return 0;
 }
 
-ZPL_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x) {
+ZPL_IMPL_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x) {
     if (x <= 0) return false;
     return !(x & (x - 1));
 }

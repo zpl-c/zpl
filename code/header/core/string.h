@@ -74,8 +74,8 @@ ZPL_DEF void    zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
 //
 
 // NOTE: Does not check if utf-8 string is valid
-ZPL_INLINE zpl_isize zpl_utf8_strlen(zpl_u8 const *str);
-ZPL_INLINE zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len);
+ZPL_IMPL_INLINE zpl_isize zpl_utf8_strlen(zpl_u8 const *str);
+ZPL_IMPL_INLINE zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len);
 
 // NOTE: Windows doesn't handle 8 bit filenames well
 ZPL_DEF zpl_u16 *zpl_utf8_to_ucs2(zpl_u16 *buffer, zpl_isize len, zpl_u8 const *str);
@@ -90,41 +90,41 @@ ZPL_DEF zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r);
 
 /* inlines */
 
-ZPL_INLINE char zpl_char_to_lower(char c) {
+ZPL_IMPL_INLINE char zpl_char_to_lower(char c) {
     if (c >= 'A' && c <= 'Z') return 'a' + (c - 'A');
     return c;
 }
 
-ZPL_INLINE char zpl_char_to_upper(char c) {
+ZPL_IMPL_INLINE char zpl_char_to_upper(char c) {
     if (c >= 'a' && c <= 'z') return 'A' + (c - 'a');
     return c;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_space(char c) {
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_space(char c) {
     if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') return true;
     return false;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_digit(char c) {
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_digit(char c) {
     if (c >= '0' && c <= '9') return true;
     return false;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_hex_digit(char c) {
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_hex_digit(char c) {
     if (zpl_char_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) return true;
     return false;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_alpha(char c) {
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_alpha(char c) {
     if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return true;
     return false;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_alphanumeric(char c) { return zpl_char_is_alpha(c) || zpl_char_is_digit(c); }
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_alphanumeric(char c) { return zpl_char_is_alpha(c) || zpl_char_is_digit(c); }
 
-ZPL_INLINE zpl_i32 zpl_digit_to_int(char c) { return zpl_char_is_digit(c) ? c - '0' : c - 'W'; }
+ZPL_IMPL_INLINE zpl_i32 zpl_digit_to_int(char c) { return zpl_char_is_digit(c) ? c - '0' : c - 'W'; }
 
-ZPL_INLINE zpl_i32 zpl_hex_digit_to_int(char c) {
+ZPL_IMPL_INLINE zpl_i32 zpl_hex_digit_to_int(char c) {
     if (zpl_char_is_digit(c))
         return zpl_digit_to_int(c);
     else if (zpl_is_between(c, 'a', 'f'))
@@ -134,7 +134,7 @@ ZPL_INLINE zpl_i32 zpl_hex_digit_to_int(char c) {
     return -1;
 }
 
-ZPL_INLINE zpl_u8 zpl_char_to_hex_digit(char c) {
+ZPL_IMPL_INLINE zpl_u8 zpl_char_to_hex_digit(char c) {
     if (c >= '0' && c <= '9')
         return (zpl_u8)(c - '0');
     if (c >= 'a' && c <= 'f')
@@ -145,7 +145,7 @@ ZPL_INLINE zpl_u8 zpl_char_to_hex_digit(char c) {
 }
 
 
-ZPL_INLINE void zpl_str_to_lower(char *str) {
+ZPL_IMPL_INLINE void zpl_str_to_lower(char *str) {
     if (!str) return;
     while (*str) {
         *str = zpl_char_to_lower(*str);
@@ -153,7 +153,7 @@ ZPL_INLINE void zpl_str_to_lower(char *str) {
     }
 }
 
-ZPL_INLINE void zpl_str_to_upper(char *str) {
+ZPL_IMPL_INLINE void zpl_str_to_upper(char *str) {
     if (!str) return;
     while (*str) {
         *str = zpl_char_to_upper(*str);
@@ -161,7 +161,7 @@ ZPL_INLINE void zpl_str_to_upper(char *str) {
     }
 }
 
-ZPL_INLINE zpl_isize zpl_strlen(const char *str) {
+ZPL_IMPL_INLINE zpl_isize zpl_strlen(const char *str) {
     if (str == NULL) { return 0; }
 
     const char *begin = str;
@@ -177,13 +177,13 @@ ZPL_INLINE zpl_isize zpl_strlen(const char *str) {
     return str - begin;
 }
 
-ZPL_INLINE zpl_isize zpl_strnlen(const char *str, zpl_isize max_len) {
+ZPL_IMPL_INLINE zpl_isize zpl_strnlen(const char *str, zpl_isize max_len) {
     const char *end = cast(const char *) zpl_memchr(str, 0, max_len);
     if (end) return end - str;
     return max_len;
 }
 
-ZPL_INLINE zpl_isize zpl_utf8_strlen(zpl_u8 const *str) {
+ZPL_IMPL_INLINE zpl_isize zpl_utf8_strlen(zpl_u8 const *str) {
     zpl_isize count = 0;
     for (; *str; count++) {
         zpl_u8 c = *str;
@@ -204,7 +204,7 @@ ZPL_INLINE zpl_isize zpl_utf8_strlen(zpl_u8 const *str) {
     return count;
 }
 
-ZPL_INLINE zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len) {
+ZPL_IMPL_INLINE zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len) {
     zpl_isize count = 0;
     for (; *str && max_len > 0; count++) {
         zpl_u8 c = *str;
@@ -226,12 +226,12 @@ ZPL_INLINE zpl_isize zpl_utf8_strnlen(zpl_u8 const *str, zpl_isize max_len) {
     return count;
 }
 
-ZPL_INLINE zpl_i32 zpl_strcmp(const char *s1, const char *s2) {
+ZPL_IMPL_INLINE zpl_i32 zpl_strcmp(const char *s1, const char *s2) {
     while (*s1 && (*s1 == *s2)) { s1++, s2++; }
     return *(zpl_u8 *)s1 - *(zpl_u8 *)s2;
 }
 
-ZPL_INLINE char *zpl_strcpy(char *dest, const char *source) {
+ZPL_IMPL_INLINE char *zpl_strcpy(char *dest, const char *source) {
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
         char *str = dest;
@@ -240,7 +240,7 @@ ZPL_INLINE char *zpl_strcpy(char *dest, const char *source) {
     return dest;
 }
 
-ZPL_INLINE char *zpl_strncpy(char *dest, const char *source, zpl_isize len) {
+ZPL_IMPL_INLINE char *zpl_strncpy(char *dest, const char *source, zpl_isize len) {
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
         char *str = dest;
@@ -256,7 +256,7 @@ ZPL_INLINE char *zpl_strncpy(char *dest, const char *source, zpl_isize len) {
     return dest;
 }
 
-ZPL_INLINE zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len) {
+ZPL_IMPL_INLINE zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len) {
     zpl_isize result = 0;
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
@@ -276,7 +276,7 @@ ZPL_INLINE zpl_isize zpl_strlcpy(char *dest, const char *source, zpl_isize len) 
     return result;
 }
 
-ZPL_INLINE char *zpl_strrev(char *str) {
+ZPL_IMPL_INLINE char *zpl_strrev(char *str) {
     zpl_isize len = zpl_strlen(str);
     char *a = str + 0;
     char *b = str + len - 1;
@@ -288,7 +288,7 @@ ZPL_INLINE char *zpl_strrev(char *str) {
     return str;
 }
 
-ZPL_INLINE zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len) {
+ZPL_IMPL_INLINE zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len) {
     for (; len > 0; s1++, s2++, len--) {
         if (*s1 != *s2)
             return ((s1 < s2) ? -1 : +1);
@@ -298,44 +298,44 @@ ZPL_INLINE zpl_i32 zpl_strncmp(const char *s1, const char *s2, zpl_isize len) {
     return 0;
 }
 
-ZPL_INLINE const char *zpl_strtok(char *output, const char *src, const char *delimit) {
+ZPL_IMPL_INLINE const char *zpl_strtok(char *output, const char *src, const char *delimit) {
     while (*src && zpl_char_first_occurence(delimit, *src) == NULL) *output++ = *src++;
 
     *output = 0;
     return *src ? src + 1 : src;
 }
 
-ZPL_INLINE zpl_b32 zpl_char_is_control(char c) {
+ZPL_IMPL_INLINE zpl_b32 zpl_char_is_control(char c) {
     return !!zpl_strchr("\"\\/bfnrt", c);
 }
 
-ZPL_INLINE zpl_b32 zpl__is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
-ZPL_INLINE zpl_b32 zpl__is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
-ZPL_INLINE zpl_b32 zpl__is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+ZPL_IMPL_INLINE zpl_b32 zpl__is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
+ZPL_IMPL_INLINE zpl_b32 zpl__is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
+ZPL_IMPL_INLINE zpl_b32 zpl__is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
 
 
-ZPL_INLINE char *zpl_str_control_skip(char *str, char c) {
+ZPL_IMPL_INLINE char *zpl_str_control_skip(char *str, char c) {
     while ((*str && *str != c) || (*(str - 1) == '\\' && *str == c && zpl_char_is_control(c))) { ++str; }
 
     return str;
 }
 
 
-ZPL_INLINE zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix) {
+ZPL_IMPL_INLINE zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix) {
     while (*prefix) {
         if (*str++ != *prefix++) return false;
     }
     return true;
 }
 
-ZPL_INLINE zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix) {
+ZPL_IMPL_INLINE zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix) {
     zpl_isize i = zpl_strlen(str);
     zpl_isize j = zpl_strlen(suffix);
     if (j <= i) return zpl_strcmp(str + i - j, suffix) == 0;
     return false;
 }
 
-ZPL_INLINE const char *zpl_char_first_occurence(const char *s, char c) {
+ZPL_IMPL_INLINE const char *zpl_char_first_occurence(const char *s, char c) {
     char ch = c;
     for (; *s != ch; s++) {
         if (*s == '\0') return NULL;
@@ -343,7 +343,7 @@ ZPL_INLINE const char *zpl_char_first_occurence(const char *s, char c) {
     return s;
 }
 
-ZPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
+ZPL_IMPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
     const char *result = NULL;
     do {
         if (*s == c) result = s;
@@ -352,18 +352,18 @@ ZPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
     return result;
 }
 
-ZPL_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline)
+ZPL_IMPL_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline)
 {
     while (*str && zpl_char_is_space(*str) && (!skip_newline || (skip_newline && *str != '\n'))) { ++str; }
     return str;
 }
 
-ZPL_INLINE char *zpl_str_skip(char *str, char c) {
+ZPL_IMPL_INLINE char *zpl_str_skip(char *str, char c) {
     while (*str && *str != c) { ++str; }
     return str;
 }
 
-ZPL_INLINE void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
+ZPL_IMPL_INLINE void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b,
                                zpl_isize src_b_len) {
     ZPL_ASSERT(dest_len >= src_a_len + src_b_len + 1);
     if (dest) {
@@ -373,13 +373,13 @@ ZPL_INLINE void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a
     }
 }
 
-ZPL_INLINE zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
+ZPL_IMPL_INLINE zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr) {
     zpl_f64 f = zpl_str_to_f64(str, end_ptr);
     zpl_f32 r = cast(zpl_f32) f;
     return r;
 }
 
-ZPL_INLINE char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len) {
+ZPL_IMPL_INLINE char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len) {
     ZPL_ASSERT_NOT_NULL(src);
     zpl_isize len = zpl_strlen(src);
     char *dest = cast(char *) zpl_alloc(a, max_len);
@@ -389,7 +389,7 @@ ZPL_INLINE char *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len) {
     return dest;
 }
 
-ZPL_INLINE char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace) {
+ZPL_IMPL_INLINE char **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace) {
     char **lines = NULL, *p = source, *pd = p;
     zpl_array_init(lines, alloc);
 

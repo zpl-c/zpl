@@ -113,14 +113,14 @@ ZPL_DEF void   zpl_co_yield(zpl_co *co);
 
 //! @}
 
-ZPL_INLINE zpl_b32 zpl_co_running(zpl_co *co) {
+ZPL_IMPL_INLINE zpl_b32 zpl_co_running(zpl_co *co) {
     return zpl_atomic32_load(&co->status) == ZPL_CO_RUNNING;
 }
 
-ZPL_INLINE zpl_b32 zpl_co_finished(zpl_co *co) {
+ZPL_IMPL_INLINE zpl_b32 zpl_co_finished(zpl_co *co) {
     return zpl_atomic32_load(&co->status) == ZPL_CO_DEAD;
 }
 
-ZPL_INLINE zpl_b32 zpl_co_waiting(zpl_co *co) {
+ZPL_IMPL_INLINE zpl_b32 zpl_co_waiting(zpl_co *co) {
     return zpl_atomic32_load(&co->resume) == 0;
 }

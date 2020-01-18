@@ -322,32 +322,32 @@ ZPL_DEF char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *)*lines, 
 /* inlines */
 
 
-ZPL_INLINE zpl_b32 zpl_file_read_at_check(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_read_at_check(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_read) {
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     return f->ops.read_at(f->fd, buffer, size, offset, bytes_read, false);
 }
 
-ZPL_INLINE zpl_b32 zpl_file_write_at_check(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_write_at_check(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset, zpl_isize *bytes_written) {
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     return f->ops.write_at(f->fd, buffer, size, offset, bytes_written);
 }
 
-ZPL_INLINE zpl_b32 zpl_file_read_at(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_read_at(zpl_file *f, void *buffer, zpl_isize size, zpl_i64 offset) {
     return zpl_file_read_at_check(f, buffer, size, offset, NULL);
 }
 
-ZPL_INLINE zpl_b32 zpl_file_write_at(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_write_at(zpl_file *f, void const *buffer, zpl_isize size, zpl_i64 offset) {
     return zpl_file_write_at_check(f, buffer, size, offset, NULL);
 }
 
-ZPL_INLINE zpl_i64 zpl_file_seek(zpl_file *f, zpl_i64 offset) {
+ZPL_IMPL_INLINE zpl_i64 zpl_file_seek(zpl_file *f, zpl_i64 offset) {
     zpl_i64 new_offset = 0;
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.seek(f->fd, offset, ZPL_SEEK_WHENCE_BEGIN, &new_offset);
     return new_offset;
 }
 
-ZPL_INLINE zpl_i64 zpl_file_seek_to_end(zpl_file *f) {
+ZPL_IMPL_INLINE zpl_i64 zpl_file_seek_to_end(zpl_file *f) {
     zpl_i64 new_offset = 0;
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_END, &new_offset);
@@ -355,28 +355,28 @@ ZPL_INLINE zpl_i64 zpl_file_seek_to_end(zpl_file *f) {
 }
 
 // NOTE: Skips a certain amount of bytes
-ZPL_INLINE zpl_i64 zpl_file_skip(zpl_file *f, zpl_i64 bytes) {
+ZPL_IMPL_INLINE zpl_i64 zpl_file_skip(zpl_file *f, zpl_i64 bytes) {
     zpl_i64 new_offset = 0;
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.seek(f->fd, bytes, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
     return new_offset;
 }
 
-ZPL_INLINE zpl_i64 zpl_file_tell(zpl_file *f) {
+ZPL_IMPL_INLINE zpl_i64 zpl_file_tell(zpl_file *f) {
     zpl_i64 new_offset = 0;
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.seek(f->fd, 0, ZPL_SEEK_WHENCE_CURRENT, &new_offset);
     return new_offset;
 }
 
-ZPL_INLINE zpl_b32 zpl_file_read(zpl_file *f, void *buffer, zpl_isize size) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_read(zpl_file *f, void *buffer, zpl_isize size) {
     zpl_i64 cur_offset = zpl_file_tell(f);
     zpl_b32 result = zpl_file_read_at(f, buffer, size, zpl_file_tell(f));
     zpl_file_seek(f, cur_offset + size);
     return result;
 }
 
-ZPL_INLINE zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isize size) {
+ZPL_IMPL_INLINE zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isize size) {
     zpl_i64 cur_offset = zpl_file_tell(f);
     zpl_b32 result = zpl_file_write_at(f, buffer, size, zpl_file_tell(f));
     zpl_file_seek(f, cur_offset + size);

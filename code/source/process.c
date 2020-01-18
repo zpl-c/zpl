@@ -7,12 +7,12 @@
 #include <zpl.h>
 #endif
 
-ZPL_ALWAYS_INLINE void zpl__pr_close_file_handle(zpl_file *f) {
+static ZPL_ALWAYS_INLINE void zpl__pr_close_file_handle(zpl_file *f) {
     ZPL_ASSERT_NOT_NULL(f);
     f->fd.p  = NULL;
 }
 
-ZPL_ALWAYS_INLINE void zpl__pr_close_file_handles(zpl_pr *process) {
+static ZPL_ALWAYS_INLINE void zpl__pr_close_file_handles(zpl_pr *process) {
     ZPL_ASSERT_NOT_NULL(process);
 
     zpl__pr_close_file_handle(&process->in);

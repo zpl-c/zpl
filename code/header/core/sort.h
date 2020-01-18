@@ -71,7 +71,7 @@ ZPL_DEF void zpl_reverse(void *base, zpl_isize count, zpl_isize size);
 //! @}
 
 
-ZPL_INLINE zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
+ZPL_IMPL_INLINE zpl_isize zpl_binary_search(void const *base, zpl_isize count, zpl_isize size, void const *key,
                                    zpl_compare_proc compare_proc) {
     zpl_isize start = 0;
     zpl_isize end = count;

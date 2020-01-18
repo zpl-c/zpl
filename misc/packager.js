@@ -3,6 +3,7 @@ const path = require('path')
 const {Plugin} = require('release-it')
 
 const basefile = path.join(__dirname, '..', 'code', 'zpl.h')
+const workdir = path.join(__dirname, 'deploy')
 
 const versionGet = () => {
     const data = fs.readFileSync(basefile, 'utf8')
@@ -25,7 +26,6 @@ const versionSet = (major, minor, patch) => {
 }
 
 const embedIncludes = () => {
-    const workdir = path.join(__dirname, 'deploy')
     if (!fs.existsSync(workdir)) fs.mkdirSync(workdir)
 
     let data = fs.readFileSync(basefile, 'utf8')
@@ -75,6 +75,13 @@ class Bumper extends Plugin {
     async beforeRelease() {
         embedIncludes()
         console.log('done')
+    }
+
+
+    afterRelease() {
+        if (fs.existsSync(path.join(workdir, 'zpl.h'))) {
+            fs.unlinkSync(path.join(workdir, 'zpl.h'))
+        }
     }
 }
 

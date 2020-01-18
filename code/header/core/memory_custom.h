@@ -250,40 +250,40 @@ ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 
 /* inlines */
 
-ZPL_INLINE void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment) {
+ZPL_IMPL_INLINE void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment) {
     return a.proc(a.data, ZPL_ALLOCATION_ALLOC, size, alignment, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
-ZPL_INLINE void *zpl_alloc(zpl_allocator a, zpl_isize size) {
+ZPL_IMPL_INLINE void *zpl_alloc(zpl_allocator a, zpl_isize size) {
     return zpl_alloc_align(a, size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
-ZPL_INLINE void zpl_free(zpl_allocator a, void *ptr) {
+ZPL_IMPL_INLINE void zpl_free(zpl_allocator a, void *ptr) {
     if (ptr != NULL) a.proc(a.data, ZPL_ALLOCATION_FREE, 0, 0, ptr, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
-ZPL_INLINE void zpl_free_all(zpl_allocator a) {
+ZPL_IMPL_INLINE void zpl_free_all(zpl_allocator a) {
     a.proc(a.data, ZPL_ALLOCATION_FREE_ALL, 0, 0, NULL, 0, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
-ZPL_INLINE void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size) {
+ZPL_IMPL_INLINE void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size) {
     return zpl_resize_align(a, ptr, old_size, new_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
-ZPL_INLINE void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment) {
+ZPL_IMPL_INLINE void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment) {
     return a.proc(a.data, ZPL_ALLOCATION_RESIZE, new_size, alignment, ptr, old_size, ZPL_DEFAULT_ALLOCATOR_FLAGS);
 }
 
-ZPL_INLINE void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size) {
+ZPL_IMPL_INLINE void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size) {
     return zpl_memcopy(zpl_alloc(a, size), src, size);
 }
-ZPL_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment) {
+ZPL_IMPL_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment) {
     return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size);
 }
 
-ZPL_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
+ZPL_IMPL_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
     char *result;
     result = cast(char *) zpl_alloc_copy(a, str, len + 1);
     result[len] = '\0';
     return result;
 }
 
-ZPL_INLINE void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl_isize old_size, zpl_isize new_size,
+ZPL_IMPL_INLINE void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl_isize old_size, zpl_isize new_size,
                                           zpl_isize alignment) {
     if (!old_memory) return zpl_alloc_align(a, new_size, alignment);
 
@@ -310,7 +310,7 @@ ZPL_INLINE void *zpl_default_resize_align(zpl_allocator a, void *old_memory, zpl
 // Heap Allocator
 //
 
-ZPL_INLINE zpl_allocator zpl_heap_allocator(void) {
+ZPL_IMPL_INLINE zpl_allocator zpl_heap_allocator(void) {
     zpl_allocator a;
     a.proc = zpl_heap_allocator_proc;
     a.data = NULL;
@@ -321,7 +321,7 @@ ZPL_INLINE zpl_allocator zpl_heap_allocator(void) {
 // Arena Allocator
 //
 
-ZPL_INLINE void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size) {
     arena->backing.proc = NULL;
     arena->backing.data = NULL;
     arena->physical_start = start;
@@ -330,7 +330,7 @@ ZPL_INLINE void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_is
     arena->temp_count = 0;
 }
 
-ZPL_INLINE void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size) {
     arena->backing = backing;
     arena->physical_start = zpl_alloc(backing, size); // NOTE: Uses default alignment
     arena->total_size = size;
@@ -338,18 +338,18 @@ ZPL_INLINE void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator ba
     arena->temp_count = 0;
 }
 
-ZPL_INLINE void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size) {
     zpl_arena_init_from_allocator(arena, zpl_arena_allocator(parent_arena), size);
 }
 
-ZPL_INLINE void zpl_arena_free(zpl_arena *arena) {
+ZPL_IMPL_INLINE void zpl_arena_free(zpl_arena *arena) {
     if (arena->backing.proc) {
         zpl_free(arena->backing, arena->physical_start);
         arena->physical_start = NULL;
     }
 }
 
-ZPL_INLINE zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment) {
+ZPL_IMPL_INLINE zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment) {
     zpl_isize alignment_offset, result_pointer, mask;
     ZPL_ASSERT(zpl_is_power_of_two(alignment));
 
@@ -361,21 +361,21 @@ ZPL_INLINE zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignmen
     return alignment_offset;
 }
 
-ZPL_INLINE zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment) {
+ZPL_IMPL_INLINE zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment) {
     zpl_isize result = arena->total_size - (arena->total_allocated + zpl_arena_alignment_of(arena, alignment));
     return result;
 }
 
-ZPL_INLINE void zpl_arena_check(zpl_arena *arena) { ZPL_ASSERT(arena->temp_count == 0); }
+ZPL_IMPL_INLINE void zpl_arena_check(zpl_arena *arena) { ZPL_ASSERT(arena->temp_count == 0); }
 
-ZPL_INLINE zpl_allocator zpl_arena_allocator(zpl_arena *arena) {
+ZPL_IMPL_INLINE zpl_allocator zpl_arena_allocator(zpl_arena *arena) {
     zpl_allocator allocator;
     allocator.proc = zpl_arena_allocator_proc;
     allocator.data = arena;
     return allocator;
 }
 
-ZPL_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
+ZPL_IMPL_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
     zpl_temp_arena_memory tmp;
     tmp.arena = arena;
     tmp.original_count = arena->total_allocated;
@@ -383,7 +383,7 @@ ZPL_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
     return tmp;
 }
 
-ZPL_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
+ZPL_IMPL_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
     ZPL_ASSERT(tmp.arena->total_allocated >= tmp.original_count);
     ZPL_ASSERT(tmp.arena->temp_count > 0);
     tmp.arena->total_allocated = tmp.original_count;
@@ -394,28 +394,28 @@ ZPL_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
 // Pool Allocator
 //
 
-ZPL_INLINE void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size) {
+ZPL_IMPL_INLINE void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size) {
     zpl_pool_init_align(pool, backing, num_blocks, block_size, ZPL_DEFAULT_MEMORY_ALIGNMENT);
 }
 
-ZPL_INLINE void zpl_pool_free(zpl_pool *pool) {
+ZPL_IMPL_INLINE void zpl_pool_free(zpl_pool *pool) {
     if (pool->backing.proc) { zpl_free(pool->backing, pool->physical_start); }
 }
 
-ZPL_INLINE zpl_allocator zpl_pool_allocator(zpl_pool *pool) {
+ZPL_IMPL_INLINE zpl_allocator zpl_pool_allocator(zpl_pool *pool) {
     zpl_allocator allocator;
     allocator.proc = zpl_pool_allocator_proc;
     allocator.data = pool;
     return allocator;
 }
 
-ZPL_INLINE zpl_allocation_header_ev *zpl_allocation_header(void *data) {
+ZPL_IMPL_INLINE zpl_allocation_header_ev *zpl_allocation_header(void *data) {
     zpl_isize *p = cast(zpl_isize *) data;
     while (p[-1] == cast(zpl_isize)(-1)) p--;
     return cast(zpl_allocation_header_ev *) p - 1;
 }
 
-ZPL_INLINE void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size) {
     zpl_isize *ptr;
     header->size = size;
     ptr = cast(zpl_isize *)(header + 1);
@@ -429,20 +429,20 @@ ZPL_INLINE void zpl_allocation_header_fill(zpl_allocation_header_ev *header, voi
 #define ZPL_STACK_ALLOC_OFFSET sizeof(zpl_u64)
 ZPL_STATIC_ASSERT(ZPL_STACK_ALLOC_OFFSET == 8, "ZPL_STACK_ALLOC_OFFSET != 8");
 
-ZPL_INLINE void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size) {
     s->physical_start = start;
     s->total_size = size;
     s->allocated = 0;
 }
 
-ZPL_INLINE void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size) {
+ZPL_IMPL_INLINE void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size) {
     s->backing = backing;
     s->physical_start = zpl_alloc(backing, size);
     s->total_size = size;
     s->allocated = 0;
 }
 
-ZPL_INLINE zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
+ZPL_IMPL_INLINE zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
     if (s->allocated == 0) return false;
 
     if (ptr > s->physical_start && ptr < zpl_pointer_add(s->physical_start, s->total_size)) { return true; }
@@ -450,14 +450,14 @@ ZPL_INLINE zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr) {
     return false;
 }
 
-ZPL_INLINE void zpl_stack_memory_free(zpl_stack_memory *s) {
+ZPL_IMPL_INLINE void zpl_stack_memory_free(zpl_stack_memory *s) {
     if (s->backing.proc) {
         zpl_free(s->backing, s->physical_start);
         s->physical_start = NULL;
     }
 }
 
-ZPL_INLINE zpl_allocator zpl_stack_allocator(zpl_stack_memory *s) {
+ZPL_IMPL_INLINE zpl_allocator zpl_stack_allocator(zpl_stack_memory *s) {
     zpl_allocator a;
     a.proc = zpl_stack_allocator_proc;
     a.data = s;

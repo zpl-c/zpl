@@ -9,9 +9,9 @@
 #include <zpl.h>
 #endif
 
-ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
-ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
-ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
+static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
+static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
 
 char *zpl__json_parse_object(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 char *zpl__json_parse_array(zpl_json_object *obj, char *base, zpl_allocator a, zpl_u8 *err_code);

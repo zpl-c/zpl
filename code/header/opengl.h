@@ -206,7 +206,7 @@
     zpl_i32 const ZPLGL_INTERNAL_TEXTURE_FORMAT_I32[4] = { GL_R32I,  GL_RG32I,  GL_RGB32I,  GL_RGBA32I };
     zpl_i32 const ZPLGL_INTERNAL_TEXTURE_FORMAT_F32[4] = { GL_R32F,  GL_RG32F,  GL_RGB32F,  GL_RGBA32F };
 
-    zpl_inline zpl_i32 zplgl_texture_format(zplgl_buffer_data_type data_type, zpl_i32 channel_count) {
+    ZPL_IMPL_INLINE zpl_i32 zplgl_texture_format(zplgl_buffer_data_type data_type, zpl_i32 channel_count) {
         ZPL_ASSERT(zpl_is_between(channel_count, 1, 4));
         switch (data_type) {
         case ZPLGL_BUFFER_DATA_U8:  return ZPLGL_INTERNAL_TEXTURE_FORMAT_U8[channel_count - 1];

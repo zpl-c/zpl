@@ -39,7 +39,7 @@ zplgl_color zplgl_colorf(zpl_f32 r, zpl_f32 g, zpl_f32 b, zpl_f32 a) {
     return result;
 }
 
-zpl_inline zplgl_color zplgl_color_opacity(zplgl_color color, zpl_f32 alpha)
+ZPL_IMPL_INLINE zplgl_color zplgl_color_opacity(zplgl_color color, zpl_f32 alpha)
 {
     zplgl_color result;
     result = color;
@@ -64,7 +64,7 @@ zpl_u32 zplgl_make_sampler(zpl_u32 min_filter, zpl_u32 max_filter, zpl_u32 s_wra
 //
 //
 
-zpl_inline zpl_u32 zplgl__make_buffer(zpl_isize size, void const *data, zpl_i32 target, zpl_i32 usage_hint) {
+ZPL_IMPL_INLINE zpl_u32 zplgl__make_buffer(zpl_isize size, void const *data, zpl_i32 target, zpl_i32 usage_hint) {
     zpl_u32 buffer_handle;
     glGenBuffers(1, &buffer_handle);
     glBindBuffer(target, buffer_handle);
@@ -72,32 +72,32 @@ zpl_inline zpl_u32 zplgl__make_buffer(zpl_isize size, void const *data, zpl_i32 
     return buffer_handle;
 }
 
-zpl_inline void zplgl__buffer_copy(zpl_u32 buffer_handle, zpl_i32 target, void const *data, zpl_isize size, zpl_isize offset) {
+ZPL_IMPL_INLINE void zplgl__buffer_copy(zpl_u32 buffer_handle, zpl_i32 target, void const *data, zpl_isize size, zpl_isize offset) {
     glBindBuffer(target, buffer_handle);
     glBufferSubData(target, offset, size, data);
 }
 
 // NOTE(bill): usage_hint == (GL_STATIC_DRAW, GL_STREAM_DRAW, GL_DYNAMIC_DRAW)
-zpl_inline zpl_u32 zplgl_make_vbo(void const *data, zpl_isize size, zpl_i32 usage_hint) {
+ZPL_IMPL_INLINE zpl_u32 zplgl_make_vbo(void const *data, zpl_isize size, zpl_i32 usage_hint) {
     return zplgl__make_buffer(size, data, GL_ARRAY_BUFFER, usage_hint);
 }
 
-zpl_inline zpl_u32 zplgl_make_ebo(void const *data, zpl_isize size, zpl_i32 usage_hint) {
+ZPL_IMPL_INLINE zpl_u32 zplgl_make_ebo(void const *data, zpl_isize size, zpl_i32 usage_hint) {
     return zplgl__make_buffer(size, data, GL_ELEMENT_ARRAY_BUFFER, usage_hint);
 }
 
-zpl_inline zpl_u32 zplgl_make_ssbo(void const *data, zpl_isize size, zpl_i32 ssbo_usage_hint) {
+ZPL_IMPL_INLINE zpl_u32 zplgl_make_ssbo(void const *data, zpl_isize size, zpl_i32 ssbo_usage_hint) {
     return zplgl__make_buffer(size, data, GL_SHADER_STORAGE_BUFFER, ssbo_usage_hint);
 }
 
-zpl_inline zpl_u32 zplgl_make_vao(void) {
+ZPL_IMPL_INLINE zpl_u32 zplgl_make_vao(void) {
     zpl_u32 vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     return vao;
 }
 
-zpl_inline zplgl_tbo zplgl_make_tbo(zplgl_buffer_data_type data_type, zpl_i32 channel_count, void const *data, zpl_isize size, zpl_i32 usage_hint) {
+ZPL_IMPL_INLINE zplgl_tbo zplgl_make_tbo(zplgl_buffer_data_type data_type, zpl_i32 channel_count, void const *data, zpl_isize size, zpl_i32 usage_hint) {
     zplgl_tbo tbo;
     zpl_i32 internal_format;
 
@@ -110,45 +110,45 @@ zpl_inline zplgl_tbo zplgl_make_tbo(zplgl_buffer_data_type data_type, zpl_i32 ch
     return tbo;
 }
 
-zpl_inline void zplgl_vbo_copy(zpl_u32 vbo_handle, void *const data, zpl_isize size, zpl_isize offset) {
+ZPL_IMPL_INLINE void zplgl_vbo_copy(zpl_u32 vbo_handle, void *const data, zpl_isize size, zpl_isize offset) {
     zplgl__buffer_copy(vbo_handle, GL_ARRAY_BUFFER, data, size, offset);
 }
 
-zpl_inline void zplgl_ebo_copy(zpl_u32 ebo_handle, void *const data, zpl_isize size, zpl_isize offset) {
+ZPL_IMPL_INLINE void zplgl_ebo_copy(zpl_u32 ebo_handle, void *const data, zpl_isize size, zpl_isize offset) {
     zplgl__buffer_copy(ebo_handle, GL_ELEMENT_ARRAY_BUFFER, data, size, offset);
 }
 
-zpl_inline void zplgl_ssbo_copy(zpl_u32 ssbo_handle, void *const data, zpl_isize size, zpl_isize offset) {
+ZPL_IMPL_INLINE void zplgl_ssbo_copy(zpl_u32 ssbo_handle, void *const data, zpl_isize size, zpl_isize offset) {
     zplgl__buffer_copy(ssbo_handle, GL_SHADER_STORAGE_BUFFER, data, size, offset);
 }
 
-zpl_inline void zplgl_tbo_copy(zplgl_tbo tbo, void *const data, zpl_isize size, zpl_isize offset) {
+ZPL_IMPL_INLINE void zplgl_tbo_copy(zplgl_tbo tbo, void *const data, zpl_isize size, zpl_isize offset) {
     zplgl__buffer_copy(tbo.buffer_obj_handle, GL_TEXTURE_BUFFER, data, size, offset);
 }
 
-zpl_inline void zplgl_bind_vbo(zpl_u32 vbo_handle) { glBindBuffer(GL_ARRAY_BUFFER, vbo_handle); }
-zpl_inline void zplgl_bind_ebo(zpl_u32 ebo_handle) { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle); }
-zpl_inline void zplgl_bind_ssbo(zpl_u32 ssbo_handle) { glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_handle); }
+ZPL_IMPL_INLINE void zplgl_bind_vbo(zpl_u32 vbo_handle) { glBindBuffer(GL_ARRAY_BUFFER, vbo_handle); }
+ZPL_IMPL_INLINE void zplgl_bind_ebo(zpl_u32 ebo_handle) { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle); }
+ZPL_IMPL_INLINE void zplgl_bind_ssbo(zpl_u32 ssbo_handle) { glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_handle); }
 
-zpl_inline void zplgl_bind_tbo(zplgl_tbo tbo, zpl_i32 sampler_handle, zpl_i32 tex_unit) {
+ZPL_IMPL_INLINE void zplgl_bind_tbo(zplgl_tbo tbo, zpl_i32 sampler_handle, zpl_i32 tex_unit) {
     glActiveTexture(GL_TEXTURE0 + tex_unit);
     glBindTexture(GL_TEXTURE_BUFFER, tbo.buffer_handle);
     glBindSampler(0, sampler_handle);
 }
 
 // NOTE(bill): access = GL_WRITE_ONLY, etc.
-zpl_inline void * zplgl_map_vbo(zpl_u32 vbo_handle, zpl_i32 access) {
+ZPL_IMPL_INLINE void * zplgl_map_vbo(zpl_u32 vbo_handle, zpl_i32 access) {
     zplgl_bind_vbo(vbo_handle);
     return glMapBuffer(GL_ARRAY_BUFFER, access);
 }
 
-zpl_inline void * zplgl_map_ebo(zpl_u32 ebo_handle, zpl_i32 access) {
+ZPL_IMPL_INLINE void * zplgl_map_ebo(zpl_u32 ebo_handle, zpl_i32 access) {
     zplgl_bind_ebo(ebo_handle);
     return glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, access);
 }
 
-zpl_inline void zplgl_unmap_vbo(void) { glUnmapBuffer(GL_ARRAY_BUFFER); }
-zpl_inline void zplgl_unmap_ebo(void) { glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER); }
+ZPL_IMPL_INLINE void zplgl_unmap_vbo(void) { glUnmapBuffer(GL_ARRAY_BUFFER); }
+ZPL_IMPL_INLINE void zplgl_unmap_ebo(void) { glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER); }
 
 
 
@@ -314,7 +314,7 @@ zplgl_shader_error zplgl_load_shader_from_memory_vfg(zplgl_shader *s, char const
     return err;
 }
 
-zpl_inline void zplgl_destroy_shader(zplgl_shader *shader) {
+ZPL_IMPL_INLINE void zplgl_destroy_shader(zplgl_shader *shader) {
     zpl_i32 i;
     for (i = 0; i < ZPLGL_SHADER_COUNT; i++) {
         if (shader->type_flags & ZPL_BIT(i)) {
@@ -331,7 +331,7 @@ zpl_inline void zplgl_destroy_shader(zplgl_shader *shader) {
 }
 
 
-zpl_inline zpl_b32 zplgl_has_shader_changed(zplgl_shader *shader) {
+ZPL_IMPL_INLINE zpl_b32 zplgl_has_shader_changed(zplgl_shader *shader) {
     zpl_i32 i;
     for (i = 0; i < ZPLGL_SHADER_COUNT; i++) {
         if (shader->type_flags & ZPL_BIT(i)) {
@@ -363,9 +363,9 @@ zpl_b32 zplgl_reload_shader(zplgl_shader *shader) {
     return true;
 }
 
-zpl_inline void zplgl_use_shader(zplgl_shader *s) { glUseProgram(s ? s->program : 0); }
+ZPL_IMPL_INLINE void zplgl_use_shader(zplgl_shader *s) { glUseProgram(s ? s->program : 0); }
 
-zpl_inline zpl_b32 zplgl_is_shader_in_use(zplgl_shader *s) {
+ZPL_IMPL_INLINE zpl_b32 zplgl_is_shader_in_use(zplgl_shader *s) {
     if (s) {
         zpl_i32 curr = 0;
         glGetIntegerv(GL_CURRENT_PROGRAM, &curr);
@@ -419,36 +419,36 @@ void zplgl_bind_ssbo_storage_block(zplgl_shader *s, zpl_i32 binding_point, zpl_i
 }
 
 
-zpl_inline void zplgl_set_uniform_int(zplgl_shader *s, char const *name, zpl_i32 i) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_int(zplgl_shader *s, char const *name, zpl_i32 i) {
     glUniform1i(zplgl_get_uniform(s, name), i);
 }
 
-zpl_inline void zplgl_set_uniform_float(zplgl_shader *s, char const *name, zpl_f32 f) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_float(zplgl_shader *s, char const *name, zpl_f32 f) {
     glUniform1f(zplgl_get_uniform(s, name), f);
 }
 
-zpl_inline void zplgl_set_uniform_vec2(zplgl_shader *s, char const *name, zpl_f32 const *v) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_vec2(zplgl_shader *s, char const *name, zpl_f32 const *v) {
     glUniform2fv(zplgl_get_uniform(s, name), 1, v);
 }
 
-zpl_inline void zplgl_set_uniform_vec3(zplgl_shader *s, char const *name, zpl_f32 const *v) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_vec3(zplgl_shader *s, char const *name, zpl_f32 const *v) {
     glUniform3fv(zplgl_get_uniform(s, name), 1, v);
 }
 
-zpl_inline void zplgl_set_uniform_vec4(zplgl_shader *s, char const *name, zpl_f32 const *v) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_vec4(zplgl_shader *s, char const *name, zpl_f32 const *v) {
     glUniform4fv(zplgl_get_uniform(s, name), 1, v);
 }
 
-zpl_inline void zplgl_set_uniform_mat4(zplgl_shader *s, char const *name, zpl_f32 const *m) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_mat4(zplgl_shader *s, char const *name, zpl_f32 const *m) {
     zplgl_set_uniform_mat4_count(s, name, m, 1);
 }
 
-zpl_inline void zplgl_set_uniform_mat4_count(zplgl_shader *s, char const *name, zpl_f32 const *m, zpl_isize count) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_mat4_count(zplgl_shader *s, char const *name, zpl_f32 const *m, zpl_isize count) {
     glUniformMatrix4fv(zplgl_get_uniform(s, name), (GLsizei)count, false, m);
 }
 
 
-zpl_inline void zplgl_set_uniform_colour(zplgl_shader *s, char const *name, zplgl_color col) {
+ZPL_IMPL_INLINE void zplgl_set_uniform_colour(zplgl_shader *s, char const *name, zplgl_color col) {
     zpl_f32 v[4];
     v[0] = col.r / 255.0f;
     v[1] = col.g / 255.0f;
@@ -501,7 +501,7 @@ zpl_b32 zplgl_init_render_buffer(zplgl_render_buffer *rb, zpl_i32 width, zpl_i32
     return true;
 }
 
-zpl_inline void zplgl_destroy_render_buffer(zplgl_render_buffer *rb) {
+ZPL_IMPL_INLINE void zplgl_destroy_render_buffer(zplgl_render_buffer *rb) {
     if (rb->handle)
         glDeleteFramebuffers(1, &rb->handle);
 
@@ -509,13 +509,13 @@ zpl_inline void zplgl_destroy_render_buffer(zplgl_render_buffer *rb) {
 }
 
 
-zpl_inline void zplgl_render_to_buffer(zplgl_render_buffer const *rb) {
+ZPL_IMPL_INLINE void zplgl_render_to_buffer(zplgl_render_buffer const *rb) {
     ZPL_ASSERT_NOT_NULL(rb);
     glViewport(0, 0, rb->width, rb->height);
     glBindFramebuffer(GL_FRAMEBUFFER, rb->handle);
 }
 
-zpl_inline void zplgl_render_to_screen(zpl_i32 width, zpl_i32 height) {
+ZPL_IMPL_INLINE void zplgl_render_to_screen(zpl_i32 width, zpl_i32 height) {
     glViewport(0, 0, width, height);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -581,12 +581,12 @@ zpl_b32 zplgl_load_texture2d_from_file(zplgl_texture *texture, zpl_b32 flip_vert
     return result;
 }
 
-zpl_inline zpl_b32 zplgl_init_texture2d_coloured(zplgl_texture *t, zplgl_color colour) {
+ZPL_IMPL_INLINE zpl_b32 zplgl_init_texture2d_coloured(zplgl_texture *t, zplgl_color colour) {
     return zplgl_load_texture2d_from_memory(t, &colour.rgba, 1, 1, 4);
 }
 
 
-zpl_inline void zplgl_bind_texture2d(zplgl_texture const *t, zpl_u32 position, zpl_u32 sampler) {
+ZPL_IMPL_INLINE void zplgl_bind_texture2d(zplgl_texture const *t, zpl_u32 position, zpl_u32 sampler) {
     if (t != NULL) {
         ZPL_ASSERT(t->type == ZPLGL_TEXTURE_2D);
     }
@@ -603,7 +603,7 @@ zpl_inline void zplgl_bind_texture2d(zplgl_texture const *t, zpl_u32 position, z
     glBindSampler(position, sampler);
 }
 
-zpl_inline void zplgl_destroy_texture(zplgl_texture *t) {
+ZPL_IMPL_INLINE void zplgl_destroy_texture(zplgl_texture *t) {
     if (t->handle) {
         glDeleteTextures(1, &t->handle);
     }
@@ -617,14 +617,14 @@ zpl_inline void zplgl_destroy_texture(zplgl_texture *t) {
 //
 
 #if !defined(ZPLGL_NO_FONTS)
-zpl_inline ZPL_COMPARE_PROC(zplgl__kern_pair_compare) {
+ZPL_IMPL_INLINE ZPL_COMPARE_PROC(zplgl__kern_pair_compare) {
     zplgl_kern_pair *kp0 = cast(zplgl_kern_pair *)a;
     zplgl_kern_pair *kp1 = cast(zplgl_kern_pair *)b;
     return kp0->packed - kp1->packed;
 }
 
 
-zpl_inline ZPL_COMPARE_PROC(zplgl__glyph_map_compare) {
+ZPL_IMPL_INLINE ZPL_COMPARE_PROC(zplgl__glyph_map_compare) {
     zplgl_glyph_mapkv_pair g0 = *cast(zplgl_glyph_mapkv_pair *)a;
     zplgl_glyph_mapkv_pair g1 = *cast(zplgl_glyph_mapkv_pair *)b;
     return g0.codepoint - g1.codepoint;
@@ -745,14 +745,14 @@ void zplgl_destroy_font_cache(zplglFontCache *fc) {
 #endif
 
 
-zpl_inline zplgl_font * zplgl_load_font_from_file(zplgl_font_cache *fc, char const *ttf_filename, zpl_f32 font_size) {
+ZPL_IMPL_INLINE zplgl_font * zplgl_load_font_from_file(zplgl_font_cache *fc, char const *ttf_filename, zpl_f32 font_size) {
     zplgl_font *f = zplgl_get_font_only_from_cache(fc, ttf_filename, font_size);
     if (f) return f;
     return zplgl_cache_font(fc, ttf_filename, font_size);
 }
 
 
-zpl_inline zplgl_font * zplgl_get_font_only_from_cache(zplgl_font_cache *fc, char const *ttf_filename, zpl_f32 font_size) {
+ZPL_IMPL_INLINE zplgl_font * zplgl_get_font_only_from_cache(zplgl_font_cache *fc, char const *ttf_filename, zpl_f32 font_size) {
     zplgl_font *f = fc->fonts;
     while (f) {
         if (f->size == font_size && zpl_strcmp(ttf_filename, f->ttf_filename) == 0) {
@@ -978,13 +978,13 @@ zplgl_font * zplgl_cache_font(zplgl_font_cache *fc, char const *ttf_filename, zp
 }
 
 
-zpl_inline ZPL_COMPARE_PROC(zplgl__font_glyph_map_search_proc) {
+ZPL_IMPL_INLINE ZPL_COMPARE_PROC(zplgl__font_glyph_map_search_proc) {
     zplgl_glyph_mapkv_pair const *gm = cast(zplgl_glyph_mapkv_pair const *)a;
     zpl_char32 ucp = *cast(zpl_char32 const *)b;
     return cast(zpl_i32)(cast(zpl_i64)gm->codepoint - cast(zpl_i64)ucp);
 }
 
-zpl_inline zplgl_glyph_info * zplgl_get_glyph_info(zplgl_font *font, zpl_char32 codepoint, zpl_isize *out_index) {
+ZPL_IMPL_INLINE zplgl_glyph_info * zplgl_get_glyph_info(zplgl_font *font, zpl_char32 codepoint, zpl_isize *out_index) {
     zpl_isize index = zpl_binary_search_array(font->glyph_map, font->glyph_count, &codepoint, zplgl__font_glyph_map_search_proc);
     if (index >= 0) {
         ZPL_ASSERT(codepoint == font->glyph_map[index].codepoint);
@@ -995,7 +995,7 @@ zpl_inline zplgl_glyph_info * zplgl_get_glyph_info(zplgl_font *font, zpl_char32 
     return NULL;
 }
 
-zpl_inline zpl_f32 zplgl_get_font_kerning_from_glyph_indices(zplgl_font *font, zpl_isize left_index, zpl_isize right_index) {
+ZPL_IMPL_INLINE zpl_f32 zplgl_get_font_kerning_from_glyph_indices(zplgl_font *font, zpl_isize left_index, zpl_isize right_index) {
     zpl_isize needle = (right_index << 16) | (left_index & 0xff);
 
     zpl_isize f = 0;
@@ -1131,7 +1131,7 @@ zpl_i32 zplgl_get_wrapped_line_count(zplgl_font *font, char const *str, zpl_isiz
     return cast(zpl_i32)line_count;
 }
 
-zpl_inline zpl_f32 zplgl_get_string_width(zplgl_font *font, char const *str, zpl_isize max_len) {
+ZPL_IMPL_INLINE zpl_f32 zplgl_get_string_width(zplgl_font *font, char const *str, zpl_isize max_len) {
     zpl_isize len = zpl_strnlen(str, max_len);
     zpl_isize char_count = zpl_utf8_strnlen((zpl_u8 *)str, len);
     return zplgl_get_sub_string_width(font, str, char_count);
@@ -1284,7 +1284,7 @@ void zplgl_bs_init(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_h
 #endif
 }
 
-zpl_inline void zplgl_bs_set_resolution(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height) {
+ZPL_IMPL_INLINE void zplgl_bs_set_resolution(zplgl_basic_state *bs, zpl_i32 window_width, zpl_i32 window_height) {
     zpl_f32 left = 0.0f;
     zpl_f32 right = cast(zpl_f32)window_width;
     zpl_f32 bottom = 0.0f;
@@ -1316,12 +1316,12 @@ zpl_inline void zplgl_bs_set_resolution(zplgl_basic_state *bs, zpl_i32 window_wi
     bs->ortho_mat[15] = 1.0f;
 }
 
-zpl_inline void zplgl_bs_begin(zplgl_basic_state *bs) {
+ZPL_IMPL_INLINE void zplgl_bs_begin(zplgl_basic_state *bs) {
     glBindVertexArray(bs->vao);
     glDisable(GL_SCISSOR_TEST);
 }
 
-zpl_inline void zplgl_bs_end(zplgl_basic_state *bs) {
+ZPL_IMPL_INLINE void zplgl_bs_end(zplgl_basic_state *bs) {
     glBindVertexArray(0);
 }
 
@@ -1363,7 +1363,7 @@ void zplgl_bs_draw_textured_rect(zplgl_basic_state *bs, zplgl_texture *tex, zpl_
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 }
 
-zpl_inline void zplgl_bs_draw_rect(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zplgl_color col) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_rect(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zplgl_color col) {
     zplgl_bs_draw_quad(bs,
         x, y,
         x + w, y,
@@ -1372,7 +1372,7 @@ zpl_inline void zplgl_bs_draw_rect(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, 
         col);
 }
 
-zpl_inline void zplgl_bs_draw_rect_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zplgl_color col, zpl_f32 thickness) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_rect_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zplgl_color col, zpl_f32 thickness) {
     zplgl_bs_draw_quad_outline(bs,
         x, y,
         x + w, y,
@@ -1398,7 +1398,7 @@ zpl_internal void zplgl__bs_setup_ortho_colour_state(zplgl_basic_state *bs, zpl_
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-zpl_inline void zplgl_bs_draw_quad(zplgl_basic_state *bs,
+ZPL_IMPL_INLINE void zplgl_bs_draw_quad(zplgl_basic_state *bs,
     zpl_f32 x0, zpl_f32 y0,
     zpl_f32 x1, zpl_f32 y1,
     zpl_f32 x2, zpl_f32 y2,
@@ -1420,7 +1420,7 @@ zpl_inline void zplgl_bs_draw_quad(zplgl_basic_state *bs,
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 }
 
-zpl_inline void zplgl_bs_draw_quad_outline(zplgl_basic_state *bs,
+ZPL_IMPL_INLINE void zplgl_bs_draw_quad_outline(zplgl_basic_state *bs,
     zpl_f32 x0, zpl_f32 y0,
     zpl_f32 x1, zpl_f32 y1,
     zpl_f32 x2, zpl_f32 y2,
@@ -1443,7 +1443,7 @@ zpl_inline void zplgl_bs_draw_quad_outline(zplgl_basic_state *bs,
     glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
-zpl_inline void zplgl_bs_draw_line(zplgl_basic_state *bs, zpl_f32 x0, zpl_f32 y0, zpl_f32 x1, zpl_f32 y1, zplgl_color col, zpl_f32 thickness) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_line(zplgl_basic_state *bs, zpl_f32 x0, zpl_f32 y0, zpl_f32 x1, zpl_f32 y1, zplgl_color col, zpl_f32 thickness) {
     bs->vertices[0].x = x0;
     bs->vertices[0].y = y0;
 
@@ -1455,7 +1455,7 @@ zpl_inline void zplgl_bs_draw_line(zplgl_basic_state *bs, zpl_f32 x0, zpl_f32 y0
     glDrawArrays(GL_LINES, 0, 2);
 }
 
-zpl_inline void zplgl_bs_draw_elliptical_arc(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius_a, zpl_f32 radius_b,
+ZPL_IMPL_INLINE void zplgl_bs_draw_elliptical_arc(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius_a, zpl_f32 radius_b,
     zpl_f32 min_angle, zpl_f32 max_angle, zplgl_color col) {
     zpl_isize i;
 
@@ -1475,7 +1475,7 @@ zpl_inline void zplgl_bs_draw_elliptical_arc(zplgl_basic_state *bs, zpl_f32 x, z
     glDrawArrays(GL_TRIANGLE_FAN, 0, 32);
 }
 
-zpl_inline void zplgl_bs_draw_elliptical_arc_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius_a, zpl_f32 radius_b,
+ZPL_IMPL_INLINE void zplgl_bs_draw_elliptical_arc_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius_a, zpl_f32 radius_b,
     zpl_f32 min_angle, zpl_f32 max_angle, zplgl_color col, zpl_f32 thickness) {
     zpl_isize i;
 
@@ -1495,11 +1495,11 @@ zpl_inline void zplgl_bs_draw_elliptical_arc_outline(zplgl_basic_state *bs, zpl_
 
 
 
-zpl_inline void zplgl_bs_draw_circle(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius, zplgl_color col) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_circle(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius, zplgl_color col) {
     zplgl_bs_draw_elliptical_arc(bs, x, y, radius, radius, 0, ZPL_TAU, col);
 }
 
-zpl_inline void zplgl_bs_draw_circle_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius, zplgl_color col, zpl_f32 thickness) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_circle_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 radius, zplgl_color col, zpl_f32 thickness) {
     zplgl_bs_draw_elliptical_arc_outline(bs, x, y, radius, radius, 0, ZPL_TAU, col, thickness);
 }
 
@@ -1603,7 +1603,7 @@ void zplgl_bs_draw_rounded_rect_corners(zplgl_basic_state *bs, zpl_f32 x, zpl_f3
     }
 }
 
-zpl_inline void zplgl_bs_draw_rounded_rect(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zpl_f32 roundness, zplgl_color col) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_rounded_rect(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zpl_f32 roundness, zplgl_color col) {
     zplgl_bs_draw_rounded_rect_corners(bs, x, y, w, h, roundness, col, 1 | 2 | 4 | 8);
 }
 
@@ -1695,7 +1695,7 @@ void zplgl_bs_draw_rounded_rect_corners_outline(zplgl_basic_state *bs, zpl_f32 x
     }
 }
 
-zpl_inline void zplgl_bs_draw_rounded_rect_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zpl_f32 roundness, zplgl_color col, zpl_f32 thickness) {
+ZPL_IMPL_INLINE void zplgl_bs_draw_rounded_rect_outline(zplgl_basic_state *bs, zpl_f32 x, zpl_f32 y, zpl_f32 w, zpl_f32 h, zpl_f32 roundness, zplgl_color col, zpl_f32 thickness) {
     zplgl_bs_draw_rounded_rect_corners_outline(bs, x, y, w, h, roundness, col, thickness, 1 | 2 | 4 | 8);
 }
 
@@ -1868,7 +1868,7 @@ zpl_isize zplgl_bs_draw_string(zplgl_basic_state *bs, zplgl_font *font, zpl_f32 
     return len;
 }
 
-zpl_inline zpl_isize zplgl_bs_draw_string_va(zplgl_basic_state *bs, zplgl_font *font, zpl_f32 x, zpl_f32 y, zplgl_color col, char const *fmt, va_list va) {
+ZPL_IMPL_INLINE zpl_isize zplgl_bs_draw_string_va(zplgl_basic_state *bs, zplgl_font *font, zpl_f32 x, zpl_f32 y, zplgl_color col, char const *fmt, va_list va) {
     zpl_isize len = zpl_snprintf_va(bs->font_text_buffer, zpl_size_of(bs->font_text_buffer),
         fmt, va);
     zpl_isize char_count = zpl_utf8_strnlen((zpl_u8 *)bs->font_text_buffer, len);

@@ -133,41 +133,41 @@ ZPL_DEF_INLINE zpl_string zpl_string_trim_space(zpl_string str); // Whitespace `
 ZPL_DEF_INLINE void       zpl__set_string_length(zpl_string str, zpl_isize len);
 ZPL_DEF_INLINE void       zpl__set_string_capacity(zpl_string str, zpl_isize cap);
 
-ZPL_INLINE void zpl__set_string_length(zpl_string str, zpl_isize len) { ZPL_STRING_HEADER(str)->length = len; }
-ZPL_INLINE void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
-ZPL_INLINE zpl_string zpl_string_make(zpl_allocator a, const char *str) {
+ZPL_IMPL_INLINE void zpl__set_string_length(zpl_string str, zpl_isize len) { ZPL_STRING_HEADER(str)->length = len; }
+ZPL_IMPL_INLINE void zpl__set_string_capacity(zpl_string str, zpl_isize cap) { ZPL_STRING_HEADER(str)->capacity = cap; }
+ZPL_IMPL_INLINE zpl_string zpl_string_make(zpl_allocator a, const char *str) {
     zpl_isize len = str ? zpl_strlen(str) : 0;
     return zpl_string_make_length(a, str, len);
 }
 
-ZPL_INLINE void zpl_string_free(zpl_string str) {
+ZPL_IMPL_INLINE void zpl_string_free(zpl_string str) {
     if (str) {
         zpl_string_header *header = ZPL_STRING_HEADER(str);
         zpl_free(header->allocator, header);
     }
 }
 
-ZPL_INLINE zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str) {
+ZPL_IMPL_INLINE zpl_string zpl_string_duplicate(zpl_allocator a, zpl_string const str) {
     return zpl_string_make_length(a, str, zpl_string_length(str));
 }
 
-ZPL_INLINE zpl_isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
-ZPL_INLINE zpl_isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
+ZPL_IMPL_INLINE zpl_isize zpl_string_length(zpl_string const str) { return ZPL_STRING_HEADER(str)->length; }
+ZPL_IMPL_INLINE zpl_isize zpl_string_capacity(zpl_string const str) { return ZPL_STRING_HEADER(str)->capacity; }
 
-ZPL_INLINE zpl_isize zpl_string_available_space(zpl_string const str) {
+ZPL_IMPL_INLINE zpl_isize zpl_string_available_space(zpl_string const str) {
     zpl_string_header *h = ZPL_STRING_HEADER(str);
     if (h->capacity > h->length) return h->capacity - h->length;
     return 0;
 }
 
-ZPL_INLINE void zpl_string_clear(zpl_string str) {
+ZPL_IMPL_INLINE void zpl_string_clear(zpl_string str) {
     zpl__set_string_length(str, 0);
     str[0] = '\0';
 }
 
-ZPL_INLINE zpl_string zpl_string_append(zpl_string str, zpl_string const other) {
+ZPL_IMPL_INLINE zpl_string zpl_string_append(zpl_string str, zpl_string const other) {
     return zpl_string_append_length(str, other, zpl_string_length(other));
 }
 
-ZPL_INLINE zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
+ZPL_IMPL_INLINE zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
 

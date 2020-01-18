@@ -35,5 +35,5 @@ ZPL_DEF_INLINE zpl_u64 zpl_murmur64(void const *data, zpl_isize len);
 
 //! @}
 
-ZPL_INLINE zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
-ZPL_INLINE zpl_u64 zpl_murmur64(void const *data, zpl_isize len) { return zpl_murmur64_seed(data, len, 0x9747b28c); }
+ZPL_IMPL_INLINE zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
+ZPL_IMPL_INLINE zpl_u64 zpl_murmur64(void const *data, zpl_isize len) { return zpl_murmur64_seed(data, len, 0x9747b28c); }

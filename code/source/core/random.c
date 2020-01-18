@@ -27,7 +27,7 @@ zpl_internal zpl_u32 zpl__get_noise_from_time(void) {
 // NOTE: Partly from http://preshing.com/20121224/how-to-generate-a-sequence-of-unique-random-integers/
 // But the generation is even more random-er-est
 
-zpl_internal ZPL_INLINE zpl_u32 zpl__permute_qpr(zpl_u32 x) {
+zpl_internal ZPL_ALWAYS_INLINE zpl_u32 zpl__permute_qpr(zpl_u32 x) {
     zpl_local_persist zpl_u32 const prime = 4294967291; // 2^32 - 5
     if (x >= prime) {
         return x;
@@ -40,7 +40,7 @@ zpl_internal ZPL_INLINE zpl_u32 zpl__permute_qpr(zpl_u32 x) {
     }
 }
 
-zpl_internal ZPL_INLINE zpl_u32 zpl__permute_with_offset(zpl_u32 x, zpl_u32 offset) {
+zpl_internal ZPL_ALWAYS_INLINE zpl_u32 zpl__permute_with_offset(zpl_u32 x, zpl_u32 offset) {
     return (zpl__permute_qpr(x) + offset) ^ 0x5bf03635;
 }
 

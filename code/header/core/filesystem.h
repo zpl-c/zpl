@@ -88,7 +88,7 @@ ZPL_DEF void zpl_dirinfo_step(zpl_dir_entry *dir_entry);
 
 /* inlines */
 
-ZPL_INLINE zpl_b32 zpl_path_is_absolute(char const *path) {
+ZPL_IMPL_INLINE zpl_b32 zpl_path_is_absolute(char const *path) {
     zpl_b32 result = false;
     ZPL_ASSERT_NOT_NULL(path);
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -99,9 +99,9 @@ ZPL_INLINE zpl_b32 zpl_path_is_absolute(char const *path) {
     return result;
 }
 
-ZPL_INLINE zpl_b32 zpl_path_is_relative(char const *path) { return !zpl_path_is_absolute(path); }
+ZPL_IMPL_INLINE zpl_b32 zpl_path_is_relative(char const *path) { return !zpl_path_is_absolute(path); }
 
-ZPL_INLINE zpl_b32 zpl_path_is_root(char const *path) {
+ZPL_IMPL_INLINE zpl_b32 zpl_path_is_root(char const *path) {
     zpl_b32 result = false;
     ZPL_ASSERT_NOT_NULL(path);
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -112,7 +112,7 @@ ZPL_INLINE zpl_b32 zpl_path_is_root(char const *path) {
     return result;
 }
 
-ZPL_INLINE char const *zpl_path_base_name(char const *path) {
+ZPL_IMPL_INLINE char const *zpl_path_base_name(char const *path) {
     char const *ls;
     ZPL_ASSERT_NOT_NULL(path);
     zpl_path_fix_slashes((char *)path);
@@ -120,7 +120,7 @@ ZPL_INLINE char const *zpl_path_base_name(char const *path) {
     return (ls == NULL) ? path : ls + 1;
 }
 
-ZPL_INLINE char const *zpl_path_extension(char const *path) {
+ZPL_IMPL_INLINE char const *zpl_path_extension(char const *path) {
     char const *ld;
     ZPL_ASSERT_NOT_NULL(path);
     ld = zpl_char_last_occurence(path, '.');

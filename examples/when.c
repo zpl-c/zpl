@@ -5,7 +5,7 @@ void easy_print(i64 *nums, isize cnt) {
     zpl_printf("Numbers:\n");
     for (isize i = 0; i < cnt; ++i) {
         zpl_when (&nums[i], i64*, number) {
-            zpl_printf("%ld, ", *number);
+            zpl_printf("%ld, ", (long)*number);
         }
     }
     zpl_printf("\n");

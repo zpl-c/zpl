@@ -54,13 +54,13 @@ ZPL_DEF_INLINE zpl_list *zpl_list_add(zpl_list *list, zpl_list *item);
 ZPL_DEF_INLINE zpl_list *zpl_list_remove(zpl_list *list);
 
 
-ZPL_INLINE void zpl_list_init(zpl_list *list, void const *ptr) {
+ZPL_IMPL_INLINE void zpl_list_init(zpl_list *list, void const *ptr) {
     zpl_list list_ = { 0 };
     *list = list_;
     list->ptr = ptr;
 }
 
-ZPL_INLINE zpl_list *zpl_list_add(zpl_list *list, zpl_list *item) {
+ZPL_IMPL_INLINE zpl_list *zpl_list_add(zpl_list *list, zpl_list *item) {
     item->next = NULL;
 
     if (list->next) { item->next = list->next; }
@@ -70,7 +70,7 @@ ZPL_INLINE zpl_list *zpl_list_add(zpl_list *list, zpl_list *item) {
     return item;
 }
 
-ZPL_INLINE zpl_list *zpl_list_remove(zpl_list *list) {
+ZPL_IMPL_INLINE zpl_list *zpl_list_remove(zpl_list *list) {
     if (list->prev) { list->prev->next = list->next; }
 
     return list->next;
