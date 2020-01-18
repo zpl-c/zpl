@@ -49,33 +49,14 @@ ZPL consists of the following modules:
 * **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
 * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.
-* **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
+* **Jobs system** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
 
-## External modules
-These are modules that work either as a standalone library or didn't fit into the ZPL library itself:
-* **zpl_glgen.py** - A Python script which fetches `glcorearb.h` to generate `zpl_glgen.h` which acts as an OpenGL extension wrangler.
-* **zpl_image.h** - Image manipulation methods and simple GIF reading API.
-
-This repository also contains third-party libraries which were either included or modified to be used by some of these ZPL external modules.
-
 ## Documentation
 
 We plan to use [DuckDoc](https://duckdoc.io/) for documentation later on. The service is still under development, but we're looking forward to it.
-
-### Old format
-
-Documentation is available in its generated form at [zpl.madaraszd.net](https://zpl.madaraszd.net/).
-
-You can see all modules by accessing the **Modules** link.
-
-Note that the documentation is still work in progress and will be tweaked further.
-
-You can build the documentation using Doxygen 1.8.11 or later. We use modified version of [m.css](http://mcss.mosra.cz/doxygen/) to generate styled documentation. It uses Python3 with dependencies: `jinja2, Pygments` to generate files. You can use `docs.bat` to build offline documentation.
-
-m.css is available as submodule, so make sure you clone this repo recursively to obtain it.
 
 # Support Me
 
@@ -84,23 +65,23 @@ While ZPL is free and open source library, I use my spare time to develop featur
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
 
-First, I recommend looking at [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) header file, which describes how to use the library. Now you know, that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE** including the zpl.h file itself to successfully embed it.
+First, I recommend looking at [zpl.h](https://github.com/zpl-c/zpl/releases/latest) header file from the releases, which describes how to use the library. Now you know, that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE** including the zpl.h file itself to successfully embed it.
 
-Afterwards, we need to deal with file loading, this time, we can either search for file module inside of [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) (not recommended), or we can navigate to [code/zpl/](https://github.com/zpl-c/zpl/blob/master/code/zpl/) to see the original form of the ZPL library.
+Afterwards, we need to deal with file loading, simply navigate to the `code` folder and find the respective module [file.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/file.h)
 
-As you can see, each module is contained within its own source file. There's also a Python script called [build.py](https://github.com/zpl-c/zpl/blob/master/code/zpl/build.py) which generates a new [zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h) file, combining all these modules together.
+As you can see, each module is contained within its own header/source file. These are bundled together on each release. When we develop ZPL, we include [code/zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h), as it allows us to have full syntax and semantics support while coding the library. However, as an end user, you can use ZPL from the releases page, as it contains everything bundled together and ready to be used within the project.
 
-Here we need [file.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/file.c), which contains necessary file i/o operations. Write a code to read `test.json5` file (you can use zpl_file_read_contents) and try to print its content (either use libc's printf or methods from [print.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/print.c)) Check test folder for code examples.
+File module takes care of necessary file i/o operations. Write a code to read `test.json5` file (you can use `zpl_file_read_contents`) and try to print its content (either use libc's printf or methods from [print.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/print.h)) Check [code/apps](https://github.com/zpl-c/zpl/blob/master/code/apps/) folder for code examples.
 
-Done? Great! Now we need to parse this file, but how? Well guess what, [json.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/json.c) is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
+Done? Great! Now we need to parse this file, but how? Well guess what, [json.h](https://github.com/zpl-c/zpl/blob/master/code/header/json.h) is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
 
-But what use is it for a benchmark tool if it doesn't even let you know how long the process took? It is time (pun intended) to visit [time.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/time.c) file now, capture 2 timestamps, one before, another after the operation happened and the difference is your time you can display to user. Or just check out code examples in test folder.
+But what use is it for a benchmark tool if it doesn't even let you know how long the process took? It is time (pun intended) to visit [time.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/time.h) file now, capture 2 timestamps, one before, another after the operation happened and the difference is your time you can display to user. Or just check out code examples in test folder.
 
 What's left? We can read a specific JSON5 file, parse it and display the time it took to do so. Did I say.. specific? How about we let the user customise the options on the command line?
 
-Visit [opts.c](https://github.com/zpl-c/zpl/blob/master/code/zpl/opts.c) and get to know it. As always, test folder can be useful in this case.
+Visit [opts.h](https://github.com/zpl-c/zpl/blob/master/code/header/opts.h) and get to know it. As always, test folder can be useful in this case.
 
-Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/test/json_benchmark.c) test file:
+Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/code/apps/json_benchmark.c) test file:
 
 ```c
 #define ZPL_IMPLEMENTATION
@@ -167,7 +148,6 @@ int main(int argc, char **argv) {
 ```
 
 Have fun!
-
 
 # Frequently Asked Questions
 
