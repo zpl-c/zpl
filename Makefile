@@ -20,6 +20,8 @@ EXAMPLES_SRCS += $(wildcard examples/*.cc)
 EXAMPLES += $(patsubst %.c,%,$(EXAMPLES_SRCS))
 EXAMPLES += $(patsubst %.cc,%,$(EXAMPLES_SRCS))
 
+BUILD_FILES = $(wildcard build/*)
+
 .PHONY: all clean examples test
 
 all: clean examples test
@@ -32,7 +34,10 @@ examples: $(EXAMPLES)
 	@echo '> Building examples'
 
 clean:
+ifneq ($(BUILD_FILES),)
 	@echo '> Cleaning up files'
+	@rm $(BUILD_FILES)
+endif
 
 % : %.c
 	@mkdir -p build
