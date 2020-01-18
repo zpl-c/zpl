@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on windows
-        run: mkdir build && cd build && cmake ../misc
+        run: mkdir build ; cd build ; cmake ../misc
 
   build-lin:
     name: Build Linux
