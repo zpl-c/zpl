@@ -19,5 +19,5 @@ foreach(example_source ${examples})
     endif()
 endforeach()
 
-add_executable(zpl_unit ../code/apps/tests/tester.c)
-target_link_libraries(zpl_unit pthread m dl)
+add_executable(tester ../code/apps/tests/tester.c)
+target_link_libraries(tester pthread m dl)
