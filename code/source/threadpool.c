@@ -6,7 +6,7 @@
 #include <zpl.h>
 #endif
 
-zpl_i64 zpl__jobs_entry(struct zpl_thread *thread) {
+zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
 

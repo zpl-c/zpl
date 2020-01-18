@@ -2,7 +2,7 @@ CC=gcc
 CXX=g++
 
 LDFLAGS += -pthread -ldl -lm
-DISABLED_WARNS = -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function
+DISABLED_WARNS = -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
 CFLAGS += -g -std=gnu11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
 CXXFLAGS += -g -std=c++11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
 
