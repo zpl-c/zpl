@@ -11,7 +11,7 @@ misc/deploy/
 package-lock.json
 
 # workdir
-!work/.gitignore
+work/
 
 # qtcreator
 zpl.creator
