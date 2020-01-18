@@ -33,7 +33,7 @@ examples: $(EXAMPLES)
 clean:
 ifneq ($(BUILD_FILES),)
 	@echo '> Cleaning up files'
-	@rm $(BUILD_FILES)
+	@rm -r $(BUILD_FILES)
 endif
 
 % : %.c
