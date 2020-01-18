@@ -52,8 +52,6 @@ ZPL consists of the following modules:
 * **Thread pool** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
-* **Platform layer** - A port of gb_platform which gains access to window and input management, as well as graphics. (Works only on Windows so far).
-* **OpenGL** - Offers OpenGL helper methods as well as basic 2D sprite and font rendering.
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
 
 ## External modules
