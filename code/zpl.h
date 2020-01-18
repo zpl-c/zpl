@@ -518,6 +518,22 @@ Version History:
             /* prevent it from including later */
             #define ZPL_NO_WINDOWS_H
         #endif
+
+        // TODO(ZaKlaus): Find a better way to get this flag in MinGW.
+        #if defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)
+            #define WC_ERR_INVALID_CHARS 0x0080
+        #endif
+
+        #if defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)
+            #ifndef ZPL_COMPILER_MINGW
+            #define ZPL_COMPILER_MINGW // assume we use mingw as a compiler
+            #endif
+        #endif
+
+        // include errno.h for MinGW
+        #if defined(ZPL_COMPILER_GCC)
+            #include <errno.h>
+        #endif
     #endif
 
     #if !defined(zpl_thread_local)

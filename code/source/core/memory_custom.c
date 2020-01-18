@@ -4,6 +4,9 @@
 
 #include <stdlib.h>
 
+#if defined(ZPL_SYSTEM_WINDOWS)
+    #include <malloc.h>
+#endif
 
 ZPL_BEGIN_C_DECLS
 
