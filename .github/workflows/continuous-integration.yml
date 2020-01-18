@@ -16,13 +16,13 @@ jobs:
         run: mkdir build ; cd build
 
       - name: Run cmake generator
-         run: cmake ../misc
+        run: cmake ../misc
 
       - name: Run Windows build
-         run: cmake --build .
+        run: cmake --build .
 
       - name: Run unit tests
-         run: cd Debug ; zpl_unit.exe
+        run: cd Debug ; zpl_unit.exe
 
   build-lin:
     name: Build Linux
