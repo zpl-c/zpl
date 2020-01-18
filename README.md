@@ -71,7 +71,7 @@ Afterwards, we need to deal with file loading, simply navigate to the `code` fol
 
 As you can see, each module is contained within its own header/source file. These are bundled together on each release. When we develop ZPL, we include [code/zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h), as it allows us to have full syntax and semantics support while coding the library. However, as an end user, you can use ZPL from the releases page, as it contains everything bundled together and ready to be used within the project.
 
-File module takes care of necessary file i/o operations. Write a code to read `test.json5` file (you can use `zpl_file_read_contents`) and try to print its content (either use libc's printf or methods from [print.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/print.h)) Check [code/apps](https://github.com/zpl-c/zpl/blob/master/code/apps/) folder for code examples.
+File module takes care of necessary file i/o operations. Write a code to read `test.json5` file (you can use `zpl_file_read_contents`) and try to print its content (either use libc's printf or methods from [print.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/print.h)) Check [code/apps](https://github.com/zpl-c/zpl/blob/master/code/apps/examples/) folder for code examples.
 
 Done? Great! Now we need to parse this file, but how? Well guess what, [json.h](https://github.com/zpl-c/zpl/blob/master/code/header/json.h) is exactly what you're looking for! Now you might wonder, you can parse JSON5 files...
 
@@ -81,7 +81,7 @@ What's left? We can read a specific JSON5 file, parse it and display the time it
 
 Visit [opts.h](https://github.com/zpl-c/zpl/blob/master/code/header/opts.h) and get to know it. As always, test folder can be useful in this case.
 
-Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/code/apps/json_benchmark.c) test file:
+Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/code/apps/examples/json_benchmark.c) test file:
 
 ```c
 #define ZPL_IMPLEMENTATION
