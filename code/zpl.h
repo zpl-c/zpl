@@ -394,6 +394,10 @@ Version History:
         #define ZPL_MODULE_JOBS
     #endif
     #if defined(ZPL_ENABLE_COROUTINES) && !defined(ZPL_MODULE_COROUTINES)
+        #ifndef ZPL_MODULE_JOBS
+        #define ZPL_MODULE_JOBS /* dependency */
+        #endif
+
         #define ZPL_MODULE_COROUTINES
     #endif
     #if defined(ZPL_ENABLE_PLATFORM) && !defined(ZPL_MODULE_PLATFORM)
