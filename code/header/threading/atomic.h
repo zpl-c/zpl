@@ -10,8 +10,9 @@
 # include <stdatomic.h>
 # define zpl_atomic(X) volatile _Atomic(X)
 #else
-# include <atomic>
-# define zpl_atomic(X) volatile std::atomic<X>
+// TODO: Fix once C++ guys bother to add C atomics to std.
+//# include <atomic>
+# define zpl_atomic(X) volatile X /*std::atomic<X>*/
 #endif
 
 #define zpl_atomicarg(X) volatile X
