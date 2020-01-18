@@ -13,6 +13,10 @@ foreach(example_source ${examples})
 
     # Setup the example
     add_executable(${example_name} ${example_source})
+
+    if (UNIX)
+        link_libraries(${example_name} pthread m ln)
+    endif()
 endforeach()
 
 add_executable(zpl_unit ../code/apps/tests/tester.c)
