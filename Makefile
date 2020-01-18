@@ -10,15 +10,12 @@ else
 	endif
 endif
 
-WARNS = -Wal -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
+WARNS = -Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
 CFLAGS += -g -std=gnu11 -Icode $(WARNS)
 CXXFLAGS += -g -std=c++11 -Icode $(WARNS)
 
-EXAMPLES_SRCS += $(wildcard code/apps/examples/*.c)
-EXAMPLES_SRCS += $(wildcard code/apps/examples/*.cc)
-
-EXAMPLES += $(patsubst %.c,%,$(EXAMPLES_SRCS))
-EXAMPLES += $(patsubst %.cc,%,$(EXAMPLES_SRCS))
+EXAMPLES += $(patsubst %.c,%,$(wildcard code/apps/examples/*.c))
+EXAMPLES += $(patsubst %.cc,%,$(wildcard code/apps/examples/*.cc))
 
 BUILD_FILES = $(wildcard build/*)
 
