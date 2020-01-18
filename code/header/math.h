@@ -397,12 +397,6 @@ ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *i
 
 //! @}
 ZPL_END_C_DECLS
-
-/*
-    This file provides C++ math extensions for the math module.
-    Make sure ZPL is included first before including this file.
-*/
-
 #if defined(__cplusplus)
     ZPL_INLINE bool operator==(zpl_vec2 a, zpl_vec2 b) { return (a.x == b.x) && (a.y == b.y); }
     ZPL_INLINE bool operator!=(zpl_vec2 a, zpl_vec2 b) { return !operator==(a, b); }
