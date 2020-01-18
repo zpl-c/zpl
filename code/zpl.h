@@ -592,7 +592,10 @@ Version History:
 #elif defined(ZPL_SYSTEM_WINDOWS)
     #if !defined(ZPL_NO_WINDOWS_H)
         #ifndef WIN32_LEAN_AND_MEAN
+            #ifndef NOMINMAX
             #define NOMINMAX
+            #endif
+
             #define WIN32_LEAN_AND_MEAN
             #define WIN32_MEAN_AND_LEAN
             #define VC_EXTRALEAN

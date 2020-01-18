@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         if (filename == NULL)
             goto bad;
 
-        printf("Filename: %s\n", filename);
+        zpl_printf("Filename: %s\n", filename);
     }
     else
     {
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 
     zpl_file_contents fc = zpl_file_read_contents(zpl_heap(), true, filename);
 
-    printf("Parsing JSON5 file!\n");
+    zpl_printf("Parsing JSON5 file!\n");
 
     zpl_json_object root = {0};
 
@@ -57,11 +57,11 @@ int main(int argc, char **argv) {
 
     if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)
     {
-        printf("File not found!\n");
+        zpl_printf("File not found!\n");
         return -2;
     }
 
-    printf("Delta: %fms\nNo. of nodes: %td\nError code: %d\nFile size: %td bytes\n", delta*1000, zpl_array_count(root.nodes), err, fc.size);
+    zpl_printf("Delta: %fms\nNo. of nodes: %td\nError code: %d\nFile size: %td bytes\n", delta*1000, zpl_array_count(root.nodes), err, fc.size);
 
     zpl_json_free(&root);
     zpl_file_free_contents(&fc);
