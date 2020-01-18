@@ -4,6 +4,7 @@
 zpl_global u8 counter = 0;
 
 void test1_cb(void *user_data) {
+    (void)user_data;
     zpl_printf("Hello, Sailor!\n");
     
     if (counter == 10) {
@@ -12,6 +13,7 @@ void test1_cb(void *user_data) {
 }
 
 void test2_cb(void *user_data) {
+    (void)user_data;
     zpl_printf("This has been called %d/10 times!\n", ++counter);
 }
 

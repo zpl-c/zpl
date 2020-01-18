@@ -449,6 +449,8 @@ ZPL_BEGIN_C_DECLS
     #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wunused-function"
+        #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     #endif
 
     #if defined(_MSC_VER)
@@ -612,6 +614,7 @@ ZPL_BEGIN_C_DECLS
         #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         #pragma GCC diagnostic ignored "-Wmissing-braces"
         #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     #endif
 
     #if defined(_MSC_VER)
