@@ -14,8 +14,8 @@ DISABLED_WARNS = -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-f
 CFLAGS += -g -std=gnu11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
 CXXFLAGS += -g -std=c++11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
 
-EXAMPLES_SRCS += $(wildcard examples/*.c)
-EXAMPLES_SRCS += $(wildcard examples/*.cc)
+EXAMPLES_SRCS += $(wildcard code/apps/examples/*.c)
+EXAMPLES_SRCS += $(wildcard code/apps/examples/*.cc)
 
 EXAMPLES += $(patsubst %.c,%,$(EXAMPLES_SRCS))
 EXAMPLES += $(patsubst %.cc,%,$(EXAMPLES_SRCS))
@@ -26,7 +26,7 @@ BUILD_FILES = $(wildcard build/*)
 
 all: clean examples test
 
-test: clean tests/tester
+test: clean code/apps/tests/tester
 	@echo '> Building unit tests'
 	build/tester
 
