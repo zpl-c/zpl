@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #if defined(ZPL_MODULE_THREADING)
     zpl_global zpl_atomic32 zpl__random_shared_counter = {0};
 #else
@@ -164,4 +166,4 @@ zpl_f64 zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_in
     return f;
 }
 
-
+ZPL_END_C_DECLS

@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_b32 zpl_thread_is_running(zpl_thread const *t) { return t->is_running != 0; }
 
 void zpl_thread_init(zpl_thread *t) {
@@ -147,3 +149,5 @@ void zpl_thread_set_name(zpl_thread *t, char const *name) {
         //        pthread_set_name_np(t->posix_handle, name);
     #endif
 }
+
+ZPL_END_C_DECLS

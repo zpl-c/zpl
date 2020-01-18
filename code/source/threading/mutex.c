@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_mutex_init(zpl_mutex *m) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         InitializeCriticalSection(&m->win32_critical_section);
@@ -41,3 +43,5 @@ void zpl_mutex_unlock(zpl_mutex *m) {
         pthread_mutex_unlock(&m->pthread_mutex);
     #endif
 }
+
+ZPL_END_C_DECLS

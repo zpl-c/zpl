@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_semaphore_release(zpl_semaphore *s) { zpl_semaphore_post(s, 1); }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -28,3 +30,5 @@ void zpl_semaphore_release(zpl_semaphore *s) { zpl_semaphore_post(s, 1); }
 #else
     #error Semaphores for this OS are not implemented
 #endif
+
+ZPL_END_C_DECLS

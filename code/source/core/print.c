@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_isize zpl_printf_va(char const *fmt, va_list va) {
     return zpl_fprintf_va(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), fmt, va);
 }
@@ -412,3 +414,5 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
     res = (text - text_begin);
     return (res >= max_len || res < 0) ? -1 : res;
 }
+
+ZPL_END_C_DECLS

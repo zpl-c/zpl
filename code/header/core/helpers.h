@@ -3,6 +3,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef cast
     #define cast(Type) (Type)
 #endif
@@ -157,3 +159,5 @@
 #ifndef ZPL_MULTILINE
     #define ZPL_MULTILINE(...) #__VA_ARGS__
 #endif
+
+ZPL_END_C_DECLS

@@ -10,6 +10,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_GLGEN_IMPLEMENTATION
 #include "zpl_glgen.h"
 #endif
@@ -670,3 +672,4 @@
 #endif // !defined(ZPL_NO_BASIC_STATE)
 
 //! @}
+ZPL_END_C_DECLS

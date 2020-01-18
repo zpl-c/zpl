@@ -1,10 +1,5 @@
-#include <sys/stat.h>
 #ifdef ZPL_EDITOR
 #include <zpl.h>
-#endif
-
-#ifdef ZPL_SYSTEM_MACOS
-    #include <copyfile.h>
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -12,6 +7,13 @@
 // File Handling
 //
 //
+#include <sys/stat.h>
+
+#ifdef ZPL_SYSTEM_MACOS
+    #include <copyfile.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
@@ -453,8 +455,8 @@ char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *)*lines, char con
 }
 
 #if !defined(_WINDOWS_) && defined(ZPL_SYSTEM_WINDOWS)
-ZPL_IMPORT DWORD WINAPI GetFullPathNameA(char const *lpFileName, DWORD nBufferLength, char *lpBuffer,
-                                             char **lpFilePart);
-ZPL_IMPORT DWORD WINAPI GetFullPathNameW(wchar_t const *lpFileName, DWORD nBufferLength, wchar_t *lpBuffer,
-                                             wchar_t **lpFilePart);
+    ZPL_IMPORT DWORD WINAPI GetFullPathNameA(char const *lpFileName, DWORD nBufferLength, char *lpBuffer, char **lpFilePart);
+    ZPL_IMPORT DWORD WINAPI GetFullPathNameW(wchar_t const *lpFileName, DWORD nBufferLength, wchar_t *lpBuffer, wchar_t **lpFilePart);
 #endif
+
+ZPL_END_C_DECLS

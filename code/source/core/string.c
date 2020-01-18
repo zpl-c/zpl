@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_internal zpl_isize zpl__scan_zpl_i64(const char *text, zpl_i32 base, zpl_i64 *value) {
     const char *text_begin = text;
     zpl_i64 result = 0;
@@ -446,3 +448,5 @@ zpl_isize zpl_utf8_encode_rune(zpl_u8 buf[4], zpl_rune r) {
     buf[3] = 0x80 | (cast(zpl_u8)(r) & mask);
     return 4;
 }
+
+ZPL_END_C_DECLS

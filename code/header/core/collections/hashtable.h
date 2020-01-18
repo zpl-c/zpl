@@ -24,10 +24,12 @@
 
  @{
 */
+
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
 
 typedef struct zpl_hash_table_find_result {
     zpl_isize hash_index;
@@ -168,3 +170,5 @@ void ZPL_JOIN2(FUNC, set)(NAME * h, zpl_u64 key, VALUE value) {                 
 }\
 
 //! @}
+
+ZPL_END_C_DECLS

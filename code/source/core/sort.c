@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #define ZPL__COMPARE_PROC(Type)                                                                                        \
 zpl_global zpl_isize Type##__cmp_offset;                                                                         \
 ZPL_COMPARE_PROC(Type##__cmp) {                                                                              \
@@ -166,3 +168,5 @@ void zpl_reverse(void *base, zpl_isize count, zpl_isize size) {
     zpl_isize i, j = count - 1;
     for (i = 0; i < j; i++, j++) zpl_memswap(cast(zpl_u8 *) base + i * size, cast(zpl_u8 *) base + j * size, size);
 }
+
+ZPL_END_C_DECLS

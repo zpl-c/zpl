@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_string zpl_string_make_reserve(zpl_allocator a, zpl_isize capacity) {
     zpl_isize header_size = zpl_size_of(zpl_string_header);
     void *ptr = zpl_alloc(a, header_size + capacity + 1);
@@ -199,3 +201,5 @@ zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...) {
     va_end(va);
     return zpl_string_append_length(str, buf, res);
 }
+
+ZPL_END_C_DECLS

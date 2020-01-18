@@ -1,7 +1,10 @@
-/* Basic types */
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
+
+/* Basic types */
 
 #if defined(ZPL_COMPILER_MSVC)
     #if _MSC_VER < 1300
@@ -150,3 +153,5 @@ typedef zpl_i32 zpl_b32;
         #define NULL ZPL_NULL
     #endif
 #endif
+
+ZPL_END_C_DECLS

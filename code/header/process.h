@@ -11,6 +11,7 @@ It also exposes standard I/O with configurable options.
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
 // TODO(zaklaus): Add Linux support
 
 typedef enum {
@@ -50,3 +51,4 @@ ZPL_DEF void    zpl_pr_terminate(zpl_pr *process, zpl_i32 err_code);
 ZPL_DEF zpl_i32 zpl_pr_join(zpl_pr *process);
 
 //! @}
+ZPL_END_C_DECLS

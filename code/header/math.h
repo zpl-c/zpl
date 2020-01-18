@@ -10,6 +10,8 @@ OpenGL gamedev friendly library for math.
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef union zpl_vec2 {
     struct {
         zpl_f32 x, y;
@@ -394,3 +396,4 @@ ZPL_DEF int zpl_rect2_intersects(zpl_rect2 a, zpl_rect2 b);
 ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersection);
 
 //! @}
+ZPL_END_C_DECLS

@@ -14,6 +14,8 @@ We can parse JSON5 files in two different modes:
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 //! Debug mode
 
 #ifdef ZPL_JSON_DEBUG
@@ -177,3 +179,5 @@ ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, 
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 type);
 
 //! @}
+
+ZPL_END_C_DECLS

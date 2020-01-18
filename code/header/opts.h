@@ -11,6 +11,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef enum {
     ZPL_OPTS_STRING,
     ZPL_OPTS_FLOAT,
@@ -129,3 +131,5 @@ ZPL_DEF zpl_b32 zpl_opts_has_arg(zpl_opts *opts, char const *name);
 ZPL_DEF zpl_b32 zpl_opts_positionals_filled(zpl_opts *opts);
 
 //! @}
+
+ZPL_END_C_DECLS

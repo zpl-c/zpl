@@ -1,12 +1,15 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_PATH_SEPARATOR
     #if defined(ZPL_SYSTEM_WINDOWS)
         #define ZPL_PATH_SEPARATOR '\\'
     #else
         #define ZPL_PATH_SEPARATOR '/'
     #endif
-#endif
-#ifdef ZPL_EDITOR
-#include <zpl.h>
 #endif
 
 /**
@@ -126,3 +129,5 @@ ZPL_IMPL_INLINE char const *zpl_path_extension(char const *path) {
     ld = zpl_char_last_occurence(path, '.');
     return (ld == NULL) ? NULL : ld + 1;
 }
+
+ZPL_END_C_DECLS

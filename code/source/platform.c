@@ -8,6 +8,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_key_state_update(zpl_key_state *s, zpl_b32 is_down) {
     zpl_b32 was_down = (*s & ZPL_KEY_STATE_DOWN) != 0;
     is_down = is_down != 0; // NOTE(bill): Make sure it's a boolean
@@ -1787,3 +1789,5 @@ ZPL_COMPARE_PROC(zpl_video_mode_cmp) {
 }
 
 ZPL_COMPARE_PROC(zpl_video_mode_dsc_cmp) { return zpl_video_mode_cmp(b, a); }
+
+ZPL_END_C_DECLS

@@ -6,15 +6,18 @@ Offers methods for c-string manipulation, but also a string library based on gb_
 
 @{
 */
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ////////////////////////////////////////////////////////////////
 //
 // Char Functions
 //
 //
+
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
 
 ZPL_DEF_INLINE char    zpl_char_to_lower(char c);
 ZPL_DEF_INLINE char    zpl_char_to_upper(char c);
@@ -408,3 +411,5 @@ ZPL_IMPL_INLINE char **zpl_str_split_lines(zpl_allocator alloc, char *source, zp
     }
     return lines;
 }
+
+ZPL_END_C_DECLS

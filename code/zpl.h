@@ -451,193 +451,96 @@ Version History:
     #endif
 #endif
 
-ZPL_BEGIN_C_DECLS
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunused-function"
+    #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
 
-    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wunused-function"
-        #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4201)
+    #pragma warning(disable : 4127) // Conditional expression is constant
+#endif
+
+/* general purpose includes */
+
+#include "header/core/system.h"
+
+#include <stdarg.h>
+#include <stddef.h>
+
+#if defined(ZPL_SYSTEM_WINDOWS)
+    #include <intrin.h>
+#endif
+
+#include "header/core/types.h"
+#include "header/core/helpers.h"
+
+#if defined(ZPL_MODULE_CORE)
+    #include "header/core/debug.h"
+    #include "header/core/memory.h"
+    #include "header/core/memory_virtual.h"
+    #include "header/core/memory_custom.h"
+    #include "header/core/collections/array.h"
+    #include "header/core/collections/buffer.h"
+    #include "header/core/collections/list.h"
+    #include "header/core/collections/ring.h"
+    #include "header/core/collections/hashtable.h"
+    #include "header/core/string.h"
+    #include "header/core/stringlib.h"
+    #include "header/core/file.h"
+    #include "header/core/filesystem.h"
+    #include "header/core/print.h"
+    #include "header/core/time.h"
+    #include "header/core/random.h"
+    #include "header/core/misc.h"
+    #include "header/core/sort.h"
+#endif
+
+#if defined(ZPL_MODULE_TIMER)
+    #include "header/timer.h"
+#endif
+
+#if defined(ZPL_MODULE_HASHING)
+    #include "header/hashing.h"
+#endif
+
+#if defined(ZPL_MODULE_REGEX)
+    #include "header/regex.h"
+#endif
+
+#if defined(ZPL_MODULE_EVENT)
+    #include "header/event.h"
+#endif
+
+#if defined(ZPL_MODULE_DLL)
+    #include "header/dll.h"
+#endif
+
+#if defined(ZPL_MODULE_OPTS)
+    #include "header/opts.h"
+#endif
+
+#if defined(ZPL_MODULE_PROCESS)
+    #include "header/process.h"
+#endif
+
+#if defined(ZPL_MODULE_MATH)
+    #include "header/math.h"
+#endif
+
+#if defined(ZPL_MODULE_JSON)
+    #include "header/json.h"
+#endif
+
+#if defined(ZPL_MODULE_THREADING)
+    #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
+        #include <pthread.h>
     #endif
-
-    #if defined(_MSC_VER)
-        #pragma warning(push)
-        #pragma warning(disable : 4201)
-        #pragma warning(disable : 4127) // Conditional expression is constant
-    #endif
-
-    /* general purpose includes */
-
-    #include "header/core/system.h"
-
-    #include <stdarg.h>
-    #include <stddef.h>
 
     #if defined(ZPL_SYSTEM_WINDOWS)
-        #include <intrin.h>
-    #endif
-
-    #include "header/core/types.h"
-    #include "header/core/helpers.h"
-
-    #if defined(ZPL_MODULE_CORE)
-        #include "header/core/debug.h"
-        #include "header/core/memory.h"
-        #include "header/core/memory_virtual.h"
-        #include "header/core/memory_custom.h"
-        #include "header/core/collections/array.h"
-        #include "header/core/collections/buffer.h"
-        #include "header/core/collections/list.h"
-        #include "header/core/collections/ring.h"
-        #include "header/core/collections/hashtable.h"
-        #include "header/core/string.h"
-        #include "header/core/stringlib.h"
-        #include "header/core/file.h"
-        #include "header/core/filesystem.h"
-        #include "header/core/print.h"
-        #include "header/core/time.h"
-        #include "header/core/random.h"
-        #include "header/core/misc.h"
-        #include "header/core/sort.h"
-    #endif
-
-    #if defined(ZPL_MODULE_TIMER)
-        #include "header/timer.h"
-    #endif
-
-    #if defined(ZPL_MODULE_HASHING)
-        #include "header/hashing.h"
-    #endif
-
-    #if defined(ZPL_MODULE_REGEX)
-        #include "header/regex.h"
-    #endif
-
-    #if defined(ZPL_MODULE_EVENT)
-        #include "header/event.h"
-    #endif
-
-    #if defined(ZPL_MODULE_DLL)
-        #include "header/dll.h"
-    #endif
-
-    #if defined(ZPL_MODULE_OPTS)
-        #include "header/opts.h"
-    #endif
-
-    #if defined(ZPL_MODULE_PROCESS)
-        #include "header/process.h"
-    #endif
-
-    #if defined(ZPL_MODULE_MATH)
-        #include "header/math.h"
-    #endif
-
-    #if defined(ZPL_MODULE_JSON)
-        #include "header/json.h"
-    #endif
-
-    #if defined(ZPL_MODULE_THREADING)
-        #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-            #include <pthread.h>
-        #endif
-
-        #if defined(ZPL_SYSTEM_WINDOWS)
-            #if !defined(ZPL_NO_WINDOWS_H)
-                #ifndef WIN32_LEAN_AND_MEAN
-                    #define NOMINMAX
-                    #define WIN32_LEAN_AND_MEAN
-                    #define WIN32_MEAN_AND_LEAN
-                    #define VC_EXTRALEAN
-                #endif
-                #include <windows.h>
-                #undef NOMINMAX
-                #undef WIN32_LEAN_AND_MEAN
-                #undef WIN32_MEAN_AND_LEAN
-                #undef VC_EXTRALEAN
-
-                /* prevent it from including later */
-                #define ZPL_NO_WINDOWS_H
-            #endif
-        #endif
-
-        #if !defined(zpl_thread_local)
-            #if defined(_MSC_VER) && _MSC_VER >= 1300
-                #define zpl_thread_local __declspec(thread)
-            #elif defined(__GNUC__)
-                #define zpl_thread_local __thread
-            #else
-                #define zpl_thread_local thread_local
-            #endif
-        #endif
-
-        #include "header/threading/atomic.h"
-        #include "header/threading/fence.h"
-        #include "header/threading/sem.h"
-        #include "header/threading/mutex.h"
-        #include "header/threading/thread.h"
-        #include "header/threading/sync.h"
-        #include "header/threading/affinity.h"
-
-        #if defined(ZPL_MODULE_THREADPOOL)
-            #include "header/threadpool.h"
-        #endif
-
-        #if defined(ZPL_MODULE_COROUTINES)
-            #include "header/coroutines.h"
-        #endif
-    #endif
-
-    #if defined(ZPL_MODULE_PLATFORM)
-        #include "header/platform.h"
-    #endif
-
-    #if defined(ZPL_MODULE_OPENGL)
-        #include "header/opengl.h"
-    #endif
-
-    #if defined(ZPL_COMPILER_MSVC)
-        #pragma warning(pop)
-    #endif
-
-    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-        #pragma GCC diagnostic pop
-    #endif
-
-    ZPL_END_C_DECLS
-
-#if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
-#define ZPL_IMPLEMENTATION_DONE
-
-ZPL_BEGIN_C_DECLS
-
-    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wattributes"
-        #pragma GCC diagnostic ignored "-Wunused-value"
-        #pragma GCC diagnostic ignored "-Wunused-function"
-        #pragma GCC diagnostic ignored "-Wwrite-strings"
-        #pragma GCC diagnostic ignored "-Wunused-parameter"
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        #pragma GCC diagnostic ignored "-Wmissing-braces"
-        #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-    #endif
-
-    #if defined(_MSC_VER)
-        #pragma warning(push)
-        #pragma warning(disable : 4201)
-        #pragma warning(disable : 4127) // Conditional expression is constant
-    #endif
-
-    /* general purpose includes */
-
-    #include <stdio.h>
-
-    #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-        #include <unistd.h>
-        #include <errno.h>
-    #elif defined(ZPL_SYSTEM_WINDOWS)
         #if !defined(ZPL_NO_WINDOWS_H)
             #ifndef WIN32_LEAN_AND_MEAN
                 #define NOMINMAX
@@ -650,98 +553,187 @@ ZPL_BEGIN_C_DECLS
             #undef WIN32_LEAN_AND_MEAN
             #undef WIN32_MEAN_AND_LEAN
             #undef VC_EXTRALEAN
+
+            /* prevent it from including later */
+            #define ZPL_NO_WINDOWS_H
         #endif
     #endif
 
-    #if defined(ZPL_MODULE_CORE)
-        #include "source/core/debug.c"
-        #include "source/core/memory.c"
-        #include "source/core/memory_virtual.c"
-        #include "source/core/memory_custom.c"
-        #include "source/core/array.c"
-        #include "source/core/string.c"
-        #include "source/core/stringlib.c"
-        #include "source/core/file.c"
-        #include "source/core/filesystem.c"
-        #include "source/core/print.c"
-        #include "source/core/time.c"
-        #include "source/core/random.c"
-        #include "source/core/misc.c"
-        #include "source/core/sort.c"
-    #endif
-
-    #if defined(ZPL_MODULE_TIMER)
-        #include "source/timer.c"
-    #endif
-
-    #if defined(ZPL_MODULE_HASHING)
-        #include "source/hashing.c"
-    #endif
-
-    #if defined(ZPL_MODULE_REGEX)
-        #include "source/regex.c"
-    #endif
-
-    #if defined(ZPL_MODULE_EVENT)
-        #include "source/event.c"
-    #endif
-
-    #if defined(ZPL_MODULE_DLL)
-        #include "source/dll.c"
-    #endif
-
-    #if defined(ZPL_MODULE_OPTS)
-        #include "source/opts.c"
-    #endif
-
-    #if defined(ZPL_MODULE_PROCESS)
-        #include "source/process.c"
-    #endif
-
-    #if defined(ZPL_MODULE_MATH)
-        #include "source/math.c"
-    #endif
-
-    #if defined(ZPL_MODULE_JSON)
-        #include "source/json.c"
-    #endif
-
-    #if defined(ZPL_MODULE_THREADING)
-        #include "source/threading/atomic.c"
-        #include "source/threading/fence.c"
-        #include "source/threading/sem.c"
-        #include "source/threading/mutex.c"
-        #include "source/threading/thread.c"
-        #include "source/threading/sync.c"
-        #include "source/threading/affinity.c"
-
-        #if defined(ZPL_MODULE_THREADPOOL)
-            #include "source/threadpool.c"
-        #endif
-
-        #if defined(ZPL_MODULE_COROUTINES)
-            #include "source/coroutines.c"
+    #if !defined(zpl_thread_local)
+        #if defined(_MSC_VER) && _MSC_VER >= 1300
+            #define zpl_thread_local __declspec(thread)
+        #elif defined(__GNUC__)
+            #define zpl_thread_local __thread
+        #else
+            #define zpl_thread_local thread_local
         #endif
     #endif
 
-    #if defined(ZPL_MODULE_PLATFORM)
-        #include "source/platform.c"
+    #include "header/threading/atomic.h"
+    #include "header/threading/fence.h"
+    #include "header/threading/sem.h"
+    #include "header/threading/mutex.h"
+    #include "header/threading/thread.h"
+    #include "header/threading/sync.h"
+    #include "header/threading/affinity.h"
+
+    #if defined(ZPL_MODULE_THREADPOOL)
+        #include "header/threadpool.h"
     #endif
 
-    #if defined(ZPL_MODULE_OPENGL)
-        #include "source/opengl.c"
+    #if defined(ZPL_MODULE_COROUTINES)
+        #include "header/coroutines.h"
+    #endif
+#endif
+
+#if defined(ZPL_MODULE_PLATFORM)
+    #include "header/platform.h"
+#endif
+
+#if defined(ZPL_MODULE_OPENGL)
+    #include "header/opengl.h"
+#endif
+
+#if defined(ZPL_COMPILER_MSVC)
+    #pragma warning(pop)
+#endif
+
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
+
+#if defined(ZPL_IMPLEMENTATION) && !defined(ZPL_IMPLEMENTATION_DONE)
+#define ZPL_IMPLEMENTATION_DONE
+
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wattributes"
+    #pragma GCC diagnostic ignored "-Wunused-value"
+    #pragma GCC diagnostic ignored "-Wunused-function"
+    #pragma GCC diagnostic ignored "-Wwrite-strings"
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #pragma GCC diagnostic ignored "-Wmissing-braces"
+    #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4201)
+    #pragma warning(disable : 4127) // Conditional expression is constant
+#endif
+
+/* general purpose includes */
+
+#include <stdio.h>
+
+#if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
+    #include <unistd.h>
+    #include <errno.h>
+#elif defined(ZPL_SYSTEM_WINDOWS)
+    #if !defined(ZPL_NO_WINDOWS_H)
+        #ifndef WIN32_LEAN_AND_MEAN
+            #define NOMINMAX
+            #define WIN32_LEAN_AND_MEAN
+            #define WIN32_MEAN_AND_LEAN
+            #define VC_EXTRALEAN
+        #endif
+        #include <windows.h>
+        #undef NOMINMAX
+        #undef WIN32_LEAN_AND_MEAN
+        #undef WIN32_MEAN_AND_LEAN
+        #undef VC_EXTRALEAN
+    #endif
+#endif
+
+#if defined(ZPL_MODULE_CORE)
+    #include "source/core/debug.c"
+    #include "source/core/memory.c"
+    #include "source/core/memory_virtual.c"
+    #include "source/core/memory_custom.c"
+    #include "source/core/array.c"
+    #include "source/core/string.c"
+    #include "source/core/stringlib.c"
+    #include "source/core/file.c"
+    #include "source/core/filesystem.c"
+    #include "source/core/print.c"
+    #include "source/core/time.c"
+    #include "source/core/random.c"
+    #include "source/core/misc.c"
+    #include "source/core/sort.c"
+#endif
+
+#if defined(ZPL_MODULE_TIMER)
+    #include "source/timer.c"
+#endif
+
+#if defined(ZPL_MODULE_HASHING)
+    #include "source/hashing.c"
+#endif
+
+#if defined(ZPL_MODULE_REGEX)
+    #include "source/regex.c"
+#endif
+
+#if defined(ZPL_MODULE_EVENT)
+    #include "source/event.c"
+#endif
+
+#if defined(ZPL_MODULE_DLL)
+    #include "source/dll.c"
+#endif
+
+#if defined(ZPL_MODULE_OPTS)
+    #include "source/opts.c"
+#endif
+
+#if defined(ZPL_MODULE_PROCESS)
+    #include "source/process.c"
+#endif
+
+#if defined(ZPL_MODULE_MATH)
+    #include "source/math.c"
+#endif
+
+#if defined(ZPL_MODULE_JSON)
+    #include "source/json.c"
+#endif
+
+#if defined(ZPL_MODULE_THREADING)
+    #include "source/threading/atomic.c"
+    #include "source/threading/fence.c"
+    #include "source/threading/sem.c"
+    #include "source/threading/mutex.c"
+    #include "source/threading/thread.c"
+    #include "source/threading/sync.c"
+    #include "source/threading/affinity.c"
+
+    #if defined(ZPL_MODULE_THREADPOOL)
+        #include "source/threadpool.c"
     #endif
 
-
-    #if defined(ZPL_COMPILER_MSVC)
-        #pragma warning(pop)
+    #if defined(ZPL_MODULE_COROUTINES)
+        #include "source/coroutines.c"
     #endif
+#endif
 
-    #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-        #pragma GCC diagnostic pop
-    #endif
+#if defined(ZPL_MODULE_PLATFORM)
+    #include "source/platform.c"
+#endif
 
-ZPL_END_C_DECLS
+#if defined(ZPL_MODULE_OPENGL)
+    #include "source/opengl.c"
+#endif
+
+
+#if defined(ZPL_COMPILER_MSVC)
+    #pragma warning(pop)
+#endif
+
+#if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #endif // ZPL_IMPLEMENTATION
 

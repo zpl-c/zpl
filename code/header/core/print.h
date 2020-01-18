@@ -9,6 +9,8 @@ Various printing methods.
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 ZPL_DEF zpl_isize zpl_printf(char const *fmt, ...) ZPL_PRINTF_FORMAT(1, 2);
 ZPL_DEF zpl_isize zpl_printf_va(char const *fmt, va_list va);
 ZPL_DEF zpl_isize zpl_printf_err(char const *fmt, ...) ZPL_PRINTF_FORMAT(1, 2);
@@ -24,3 +26,5 @@ ZPL_DEF char *zpl_bprintf_va(char const *fmt, va_list va);
 
 ZPL_DEF zpl_isize zpl_snprintf(char *str, zpl_isize n, char const *fmt, ...) ZPL_PRINTF_FORMAT(3, 4);
 ZPL_DEF zpl_isize zpl_snprintf_va(char *str, zpl_isize n, char const *fmt, va_list va);
+
+ZPL_END_C_DECLS

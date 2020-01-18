@@ -1,6 +1,3 @@
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 ////////////////////////////////////////////////////////////////
 //
 // Instantiated Circular buffer
@@ -23,6 +20,12 @@ int main()
     return 0;
 }
 */
+
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
 
 #define ZPL_RING_DECLARE(type)                                                                                         \
 typedef struct {                                                                                                   \
@@ -92,3 +95,5 @@ ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_usi
     }                                                                                                              \
     return vals;                                                                                                   \
 }
+
+ZPL_END_C_DECLS

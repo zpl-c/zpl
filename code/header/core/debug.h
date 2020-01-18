@@ -3,6 +3,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_DEBUG_TRAP
     #if defined(_MSC_VER)
         #if _MSC_VER < 1300
@@ -47,3 +49,4 @@
 ZPL_DEF void    zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...);
 ZPL_DEF zpl_i32 zpl_assert_crash(char const *condition);
 
+ZPL_END_C_DECLS

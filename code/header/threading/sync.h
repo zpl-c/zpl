@@ -4,6 +4,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef struct zpl_sync {
     zpl_i32 target;  // Target Number of threads
     zpl_i32 current; // Threads to hit
@@ -21,3 +23,4 @@ ZPL_DEF void     zpl_sync_release       (zpl_sync *s);
 ZPL_DEF zpl_i32  zpl_sync_reach         (zpl_sync *s);
 ZPL_DEF void     zpl_sync_reach_and_wait(zpl_sync *s);
 
+ZPL_END_C_DECLS

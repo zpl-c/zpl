@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_opts_init(zpl_opts *opts, zpl_allocator a, char const *app) {
     zpl_opts opts_ = { 0 };
     *opts = opts_;
@@ -240,3 +242,5 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
     }
     return !had_errors;
 }
+
+ZPL_END_C_DECLS

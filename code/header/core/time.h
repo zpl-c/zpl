@@ -6,9 +6,12 @@
 
  @{
  */
+
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
 
 //! Return CPU timestamp.
 ZPL_DEF zpl_u64 zpl_rdtsc(void);
@@ -21,3 +24,5 @@ ZPL_DEF zpl_f64 zpl_utc_time_now(void);
 
 //! Sleep for specified number of milliseconds.
 ZPL_DEF void zpl_sleep_ms(zpl_u32 ms);
+
+ZPL_END_C_DECLS

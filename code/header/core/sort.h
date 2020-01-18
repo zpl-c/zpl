@@ -10,6 +10,8 @@ Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #define ZPL_COMPARE_PROC(name) int name(void const *a, void const *b)
 typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 
@@ -89,3 +91,5 @@ ZPL_IMPL_INLINE zpl_isize zpl_binary_search(void const *base, zpl_isize count, z
 
     return -1;
 }
+
+ZPL_END_C_DECLS

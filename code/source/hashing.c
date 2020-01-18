@@ -8,6 +8,8 @@
 #include "../zpl.h"
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_u32 zpl_adler32(void const *data, zpl_isize len) {
     zpl_u32 const MOD_ALDER = 65521;
     zpl_u32 a = 1, b = 0;
@@ -474,3 +476,5 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
     return h;
 #endif
 }
+
+ZPL_END_C_DECLS

@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #if defined(_MSC_VER)
      /* Microsoft C/C++-compatible compiler */
      #include <intrin.h>
@@ -69,3 +71,5 @@ void zpl_lfence(void) {
         #error Unknown architecture
     #endif
 }
+
+ZPL_END_C_DECLS

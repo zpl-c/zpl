@@ -10,6 +10,8 @@ File I/O operations as well as path and folder structure manipulation methods. W
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef zpl_u32 zpl_file_mode;
 
 typedef enum zpl_file_mode_flag {
@@ -382,3 +384,5 @@ ZPL_IMPL_INLINE zpl_b32 zpl_file_write(zpl_file *f, void const *buffer, zpl_isiz
     zpl_file_seek(f, cur_offset + size);
     return result;
 }
+
+ZPL_END_C_DECLS

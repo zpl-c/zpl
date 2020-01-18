@@ -6,6 +6,8 @@
     #include <sys/sysctl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #if defined(ZPL_SYSTEM_WINDOWS)
 
     void zpl_affinity_init(zpl_affinity *a) {
@@ -226,3 +228,5 @@
 #else
     #error TODO: Unknown system
 #endif
+
+ZPL_END_C_DECLS

@@ -12,6 +12,8 @@
     #include <mach/clock.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 //! @}
 //$$
 ////////////////////////////////////////////////////////////////
@@ -179,3 +181,5 @@
     }
 
 #endif
+
+ZPL_END_C_DECLS

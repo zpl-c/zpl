@@ -15,6 +15,9 @@
     #include <direct.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
+
 #if defined(ZPL_SYSTEM_WINDOWS)
     zpl_file_time zpl_fs_last_write_time(char const *filepath) {
         ULARGE_INTEGER li = { 0 };
@@ -435,3 +438,5 @@ void zpl_path_fix_slashes(char *path) {
     }
 #endif
 }
+
+ZPL_END_C_DECLS

@@ -1,7 +1,8 @@
-
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_WINDOWS)
 
@@ -40,3 +41,5 @@ ZPL_DEF void      zpl_affinity_init   (zpl_affinity *a);
 ZPL_DEF void      zpl_affinity_destroy(zpl_affinity *a);
 ZPL_DEF zpl_b32   zpl_affinity_set    (zpl_affinity *a, zpl_isize core, zpl_isize thread);
 ZPL_DEF zpl_isize zpl_affinity_thread_count_for_core(zpl_affinity *a, zpl_isize core);
+
+ZPL_END_C_DECLS

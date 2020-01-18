@@ -91,12 +91,13 @@ int main(int argc, char **argv) {
 }
 #endif
 
-
-typedef char *zpl_string;
-
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
+
+typedef char *zpl_string;
 
 typedef struct zpl_string_header {
     zpl_allocator allocator;
@@ -171,3 +172,5 @@ ZPL_IMPL_INLINE zpl_string zpl_string_append(zpl_string str, zpl_string const ot
 
 ZPL_IMPL_INLINE zpl_string zpl_string_trim_space(zpl_string str) { return zpl_string_trim(str, " \t\r\n\v\f"); }
 
+
+ZPL_END_C_DECLS

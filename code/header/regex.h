@@ -43,6 +43,8 @@ Supported Matching:
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef struct zpl_re {
     zpl_allocator backing;
     zpl_isize capture_count;
@@ -85,3 +87,5 @@ ZPL_DEF zpl_b32         zpl_re_match(zpl_re *re, char const *str, zpl_isize str_
 
 //! Match all occurences in an input string and output them into captures. Array of captures is allocated on the heap and needs to be freed afterwards.
 ZPL_DEF zpl_b32         zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isize max_capture_count, zpl_re_capture **out_captures);
+
+ZPL_END_C_DECLS

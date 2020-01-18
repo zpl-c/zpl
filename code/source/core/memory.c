@@ -1,7 +1,11 @@
-#include <string.h>
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+#include <string.h>
+
+ZPL_BEGIN_C_DECLS
+
 
 void zpl_memswap(void *i, void *j, zpl_isize size) {
     if (i == j) return;
@@ -231,3 +235,5 @@ void *zpl_memcopy(void *dest, void const *source, zpl_isize n) {
 
     return dest;
 }
+
+ZPL_END_C_DECLS

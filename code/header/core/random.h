@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef struct zpl_random {
     zpl_u32 offsets[8];
     zpl_u32 value;
@@ -16,3 +18,5 @@ ZPL_DEF zpl_isize zpl_random_gen_isize(zpl_random *r);
 ZPL_DEF zpl_i64   zpl_random_range_i64(zpl_random *r, zpl_i64 lower_inc, zpl_i64 higher_inc);
 ZPL_DEF zpl_isize zpl_random_range_isize(zpl_random *r, zpl_isize lower_inc, zpl_isize higher_inc);
 ZPL_DEF zpl_f64   zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_inc);
+
+ZPL_END_C_DECLS

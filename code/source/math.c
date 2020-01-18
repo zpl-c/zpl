@@ -1,10 +1,13 @@
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+
 #if !defined(ZPL_NO_MATH_H)
     #include <math.h>
 #endif
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
+ZPL_BEGIN_C_DECLS
 
 ////////////////////////////////////////////////////////////////
 //
@@ -1418,3 +1421,5 @@ int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersect
         return 0;
     }
 }
+
+ZPL_END_C_DECLS

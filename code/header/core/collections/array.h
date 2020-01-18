@@ -1,7 +1,3 @@
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
-
 ////////////////////////////////////////////////////////////////
 //
 // Dynamic Array (POD Types)
@@ -62,6 +58,11 @@ void foo(void) {
 }
 #endif
 
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
 
 typedef struct zpl_array_header {
     char *data;
@@ -185,3 +186,5 @@ do {                                                                            
 do {                                                                                                               \
     if (ZPL_ARRAY_HEADER(x)->capacity < (new_capacity)) zpl_array_set_capacity(x, new_capacity);                   \
 } while (0)
+
+ZPL_END_C_DECLS

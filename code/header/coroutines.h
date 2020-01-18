@@ -13,6 +13,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_CO_ARG_STACK_CAPACITY
 #define ZPL_CO_ARG_STACK_CAPACITY 128
 #endif
@@ -124,3 +126,5 @@ ZPL_IMPL_INLINE zpl_b32 zpl_co_finished(zpl_co *co) {
 ZPL_IMPL_INLINE zpl_b32 zpl_co_waiting(zpl_co *co) {
     return zpl_atomic32_load(&co->resume) == 0;
 }
+
+ZPL_END_C_DECLS

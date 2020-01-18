@@ -8,6 +8,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_GLGEN_IMPLEMENTATION
 #define ZPL_GLGEN_IMPLEMENTATION
 #include "zpl_glgen.h"
@@ -1879,3 +1881,5 @@ ZPL_IMPL_INLINE zpl_isize zplgl_bs_draw_string_va(zplgl_basic_state *bs, zplgl_f
 
 #endif // !defined(ZPLGL_NO_FONTS)
 #endif // !defined(ZPLGL_NO_BASIC_STATE)
+
+ZPL_END_C_DECLS

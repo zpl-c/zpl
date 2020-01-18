@@ -6,6 +6,8 @@
     #include <dlfcn.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 ////////////////////////////////////////////////////////////////
 //
 // DLL Handling
@@ -40,3 +42,5 @@
     }
 
 #endif
+
+ZPL_END_C_DECLS

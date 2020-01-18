@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
     #include <sched.h>
 #endif
@@ -144,3 +146,5 @@ zpl_string zpl_system_command_str(const char *command, zpl_allocator backing) {
 
     return output;
 }
+
+ZPL_END_C_DECLS

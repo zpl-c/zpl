@@ -1,6 +1,3 @@
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 ////////////////////////////////////////////////////////////////
 //
 // Fixed Capacity Buffer (POD Types)
@@ -17,6 +14,11 @@
 // zpl_buffer_pop
 // zpl_buffer_clear
 
+#ifdef ZPL_EDITOR
+#include <zpl.h>
+#endif
+
+ZPL_BEGIN_C_DECLS
 
 typedef struct zpl_buffer_header {
     zpl_allocator backing;
@@ -73,3 +75,5 @@ do {                                                                            
 } while (0)
 #define zpl_buffer_clear(x)                                                                                            \
 do { zpl_buffer_count(x) = 0; } while (0)
+
+ZPL_END_C_DECLS

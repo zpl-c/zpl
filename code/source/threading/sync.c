@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_sync_init(zpl_sync *s) {
     zpl_zero_item(s);
     zpl_mutex_init(&s->mutex);
@@ -67,3 +69,5 @@ void zpl_sync_reach_and_wait(zpl_sync *s) {
         zpl_mutex_unlock(&s->mutex);
     }
 }
+
+ZPL_END_C_DECLS

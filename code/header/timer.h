@@ -1,7 +1,10 @@
-typedef void (*zpl_timer_cb)(void *data);
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
+
+typedef void (*zpl_timer_cb)(void *data);
 
 //! Timer data structure
 typedef struct zpl_timer {
@@ -42,3 +45,5 @@ ZPL_DEF void zpl_timer_start(zpl_timer *timer, zpl_f64 delay_start);
 
 //! Stop timer and prevent it from triggering.
 ZPL_DEF void zpl_timer_stop(zpl_timer *timer);
+
+ZPL_END_C_DECLS

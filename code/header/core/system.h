@@ -1,7 +1,10 @@
-/* Platform architecture */
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
+
+/* Platform architecture */
 
 #if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) ||       \
 defined(__ppc64__) || defined(__aarch64__)
@@ -116,3 +119,5 @@ defined(__ppc64__) || defined(__aarch64__)
 #else
     #error Unknown CPU Type
 #endif
+
+ZPL_END_C_DECLS

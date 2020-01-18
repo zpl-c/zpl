@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 struct {
     zpl_b32 is_ready;
     zpl_thread_pool coroutines;
@@ -141,3 +143,5 @@ void zpl_co_yield(zpl_co *co) {
     zpl_atomic32_store(&co->status, ZPL_CO_RUNNING);
     zpl_atomic32_fetch_add(&co->resume, -1);
 }
+
+ZPL_END_C_DECLS

@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 ZPL_TABLE_DEFINE(zpl_event_pool, zpl_event_pool_, zpl_event_block);
 
 void zpl_event_init(zpl_event_pool *pool, zpl_allocator alloc) { zpl_event_pool_init(pool, alloc); }
@@ -49,3 +51,5 @@ void zpl_event_trigger(zpl_event_pool *pool, zpl_u64 slot, zpl_event_data evt) {
         for (zpl_isize i = 0; i < zpl_array_count(*block); ++i) { (*block)[i](evt); }
     }
 }
+
+ZPL_END_C_DECLS

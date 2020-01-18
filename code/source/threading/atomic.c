@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 ////////////////////////////////////////////////////////////////
 //
 // Concurrency
@@ -459,3 +461,5 @@ zpl_b32 zpl_atomic64_try_acquire_lock(zpl_atomic64 *a) {
     }
 
 #endif
+
+ZPL_END_C_DECLS

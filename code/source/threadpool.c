@@ -6,6 +6,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
     zpl_thread_pool *pool = (zpl_thread_pool *)tw->pool;
@@ -156,3 +158,5 @@ zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
 
     return true;
 }
+
+ZPL_END_C_DECLS

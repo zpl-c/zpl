@@ -8,9 +8,12 @@
 // zpl_list_init
 // zpl_list_add
 // zpl_list_remove
+
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
 
 #if 0
 #define ZPL_IMPLEMENTATION
@@ -75,3 +78,5 @@ ZPL_IMPL_INLINE zpl_list *zpl_list_remove(zpl_list *list) {
 
     return list->next;
 }
+
+ZPL_END_C_DECLS

@@ -30,6 +30,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #ifndef ZPL_MAX_GAME_CONTROLLER_COUNT
 #define ZPL_MAX_GAME_CONTROLLER_COUNT 4
 #endif
@@ -380,3 +382,4 @@ ZPL_DEF void    zpl_platform_show_window(zpl_platform *p);
 ZPL_DEF void    zpl_platform_hide_window(zpl_platform *p);
 
 //! @}
+ZPL_END_C_DECLS

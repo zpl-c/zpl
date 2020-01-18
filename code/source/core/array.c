@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 ZPL_NEVER_INLINE void *zpl__array_set_capacity(void *array, zpl_isize capacity, zpl_isize element_size) {
     zpl_array_header *h = ZPL_ARRAY_HEADER(array);
 
@@ -30,3 +32,5 @@ ZPL_NEVER_INLINE void *zpl__array_set_capacity(void *array, zpl_isize capacity, 
         return nh + 1;
     }
 }
+
+ZPL_END_C_DECLS

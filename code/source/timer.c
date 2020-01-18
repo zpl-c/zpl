@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 zpl_timer *zpl_timer_add(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
 
@@ -63,3 +65,5 @@ void zpl_timer_update(zpl_timer_pool pool) {
         }
     }
 }
+
+ZPL_END_C_DECLS

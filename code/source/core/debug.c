@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 void zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...) {
     zpl_printf_err("%s:(%d): Assert Failure: ", file, line);
 
@@ -21,3 +23,5 @@ zpl_i32 zpl_assert_crash(char const *condition) {
     ZPL_PANIC(condition);
     return 0;
 }
+
+ZPL_END_C_DECLS

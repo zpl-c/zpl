@@ -7,6 +7,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef enum zplAllocationType {
     ZPL_ALLOCATION_ALLOC,
     ZPL_ALLOCATION_FREE,
@@ -463,3 +465,5 @@ ZPL_IMPL_INLINE zpl_allocator zpl_stack_allocator(zpl_stack_memory *s) {
     a.data = s;
     return a;
 }
+
+ZPL_END_C_DECLS

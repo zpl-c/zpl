@@ -4,6 +4,9 @@
 
 #include <stdlib.h>
 
+
+ZPL_BEGIN_C_DECLS
+
 char *zpl_alloc_str(zpl_allocator a, char const *str) {
     return zpl_alloc_str_len(a, str, zpl_strlen(str));
 }
@@ -343,3 +346,5 @@ ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc) {
     }
     return ptr;
 }
+
+ZPL_END_C_DECLS

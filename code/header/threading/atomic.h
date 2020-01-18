@@ -13,6 +13,8 @@
 # define _Atomic(X) X volatile /*std::atomic< X >*/
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 #if defined(ZPL_COMPILER_MSVC)
     typedef struct zpl_atomic32  { _Atomic(zpl_i32) value; } zpl_atomic32;
     typedef struct zpl_atomic64  { _Atomic(zpl_i64) value; } zpl_atomic64;
@@ -65,3 +67,5 @@ ZPL_DEF void     *zpl_atomic_ptr_fetch_or        (zpl_atomic_ptr *a, void *opera
 ZPL_DEF zpl_b32   zpl_atomic_ptr_spin_lock       (zpl_atomic_ptr *a, zpl_isize time_out); // NOTE: time_out = -1 as default
 ZPL_DEF void      zpl_atomic_ptr_spin_unlock     (zpl_atomic_ptr *a);
 ZPL_DEF zpl_b32   zpl_atomic_ptr_try_acquire_lock(zpl_atomic_ptr *a);
+
+ZPL_END_C_DECLS

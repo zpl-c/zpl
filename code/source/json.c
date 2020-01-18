@@ -4,10 +4,13 @@
 //
 //
 
-#include <math.h> /* needed for INFINITY and NAN */
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
+
+#include <math.h> /* needed for INFINITY and NAN */
+
+ZPL_BEGIN_C_DECLS
 
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_special_char(char c) { return !!zpl_strchr("<>:/", c); }
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
@@ -793,3 +796,5 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 typ
 
     return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
 }
+
+ZPL_END_C_DECLS

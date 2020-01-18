@@ -8,8 +8,10 @@ Several hashing methods used by ZPL internally but possibly useful outside of it
 */
 
 #ifdef ZPL_EDITOR
-#include "../zpl.h"
+#include <zpl.h>
 #endif
+
+ZPL_BEGIN_C_DECLS
 
 ZPL_DEF zpl_u32 zpl_adler32(void const *data, zpl_isize len);
 
@@ -37,3 +39,5 @@ ZPL_DEF_INLINE zpl_u64 zpl_murmur64(void const *data, zpl_isize len);
 
 ZPL_IMPL_INLINE zpl_u32 zpl_murmur32(void const *data, zpl_isize len) { return zpl_murmur32_seed(data, len, 0x9747b28c); }
 ZPL_IMPL_INLINE zpl_u64 zpl_murmur64(void const *data, zpl_isize len) { return zpl_murmur64_seed(data, len, 0x9747b28c); }
+
+ZPL_END_C_DECLS

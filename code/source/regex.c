@@ -2,6 +2,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef enum zplreOp {
     ZPL_RE_OP_BEGIN_CAPTURE,
     ZPL_RE_OP_END_CAPTURE,
@@ -763,3 +765,4 @@ zpl_b32 zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isi
     return true;
 }
 
+ZPL_END_C_DECLS

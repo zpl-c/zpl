@@ -11,6 +11,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 typedef void (*zpl_jobs_proc)(void *data);
 
 #define ZPL_INVALID_JOB ZPL_U32_MAX
@@ -61,3 +63,5 @@ ZPL_DEF void    zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_p
 
 //! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
 ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);
+
+ZPL_END_C_DECLS

@@ -10,6 +10,8 @@
 #include <zpl.h>
 #endif
 
+ZPL_BEGIN_C_DECLS
+
 //! Checks if value is power of 2.
 ZPL_DEF_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x);
 
@@ -248,3 +250,5 @@ ZPL_IMPL_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x) {
     if (x <= 0) return false;
     return !(x & (x - 1));
 }
+
+ZPL_END_C_DECLS
