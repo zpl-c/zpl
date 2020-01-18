@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on Linux
-        run: chmod +x ./build_tests.sh.bat && chmod +x ./build.sh && ./build_tests.sh.bat
+        run: make
 
   build-mac:
     name: Build Linux
@@ -31,4 +31,4 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on Linux
-        run: chmod +x ./build_tests.sh.bat && chmod +x ./build.sh && ./build_tests.sh.bat
+        run: make
