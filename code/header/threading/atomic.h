@@ -9,8 +9,8 @@
 #ifndef __cplusplus
 # include <stdatomic.h>
 #else
-//# include <atomic>
-# define _Atomic(X) X volatile /*std::atomic< X >*/
+# include <atomic>
+# define _Atomic(X) std::atomic<X>
 #endif
 
 ZPL_BEGIN_C_DECLS
