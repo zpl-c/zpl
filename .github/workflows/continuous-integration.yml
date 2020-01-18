@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Run build on windows
-        run: razzle.bat amd64; build_tests.sh.bat
+        run: mkdir build && cd build && cmake ../misc
 
   build-lin:
     name: Build Linux
@@ -25,10 +25,10 @@ jobs:
         run: make
 
   build-mac:
-    name: Build Linux
+    name: Build macOS
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v1
 
-      - name: Run build on Linux
+      - name: Run build on macOS
         run: make
