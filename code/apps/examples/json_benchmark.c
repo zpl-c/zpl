@@ -6,6 +6,9 @@
 //   Parsing with strip_comments enabled - ~255 ms
 //
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_JSON
+#define ZPL_ENABLE_OPTS
 #include <zpl.h>
 
 int main(int argc, char **argv) {

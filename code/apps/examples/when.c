@@ -1,4 +1,5 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include <zpl.h>
 
 void easy_print(i64 *nums, isize cnt) {

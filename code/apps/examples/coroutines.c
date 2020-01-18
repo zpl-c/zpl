@@ -1,4 +1,8 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_THREADING
+#define ZPL_ENABLE_COROUTINES
+#define ZPL_ENABLE_JOBS
 #include <zpl.h>
 
 zpl_global zpl_mutex test__print;

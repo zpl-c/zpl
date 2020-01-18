@@ -1,4 +1,5 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include "zpl.h"
 
 #define BUF_LEN 4096

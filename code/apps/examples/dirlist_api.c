@@ -1,4 +1,5 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include <zpl.h>
 
 char const* get_type(u8 type) {

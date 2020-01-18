@@ -1,5 +1,6 @@
 #define ZPL_IMPLEMENTATION
-#define ZPL_STATIC
+#define ZPL_NANO
+#define ZPL_ENABLE_OPTS
 #include <zpl.h>
 
 int main(int argc, char **argv)

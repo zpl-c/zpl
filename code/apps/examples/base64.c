@@ -1,4 +1,6 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_HASHING
 #include "zpl.h"
 
 int main(void)

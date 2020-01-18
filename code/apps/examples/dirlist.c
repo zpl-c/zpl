@@ -1,6 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include <zpl.h>
 #include <string.h>
 

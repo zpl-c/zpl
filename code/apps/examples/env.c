@@ -1,4 +1,5 @@
 #define ZPL_IMPL
+#define ZPL_NANO
 #include <zpl.h>
 #include <stdlib.h>
 

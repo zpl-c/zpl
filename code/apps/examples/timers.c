@@ -1,4 +1,6 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_TIMER
 #include <zpl.h>
 
 zpl_global u8 counter = 0;

@@ -1,4 +1,6 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_EVENT
 #include <zpl.h>
 
 typedef struct {

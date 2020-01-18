@@ -1,4 +1,5 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include <zpl.h>
 
 ZPL_RING_DECLARE(u32);

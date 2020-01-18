@@ -1,4 +1,7 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_THREADING
+#define ZPL_ENABLE_JOBS
 #include <zpl.h>
 #define TEST_ENQUEUE_JOB 0.8
 

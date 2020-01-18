@@ -1,10 +1,11 @@
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
 #include <zpl.h>
 
 int main()
 {
     zpl_string filelst;
-    filelst = zpl_path_dirlist(zpl_heap_allocator(), "/home/zaklaus/dev/zpl", true);
+    filelst = zpl_path_dirlist(zpl_heap_allocator(), "$HOME/", true);
     
     char **files=zpl_str_split_lines(zpl_heap_allocator(), filelst, false);
     

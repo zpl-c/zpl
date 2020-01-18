@@ -331,7 +331,7 @@ Version History:
     #define ZPL_MODULE_MATH
     #define ZPL_MODULE_JSON
     #define ZPL_MODULE_THREADING
-    #define ZPL_MODULE_THREADPOOL
+    #define ZPL_MODULE_JOBS
     #define ZPL_MODULE_COROUTINES
 
     /* zpl nano distribtuion */
@@ -346,7 +346,7 @@ Version History:
         #undef ZPL_MODULE_MATH
         #undef ZPL_MODULE_JSON
         #undef ZPL_MODULE_THREADING
-        #undef ZPL_MODULE_THREADPOOL
+        #undef ZPL_MODULE_JOBS
         #undef ZPL_MODULE_COROUTINES
     #endif
 
@@ -390,8 +390,8 @@ Version History:
     #if defined(ZPL_ENABLE_THREADING) && !defined(ZPL_MODULE_THREADING)
         #define ZPL_MODULE_THREADING
     #endif
-    #if defined(ZPL_ENABLE_THREADPOOL) && !defined(ZPL_MODULE_THREADPOOL)
-        #define ZPL_MODULE_THREADPOOL
+    #if defined(ZPL_ENABLE_JOBS) && !defined(ZPL_MODULE_JOBS)
+        #define ZPL_MODULE_JOBS
     #endif
     #if defined(ZPL_ENABLE_COROUTINES) && !defined(ZPL_MODULE_COROUTINES)
         #define ZPL_MODULE_COROUTINES
@@ -437,8 +437,8 @@ Version History:
     #if defined(ZPL_DISABLE_THREADING) && defined(ZPL_MODULE_THREADING)
         #undef ZPL_MODULE_THREADING
     #endif
-    #if defined(ZPL_DISABLE_THREADPOOL) && defined(ZPL_MODULE_THREADPOOL)
-        #undef ZPL_MODULE_THREADPOOL
+    #if defined(ZPL_DISABLE_JOBS) && defined(ZPL_MODULE_JOBS)
+        #undef ZPL_MODULE_JOBS
     #endif
     #if defined(ZPL_DISABLE_COROUTINES) && defined(ZPL_MODULE_COROUTINES)
         #undef ZPL_MODULE_COROUTINES
@@ -577,8 +577,8 @@ Version History:
     #include "header/threading/sync.h"
     #include "header/threading/affinity.h"
 
-    #if defined(ZPL_MODULE_THREADPOOL)
-        #include "header/threadpool.h"
+    #if defined(ZPL_MODULE_JOBS)
+        #include "header/jobs.h"
     #endif
 
     #if defined(ZPL_MODULE_COROUTINES)
@@ -709,8 +709,8 @@ Version History:
     #include "source/threading/sync.c"
     #include "source/threading/affinity.c"
 
-    #if defined(ZPL_MODULE_THREADPOOL)
-        #include "source/threadpool.c"
+    #if defined(ZPL_MODULE_JOBS)
+        #include "source/jobs.c"
     #endif
 
     #if defined(ZPL_MODULE_COROUTINES)
