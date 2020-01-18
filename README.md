@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/9026786/43263060-7c0a8b86-90e2-11e8-96e3-3e71e559f62a.png" alt="zpl" /></a>
+    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/72661667-9fd43500-39e5-11ea-98b2-14f3de66d389.png" alt="zpl" /></a>
 </div>
 
 <div align="center">
@@ -15,12 +15,12 @@
 
 <div align="center">
   <sub>
-    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>, 
+    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>,
      <a href="https://github.com/inlife">@inlife</a>,
     and <strong>contributors</strong>
   </sub>
 </div>
- 
+
 # Introduction
 It's been created to simplify development process under C/C++ language and offers commonly used set of features that C developers often re-invent or search libraries for. Apart from helper methods that replace/extend C standard library, this toolkit also consists of modules that are very helpful in specific areas of expertise, such as graph culling algorithms, JSON5 parser, OpenGL-friendly math library as well as OpenGL helper module and many more...
 
