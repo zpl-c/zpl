@@ -7,7 +7,7 @@ int main(void) {
 
     zpl_json_object root = {0};
     root.cfg_mode = 1;
-    zpl_json_init_node(&root, zpl_heap(), "<root>" /* unused for root object */, ZPL_JSON_TYPE_OBJECT /* unused for root object */);
+    zpl_json_init_node(&root, zpl_heap(), "<root>" /* unused for root object */, ZPL_JSON_TYPE_OBJECT);
 
     zpl_random rng={0};
     zpl_random_init(&rng);
