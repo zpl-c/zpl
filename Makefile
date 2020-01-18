@@ -1,7 +1,15 @@
 CC=gcc
 CXX=g++
 
-LDFLAGS += -pthread -ldl -lm
+ifeq ($(OS),Windows_NT)
+	CFLAGS += -DWIN32
+else
+	OSDEF := $(shell uname -s)
+	ifeq ($(OSDEF),Linux)
+		LDFLAGS += -pthread -ldl -lm
+	endif
+endif
+
 DISABLED_WARNS = -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
 CFLAGS += -g -std=gnu11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
 CXXFLAGS += -g -std=c++11 -Icode -Wall -Wextra -Werror $(DISABLED_WARNS)
@@ -25,15 +33,14 @@ examples: $(EXAMPLES)
 
 clean:
 	@echo '> Cleaning up files'
-	#@rm build/$(EXAMPLES) build/tester
 
 % : %.c
 	@mkdir -p build
-	@echo '=> Building $@'
+	@echo '=> Building $(@F)'
 	$(CC) -g $(CFLAGS) $^ $(LDFLAGS) -o build/$(@F)
 
 % : %.cc
 	@mkdir -p build
-	@echo '=> Building $@'
+	@echo '=> Building $(@F)'
 	$(CXX) -g $(CXXFLAGS) $^ $(LDFLAGS) -o build/$(@F)
 
