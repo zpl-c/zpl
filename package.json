@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "10.0.2",
+  "version": "10.0.0-pre.0",
   "homepage": "https://github.com/zpl-c/zpl#readme",
   "description": "Single-file header-only C and C++ helper library.",
   "author": "Dominik Madarasz <zaklaus@outlook.com> (http://madaraszd.net/)",
@@ -16,7 +16,10 @@
     "release": "release-it",
     "release-patch": "release-it patch --ci",
     "release-minor": "release-it minor --ci",
-    "release-major": "release-it major --ci"
+    "release-major": "release-it major --ci",
+    "release-patch-pre": "release-it patch --preRelease=pre --ci",
+    "release-minor-pre": "release-it minor --preRelease=pre --ci",
+    "release-major-pre": "release-it major --preRelease=pre --ci"
   },
   "release-it": {
     "npm": {

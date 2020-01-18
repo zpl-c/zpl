@@ -11,16 +11,23 @@ const versionGet = () => {
     const major = data.match(/ZPL_VERSION_MAJOR\s+([0-9]+)\n/)[1]
     const minor = data.match(/ZPL_VERSION_MINOR\s+([0-9]+)\n/)[1]
     const patch = data.match(/ZPL_VERSION_PATCH\s+([0-9]+)\n/)[1]
+    const pre   = data.match(/ZPL_VERSION_PRE\s+\"([\.a-z0-9]+)\"\n/)
 
-    return `${major}.${minor}.${patch}`
+    return `${major}.${minor}.${patch}${pre ? '-' + pre[1] : ''}`
 }
 
-const versionSet = (major, minor, patch) => {
+const versionSet = (version) => {
     let data = fs.readFileSync(basefile, 'utf8')
+
+    let [base, pre] = version.split('-')
+    let [major, minor, patch] = base.split('.').map(a => parseInt(a))
+
+    if (!pre) pre = ''
 
     data = data.replace(/ZPL_VERSION_MAJOR\s+([0-9]+)\n/, `ZPL_VERSION_MAJOR ${major}\n`)
     data = data.replace(/ZPL_VERSION_MINOR\s+([0-9]+)\n/, `ZPL_VERSION_MINOR ${minor}\n`)
     data = data.replace(/ZPL_VERSION_PATCH\s+([0-9]+)\n/, `ZPL_VERSION_PATCH ${patch}\n`)
+    data = data.replace(/ZPL_VERSION_PRE\s+\"([\.0-9a-z]+)\"\n/, `ZPL_VERSION_PRE "${pre}"\n`)
 
     fs.writeFileSync(basefile, data)
 }
@@ -64,19 +71,13 @@ class Bumper extends Plugin {
 
     bump(version) {
         this.version = version;
-
-        const [major, minor, patch] = version
-            .split('.')
-            .map(a => parseInt(a))
-
-        versionSet(major, minor, patch)
+        versionSet(version)
     }
 
     async beforeRelease() {
         embedIncludes()
         console.log('done')
     }
-
 
     afterRelease() {
         if (fs.existsSync(path.join(workdir, 'zpl.h'))) {
