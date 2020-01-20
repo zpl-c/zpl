@@ -1,3 +1,5 @@
+// file: header/hashing.h
+
 /** @file hashing.c
 @brief Hashing and Checksum Functions
 @defgroup hashing Hashing and Checksum Functions

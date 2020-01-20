@@ -1,3 +1,5 @@
+// file: header/regex.h
+
 /** @file regex.c
 @brief Regular expressions parser.
 @defgroup regex Regex processor

@@ -1,3 +1,5 @@
+// file: header/core/time.h
+
 /** @file time.c
 @brief Time helper methods.
 @defgroup time Time helpers

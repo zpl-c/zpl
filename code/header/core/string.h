@@ -1,3 +1,5 @@
+// file: header/core/string.h
+
 /** @file string.c
 @brief String operations and library
 @defgroup string String library

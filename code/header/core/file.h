@@ -1,3 +1,5 @@
+// file: header/core/file.h
+
 /** @file file.c
 @brief File handling
 @defgroup fileio File handling

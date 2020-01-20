@@ -1,3 +1,5 @@
+// file: header/core/collections/hashtable.h
+
 /** @file hashtable.c
 @brief Instantiated hash table
 @defgroup hashtable Instantiated hash table
