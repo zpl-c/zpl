@@ -27,6 +27,8 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.0.4 - Flush tester output to fix ordering
+  10.0.3 - Fix ZPL_STATIC_ASSERT under MSVC
   10.0.0 - Major overhaul of the library
 
   9.8.10 - JSON fix array-based documents with objects
@@ -243,7 +245,7 @@ Version History:
 
 #define ZPL_VERSION_MAJOR 10
 #define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 3
+#define ZPL_VERSION_PATCH 4
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"

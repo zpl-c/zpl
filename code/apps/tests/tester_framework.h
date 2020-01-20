@@ -9,12 +9,14 @@ static int _g_errors = 0;
     int ZPL_JOIN2(module__,name)() { \
         zpl_printf("--------------------------------------\n"); \
         zpl_printf("  MODULE: %s\n", #name); \
+        fflush(stdout); \
         _g_modules++; \
         int _total = 0; \
         int _errors = 0; \
         int _lasterr = 0; \
         char *_errstr = 0; \
         scope; \
+        fflush(stdout); \
         zpl_printf("  Results: %d total, %d failed, %d passed\n", _total, _errors, _total - _errors); \
         _g_total += _total; \
         _g_errors += _errors; \

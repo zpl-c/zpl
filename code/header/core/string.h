@@ -349,9 +349,9 @@ ZPL_IMPL_INLINE const char *zpl_char_first_occurence(const char *s, char c) {
 }
 
 ZPL_IMPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
-    const char *result = NULL;
+    char *result = (char*)NULL;
     do {
-        if (*s == c) result = s;
+        if (*s == c) result = (char *)s;
     } while (*s++);
 
     return result;
