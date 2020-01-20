@@ -43,6 +43,7 @@ int main() {
         MODULE_LIST
     #undef X
 
+    fflush(stdout);
     zpl_printf("--------------------------------------\n");
     zpl_printf("MODULES: %d total, %d failed, %d passed\n", _g_modules, _g_modules_err, _g_modules - _g_modules_err);
     zpl_printf("TESTS:   %d total, %d failed, %d passed\n", _g_total, _g_errors, _g_total - _g_errors);
