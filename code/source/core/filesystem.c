@@ -160,7 +160,7 @@ char *zpl_path_get_full_name(zpl_allocator a, char const *path) {
         return NULL;
     }
 
-    new_path = zpl_alloc_array(a, char, new_len1);
+    new_path = zpl_alloc_array(a, char, new_len);
     new_len1 = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, w_fullpath, cast(int) w_len, new_path,
                                    cast(int) new_len, NULL, NULL);
 
