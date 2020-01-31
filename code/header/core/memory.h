@@ -1,3 +1,5 @@
+// file: header/core/memory.h
+
 /** @file mem.c
 @brief Memory manipulation and helpers.
 @defgroup memman Memory management

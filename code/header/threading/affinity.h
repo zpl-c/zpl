@@ -1,3 +1,5 @@
+// file: header/threading/affinity.h
+
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif

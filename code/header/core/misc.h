@@ -1,3 +1,5 @@
+// file: header/core/misc.h
+
 /** @file misc.c
 @brief Various other stuff
 @defgroup misc Various other stuff

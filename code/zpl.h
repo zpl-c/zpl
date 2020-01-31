@@ -245,7 +245,7 @@ Version History:
 
 #define ZPL_VERSION_MAJOR 10
 #define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 4
+#define ZPL_VERSION_PATCH 5
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"
@@ -714,3 +714,78 @@ Version History:
 #endif // ZPL_PREFIX_TYPES
 
 #endif // ZPL_H
+
+// TOC:
+// zpl.h
+// zpl_hedley.h
+// header/core/system.h
+// header/core/types.h
+// header/core/helpers.h
+// header/core/debug.h
+// header/core/memory.h
+// header/core/memory_virtual.h
+// header/core/memory_custom.h
+// header/core/collections/array.h
+// header/core/collections/buffer.h
+// header/core/collections/list.h
+// header/core/collections/ring.h
+// header/core/collections/hashtable.h
+// header/core/string.h
+// header/core/stringlib.h
+// header/core/file.h
+// header/core/filesystem.h
+// header/core/print.h
+// header/core/time.h
+// header/core/random.h
+// header/core/misc.h
+// header/core/sort.h
+// header/timer.h
+// header/hashing.h
+// header/regex.h
+// header/event.h
+// header/dll.h
+// header/opts.h
+// header/process.h
+// header/math.h
+// header/json.h
+// header/threading/atomic.h
+// header/threading/fence.h
+// header/threading/sem.h
+// header/threading/mutex.h
+// header/threading/thread.h
+// header/threading/sync.h
+// header/threading/affinity.h
+// header/jobs.h
+// header/coroutines.h
+// source/core/debug.c
+// source/core/memory.c
+// source/core/memory_virtual.c
+// source/core/memory_custom.c
+// source/core/array.c
+// source/core/string.c
+// source/core/stringlib.c
+// source/core/file.c
+// source/core/filesystem.c
+// source/core/print.c
+// source/core/time.c
+// source/core/random.c
+// source/core/misc.c
+// source/core/sort.c
+// source/timer.c
+// source/hashing.c
+// source/regex.c
+// source/event.c
+// source/dll.c
+// source/opts.c
+// source/process.c
+// source/math.c
+// source/json.c
+// source/threading/atomic.c
+// source/threading/fence.c
+// source/threading/sem.c
+// source/threading/mutex.c
+// source/threading/thread.c
+// source/threading/sync.c
+// source/threading/affinity.c
+// source/jobs.c
+// source/coroutines.c

@@ -1,3 +1,5 @@
+// file: source/core/random.c
+
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif

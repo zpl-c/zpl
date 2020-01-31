@@ -1,3 +1,5 @@
+// file: header/opts.h
+
 /** @file opts.c
 @brief CLI options processor
 @defgroup cli CLI options processor

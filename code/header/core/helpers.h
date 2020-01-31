@@ -1,3 +1,5 @@
+// file: header/core/helpers.h
+
 /* Various macro based helpers */
 #ifdef ZPL_EDITOR
 #include <zpl.h>

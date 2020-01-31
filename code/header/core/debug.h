@@ -1,3 +1,5 @@
+// file: header/core/debug.h
+
 /* Debugging stuff */
 #ifdef ZPL_EDITOR
 #include <zpl.h>
