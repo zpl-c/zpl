@@ -91,6 +91,7 @@ enum {
     ZPL_FMT_UNSIGNED = ZPL_BIT(12),
     ZPL_FMT_LOWER    = ZPL_BIT(13),
     ZPL_FMT_UPPER    = ZPL_BIT(14),
+    ZPL_FMT_WIDTH    = ZPL_BIT(15),
 
     ZPL_FMT_DONE = ZPL_BIT(30),
 
@@ -107,20 +108,22 @@ typedef struct {
 } zpl__format_info;
 
 zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__format_info *info, char const *str) {
-    // TODO: Get precision and width to work correctly. How does it actually work?!
-    // TODO: This looks very buggy indeed.
     zpl_isize res = 0, len = 0;
     zpl_isize remaining = max_len;
 
     if (str == NULL && max_len >= 4) {
         res += zpl_strlcpy(text, "(null)", 6);
-        return 6;
+        return res;
     }
 
     if (info && info->precision >= 0)
         len = zpl_strnlen(str, info->precision);
     else
         len = zpl_strlen(str);
+
+    if (info && (info->width == 0 && info->flags & ZPL_FMT_WIDTH)) {
+        return res;
+    }
 
     if (info && (info->width == 0 || info->flags & ZPL_FMT_MINUS)) {
         if (info->precision > 0) len = info->precision < len ? info->precision : len;
@@ -262,12 +265,12 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
         if (*fmt == '%') {
             do {
                 switch (*++fmt) {
-                    case '-': info.flags |= ZPL_FMT_MINUS; break;
-                    case '+': info.flags |= ZPL_FMT_PLUS; break;
-                    case '#': info.flags |= ZPL_FMT_ALT; break;
-                    case ' ': info.flags |= ZPL_FMT_SPACE; break;
-                    case '0': info.flags |= ZPL_FMT_ZERO; break;
-                    default: info.flags |= ZPL_FMT_DONE; break;
+                case '-': {info.flags |= ZPL_FMT_MINUS; break;}
+                case '+': {info.flags |= ZPL_FMT_PLUS; break;}
+                case '#': {info.flags |= ZPL_FMT_ALT; break;}
+                case ' ': {info.flags |= ZPL_FMT_SPACE; break;}
+                case '0': {info.flags |= ZPL_FMT_ZERO; info.flags |= ZPL_FMT_WIDTH; break;}
+                default: {info.flags |= ZPL_FMT_DONE; break;}
                 }
             } while (!(info.flags & ZPL_FMT_DONE));
         }
@@ -281,9 +284,13 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
             } else {
                 info.width = width;
             }
+            info.flags |= ZPL_FMT_WIDTH;
             fmt++;
         } else {
             info.width = cast(zpl_i32) zpl_str_to_i64(fmt, cast(char **) & fmt, 10);
+            if (info.width != 0) {
+                info.flags |= ZPL_FMT_WIDTH;
+            }
         }
 
         // NOTE: Optional Precision
