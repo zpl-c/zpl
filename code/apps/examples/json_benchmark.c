@@ -11,6 +11,12 @@
 #define ZPL_ENABLE_OPTS
 #include <zpl.h>
 
+void exit_with_help(zpl_opts *opts) {
+    zpl_opts_print_errors(opts);
+    zpl_opts_print_help(opts);
+    zpl_exit(-1);
+}
+
 int main(int argc, char **argv) {
     zpl_opts opts={0};
 
@@ -26,23 +32,16 @@ int main(int argc, char **argv) {
     char *filename = NULL;
     b32 strip_comments = false;
 
-    if (ok && zpl_opts_positionals_filled(&opts))
-    {
-        filename = zpl_opts_string(&opts, "file", NULL);
-        strip_comments = zpl_opts_has_arg(&opts, "strip-comments");
+    if (!ok || !zpl_opts_positionals_filled(&opts))
+        exit_with_help(&opts);
 
-        if (filename == NULL)
-            goto bad;
+    filename = zpl_opts_string(&opts, "file", NULL);
+    strip_comments = zpl_opts_has_arg(&opts, "strip-comments");
 
-        zpl_printf("Filename: %s\n", filename);
-    }
-    else
-    {
-        bad:
-        zpl_opts_print_errors(&opts);
-        zpl_opts_print_help(&opts);
-        return -1;
-    }
+    if (filename == NULL)
+        exit_with_help(&opts);
+
+    zpl_printf("Filename: %s\n", filename);
 
     zpl_file_contents fc = zpl_file_read_contents(zpl_heap(), true, filename);
 
