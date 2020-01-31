@@ -269,7 +269,7 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
                 case '+': {info.flags |= ZPL_FMT_PLUS; break;}
                 case '#': {info.flags |= ZPL_FMT_ALT; break;}
                 case ' ': {info.flags |= ZPL_FMT_SPACE; break;}
-                case '0': {info.flags |= ZPL_FMT_ZERO; info.flags |= ZPL_FMT_WIDTH; break;}
+                case '0': {info.flags |= (ZPL_FMT_ZERO|ZPL_FMT_WIDTH); break;}
                 default: {info.flags |= ZPL_FMT_DONE; break;}
                 }
             } while (!(info.flags & ZPL_FMT_DONE));
