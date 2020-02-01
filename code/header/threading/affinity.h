@@ -6,7 +6,7 @@
 
 ZPL_BEGIN_C_DECLS
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined (ZPL_SYSTEM_CYGWIN)
 
     typedef struct zpl_affinity {
         zpl_b32   is_accurate;
