@@ -20,7 +20,6 @@ ZPL_BEGIN_C_DECLS
 #endif
 
 #ifndef ZPL_ASSERT_MSG
-    #if defined(_MSC_VER)
     #define ZPL_ASSERT_MSG(cond, msg, ...)                                                                             \
     do {                                                                                                               \
         if (!(cond)) {                                                                                                 \
@@ -28,14 +27,6 @@ ZPL_BEGIN_C_DECLS
             ZPL_DEBUG_TRAP( );                                                                                         \
         }                                                                                                              \
     } while (0)
-    #else
-    #define ZPL_ASSERT_MSG(cond, msg, ...)                                                                             \
-    do {                                                                                                               \
-        if (!(cond)) {                                                                                                 \
-            ZPL_DEBUG_TRAP( );                                                                                         \
-        }                                                                                                              \
-    } while (0)
-    #endif
 #endif
 
 #ifndef ZPL_ASSERT
