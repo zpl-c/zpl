@@ -15,9 +15,13 @@
     #include <copyfile.h>
 #endif
 
+#ifdef ZPL_SYSTEM_CYGWIN
+#   include <windows.h>
+#endif
+
 ZPL_BEGIN_C_DECLS
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined (ZPL_SYSTEM_CYGWIN)
 
     zpl_internal wchar_t *zpl__alloc_utf8_to_ucs2(zpl_allocator a, char const *text, zpl_isize *w_len_) {
         wchar_t *w_text = NULL;
@@ -234,7 +238,7 @@ zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *f
     zpl_file file_ = {0};
     *f = file_;
     zpl_file_error err;
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
     err = zpl__win32_file_open(&f->fd, &f->ops, mode, filename);
 #else
     err = zpl__posix_file_open(&f->fd, &f->ops, mode, filename);

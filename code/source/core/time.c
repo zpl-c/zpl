@@ -86,7 +86,7 @@ ZPL_BEGIN_C_DECLS
     }
 #endif
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
 
     zpl_f64 zpl_time_now(void) {
         zpl_local_persist LARGE_INTEGER win32_perf_count_freq = { 0 };
