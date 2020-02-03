@@ -297,7 +297,7 @@ zpl_b32 zpl_file_has_changed(zpl_file *f) {
 zpl_global zpl_b32 zpl__std_file_set = false;
 zpl_global zpl_file zpl__std_files[ZPL_FILE_STANDARD_COUNT] = { { 0 } };
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
 
 zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     if (!zpl__std_file_set) {
