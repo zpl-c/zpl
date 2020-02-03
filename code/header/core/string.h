@@ -59,18 +59,19 @@ ZPL_DEF_INLINE char  **zpl_str_split_lines(zpl_allocator alloc, char *source, zp
 ZPL_DEF_INLINE zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix);
 ZPL_DEF_INLINE zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix);
 
-ZPL_DEF const char *zpl_char_first_occurence(const char *str, char c);
-ZPL_DEF const char *zpl_char_last_occurence(const char *str, char c);
+ZPL_DEF_INLINE const char *zpl_char_first_occurence(const char *str, char c);
+ZPL_DEF_INLINE const char *zpl_char_last_occurence(const char *str, char c);
 #define zpl_strchr zpl_char_first_occurence
 
-ZPL_DEF void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b, zpl_isize src_b_len);
+ZPL_DEF_INLINE void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b, zpl_isize src_b_len);
 
 ZPL_DEF zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
 ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr);
 ZPL_DEF zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr);
 ZPL_DEF void    zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
 ZPL_DEF void    zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);
+
+ZPL_DEF_INLINE zpl_f32 zpl_str_to_f32(const char *str, char **end_ptr);
 
 ////////////////////////////////////////////////////////////////
 //

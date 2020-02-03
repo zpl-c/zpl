@@ -26,9 +26,9 @@ It's been created to simplify development process under C/C++ language and offer
 
 Library is cross-platform and currently works on **i386**, **amd64** and **ARM** architectures. It has been tested on **Windows**, **UNIX systems**, **iOS**, **Emscripten** and **Android**.
 
-## Honorable users of this library
+## Who uses this library?
 
-* [librg](https://github.com/librg/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
+* [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
 # Table of Contents
 ZPL consists of the following modules:
@@ -85,7 +85,16 @@ Actually, the following snippet comes from the [json_benchmark.c](https://github
 
 ```c
 #define ZPL_IMPLEMENTATION
+#define ZPL_NANO
+#define ZPL_ENABLE_JSON
+#define ZPL_ENABLE_OPTS
 #include <zpl.h>
+
+void exit_with_help(zpl_opts *opts) {
+    zpl_opts_print_errors(opts);
+    zpl_opts_print_help(opts);
+    zpl_exit(-1);
+}
 
 int main(int argc, char **argv) {
     zpl_opts opts={0};
@@ -102,27 +111,20 @@ int main(int argc, char **argv) {
     char *filename = NULL;
     b32 strip_comments = false;
 
-    if (ok && zpl_opts_positionals_filled(&opts))
-    {
-        filename = zpl_opts_string(&opts, "file", NULL);
-        strip_comments = zpl_opts_has_arg(&opts, "strip-comments");
+    if (!ok || !zpl_opts_positionals_filled(&opts))
+        exit_with_help(&opts);
 
-        if (filename == NULL)
-            goto bad;
+    filename = zpl_opts_string(&opts, "file", NULL);
+    strip_comments = zpl_opts_has_arg(&opts, "strip-comments");
 
-        printf("Filename: %s\n", filename);
-    }
-    else
-    {
-        bad:
-        zpl_opts_print_errors(&opts);
-        zpl_opts_print_help(&opts);
-        return -1;
-    }
+    if (filename == NULL)
+        exit_with_help(&opts);
+
+    zpl_printf("Filename: %s\n", filename);
 
     zpl_file_contents fc = zpl_file_read_contents(zpl_heap(), true, filename);
 
-    printf("Parsing JSON5 file!\n");
+    zpl_printf("Parsing JSON5 file!\n");
 
     zpl_json_object root = {0};
 
@@ -133,16 +135,15 @@ int main(int argc, char **argv) {
 
     if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)
     {
-        printf("File not found!\n");
+        zpl_printf("File not found!\n");
         return -2;
     }
 
-    printf("Delta: %fms\nNo. of nodes: %lld\nError code: %d\nFile size: %lldbytes\n", delta*1000, 
-            zpl_array_count(root.nodes), err, fc.size);
+    zpl_printf("Delta: %fms\nNo. of nodes: %td\nError code: %d\nFile size: %td bytes\n", delta*1000, zpl_array_count(root.nodes), err, fc.size);
 
     zpl_json_free(&root);
     zpl_file_free_contents(&fc);
-    
+
     return 0;
 }
 ```

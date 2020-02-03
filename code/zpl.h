@@ -27,6 +27,9 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.0.10 - Fix zero-allocation regression in filesystem module
+  10.0.9 - Fix multi-compilation unit builds
+  10.0.8 - Fix zpl_printf "%0d" format specifier
   10.0.4 - Flush tester output to fix ordering
   10.0.3 - Fix ZPL_STATIC_ASSERT under MSVC
   10.0.0 - Major overhaul of the library
@@ -245,7 +248,7 @@ Version History:
 
 #define ZPL_VERSION_MAJOR 10
 #define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 5
+#define ZPL_VERSION_PATCH 10
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"

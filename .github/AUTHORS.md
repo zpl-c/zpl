@@ -17,4 +17,5 @@ This page lists all contributors improving this project over time, since the cre
 ## Other contributors
 
 * GitHub: r-lyeh
+* GitHub: funZX
 * YOU
