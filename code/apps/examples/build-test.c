@@ -1,4 +1,4 @@
-#define ZPL_IMPLEMENTATION
+#define ZPL_IMPL
 #include <zpl.h>
 
 int main() {

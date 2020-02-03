@@ -43,34 +43,34 @@ typedef enum zplAllocatorFlag {
 #endif
 
 //! Allocate memory with specified alignment.
-ZPL_DEF void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment);
+ZPL_DEF_INLINE void *zpl_alloc_align(zpl_allocator a, zpl_isize size, zpl_isize alignment);
 
 //! Allocate memory with default alignment.
-ZPL_DEF void *zpl_alloc(zpl_allocator a, zpl_isize size);
+ZPL_DEF_INLINE void *zpl_alloc(zpl_allocator a, zpl_isize size);
 
 //! Free allocated memory.
-ZPL_DEF void zpl_free(zpl_allocator a, void *ptr);
+ZPL_DEF_INLINE void zpl_free(zpl_allocator a, void *ptr);
 
 //! Free all memory allocated by an allocator.
-ZPL_DEF void zpl_free_all(zpl_allocator a);
+ZPL_DEF_INLINE void zpl_free_all(zpl_allocator a);
 
 //! Resize an allocated memory.
-ZPL_DEF void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size);
+ZPL_DEF_INLINE void *zpl_resize(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size);
 
 //! Resize an allocated memory with specified alignment.
-ZPL_DEF void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
+ZPL_DEF_INLINE void *zpl_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
 
 //! Allocate memory and copy data into it.
-ZPL_DEF void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size);
+ZPL_DEF_INLINE void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize size);
 
 //! Allocate memory with specified alignment and copy data into it.
-ZPL_DEF void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment);
+ZPL_DEF_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment);
 
 //! Allocate memory for null-terminated C-String.
-ZPL_DEF char *zpl_alloc_str(zpl_allocator a, char const *str);
+ZPL_DEF_INLINE char *zpl_alloc_str(zpl_allocator a, char const *str);
 
 //! Allocate memory for C-String with specified size.
-ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len);
+ZPL_DEF_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len);
 
 #ifndef zpl_alloc_item
 
@@ -84,10 +84,10 @@ ZPL_DEF char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len)
 //! Allocate/Resize memory using default options.
 
 //! Use this if you don't need a "fancy" resize allocation
-ZPL_DEF void *zpl_default_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
+ZPL_DEF_INLINE void *zpl_default_resize_align(zpl_allocator a, void *ptr, zpl_isize old_size, zpl_isize new_size, zpl_isize alignment);
 
 //! The heap allocator backed by operating system's memory manager.
-ZPL_DEF zpl_allocator zpl_heap_allocator(void);
+ZPL_DEF_INLINE zpl_allocator zpl_heap_allocator(void);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc);
 
 #ifndef zpl_malloc
@@ -115,29 +115,29 @@ typedef struct zpl_arena {
 } zpl_arena;
 
 //! Initialize memory arena from existing memory region.
-ZPL_DEF void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size);
+ZPL_DEF_INLINE void zpl_arena_init_from_memory(zpl_arena *arena, void *start, zpl_isize size);
 
 //! Initialize memory arena using existing memory allocator.
-ZPL_DEF void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size);
+ZPL_DEF_INLINE void zpl_arena_init_from_allocator(zpl_arena *arena, zpl_allocator backing, zpl_isize size);
 
 //! Initialize memory arena within an existing parent memory arena.
-ZPL_DEF void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size);
+ZPL_DEF_INLINE void zpl_arena_init_sub(zpl_arena *arena, zpl_arena *parent_arena, zpl_isize size);
 
 //! Release the memory used by memory arena.
-ZPL_DEF void zpl_arena_free(zpl_arena *arena);
+ZPL_DEF_INLINE void zpl_arena_free(zpl_arena *arena);
 
 
 //! Retrieve memory arena's aligned allocation address.
-ZPL_DEF zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment);
+ZPL_DEF_INLINE zpl_isize zpl_arena_alignment_of(zpl_arena *arena, zpl_isize alignment);
 
 //! Retrieve memory arena's remaining size.
-ZPL_DEF zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment);
+ZPL_DEF_INLINE zpl_isize zpl_arena_size_remaining(zpl_arena *arena, zpl_isize alignment);
 
 //! Check whether memory arena has any temporary snapshots.
-ZPL_DEF void zpl_arena_check(zpl_arena *arena);
+ZPL_DEF_INLINE void zpl_arena_check(zpl_arena *arena);
 
 //! Allocation Types: alloc, free_all, resize
-ZPL_DEF zpl_allocator zpl_arena_allocator(zpl_arena *arena);
+ZPL_DEF_INLINE zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
 
@@ -147,10 +147,10 @@ typedef struct zpl_temp_arena_memory {
 } zpl_temp_arena_memory;
 
 //! Capture a snapshot of used memory in a memory arena.
-ZPL_DEF zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena);
+ZPL_DEF_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena);
 
 //! Reset memory arena's usage by a captured snapshot.
-ZPL_DEF void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
+ZPL_DEF_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
 
 //
 // Pool Allocator
@@ -168,17 +168,17 @@ typedef struct zpl_pool {
 
 
 //! Initialize pool allocator.
-ZPL_DEF void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size);
+ZPL_DEF_INLINE void zpl_pool_init(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size);
 
 //! Initialize pool allocator with specific block alignment.
 ZPL_DEF void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_blocks, zpl_isize block_size,
                                  zpl_isize block_align);
 
 //! Release the resources used by pool allocator.
-ZPL_DEF void zpl_pool_free(zpl_pool *pool);
+ZPL_DEF_INLINE void zpl_pool_free(zpl_pool *pool);
 
 //! Allocation Types: alloc, free
-ZPL_DEF zpl_allocator zpl_pool_allocator(zpl_pool *pool);
+ZPL_DEF_INLINE zpl_allocator zpl_pool_allocator(zpl_pool *pool);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc);
 
 
@@ -186,8 +186,8 @@ typedef struct zpl_allocation_header_ev {
     zpl_isize size;
 } zpl_allocation_header_ev;
 
-ZPL_DEF zpl_allocation_header_ev *zpl_allocation_header(void *data);
-ZPL_DEF void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size);
+ZPL_DEF_INLINE zpl_allocation_header_ev *zpl_allocation_header(void *data);
+ZPL_DEF_INLINE void zpl_allocation_header_fill(zpl_allocation_header_ev *header, void *data, zpl_isize size);
 
 #if defined(ZPL_ARCH_32_BIT)
 #define ZPL_ISIZE_HIGH_BIT 0x80000000
@@ -233,19 +233,19 @@ typedef struct zpl_stack_memory {
 } zpl_stack_memory;
 
 //! Initialize stack allocator from existing memory.
-ZPL_DEF void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size);
+ZPL_DEF_INLINE void zpl_stack_memory_init_from_memory(zpl_stack_memory *s, void *start, zpl_isize size);
 
 //! Initialize stack allocator using existing memory allocator.
-ZPL_DEF void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size);
+ZPL_DEF_INLINE void zpl_stack_memory_init(zpl_stack_memory *s, zpl_allocator backing, zpl_isize size);
 
 //! Check whether stack allocator is in use.
-ZPL_DEF zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
+ZPL_DEF_INLINE zpl_b32 zpl_stack_memory_is_in_use(zpl_stack_memory *s, void *ptr);
 
 //! Release the resources used by stack allocator.
-ZPL_DEF void zpl_stack_memory_free(zpl_stack_memory *s);
+ZPL_DEF_INLINE void zpl_stack_memory_free(zpl_stack_memory *s);
 
 //! Allocation Types: alloc, free, free_all
-ZPL_DEF zpl_allocator zpl_stack_allocator(zpl_stack_memory *s);
+ZPL_DEF_INLINE zpl_allocator zpl_stack_allocator(zpl_stack_memory *s);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_stack_allocator_proc);
 
 // TODO: Fixed heap allocator
