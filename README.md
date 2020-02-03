@@ -26,9 +26,9 @@ It's been created to simplify development process under C/C++ language and offer
 
 Library is cross-platform and currently works on **i386**, **amd64** and **ARM** architectures. It has been tested on **Windows**, **UNIX systems**, **iOS**, **Emscripten** and **Android**.
 
-## Honorable users of this library
+## Who uses this library?
 
-* [librg](https://github.com/librg/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
+* [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
 # Table of Contents
 ZPL consists of the following modules:
