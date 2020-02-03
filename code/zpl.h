@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.0.11 - Tweak module dependencies
   10.0.10 - Fix zero-allocation regression in filesystem module
   10.0.9 - Fix multi-compilation unit builds
   10.0.8 - Fix zpl_printf "%0d" format specifier
@@ -365,9 +366,16 @@ Version History:
         #define ZPL_MODULE_THREADING
     #endif
     #if defined(ZPL_ENABLE_JOBS) && !defined(ZPL_MODULE_JOBS)
+        #ifndef ZPL_MODULE_THREADING
+        #define ZPL_MODULE_THREADING /* dependency */
+        #endif
         #define ZPL_MODULE_JOBS
     #endif
     #if defined(ZPL_ENABLE_COROUTINES) && !defined(ZPL_MODULE_COROUTINES)
+        #ifndef ZPL_MODULE_THREADING
+        #define ZPL_MODULE_THREADING /* dependency */
+        #endif
+
         #ifndef ZPL_MODULE_JOBS
         #define ZPL_MODULE_JOBS /* dependency */
         #endif
@@ -407,9 +415,21 @@ Version History:
         #undef ZPL_MODULE_JSON
     #endif
     #if defined(ZPL_DISABLE_THREADING) && defined(ZPL_MODULE_THREADING)
+        #ifdef ZPL_MODULE_JOBS
+        #undef ZPL_MODULE_JOBS /* user */
+        #endif
+
+        #ifdef ZPL_MODULE_COROUTINES
+        #undef ZPL_MODULE_COROUTINES /* user */
+        #endif
+
         #undef ZPL_MODULE_THREADING
     #endif
     #if defined(ZPL_DISABLE_JOBS) && defined(ZPL_MODULE_JOBS)
+        #ifdef ZPL_MODULE_COROUTINES
+        #undef ZPL_MODULE_COROUTINES /* user */
+        #endif
+
         #undef ZPL_MODULE_JOBS
     #endif
     #if defined(ZPL_DISABLE_COROUTINES) && defined(ZPL_MODULE_COROUTINES)
