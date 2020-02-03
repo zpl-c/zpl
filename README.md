@@ -31,20 +31,27 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 * [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
 # Table of Contents
-ZPL consists of the following modules:
+
+ZPL consists of modules that are packed to various distributions. By default, ZPL offers most of the modules from the go.
+It also offers a nano distribution consisting only of essential parts that form the basis of the library, those are:
 * **Macro helpers** - This module contains many useful macros helpful for debugging as well as development itself.
 * **Memory** - Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
-* **Threading** - This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
-* **Sorting** - Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
+* **Collections** - Consists of C++-template-like macros that define containers for any type. All of these collections are C friendly and accessible using `de-reference` or `[]` operators. These are: buffer, array, linked-list, ring buffer.
 * **String** - Offers methods for c-string manipulation, but also a string library based on gb_string, which is c-string friendly.
-* **Regex** - Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
-* **Containers** - Consists of C++ template-like macros that define containers for any type. All of these containers are C friendly and accessible using `de-reference` or `[]` operators. These are: buffer, array, linked-list, ring buffer.
-* **Hashing** - Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
 * **Hashtable** - An instantiated hashtable implementation which works for any type defined.
 * **File** - File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
 * **Print** - Re-implementation of printf methods.
+* **Time** - Helper methods for retrieving the current time in many forms under different precisions.
+* **Hashing** - Several hashing methods useful in many domains. Contains: base64, adler32, crc32/64, fnv32/64/a and murmur32/64
+* **Random** - Fast and simple RNG library.
+* **Sorting** - Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
+* **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
+
+Additionally, ZPL also contains these additional modules that build upon the core itself:
+* **Threading** - This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
+* **Regex** - Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
 * **DLL** - Helper methods for loading a dynamic library. It also offers an ability to load a procedure address.
-* **Time** - Helper methods for retrieving the current time in many forms under different precisions. It also offers a simple to use timer library.
+* **Timer** - A simple to use callback-based timer library.
 * **Event** - Simple event handler which can fire multiple callbacks per registered event.
 * **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
@@ -52,7 +59,6 @@ ZPL consists of the following modules:
 * **Jobs system** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unecessary threading overhead.
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
-* **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
 
 ## Documentation
 
