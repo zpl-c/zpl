@@ -42,7 +42,6 @@ It also offers a nano distribution consisting only of essential parts that form 
 * **File** - File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
 * **Print** - Re-implementation of printf methods.
 * **Time** - Helper methods for retrieving the current time in many forms under different precisions.
-* **Hashing** - Several hashing methods useful in many domains. Contains: base64, adler32, crc32/64, fnv32/64/a and murmur32/64
 * **Random** - Fast and simple RNG library.
 * **Sorting** - Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
@@ -52,6 +51,7 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **Regex** - Port of gb_regex with several bugfixes applied. This is a simple regex library and is fast to perform.
 * **DLL** - Helper methods for loading a dynamic library. It also offers an ability to load a procedure address.
 * **Timer** - A simple to use callback-based timer library.
+* **Hashing** - Several hashing methods useful in many domains. Contains: base64, adler32, crc32/64, fnv32/64/a and murmur32/64
 * **Event** - Simple event handler which can fire multiple callbacks per registered event.
 * **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
