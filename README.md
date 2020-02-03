@@ -33,9 +33,9 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 | *gcc C*               | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    |                       |                       | :grey_question:       | :ballot_box_with_check:|
 | *msvc C*              | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
 | *mingw C*             | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
-| *clang C++*           | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :grey_question:       | :white_check_mark:    | :grey_question:       |                        |
+| *clang C++*           | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :grey_question:       | :white_check_mark:    | :grey_question:       | :grey_question:        |
 | *gcc C++*             | :white_check_mark:    | :white_check_mark:    | :grey_question:       |                       |                       | :grey_question:       | :ballot_box_with_check:|
-| *msvc C++*            | :white_check_mark:    |                       |                       |                       |                       |                       | :grey_question:        |
+| *msvc C++*            | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
 | *mingw C++*           | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
 
 <sub>
