@@ -27,19 +27,20 @@ It's been created to simplify development process under C/C++ language and offer
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test ZPL on, feel free to let us know about your experience and we can try to make it work together.
 
-| *Compiler* / Target   | Windows               | Linux                 | macOS                 | iOS                   | Android               | Raspberry Pi          |
-|:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |
-| *clang C*             | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    | :grey_question:       |
-| *gcc C*               | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    |                       |                       | :grey_question:       |
-| *msvc C*              | :white_check_mark:    |                       |                       |                       |                       |                       |
-| *mingw C*             | :white_check_mark:    |                       |                       |                       |                       |                       |
-| *clang C++*           | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :grey_question:       | :white_check_mark:    | :grey_question:       |
-| *gcc C++*             | :white_check_mark:    | :white_check_mark:    | :grey_question:       |                       |                       | :grey_question:       |
-| *msvc C++*            | :white_check_mark:    |                       |                       |                       |                       |                       |
-| *mingw C++*           | :white_check_mark:    |                       |                       |                       |                       |                       |
+| *Compiler* / Target   | Windows               | Linux                 | macOS                 | iOS                   | Android               | Raspberry Pi          | Emscripten             |
+|:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |:-:                    |:-:                     |
+| *clang C*             | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    | :grey_question:       | :grey_question:        |
+| *gcc C*               | :white_check_mark:    | :white_check_mark:    | :white_check_mark:    |                       |                       | :grey_question:       | :ballot_box_with_check:|
+| *msvc C*              | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
+| *mingw C*             | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
+| *clang C++*           | :grey_question:       | :white_check_mark:    | :white_check_mark:    | :grey_question:       | :white_check_mark:    | :grey_question:       |                        |
+| *gcc C++*             | :white_check_mark:    | :white_check_mark:    | :grey_question:       |                       |                       | :grey_question:       | :ballot_box_with_check:|
+| *msvc C++*            | :white_check_mark:    |                       |                       |                       |                       |                       | :grey_question:        |
+| *mingw C++*           | :white_check_mark:    |                       |                       |                       |                       |                       |                        |
 
 <sub>
 :white_check_mark: - compiles/runs without any errors.  
+:ballot_box_with_check: - compiles with limited features only.
 :grey_question: - not tested.  
 :red_circle: - compilation/runtime faults.  
 </sub>
