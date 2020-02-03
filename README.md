@@ -50,7 +50,7 @@ This will download the latest release of ZPL with everything prepared for you.
 git clone https://github.com/zpl-c/zpl.git
 ```
 
-This method is used by us to develop ZPL as it contains all the development sources that are easy to modify and expand. This method is not suitable for vendoring.
+This method is used by us to develop ZPL as it contains all the development sources that are easy to modify and expand, but it is not suitable for vendoring.
 
 # Table of Contents
 
