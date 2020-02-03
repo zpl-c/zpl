@@ -30,6 +30,28 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 
 * [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
+# How to use this library?
+
+There are several options in getting ZPL to work:
+
+1. Via CLI (the simplest option):
+```sh
+wget https://github.com/zpl-c/zpl/releases/latest/download/zpl.h
+```
+
+This will download the latest release of ZPL with everything prepared for you.
+
+2. Via GitHub releases page:
+* Navigate to the [releases page](https://github.com/zpl-c/zpl/releases) of the ZPL repository and simply pick the version you want to use. Each release contains distributed version of ZPL for you to use easily.
+
+3. Cloning the repository:
+* Simply clone the repository by pressing the **Clone or download** button for instructions or simply use your terminal to clone:
+```sh
+git clone https://github.com/zpl-c/zpl.git
+```
+
+This method is used by us to develop ZPL as it contains all the development sources that are easy to modify and expand. This method is not suitable for vendoring.
+
 # Table of Contents
 
 ZPL consists of modules that are packed to various distributions. By default, ZPL offers most of the modules from the go.
