@@ -32,19 +32,19 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 
 # How to get this library?
 
-There are several options in getting ZPL to work:
+There are several options in getting hands on ZPL:
 
-1. Via CLI (the simplest option):
+## 1. Via CLI (the simplest option):
 ```sh
 wget https://github.com/zpl-c/zpl/releases/latest/download/zpl.h
 ```
 
 This will download the latest release of ZPL with everything prepared for you.
 
-2. Via GitHub releases page:
+## 2. Via GitHub releases page:
 * Navigate to the [releases page](https://github.com/zpl-c/zpl/releases) of the ZPL repository and simply pick the version you want to use. Each release contains distributed version of ZPL for you to use easily.
 
-3. Cloning the repository:
+## 3. Cloning the repository:
 * Simply clone the repository by pressing the **Clone or download** button for instructions or simply use your terminal to clone:
 ```sh
 git clone https://github.com/zpl-c/zpl.git
