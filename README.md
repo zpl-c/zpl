@@ -30,7 +30,7 @@ Library is cross-platform and currently works on **i386**, **amd64** and **ARM**
 
 * [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
 
-# How to use this library?
+# How to get this library?
 
 There are several options in getting ZPL to work:
 
