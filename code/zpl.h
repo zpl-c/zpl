@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.0.12 - Cygwin fixes
   10.0.11 - Tweak module dependencies
   10.0.10 - Fix zero-allocation regression in filesystem module
   10.0.9 - Fix multi-compilation unit builds
