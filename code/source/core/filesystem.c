@@ -8,19 +8,25 @@
     #include <dirent.h>
 #endif
 
-#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD)
+#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_CYGWIN)
     #include <sys/sendfile.h>
 #endif
 
-#if defined(ZPL_SYSTEM_WINDOWS)
-    #include <io.h>
-    #include <direct.h>
+#if defined(ZPL_SYSTEM_WINDOWS) 
+#   include <io.h>
+#   include <direct.h>
+#endif
+
+#if defined(ZPL_SYSTEM_CYGWIN) 
+#   include <io.h>
+#   include <dirent.h>
+#   include <windows.h>
 #endif
 
 ZPL_BEGIN_C_DECLS
 
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
     zpl_file_time zpl_fs_last_write_time(char const *filepath) {
         ULARGE_INTEGER li = { 0 };
         FILETIME last_write_time = { 0 };

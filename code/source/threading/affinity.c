@@ -10,7 +10,7 @@
 
 ZPL_BEGIN_C_DECLS
 
-#if defined(ZPL_SYSTEM_WINDOWS)
+#if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
 
     void zpl_affinity_init(zpl_affinity *a) {
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION *start_processor_info = NULL;

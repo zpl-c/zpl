@@ -69,6 +69,10 @@ defined(__ppc64__) || defined(__aarch64__)
         #ifndef ZPL_SYSTEM_EMSCRIPTEN
             #define ZPL_SYSTEM_EMSCRIPTEN 1
         #endif
+    #elif defined(__CYGWIN__)
+        #ifndef ZPL_SYSTEM_CYGWIN
+            #define ZPL_SYSTEM_CYGWIN 1
+        #endif
     #else
         #error This UNIX operating system is not supported
     #endif
