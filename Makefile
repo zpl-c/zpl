@@ -1,5 +1,6 @@
 CC=gcc
 CXX=g++
+STDC=-std=gnu11
 
 ifeq ($(OS),Windows_NT)
 	CFLAGS += -DWIN32
@@ -8,10 +9,16 @@ else
 	ifeq ($(OSDEF),Linux)
 		LDFLAGS += -pthread -ldl -lm
 	endif
+	ifeq ($(OSDEF),OpenBSD)
+		STDC=-std=c11
+		CC=clang
+		CXX=clang++
+		LDFLAGS += -pthread -lm
+	endif
 endif
 
 WARNS = -Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
-CFLAGS += -g -std=gnu11 -Icode $(WARNS)
+CFLAGS += -g $(STDC) -Icode $(WARNS)
 CXXFLAGS += -g -std=c++11 -Icode $(WARNS)
 
 EXAMPLES += $(patsubst %.c,%,$(wildcard code/apps/examples/*.c))
@@ -45,4 +52,3 @@ endif
 	@mkdir -p build
 	@echo '=> Building $(@F)'
 	$(CXX) -g $(CXXFLAGS) $^ $(LDFLAGS) -o build/$(@F)
-

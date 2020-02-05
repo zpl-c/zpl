@@ -120,7 +120,7 @@ ZPL_BEGIN_C_DECLS
 
 #else
 
-    #if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD)
+    #if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD)
         zpl_f64 zpl__unix_getime(void) {
             struct timespec t;
             zpl_f64 result;

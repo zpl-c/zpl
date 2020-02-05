@@ -26,7 +26,7 @@ ZPL_BEGIN_C_DECLS
         zpl_isize threads_per_core;
     } zpl_affinity;
 
-#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN) || defined(ZPL_SYSTEM_OPENBSD)
 
     typedef struct zpl_affinity {
         zpl_b32   is_accurate;

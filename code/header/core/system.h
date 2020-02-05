@@ -65,6 +65,10 @@ defined(__ppc64__) || defined(__aarch64__)
         #ifndef ZPL_SYSTEM_FREEBSD
             #define ZPL_SYSTEM_FREEBSD 1
         #endif
+    #elif defined(__OpenBSD__)
+        #ifndef ZPL_SYSTEM_OPENBSD
+            #define ZPL_SYSTEM_OPENBSD 1
+        #endif
     #elif defined(__EMSCRIPTEN__)
         #ifndef ZPL_SYSTEM_EMSCRIPTEN
             #define ZPL_SYSTEM_EMSCRIPTEN 1
