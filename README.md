@@ -45,7 +45,9 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 :red_circle: - compilation/runtime faults.  
 </sub>
 
-- \*This platform's support is unfinished and might lack some features or degree of functionality compared to fully supported platforms. See [Platform Debt](.github/platform_debt.md) to find out which features are missing out for your platform.
+<sub>
+*This platform's support is unfinished and might lack some features or degree of functionality compared to fully supported platforms. See [Platform Debt](.github/platform_debt.md) to find out which features are missing out for your platform.
+</sub>
 
 ## Who uses this library?
 
