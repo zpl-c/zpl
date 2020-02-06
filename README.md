@@ -29,14 +29,14 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 
 | ***Compiler* / Target** | **Windows**        | **OpenBSD**             | **FreeBSD**        | **Linux**          | **macOS**          | **iOS**            | **Android**        | **Raspberry Pi** | **Emscripten**          |
 |:-----------------------:|:------------------:|:-----------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:----------------:|:-----------------------:|
-| *clang C*               | :grey_question:    | :ballot_box_with_check: | :grey_question:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :grey_question:  | :grey_question:         |
-| *gcc C*                 | :white_check_mark: | :grey_question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |                    | :grey_question:  | :ballot_box_with_check: |
+| *clang*                 | :grey_question:    | :ballot_box_with_check: | :grey_question:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :grey_question:  | :grey_question:         |
+| *gcc*                   | :white_check_mark: | :grey_question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |                    | :grey_question:  | :ballot_box_with_check: |
 | *msvc C*                | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
-| *mingw C*               | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
-| *clang C++*             | :grey_question:    | :ballot_box_with_check: | :grey_question:    | :white_check_mark: | :white_check_mark: | :grey_question:    | :white_check_mark: | :grey_question:  | :grey_question:         |
-| *gcc C++*               | :white_check_mark: | :grey_question:         | :white_check_mark: | :white_check_mark: | :grey_question:    |                    |                    | :grey_question:  | :ballot_box_with_check: |
+| *mingw*                 | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
+| *clang++*               | :grey_question:    | :ballot_box_with_check: | :grey_question:    | :white_check_mark: | :white_check_mark: | :grey_question:    | :white_check_mark: | :grey_question:  | :grey_question:         |
+| *g++*                   | :white_check_mark: | :grey_question:         | :white_check_mark: | :white_check_mark: | :grey_question:    |                    |                    | :grey_question:  | :ballot_box_with_check: |
 | *msvc C++*              | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
-| *mingw C++*             | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
+| *mingw++*               | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
 
 <sub>
 :white_check_mark: - compiles/runs without any errors.  
