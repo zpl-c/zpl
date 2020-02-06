@@ -28,7 +28,7 @@ Library is cross-platform and currently works on **i386**, **amd64** and some **
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test ZPL on, feel free to let us know about your experience and we can try to make it work together.
 
 | ***Compiler* / Target** | **Windows**        | **OpenBSD**             | **FreeBSD**        | **Linux**          | **macOS**          | **iOS**            | **Android**        | **Raspberry Pi** | **Emscripten**          |
-|-------------------------|--------------------|-------------------------|--------------------|--------------------|--------------------|--------------------|--------------------|------------------|-------------------------|
+|:-----------------------:|:------------------:|:-----------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:----------------:|:-----------------------:|
 | *clang C*               | :grey_question:    | :ballot_box_with_check: | :grey_question:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :grey_question:  | :grey_question:         |
 | *gcc C*                 | :white_check_mark: | :grey_question:         | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |                    | :grey_question:  | :ballot_box_with_check: |
 | *msvc C*                | :white_check_mark: |                         |                    |                    |                    |                    |                    |                  |                         |
