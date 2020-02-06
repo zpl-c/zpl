@@ -40,11 +40,12 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 
 <sub>
 :white_check_mark: - compiles/runs without any errors.  
-:ballot_box_with_check: - compiles with limited features only.
+:ballot_box_with_check: - compiles with limited features only.\*
 :grey_question: - not tested.  
 :red_circle: - compilation/runtime faults.  
 </sub>
 
+- \*This platform's support is unfinished and might lack some features or degree of functionality compared to fully supported platforms. See [Platform Debt](.github/platform_debt.md) to find out which features are missing out for your platform.
 
 ## Who uses this library?
 
