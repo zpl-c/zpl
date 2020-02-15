@@ -15,6 +15,12 @@ else
 		CXX=clang++
 		LDFLAGS += -pthread -lm
 	endif
+	ifeq ($(OSDEF),FreeBSD)
+		STDC=-std=c11
+		CC=clang
+		CXX=clang++
+		LDFLAGS+=-pthread -lm
+	endif
 endif
 
 WARNS = -Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces

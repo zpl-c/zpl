@@ -98,6 +98,13 @@ ZPL_BEGIN_C_DECLS
         return cast(zpl_file_time) result;
     }
 
+    #if defined(ZPL_SYSTEM_FREEBSD)
+        #include <sys/types.h>
+        #include <sys/socket.h>
+        #include <sys/uio.h>
+    #endif
+
+
     zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
         zpl_unused(fail_if_exists);
     #if defined(ZPL_SYSTEM_OSX)

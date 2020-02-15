@@ -27,7 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
-
+  10.0.14 - FreeBSD support
   10.0.13 - OpenBSD support
   10.0.12 - Cygwin fixes
   10.0.11 - Tweak module dependencies
