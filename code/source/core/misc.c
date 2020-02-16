@@ -144,9 +144,9 @@ zpl_string zpl_system_command_str(const char *command, zpl_allocator backing) {
         #else
             pclose(handle);
         #endif
+        return output;
     #endif
-
-    return output;
+    return NULL;
 }
 
 ZPL_END_C_DECLS
