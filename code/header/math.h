@@ -98,8 +98,8 @@ typedef union zpl_plane {
     struct {
         zpl_f32 a, b, c, d;
     };
-    zpl_vec4 abcd;
-    zpl_vec3 abc;
+    zpl_vec4 xyzw;
+    zpl_vec3 n;
     zpl_f32 e[4];
 } zpl_plane;
 
