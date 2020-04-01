@@ -443,10 +443,15 @@ zpl_vec4 zpl_vec4fv(zpl_f32 x[4]) {
     return v;
 }
 
+zpl_f32 zpl_vec2_max(zpl_vec2 v) { return zpl_max(v.x, v.y); }
+zpl_f32 zpl_vec2_side(zpl_vec2 p, zpl_vec2 q, zpl_vec2 r) { return ((q.x - p.x) * (r.y - p.y) - (r.x - p.x) * (q.y - p.y)); }
+
 void zpl_vec2_add(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, +, v1, +0); }
 void zpl_vec2_sub(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, -, v1, +0); }
 void zpl_vec2_mul(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, *s); }
 void zpl_vec2_div(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, / s); }
+
+zpl_f32 zpl_vec3_max(zpl_vec3 v) { return zpl_max3(v.x, v.y, v.z); }
 
 void zpl_vec3_add(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, +, v1, +0); }
 void zpl_vec3_sub(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, -, v1, +0); }
@@ -586,6 +591,10 @@ void zpl_float22_identity(zpl_f32 m[2][2]) {
     m[1][1] = 1;
 }
 
+void zpl_mat2_copy(zpl_mat2* out, zpl_mat2* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat3));
+}
+
 void zpl_mat2_mul_vec2(zpl_vec2 *out, zpl_mat2 *m, zpl_vec2 in) { zpl_float22_mul_vec2(out, zpl_float22_m(m), in); }
 
 zpl_mat2 *zpl_mat2_v(zpl_vec2 m[2])   { return (zpl_mat2 *)m; }
@@ -646,6 +655,10 @@ void zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in) {
 
 void zpl_mat3_transpose(zpl_mat3 *m) { zpl_float33_transpose(zpl_float33_m(m)); }
 void zpl_mat3_identity(zpl_mat3 *m)  { zpl_float33_identity(zpl_float33_m(m)); }
+
+void zpl_mat3_copy(zpl_mat3* out, zpl_mat3* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat3));
+}
 
 void zpl_mat3_mul(zpl_mat3 *out, zpl_mat3 *m1, zpl_mat3 *m2) {
     zpl_float33_mul(zpl_float33_m(out), zpl_float33_m(m1), zpl_float33_m(m2));
@@ -735,6 +748,11 @@ void zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in) {
 
 void zpl_mat4_transpose(zpl_mat4 *m) { zpl_float44_transpose(zpl_float44_m(m)); }
 void zpl_mat4_identity(zpl_mat4 *m)  { zpl_float44_identity(zpl_float44_m(m)); }
+
+void zpl_mat4_copy(zpl_mat4* out, zpl_mat4* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat4));
+}
+
 
 void zpl_mat4_mul(zpl_mat4 *out, zpl_mat4 *m1, zpl_mat4 *m2) {
     zpl_float44_mul(zpl_float44_m(out), zpl_float44_m(m1), zpl_float44_m(m2));
@@ -1223,6 +1241,10 @@ void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *mat) {
             out->z = biggest_value;
             break;
     }
+}
+
+zpl_f32 zpl_plane_distance(zpl_plane* p, zpl_vec3 v) {
+    return (p->a * v.x + p->b * v.y + p->c * v.z + p->d);
 }
 
 zpl_f32 zpl_lerp(zpl_f32 a, zpl_f32 b, zpl_f32 t) { return a * (1.0f - t) + b * t; }

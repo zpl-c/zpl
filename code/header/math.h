@@ -18,6 +18,9 @@ typedef union zpl_vec2 {
     struct {
         zpl_f32 x, y;
     };
+    struct {
+        zpl_f32 s, t;
+    };
     zpl_f32 e[2];
 } zpl_vec2;
 
@@ -28,8 +31,12 @@ typedef union zpl_vec3 {
     struct {
         zpl_f32 r, g, b;
     };
+    struct {
+        zpl_f32 s, t, p;
+    };
 
     zpl_vec2 xy;
+    zpl_vec2 st;
     zpl_f32 e[3];
 } zpl_vec3;
 
@@ -41,7 +48,13 @@ typedef union zpl_vec4 {
         zpl_f32 r, g, b, a;
     };
     struct {
+        zpl_f32 s, t, p, q;
+    };
+    struct {
         zpl_vec2 xy, zw;
+    };
+    struct {
+        zpl_vec2 st, pq;
     };
     zpl_vec3 xyz;
     zpl_vec3 rgb;
@@ -80,6 +93,15 @@ typedef union zpl_quat {
     zpl_vec3 xyz;
     zpl_f32 e[4];
 } zpl_quat;
+
+typedef union zpl_plane {
+    struct {
+        zpl_f32 a, b, c, d;
+    };
+    zpl_vec4 abcd;
+    zpl_vec3 abc;
+    zpl_f32 e[4];
+} zpl_plane;
 
 typedef zpl_f32 zpl_float2[2];
 typedef zpl_f32 zpl_float3[3];
@@ -195,11 +217,14 @@ ZPL_DEF zpl_vec4 zpl_vec4f_zero(void);
 ZPL_DEF zpl_vec4 zpl_vec4f(zpl_f32 x, zpl_f32 y, zpl_f32 z, zpl_f32 w);
 ZPL_DEF zpl_vec4 zpl_vec4fv(zpl_f32 x[4]);
 
+ZPL_DEF zpl_f32 zpl_vec2_max(zpl_vec2 v);
+ZPL_DEF zpl_f32 zpl_vec2_side(zpl_vec2 p, zpl_vec2 q, zpl_vec2 r);
 ZPL_DEF void zpl_vec2_add(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1);
 ZPL_DEF void zpl_vec2_sub(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1);
 ZPL_DEF void zpl_vec2_mul(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s);
 ZPL_DEF void zpl_vec2_div(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s);
 
+ZPL_DEF zpl_f32 zpl_vec3_max(zpl_vec3 v);
 ZPL_DEF void zpl_vec3_add(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1);
 ZPL_DEF void zpl_vec3_sub(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1);
 ZPL_DEF void zpl_vec3_mul(zpl_vec3 *d, zpl_vec3 v, zpl_f32 s);
@@ -296,6 +321,7 @@ ZPL_DEF void zpl_float33_mul_vec3(zpl_vec3 *out, zpl_f32 m[3][3], zpl_vec3 in);
 
 ZPL_DEF void zpl_mat4_identity(zpl_mat4 *m);
 ZPL_DEF void zpl_float44_identity(zpl_f32 m[4][4]);
+ZPL_DEF void zpl_mat4_copy(zpl_mat4* out, zpl_mat4* m);
 
 ZPL_DEF void zpl_mat4_transpose(zpl_mat4 *m);
 ZPL_DEF void zpl_mat4_mul(zpl_mat4 *out, zpl_mat4 *m1, zpl_mat4 *m2);
@@ -364,6 +390,8 @@ ZPL_DEF zpl_f32 zpl_quat_roll(zpl_quat q);
 ZPL_DEF void zpl_quat_rotate_vec3(zpl_vec3 *d, zpl_quat q, zpl_vec3 v);
 ZPL_DEF void zpl_mat4_from_quat(zpl_mat4 *out, zpl_quat q);
 ZPL_DEF void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *m);
+
+ZPL_DEF zpl_f32 zpl_plane_distance(zpl_plane* p, zpl_vec3 v);
 
 /* Interpolations */
 ZPL_DEF zpl_f32 zpl_lerp(zpl_f32 a, zpl_f32 b, zpl_f32 t);
