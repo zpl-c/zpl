@@ -103,6 +103,15 @@ typedef union zpl_plane {
     zpl_f32 e[4];
 } zpl_plane;
 
+typedef struct zpl_frustum {
+    zpl_plane x1;
+    zpl_plane x2;
+    zpl_plane y1;
+    zpl_plane y2;
+    zpl_plane z1;
+    zpl_plane z2;
+} zpl_frustum;
+
 typedef zpl_f32 zpl_float2[2];
 typedef zpl_f32 zpl_float3[3];
 typedef zpl_f32 zpl_float4[4];
@@ -391,7 +400,14 @@ ZPL_DEF void zpl_quat_rotate_vec3(zpl_vec3 *d, zpl_quat q, zpl_vec3 v);
 ZPL_DEF void zpl_mat4_from_quat(zpl_mat4 *out, zpl_quat q);
 ZPL_DEF void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *m);
 
+/* Plane math. */
 ZPL_DEF zpl_f32 zpl_plane_distance(zpl_plane* p, zpl_vec3 v);
+
+/* Frustum culling. */
+ZPL_DEF void zpl_frustum_create(zpl_frustum* out, zpl_mat4* camera, zpl_mat4* proj);
+ZPL_DEF zpl_b8 zpl_frustum_sphere_inside(zpl_frustum* frustum, zpl_vec3 center, zpl_f32 radius);
+ZPL_DEF zpl_b8 zpl_frustum_point_inside(zpl_frustum* frustum, zpl_vec3 point);
+ZPL_DEF zpl_b8 zpl_frustum_box_inside(zpl_frustum* frustum, zpl_aabb3 box);
 
 /* Interpolations */
 ZPL_DEF zpl_f32 zpl_lerp(zpl_f32 a, zpl_f32 b, zpl_f32 t);
