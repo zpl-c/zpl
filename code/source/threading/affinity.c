@@ -140,7 +140,7 @@ ZPL_BEGIN_C_DECLS
         return a->threads_per_core;
     }
 
-#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD)
+#elif defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD)
 
     // IMPORTANT TODO: This zpl_affinity stuff for linux needs be improved a lot!
     // NOTE(zangent): I have to read /proc/cpuinfo to get the number of threads per core.

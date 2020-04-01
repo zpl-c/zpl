@@ -8,16 +8,16 @@
     #include <dirent.h>
 #endif
 
-#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_CYGWIN)
+#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_OPENBSD) && !defined(ZPL_SYSTEM_CYGWIN)
     #include <sys/sendfile.h>
 #endif
 
-#if defined(ZPL_SYSTEM_WINDOWS) 
+#if defined(ZPL_SYSTEM_WINDOWS)
 #   include <io.h>
 #   include <direct.h>
 #endif
 
-#if defined(ZPL_SYSTEM_CYGWIN) 
+#if defined(ZPL_SYSTEM_CYGWIN)
 #   include <io.h>
 #   include <dirent.h>
 #   include <windows.h>
@@ -98,10 +98,20 @@ ZPL_BEGIN_C_DECLS
         return cast(zpl_file_time) result;
     }
 
+    #if defined(ZPL_SYSTEM_FREEBSD)
+        #include <sys/types.h>
+        #include <sys/socket.h>
+        #include <sys/uio.h>
+    #endif
+
+
     zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
         zpl_unused(fail_if_exists);
     #if defined(ZPL_SYSTEM_OSX)
         return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
+    #elif defined(ZPL_SYSTEM_OPENBSD)
+        ZPL_NOT_IMPLEMENTED;
+        return 0;
     #else
         zpl_isize size;
         int existing_fd = open(existing_filename, O_RDONLY, 0);
