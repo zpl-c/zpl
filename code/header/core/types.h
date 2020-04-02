@@ -108,6 +108,10 @@ typedef zpl_i32 zpl_b32;
     #endif
 #endif
 
+#if __cplusplus > 199711L
+#define register      // Deprecated in C++11.
+#endif  // #if __cplusplus > 199711L
+
 #ifndef ZPL_U8_MIN
     #define ZPL_U8_MIN 0u
     #define ZPL_U8_MAX 0xffu
