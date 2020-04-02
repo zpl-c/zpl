@@ -52,6 +52,20 @@ ZPL_IMPL_INLINE zpl_u64 zpl_endian_swap64(zpl_u64 i) {
         ((i&0x000000ff00000000ull)>>8)  | ((i&0x00000000ff000000ull)<<8);
 }
 
+ZPL_IMPL_INLINE zpl_i32 zpl_next_pow2(zpl_i32 x) {
+    x--;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return x + 1;
+}
+
+ZPL_IMPL_INLINE void zpl_bit_set(zpl_u32* x, zpl_u32 bit) { *x = *x | (1 << bit); }
+ZPL_IMPL_INLINE zpl_b8 zpl_bit_get(zpl_u32 x, zpl_u32 bit) { return (x & (1 << bit)); }
+ZPL_IMPL_INLINE void zpl_bit_reset(zpl_u32* x, zpl_u32 bit) { *x = *x & ~(1 << bit); }
+
 ZPL_IMPL_INLINE zpl_isize zpl_count_set_bits(zpl_u64 mask) {
     zpl_isize count = 0;
     while (mask) {

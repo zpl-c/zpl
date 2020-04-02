@@ -443,10 +443,15 @@ zpl_vec4 zpl_vec4fv(zpl_f32 x[4]) {
     return v;
 }
 
+zpl_f32 zpl_vec2_max(zpl_vec2 v) { return zpl_max(v.x, v.y); }
+zpl_f32 zpl_vec2_side(zpl_vec2 p, zpl_vec2 q, zpl_vec2 r) { return ((q.x - p.x) * (r.y - p.y) - (r.x - p.x) * (q.y - p.y)); }
+
 void zpl_vec2_add(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, +, v1, +0); }
 void zpl_vec2_sub(zpl_vec2 *d, zpl_vec2 v0, zpl_vec2 v1) { ZPL_VEC2_3OP(d, v0, -, v1, +0); }
 void zpl_vec2_mul(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, *s); }
 void zpl_vec2_div(zpl_vec2 *d, zpl_vec2 v, zpl_f32 s)    { ZPL_VEC2_2OP(d, v, / s); }
+
+zpl_f32 zpl_vec3_max(zpl_vec3 v) { return zpl_max3(v.x, v.y, v.z); }
 
 void zpl_vec3_add(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, +, v1, +0); }
 void zpl_vec3_sub(zpl_vec3 *d, zpl_vec3 v0, zpl_vec3 v1) { ZPL_VEC3_3OP(d, v0, -, v1, +0); }
@@ -586,6 +591,10 @@ void zpl_float22_identity(zpl_f32 m[2][2]) {
     m[1][1] = 1;
 }
 
+void zpl_mat2_copy(zpl_mat2* out, zpl_mat2* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat3));
+}
+
 void zpl_mat2_mul_vec2(zpl_vec2 *out, zpl_mat2 *m, zpl_vec2 in) { zpl_float22_mul_vec2(out, zpl_float22_m(m), in); }
 
 zpl_mat2 *zpl_mat2_v(zpl_vec2 m[2])   { return (zpl_mat2 *)m; }
@@ -646,6 +655,10 @@ void zpl_mat2_inverse(zpl_mat2 *out, zpl_mat2 *in) {
 
 void zpl_mat3_transpose(zpl_mat3 *m) { zpl_float33_transpose(zpl_float33_m(m)); }
 void zpl_mat3_identity(zpl_mat3 *m)  { zpl_float33_identity(zpl_float33_m(m)); }
+
+void zpl_mat3_copy(zpl_mat3* out, zpl_mat3* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat3));
+}
 
 void zpl_mat3_mul(zpl_mat3 *out, zpl_mat3 *m1, zpl_mat3 *m2) {
     zpl_float33_mul(zpl_float33_m(out), zpl_float33_m(m1), zpl_float33_m(m2));
@@ -735,6 +748,11 @@ void zpl_mat3_inverse(zpl_mat3 *out, zpl_mat3 *in) {
 
 void zpl_mat4_transpose(zpl_mat4 *m) { zpl_float44_transpose(zpl_float44_m(m)); }
 void zpl_mat4_identity(zpl_mat4 *m)  { zpl_float44_identity(zpl_float44_m(m)); }
+
+void zpl_mat4_copy(zpl_mat4* out, zpl_mat4* m) {
+    zpl_memcopy(out, m, sizeof(zpl_mat4));
+}
+
 
 void zpl_mat4_mul(zpl_mat4 *out, zpl_mat4 *m1, zpl_mat4 *m2) {
     zpl_float44_mul(zpl_float44_m(out), zpl_float44_m(m1), zpl_float44_m(m2));
@@ -1223,6 +1241,165 @@ void zpl_quat_from_mat4(zpl_quat *out, zpl_mat4 *mat) {
             out->z = biggest_value;
             break;
     }
+}
+
+zpl_f32 zpl_plane_distance(zpl_plane* p, zpl_vec3 v) {
+    return (p->a * v.x + p->b * v.y + p->c * v.z + p->d);
+}
+
+void zpl_frustum_create(zpl_frustum* out, zpl_mat4* camera, zpl_mat4* proj) {
+    zpl_mat4 pv;
+
+    zpl_mat4_mul(&pv, camera, proj);
+
+    register zpl_plane* fp = 0;
+    zpl_f32 rmag;
+
+    fp = &out->x1;
+    fp->a = pv.x.w + pv.x.x;
+    fp->b = pv.y.w + pv.x.y;
+    fp->c = pv.z.w + pv.x.z;
+    fp->d = pv.w.w + pv.x.w;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;
+
+    fp = &out->x2;
+
+    fp->a = pv.x.w - pv.x.x;
+    fp->b = pv.y.w - pv.x.y;
+    fp->c = pv.z.w - pv.x.z;
+    fp->d = pv.w.w - pv.x.w;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;
+
+    fp = &out->y1;
+
+    fp->a = pv.x.w - pv.y.x;
+    fp->b = pv.y.w - pv.y.y;
+    fp->c = pv.z.w - pv.y.w;
+    fp->d = pv.w.w - pv.y.z;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;
+
+    fp = &out->y2;
+
+    fp->a = pv.x.w + pv.y.x;
+    fp->b = pv.y.w + pv.y.y;
+    fp->c = pv.z.w + pv.y.z;
+    fp->d = pv.w.w + pv.y.w;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;;
+
+    fp = &out->z1;
+
+    fp->a = pv.x.w + pv.z.x;
+    fp->b = pv.y.w + pv.z.y;
+    fp->c = pv.z.w + pv.z.z;
+    fp->d = pv.w.w + pv.z.w;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;
+
+    fp = &out->z2;
+
+    fp->a = pv.x.w - pv.z.x;
+    fp->b = pv.y.w - pv.z.y;
+    fp->c = pv.z.w - pv.z.z;
+    fp->d = pv.w.w - pv.z.w;
+
+    rmag = zpl_rsqrt(zpl_square(fp->a) + zpl_square(fp->b) + zpl_square(fp->c));
+
+    fp->a *= rmag;
+    fp->b *= rmag;
+    fp->c *= rmag;
+    fp->d *= rmag;
+}
+
+zpl_b8 zpl_frustum_sphere_inside(zpl_frustum* frustum, zpl_vec3 center, zpl_f32 radius) {
+    if (zpl_plane_distance(&frustum->x1, center) <= -radius) return 0;
+    if (zpl_plane_distance(&frustum->x2, center) <= -radius) return 0;
+    if (zpl_plane_distance(&frustum->y1, center) <= -radius) return 0;
+    if (zpl_plane_distance(&frustum->y2, center) <= -radius) return 0;
+    if (zpl_plane_distance(&frustum->z1, center) <= -radius) return 0;
+    if (zpl_plane_distance(&frustum->z2, center) <= -radius) return 0;
+
+    return 1;
+}
+
+zpl_b8 zpl_frustum_point_inside(zpl_frustum* frustum, zpl_vec3 point) {
+    return zpl_frustum_sphere_inside(frustum, point, 0.0f);
+}
+
+zpl_b8 zpl_frustum_box_inside(zpl_frustum* frustum, zpl_aabb3 aabb) {
+    
+    zpl_vec3 box = aabb.half_size;
+    zpl_vec3 v, b;
+
+    b = zpl_vec3f(-box.x, -box.y, -box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(+box.x, -box.y, -box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(-box.x, +box.y, -box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(+box.x, +box.y, -box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(+box.x, +box.y, +box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(-box.x, +box.y, +box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(-box.x, -box.y, +box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    b = zpl_vec3f(+box.x, -box.y, +box.z);
+    zpl_vec3_add(&v, b, aabb.centre);
+
+    if (zpl_frustum_point_inside(frustum, v)) return 1;
+
+    return 0;
 }
 
 zpl_f32 zpl_lerp(zpl_f32 a, zpl_f32 b, zpl_f32 t) { return a * (1.0f - t) + b * t; }
