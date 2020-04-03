@@ -946,9 +946,10 @@ void zpl_mat4_ortho2d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom
 
     m[0][0] = 2.0f / (right - left);
     m[1][1] = 2.0f / (top - bottom);
-    m[2][2] = -1.0f;
+    m[2][2] = -2.0f;
     m[3][0] = -(right + left) / (right - left);
     m[3][1] = -(top + bottom) / (top - bottom);
+	m[3][2] = -1.0f;
 }
 
 void zpl_mat4_ortho3d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top, zpl_f32 z_near, zpl_f32 z_far) {
@@ -994,6 +995,60 @@ void zpl_mat4_infinite_perspective(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, 
     m[3][2] = -2.0f * z_near;
 }
 
+void zpl_mat4_ortho2d_dx(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top) {
+    zpl_float4 *m;
+    zpl_mat4_identity(out);
+    m = zpl_float44_m(out);
+
+    m[0][0] = 2.0f / (right - left);
+    m[1][1] = 2.0f / (top - bottom);
+    m[2][2] = -1.0f;
+    m[3][0] = -(right + left) / (right - left);
+    m[3][1] = -(top + bottom) / (top - bottom);
+	m[3][2] = -1.0f;
+}
+
+void zpl_mat4_ortho3d_dx(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top, zpl_f32 z_near, zpl_f32 z_far) {
+    zpl_float4 *m;
+    zpl_mat4_identity(out);
+    m = zpl_float44_m(out);
+
+    m[0][0] = +2.0f / (right - left);
+    m[1][1] = +2.0f / (top - bottom);
+    m[2][2] = -1.0f / (z_far - z_near);
+    m[3][0] = -(right + left) / (right - left);
+    m[3][1] = -(top + bottom) / (top - bottom);
+    m[3][2] = -( z_near) / (z_far - z_near);
+}
+
+void zpl_mat4_perspective_dx(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, zpl_f32 z_near, zpl_f32 z_far) {
+    zpl_f32 tan_half_fovy = zpl_tan(0.5f * fovy);
+    zpl_mat4 zero_mat = { 0 };
+    zpl_float4 *m = zpl_float44_m(out);
+    *out = zero_mat;
+
+    m[0][0] = 1.0f / (aspect * tan_half_fovy);
+    m[1][1] = 1.0f / (tan_half_fovy);
+    m[2][2] = -(z_far ) / (z_far - z_near);
+    m[2][3] = -1.0f;
+    m[3][2] = - z_near / (z_far - z_near);
+}
+
+void zpl_mat4_infinite_perspective_dx(zpl_mat4 *out, zpl_f32 fovy, zpl_f32 aspect, zpl_f32 z_near) {
+     zpl_f32 tan_half_fovy = zpl_tan(0.5f * fovy);
+    zpl_mat4 zero_mat = { 0 };
+    zpl_float4 *m = zpl_float44_m(out);
+    *out = zero_mat;
+
+    m[0][0] = 1.0f / (aspect * tan_half_fovy);
+    m[1][1] = 1.0f / (tan_half_fovy);
+    m[2][2] = -1.0f;
+    m[2][3] = -1.0f;
+    m[3][2] = - z_near;
+}
+
+
+
 void zpl_mat4_look_at(zpl_mat4 *out, zpl_vec3 eye, zpl_vec3 centre, zpl_vec3 up) {
     zpl_vec3 f, s, u;
     zpl_float4 *m;
@@ -1024,6 +1079,38 @@ void zpl_mat4_look_at(zpl_mat4 *out, zpl_vec3 eye, zpl_vec3 centre, zpl_vec3 up)
     m[3][0] = -zpl_vec3_dot(s, eye);
     m[3][1] = -zpl_vec3_dot(u, eye);
     m[3][2] = +zpl_vec3_dot(f, eye);
+}
+
+void zpl_mat4_look_at_lh(zpl_mat4 *out, zpl_vec3 eye, zpl_vec3 centre, zpl_vec3 up) {
+    zpl_vec3 f, s, u;
+    zpl_float4 *m;
+
+    zpl_vec3_sub(&f, centre, eye);
+    zpl_vec3_norm(&f, f);
+
+    zpl_vec3_cross(&s, up, f);
+    zpl_vec3_norm(&s, s);
+
+    zpl_vec3_cross(&u, f, s);
+
+    zpl_mat4_identity(out);
+    m = zpl_float44_m(out);
+
+    m[0][0] = +s.x;
+    m[1][0] = +s.y;
+    m[2][0] = +s.z;
+
+    m[0][1] = +u.x;
+    m[1][1] = +u.y;
+    m[2][1] = +u.z;
+
+    m[0][2] = +f.x;
+    m[1][2] = +f.y;
+    m[2][2] = +f.z;
+
+    m[3][0] = -zpl_vec3_dot(s, eye);
+    m[3][1] = -zpl_vec3_dot(u, eye);
+    m[3][2] = -zpl_vec3_dot(f, eye);
 }
 
 zpl_quat zpl_quatf(zpl_f32 x, zpl_f32 y, zpl_f32 z, zpl_f32 w) {
