@@ -946,10 +946,9 @@ void zpl_mat4_ortho2d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom
 
     m[0][0] = 2.0f / (right - left);
     m[1][1] = 2.0f / (top - bottom);
-    m[2][2] = -2.0f;
+    m[2][2] = -1.0f;
     m[3][0] = -(right + left) / (right - left);
     m[3][1] = -(top + bottom) / (top - bottom);
-	m[3][2] = -1.0f;
 }
 
 void zpl_mat4_ortho3d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top, zpl_f32 z_near, zpl_f32 z_far) {
@@ -1005,7 +1004,6 @@ void zpl_mat4_ortho2d_dx(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bot
     m[2][2] = -1.0f;
     m[3][0] = -(right + left) / (right - left);
     m[3][1] = -(top + bottom) / (top - bottom);
-	m[3][2] = -1.0f;
 }
 
 void zpl_mat4_ortho3d_dx(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top, zpl_f32 z_near, zpl_f32 z_far) {
