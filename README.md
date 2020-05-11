@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/72661667-9fd43500-39e5-11ea-98b2-14f3de66d389.png" alt="zpl" /></a>
+    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/81554853-31e6bb80-9390-11ea-94c7-c25ab15e57eb.png" alt="zpl" /></a>
 </div>
 
 <div align="center">
@@ -10,7 +10,7 @@
 
 <br />
 <div align="center">
-  C11 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
+  C99 cross-platform header-only library that offers powerful toolkit to accelerate your development progress.
 </div>
 
 <div align="center">
@@ -212,7 +212,11 @@ code structure and QoL changes.
 
 Yes, indeed. This project is dual-licensed according to LICENSE, you are free to fork it, contribute to it or even sell it as you see fit.
 
-**Why C11?**
+**Why almost C99?**
+
+Most parts of the library are written in pure C99. There are however, some additional components that require C11 to work (mainly in the `Threading` module). As long as you are using minimal version (`ZPL_NANO`), and manually enable modules the C99 support should be just fine.
+
+**Why C99 though?**
 
 Why not?
 
