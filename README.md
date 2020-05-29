@@ -106,7 +106,7 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **Math** - OpenGL gamedev friendly library for math.
 
 ## Documentation
-Documentation is available in its generated form at [zpl.madaraszd.net](https://zpl.madaraszd.net/).
+Documentation is available in its generated form at [zpl.pw/docs](https://zpl.pw/docs).
 
 You can see all modules by accessing the **Modules** link.
 
