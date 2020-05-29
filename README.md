@@ -106,8 +106,15 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **Math** - OpenGL gamedev friendly library for math.
 
 ## Documentation
+Documentation is available in its generated form at [zpl.madaraszd.net](https://zpl.madaraszd.net/).
 
-We plan to use [DuckDoc](https://duckdoc.io/) for documentation later on. The service is still under development, but we're looking forward to it.
+You can see all modules by accessing the **Modules** link.
+
+Note that the documentation is still work in progress and will be tweaked further.
+
+You can build the documentation using Doxygen 1.8.11 or later. We use modified version of [m.css](http://mcss.mosra.cz/doxygen/) to generate styled documentation. It uses Python3 with dependencies: `jinja2, Pygments` to generate files. You can use `docs.bat` to build offline documentation.
+
+m.css is available as submodule, so make sure you clone this repo recursively to obtain it.
 
 # Support Me
 
