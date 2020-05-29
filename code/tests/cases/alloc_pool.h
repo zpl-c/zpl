@@ -66,11 +66,11 @@ MODULE(alloc_pool, {
         zpl_free_all(A);
 
         EQUALS(pool.total_size, 0);
-        EQUALS(pool.physical_start, pool.free_list);
+        EQUALS((zpl_uintptr)pool.physical_start, (zpl_uintptr)pool.free_list);
 
         zpl_alloc(A, 1);
         EQUALS(pool.total_size, 1);
-        NEQUALS(pool.physical_start, pool.free_list);
+        NEQUALS((zpl_uintptr)pool.physical_start, (zpl_uintptr)pool.free_list);
         CLEANUP();
     });
 
