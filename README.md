@@ -59,7 +59,7 @@ There are several options in getting hands on ZPL:
 
 ## 1. Via CLI (the simplest option):
 ```sh
-wget https://zpl.pw/fetch
+curl https://zpl.pw/fetch > zpl.h
 ```
 
 This will download the latest release of ZPL with everything prepared for you.
