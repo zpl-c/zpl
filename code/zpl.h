@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.2.0  - Pool allocator now supports zpl_free_all
   10.1.0  - Additional math methods (thanks to funZX and msmshazan)
   10.0.15 - WIP Emscripten fixes
   10.0.14 - FreeBSD support

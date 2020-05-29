@@ -21,7 +21,7 @@ foreach(example_source ${examples})
     endif()
 endforeach()
 
-add_executable(tester ../code/apps/tests/tester.c)
+add_executable(tester ../code/tests/tester.c)
 
 if (WIN32)
     target_link_libraries(tester winmm)

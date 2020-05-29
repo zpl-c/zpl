@@ -36,7 +36,7 @@ BUILD_FILES = $(wildcard build/*)
 
 all: clean examples test
 
-test: clean code/apps/tests/tester
+test: clean code/tests/tester
 	@echo '> Building unit tests'
 	build/tester
 

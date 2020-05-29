@@ -164,6 +164,7 @@ typedef struct zpl_pool {
     zpl_isize block_size;
     zpl_isize block_align;
     zpl_isize total_size;
+    zpl_isize num_blocks;
 } zpl_pool;
 
 

@@ -145,6 +145,7 @@ void zpl_pool_init_align(zpl_pool *pool, zpl_allocator backing, zpl_isize num_bl
     pool->backing = backing;
     pool->block_size = block_size;
     pool->block_align = block_align;
+    pool->num_blocks = num_blocks;
 
     actual_block_size = block_size + block_align;
     pool_size = num_blocks * actual_block_size;
@@ -196,9 +197,26 @@ ZPL_ALLOCATOR_PROC(zpl_pool_allocator_proc) {
             pool->total_size -= pool->block_size;
         } break;
 
-        case ZPL_ALLOCATION_FREE_ALL:
-        // TODO:
-        break;
+        case ZPL_ALLOCATION_FREE_ALL: {
+            zpl_isize actual_block_size, block_index;
+            void *curr;
+            zpl_uintptr *end;
+
+            actual_block_size = pool->block_size + pool->block_align;
+            pool->total_size = 0;
+
+            // NOTE: Init intrusive freelist
+            curr = pool->physical_start;
+            for (block_index = 0; block_index < pool->num_blocks - 1; block_index++) {
+                zpl_uintptr *next = cast(zpl_uintptr *) curr;
+                *next = cast(zpl_uintptr) curr + actual_block_size;
+                curr = zpl_pointer_add(curr, actual_block_size);
+            }
+
+            end = cast(zpl_uintptr *) curr;
+            *end = cast(zpl_uintptr) NULL;
+            pool->free_list = pool->physical_start;
+        } break;
 
         case ZPL_ALLOCATION_RESIZE:
         // NOTE: Cannot resize
