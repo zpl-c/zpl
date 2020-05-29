@@ -305,7 +305,7 @@ Version History:
 
 /* Distributions */
 #ifndef ZPL_CUSTOM_MODULES
-    /* default distribtuion */
+    /* default distribution */
     #define ZPL_MODULE_CORE
     #define ZPL_MODULE_TIMER
     #define ZPL_MODULE_HASHING
