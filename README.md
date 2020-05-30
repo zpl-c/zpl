@@ -221,7 +221,7 @@ Yes, indeed. This project is dual-licensed according to LICENSE, you are free to
 
 **Why almost C99?**
 
-Most parts of the library are written in pure C99. There are however, some additional components that require C11 to work (mainly in the `Threading` module). As long as you are using minimal version (`ZPL_NANO`), and manually enable modules the C99 support should be just fine.
+Most parts of the library are written in pure C99. There are however, some additional components that require C11 to work (notably in the `Threading` module). As long as you are using minimal version (`ZPL_NANO`), and manually enable modules, the C99 support should be just fine.
 
 **Why C99 though?**
 
