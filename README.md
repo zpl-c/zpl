@@ -82,7 +82,7 @@ It also offers a nano distribution consisting only of essential parts that form 
 * **Macro helpers** - This module contains many useful macros helpful for debugging as well as development itself.
 * **Memory** - Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
 * **Collections** - Consists of C++-template-like macros that define containers for any type. All of these collections are C friendly and accessible using `de-reference` or `[]` operators. These are: buffer, array, linked-list, ring buffer.
-* **String** - Offers methods for c-string manipulation, but also a string library based on gb_string, which is c-string friendly.
+* **String** - Offers methods for c-string manipulation, but also a string library that is c-string read-only compatible.
 * **Hashtable** - An instantiated hashtable implementation which works for any type defined.
 * **File** - File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
 * **Print** - Re-implementation of printf methods.
