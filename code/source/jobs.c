@@ -119,7 +119,7 @@ void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, v
 
 void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data) {
     ZPL_ASSERT_NOT_NULL(proc);
-    zpl_jobs_enqueue_with_priority(pool, proc, data, 0);
+    zpl_jobs_enqueue_with_priority(pool, proc, data, 1);
 }
 
 zpl_thread_local zpl_thread_pool *zpl__thread_pool;

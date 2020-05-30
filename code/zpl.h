@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.4.1  - Jobs system now enqueues jobs with def priority of 1.0
   10.4.0  - [META] version bump
   10.3.0  - Pool allocator now supports zpl_free_all
   10.2.0  - [META] version bump

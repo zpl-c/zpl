@@ -58,6 +58,7 @@ static int _g_errors = 0;
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     #pragma GCC diagnostic ignored "-Wmissing-braces"
     #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
 #endif
 
 #if defined(_MSC_VER)
