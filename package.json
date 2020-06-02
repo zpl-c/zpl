@@ -13,6 +13,7 @@
     "release-it": "^12.4.3"
   },
   "scripts": {
+    "embed": "node -e 'require(\"./misc/packager\").embedIncludes()'",
     "release": "release-it",
     "release-patch": "release-it patch --ci",
     "release-minor": "release-it minor --ci",
