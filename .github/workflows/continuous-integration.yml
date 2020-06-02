@@ -22,6 +22,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
+          description: "Windows build succeeded"
           status: ${{ job.status }}
 
   build-lin:
@@ -36,6 +37,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
+          description: "Linux build succeeded"
           status: ${{ job.status }}
 
   build-mac:
@@ -50,4 +52,5 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
+          description: "macOS build succeeded"
           status: ${{ job.status }}
