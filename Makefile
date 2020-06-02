@@ -1,5 +1,5 @@
-CC=gcc
-CXX=g++
+CC?=gcc
+CXX?=g++
 STDC=-std=gnu11
 
 ifeq ($(OS),Windows_NT)
