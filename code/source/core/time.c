@@ -14,6 +14,10 @@
     #include <mach/clock.h>
 #endif
 
+#if defined(ZPL_SYSTEM_EMSCRIPTEN)
+    #include <emscripten.h>
+#endif
+
 ZPL_BEGIN_C_DECLS
 
 //! @}
@@ -54,6 +58,10 @@ ZPL_BEGIN_C_DECLS
         result = result | lower;
 
         return result;
+    }
+#elif defined(ZPL_SYSTEM_EMSCRIPTEN)
+    zpl_u64 zpl_rdtsc(void) {
+        return (zpl_u64)(emscripten_get_now() * 1e+6);
     }
 #elif defined(ZPL_CPU_ARM)
     zpl_u64 zpl_rdtsc(void) {
