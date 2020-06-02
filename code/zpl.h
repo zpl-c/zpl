@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.5.0  - Changed casts to memcopy in random methods, added embed cmd
   10.4.1  - Jobs system now enqueues jobs with def priority of 1.0
   10.4.0  - [META] version bump
   10.3.0  - Pool allocator now supports zpl_free_all
