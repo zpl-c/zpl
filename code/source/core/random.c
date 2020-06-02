@@ -135,13 +135,16 @@ zpl_isize zpl_random_range_isize(zpl_random *r, zpl_isize lower_inc, zpl_isize h
 }
 
 ZPL_ALWAYS_INLINE zpl_f64 zpl__random_copy_sign64(zpl_f64 x, zpl_f64 y) {
-    zpl_i64 ix, iy;
-    ix = *(zpl_i64 *)&x;
-    iy = *(zpl_i64 *)&y;
+    zpl_i64 ix=0, iy=0;
+    zpl_memcopy(&ix, &x, zpl_size_of(zpl_i64));
+    zpl_memcopy(&iy, &y, zpl_size_of(zpl_i64));
 
     ix &= 0x7fffffffffffffff;
     ix |= iy & 0x8000000000000000;
-    return *cast(zpl_f64 *)&ix;
+
+    zpl_f64 r = 0.0;
+    zpl_memcopy(&r, &ix, zpl_size_of(zpl_f64));
+    return r;
 }
 
 ZPL_ALWAYS_INLINE zpl_f64 zpl__random_floor64    (zpl_f64 x)        { return cast(zpl_f64)((x >= 0.0) ? cast(zpl_i64)x : cast(zpl_i64)(x-0.9999999999999999)); }
@@ -161,7 +164,8 @@ ZPL_ALWAYS_INLINE zpl_f64 zpl__random_mod64(zpl_f64 x, zpl_f64 y) {
 
 zpl_f64 zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_inc) {
     zpl_u64 u = zpl_random_gen_u64(r);
-    zpl_f64 f = *cast(zpl_f64 *)&u;
+    zpl_f64 f = 0;
+    zpl_memcopy(&f, &u, zpl_size_of(zpl_f64));
     zpl_f64 diff = higher_inc-lower_inc+1.0;
     f = zpl__random_mod64(f, diff);
     f += lower_inc;
