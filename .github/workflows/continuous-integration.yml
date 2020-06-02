@@ -11,30 +11,43 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
-
       - name: Run cmake generator
         run: mkdir build ; cd build ; cmake ../misc
-
       - name: Run Windows build
         run: cd build ; cmake --build .
-
       - name: Run unit tests
         run: cd build ; .\Debug\tester.exe
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          status: ${{ job.status }}
 
   build-lin:
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
       - name: Run build on Linux
         run: make
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          status: ${{ job.status }}
 
   build-mac:
     name: Build macOS
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v1
-
       - name: Run build on macOS
         run: make
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          status: ${{ job.status }}
