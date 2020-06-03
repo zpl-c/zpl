@@ -15,5 +15,9 @@ int main(void)
     ZPL_ASSERT_MSG((!zpl_strcmp((const char*)buf, (const char*)dec)), "%s == %s\n", buf, dec);
 
     zpl_printf("Output:\n%s is %s\n", enc, dec);
+    
+    zpl_mfree(enc);
+    zpl_mfree(dec);
+    
     return 0;
 }
