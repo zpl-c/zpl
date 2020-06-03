@@ -18,7 +18,6 @@ ZPL_BEGIN_C_DECLS
 ZPL_DEF zpl_u32 zpl_adler32(void const *data, zpl_isize len);
 
 ZPL_DEF zpl_u32 zpl_crc32(void const *data, zpl_isize len);
-ZPL_DEF zpl_u64 zpl_crc64(void const *data, zpl_isize len);
 
 // These use FNV-1 algorithm
 ZPL_DEF zpl_u32 zpl_fnv32(void const *data, zpl_isize len);
