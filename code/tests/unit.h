@@ -32,8 +32,8 @@ static int _g_errors = 0;
     _errstr = ""; \
     _total += 1; \
     do scope while(0); \
-    _errors += _lasterr; \
-    zpl_printf(" * [%s]: It %s %s\n", (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", desc, _errstr);
+    if (_lasterr != 0xFF) _errors += _lasterr; \
+    zpl_printf(" * [%s]: It %s %s\n", (_lasterr == 0xFF) ? "\x1B[33mSKIP\x1B[0m" : (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", desc, _errstr);
 
 #define FAIL(a, b)                             { _errstr = zpl_bprintf("\n\n\tassert: \x1B[31m%s:%d %s %s:%d\x1B[0m\n\tat %s:%d\n", #a, (int)a, (a == b)?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
 #define STRFAIL(a, b)                          { _errstr = zpl_bprintf("\n\n\tassert: \x1B[31m%s:%s %s %s:%s\x1B[0m\n\tat %s:%d\n", #a, (char *)a, (!strcmp(a,b))?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
@@ -45,6 +45,7 @@ static int _g_errors = 0;
 #define GREATER(a, b)       if (a <=b)         { FAIL(a, b); }
 #define LESSEREQ(a, b)      if (a < b)         { FAIL(a, b); }
 #define GREATEREQ(a, b)     if (a > b)         { FAIL(a, b); }
+#define SKIP()                                 { _lasterr = 0xFF; }
 
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
     #pragma GCC diagnostic push
