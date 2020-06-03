@@ -22,3 +22,7 @@ zpl.cxxflags
 zpl.includes
 zpl.files
 
+# gtags
+GPATH
+GRTAGS
+GTAGS
