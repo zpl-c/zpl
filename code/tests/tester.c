@@ -1,6 +1,7 @@
 #define ZPL_IMPL
 #include "zpl.h"
 
+#define UNIT_MAX_CASES 16
 #include "unit.h"
 
 /* TEST CATEGORIES */
