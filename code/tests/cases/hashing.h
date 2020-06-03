@@ -37,6 +37,25 @@ MODULE(hashing, {
         EQUALS(sum, 0x8c0ec8d1fb9e6e32);
     });
 
+    IT("encodes base64 string", {
+        zpl_u8 *enc = zpl_base64_encode(zpl_heap(), test, len);
+        
+        NEQUALS(cast(zpl_uintptr)enc, cast(zpl_uintptr)NULL);
+        
+        STREQUALS((const char*)enc, "SGVsbG8gV29ybGQh");
+        zpl_mfree(enc);
+    });
+
+    IT("decodes base64 string", {
+        const char enc[] = "SGVsbG8gV29ybGQh";
+        zpl_u8 *dec = zpl_base64_decode(zpl_heap(), enc, zpl_strlen(enc));
+        
+        NEQUALS(cast(zpl_uintptr)dec, cast(zpl_uintptr)NULL);
+        
+        STREQUALS((const char*)dec, test);
+        zpl_mfree(dec);
+    });
+
     IT("re-encodes base64 string", {
         zpl_u8 *enc = zpl_base64_encode(zpl_heap(), test, len);
         zpl_u8 *dec = zpl_base64_decode(zpl_heap(), enc, zpl_strlen((const char*)enc));
