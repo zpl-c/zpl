@@ -48,9 +48,7 @@ do {                                                                            
     *nx = cast(void *)(zpl__bh + 1);                                                                               \
 } while (0)
 
-// DEPRECATED(zpl_buffer_free): Use zpl_buffer_free2 instead
-#define zpl_buffer_free(x, allocator) (zpl_free(allocator, ZPL_BUFFER_HEADER(x)))
-#define zpl_buffer_free2(x) (zpl_free(ZPL_BUFFER_HEADER(x)->backing, ZPL_BUFFER_HEADER(x)))
+#define zpl_buffer_free(x) (zpl_free(ZPL_BUFFER_HEADER(x)->backing, ZPL_BUFFER_HEADER(x)))
 
 #define zpl_buffer_append(x, item)                                                                                     \
 do { (x)[zpl_buffer_count(x)++] = (item); } while (0)

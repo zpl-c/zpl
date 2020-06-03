@@ -751,7 +751,7 @@ zpl_b32 zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isi
     {
         zpl_b32 ok = zpl_re_match(re, p, end - p, cps, max_capture_count, &offset);
         if (!ok) {
-            zpl_buffer_free2(cps);
+            zpl_buffer_free(cps);
             return false;
         }
 
@@ -762,7 +762,7 @@ zpl_b32 zpl_re_match_all(zpl_re *re, char const *str, zpl_isize str_len, zpl_isi
         }
     }
 
-    zpl_buffer_free2(cps);
+    zpl_buffer_free(cps);
 
     return true;
 }

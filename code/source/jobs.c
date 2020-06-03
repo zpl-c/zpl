@@ -81,7 +81,7 @@ void zpl_jobs_free(zpl_thread_pool *pool) {
         zpl_thread_destroy(&tw->thread);
     }
 
-    zpl_buffer_free(pool->workers, pool->alloc);
+    zpl_buffer_free(pool->workers);
     zpl_array_free(pool->jobs);
     zpl_array_free(pool->queue);
     zpl_array_free(pool->available);

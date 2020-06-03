@@ -58,7 +58,7 @@ void ZPL_JOIN3(zpl_ring_, type, _init)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_all
     pad->head = pad->tail = 0;                                                                                     \
 }                                                                                                                  \
 void ZPL_JOIN3(zpl_ring_, type, _free)(ZPL_JOIN2(zpl_ring_, type) * pad) {                                         \
-    zpl_buffer_free(pad->buf, pad->backing);                                                                       \
+    zpl_buffer_free(pad->buf);                                                                       \
 }                                                                                                                  \
 \
 zpl_b32 ZPL_JOIN3(zpl_ring_, type, _full)(ZPL_JOIN2(zpl_ring_, type) * pad) {                                          \
