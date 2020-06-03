@@ -53,7 +53,7 @@ jobs:
           nodetail: true
           nofail: true
           color: "0xdf332a"
-          username: "Michael Scott"
+          username: "Devastated Michael Scott"
           avatar_url: "http://raw.madaraszd.net/office/fail.jpg"
 
   build-mac:
