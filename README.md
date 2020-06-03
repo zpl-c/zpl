@@ -75,6 +75,8 @@ git clone https://github.com/zpl-c/zpl.git
 
 This method is used by us to develop ZPL as it contains all the development sources that are easy to modify and expand, but it is not suitable for vendoring.
 
+Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how to contribute to the project.
+
 # Table of Contents
 
 ZPL consists of modules that are packed to various distributions. By default, ZPL offers most of the modules from the go.
