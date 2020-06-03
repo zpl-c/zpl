@@ -9,7 +9,7 @@ int main(void) {
 
     char const* pat = "(//<<([\\w._]+)>>)";
 
-    u32 err = zpl_re_compile(&re, zpl_heap(), pat, zpl_strlen(pat));
+    zpl_u32 err = zpl_re_compile(&re, zpl_heap(), pat, zpl_strlen(pat));
     if (err) {
         zpl_printf("Regex pattern is invalid! Error code: %d\n", err);
     }
@@ -22,9 +22,9 @@ int main(void) {
 
     zpl_re_match_all(&re, str, zpl_strlen(str), 2, &captures);
 
-    for (isize i=0; i < zpl_array_count(captures); i++)
+    for (zpl_isize i=0; i < zpl_array_count(captures); i++)
     {
-        zpl_printf("Group %ld: %.*s\n", i, (i32)captures[i].len, captures[i].str);
+        zpl_printf("Group %ld: %.*s\n", i, (zpl_i32)captures[i].len, captures[i].str);
     }
 
     return 0;

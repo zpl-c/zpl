@@ -16,7 +16,7 @@ Usage:
 Options:
 
   ZPL_EDITOR - This macro should be used by the IDE's Intellisense to parse ZPL correctly. It can NEVER be used for actual compilation of the library!
-  ZPL_PREFIX_TYPES - to make sure all ZPL defined types have a prefix to avoid cluttering the global namespace.
+  ZPL_EXPOSE_TYPES - exposes all ZPL defined types to the global namespace. This means type such as `zpl_u32` is now available as `u32` globally.
   ZPL_DEFINE_NULL_MACRO - to let ZPL define what NULL stands for in case it is undefined.
   ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
 
@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.5.2  - Don't expose ZPL types anymore
   10.5.1  - Fixed zpl_rdtsc for Emscripten
   10.5.0  - Changed casts to memcopy in random methods, added embed cmd
   10.4.1  - Jobs system now enqueues jobs with def priority of 1.0
@@ -726,7 +727,7 @@ Version History:
 
 #endif // ZPL_IMPLEMENTATION
 
-#if !defined(ZPL_PREFIX_TYPES)
+#if defined(ZPL_EXPOSE_TYPES)
     typedef zpl_u8 u8;
     typedef zpl_i8 i8;
     typedef zpl_u16 u16;
@@ -745,7 +746,7 @@ Version History:
     typedef zpl_isize isize;
     typedef zpl_uintptr uintptr;
     typedef zpl_intptr intptr;
-#endif // ZPL_PREFIX_TYPES
+#endif // ZPL_EXPOSE_TYPES
 
 #endif // ZPL_H
 

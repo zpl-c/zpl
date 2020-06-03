@@ -27,10 +27,10 @@ int main(int argc, char **argv) {
 
     zpl_opts_positional_add(&opts, "file");
 
-    b32 ok = zpl_opts_compile(&opts, argc, argv);
+    zpl_b32 ok = zpl_opts_compile(&opts, argc, argv);
 
     char *filename = NULL;
-    b32 strip_comments = false;
+    zpl_b32 strip_comments = false;
 
     if (!ok || !zpl_opts_positionals_filled(&opts))
         exit_with_help(&opts);
@@ -49,10 +49,10 @@ int main(int argc, char **argv) {
 
     zpl_json_object root = {0};
 
-    u8 err;
-    f64 time = zpl_time_now();
+    zpl_u8 err;
+    zpl_f64 time = zpl_time_now();
     zpl_json_parse(&root, fc.size, (char *)fc.data, zpl_heap(), strip_comments, &err);
-    f64 delta = zpl_time_now() - time;
+    zpl_f64 delta = zpl_time_now() - time;
 
     if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)
     {

@@ -12,17 +12,17 @@ main(void) {
     zpl_allocator stack_alloc = zpl_stack_allocator(&stack);
     
     // NOTE(ZaKlaus): Create array container
-    zpl_array(u32) arr;
+    zpl_array(zpl_u32) arr;
     zpl_array_init(arr, stack_alloc);
     
     // NOTE(ZaKlaus): Push 5 elements
-    for (i32 i = 0; i < 5; ++i) {
+    for (zpl_i32 i = 0; i < 5; ++i) {
         zpl_array_append(arr, i*2);
     }
     
     // NOTE(ZaKlaus): List them
     zpl_printf("Before removal:\n");
-    for (i32 i = 0; i < 5; ++i) {
+    for (zpl_i32 i = 0; i < 5; ++i) {
         zpl_printf("Value: %d\n", arr[i]);
     }
     
@@ -32,7 +32,7 @@ main(void) {
 
     // NOTE(ZaKlaus): List them again
     zpl_printf("\nAfter removal:\n");
-    for (i32 i = 0; i < 3; ++i) {
+    for (zpl_i32 i = 0; i < 3; ++i) {
         zpl_printf("Value: %d\n", arr[i]);
     }
     

@@ -3,7 +3,7 @@
 #define ZPL_ENABLE_TIMER
 #include <zpl.h>
 
-zpl_global u8 counter = 0;
+zpl_global zpl_u8 counter = 0;
 
 void test1_cb(void *user_data) {
     (void)user_data;

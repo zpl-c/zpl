@@ -9,7 +9,7 @@ int main()
     
     char **files=zpl_str_split_lines(zpl_heap_allocator(), filelst, false);
     
-    for (i32 i=0; i<zpl_array_count(files); ++i) {
+    for (zpl_i32 i=0; i<zpl_array_count(files); ++i) {
         printf("%s\n", files[i]);
     }
     

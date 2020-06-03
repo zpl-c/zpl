@@ -17,7 +17,7 @@
 // NOTE(ZaKlaus): Declare user structure
 typedef struct user {
     zpl_string name;
-    i64          score;
+    zpl_i64          score;
 } user;
 
 // NOTE(ZaKlaus): Declare hash table of type user
@@ -35,7 +35,7 @@ main(void) {
     tbl_user_init(&users, zpl_heap_allocator());
     
     // NOTE(ZaKlaus): Create hash key
-    u64 key = 0x29;
+    zpl_u64 key = 0x29;
     
     // NOTE(ZaKlaus): Create new user
     user user1;

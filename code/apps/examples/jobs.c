@@ -9,7 +9,7 @@ zpl_mutex print_mut;
 
 void calc_nums(void* data) {
     zpl_unused(data);
-    i64 nums=0;
+    zpl_i64 nums=0;
     zpl_random rnd={0};
     zpl_random_init(&rnd);
 
@@ -39,11 +39,11 @@ int main() {
     zpl_jobs_enqueue(&p, calc_nums, NULL);
     zpl_jobs_enqueue(&p, calc_nums, NULL);
 
-    f64 time=zpl_time_now();
+    zpl_f64 time=zpl_time_now();
 
     for (;;) {
-        f64 now=zpl_time_now();
-        f64 dt =now-time;
+        zpl_f64 now=zpl_time_now();
+        zpl_f64 dt =now-time;
         if (dt > TEST_ENQUEUE_JOB) {
             time=now;
             zpl_jobs_enqueue(&p, calc_nums, NULL);

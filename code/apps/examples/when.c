@@ -2,10 +2,10 @@
 #define ZPL_NANO
 #include <zpl.h>
 
-void easy_print(i64 *nums, isize cnt) {
+void easy_print(zpl_i64 *nums, zpl_isize cnt) {
     zpl_printf("Numbers:\n");
-    for (isize i = 0; i < cnt; ++i) {
-        zpl_when (&nums[i], i64*, number) {
+    for (zpl_isize i = 0; i < cnt; ++i) {
+        zpl_when (&nums[i], zpl_i64*, number) {
             zpl_printf("%ld, ", (long)*number);
         }
     }
@@ -18,19 +18,19 @@ int main(void) {
     zpl_random_init(&rng);
     
     // NOTE(ZaKlaus): Initialize our buffer
-    zpl_buffer(i64) numbers = 0;
-    zpl_buffer_init(numbers, zpl_heap_allocator(), zpl_size_of(i64)*20);
+    zpl_buffer(zpl_i64) numbers = 0;
+    zpl_buffer_init(numbers, zpl_heap_allocator(), zpl_size_of(zpl_i64)*20);
     
-    for (isize i = 0; i < 20; ++i) {
+    for (zpl_isize i = 0; i < 20; ++i) {
         numbers[i] = zpl_random_range_i64(&rng, 0, 2);
     }
     
     easy_print(numbers, 20);
     
     // NOTE(ZaKlaus): Perform checks
-    for (isize i = 0; i < 20; ++i) {
+    for (zpl_isize i = 0; i < 20; ++i) {
         if (i == 19) continue;
-        zpl_when (&numbers[i], i64*, number) {
+        zpl_when (&numbers[i], zpl_i64*, number) {
             *number = *number + *(number+1);;
         }
     }

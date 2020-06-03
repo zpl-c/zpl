@@ -7,8 +7,8 @@ main(void) {
     
 #define ARRAY_SIZE 4096*8
     // NOTE(ZaKlaus): Define a storage for our numbers and the temporary buffer.
-    u32 nums[ARRAY_SIZE] = {0};
-    u32 temp[ARRAY_SIZE] = {0};
+    zpl_u32 nums[ARRAY_SIZE] = {0};
+    zpl_u32 temp[ARRAY_SIZE] = {0};
     zpl_f64_cmp(0);
     
     // NOTE(ZaKlaus): Initialize random seed.

@@ -17,22 +17,22 @@ int main(int argc, char **argv)
     
     zpl_opts_positional_add(&opts, "4pay");
     
-    b32 ok=zpl_opts_compile(&opts, argc, argv);
+    zpl_b32 ok=zpl_opts_compile(&opts, argc, argv);
     
     if (ok && zpl_opts_positionals_filled(&opts)) {
         
-        b32 help=zpl_opts_has_arg(&opts, "help");
+        zpl_b32 help=zpl_opts_has_arg(&opts, "help");
         if (help) {
             zpl_opts_print_help(&opts);
             return 0;
         }
         zpl_string foo=zpl_opts_string(&opts, "foo", "WRONG!");
-        f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
-        i32 right=(i32)zpl_opts_integer(&opts, "4pay", 42);
+        zpl_f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
+        zpl_i32 right=(zpl_i32)zpl_opts_integer(&opts, "4pay", 42);
         zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
                    right);
         
-        b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
+        zpl_b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
         if (gfx) {
             zpl_printf("You wanted HD graphics? Here:\n\n");
             for (int i=0; i<5; ++i) {

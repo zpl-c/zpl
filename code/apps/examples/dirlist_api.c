@@ -2,7 +2,7 @@
 #define ZPL_NANO
 #include <zpl.h>
 
-char const* get_type(u8 type) {
+char const* get_type(zpl_u8 type) {
     switch (type) {
         case ZPL_DIR_TYPE_FILE:
             return "file";

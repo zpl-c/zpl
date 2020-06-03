@@ -1,5 +1,6 @@
 #define ZPL_IMPLEMENTATION
 #define ZPL_NANO
+#define ZPL_EXPOSE_TYPES
 #include <zpl.h>
 
 ZPL_RING_DECLARE(u32);
