@@ -32,7 +32,7 @@ EXAMPLES += $(patsubst %.cc,%,$(wildcard code/apps/examples/*.cc))
 
 BUILD_FILES = $(wildcard build/*)
 
-.PHONY: all clean examples test
+.PHONY: all clean examples test app
 
 all: clean examples test
 
@@ -42,6 +42,10 @@ test: clean code/tests/tester
 
 examples: $(EXAMPLES)
 	@echo '> Building examples'
+
+app:
+	@echo '=> Building $(NAME)'
+	$(CC) -g $(CFLAGS) code/apps/examples/$(NAME).c $(LDFLAGS) -o build/$(NAME)
 
 clean:
 ifneq ($(BUILD_FILES),)
