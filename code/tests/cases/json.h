@@ -7,6 +7,9 @@
     zpl_json_object r={0}; \
     zpl_json_parse(&r, zpl_strlen(t), (char *const)t, zpl_heap(), comments, &err);
 
+#define __CLEANUP() \
+    zpl_json_free(&r);
+
 MODULE(json5_parser, {
     zpl_u8 err = 0;
     IT("parses empty JSON5 object", {
@@ -17,7 +20,7 @@ MODULE(json5_parser, {
         EQUALS(zpl_array_count(r.nodes), 0);
         EQUALS(r.type, ZPL_JSON_TYPE_OBJECT);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses empty JSON5 array", {
@@ -27,7 +30,7 @@ MODULE(json5_parser, {
         EQUALS(err, 0);
         EQUALS(r.type, ZPL_JSON_TYPE_ARRAY);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("fails to parse broken JSON5 array", {
@@ -36,7 +39,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("fails to parse broken JSON5 object", {
@@ -45,7 +48,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("fails to parse invalid data", {
@@ -54,7 +57,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses commented JSON5 object", {
@@ -67,7 +70,7 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[0].type, ZPL_JSON_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
-        zpl_json_free(&r);
+        __CLEANUP();
         zpl_string_free(t);
     });
 
@@ -80,7 +83,7 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[0].type, ZPL_JSON_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
-        zpl_json_free(&r);
+        __CLEANUP();
         zpl_string_free(t);
     });
 
@@ -94,7 +97,7 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[1].integer, 456);
         STREQUALS(r.nodes[2].string, "hello");
 
-        zpl_json_free(&r);
+        __CLEANUP();
         zpl_string_free(t);
     });
 
@@ -128,7 +131,7 @@ MODULE(json5_parser, {
         EQUALS(zpl_array_count(r.nodes), 7);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses nested array", {
@@ -143,7 +146,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses nested array inside of an object", {
@@ -159,7 +162,7 @@ MODULE(json5_parser, {
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses keywords", {
@@ -178,7 +181,7 @@ MODULE(json5_parser, {
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses empty object as a field", {
@@ -191,7 +194,7 @@ MODULE(json5_parser, {
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses numbers with scientific notation", {
@@ -218,7 +221,7 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[2].lead_digit, false);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses minified JSON array", {
@@ -231,7 +234,7 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[0].nodes[3].type, ZPL_JSON_TYPE_ARRAY);
         EQUALS(zpl_array_count(r.nodes[0].nodes[3].nodes), 8);
 
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 
     IT("parses geojson.io data", {
@@ -242,6 +245,9 @@ MODULE(json5_parser, {
         NEQUALS(zpl_array_count(r.nodes), 0);
 
         zpl_string_free(t);
-        zpl_json_free(&r);
+        __CLEANUP();
     });
 });
+
+#undef __PARSE
+#undef __CLEANUP
