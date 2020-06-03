@@ -27,19 +27,34 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          description: "ZPL started the fire! (Running tests...)"
+          description: "**ZPL** has started the fire trial! (Running tests...)"
           nodetail: true
           nofail: true
           color: "0xFFA500"
+          username: "Michael Scott"
+          avatar_url: "http://raw.madaraszd.net/office/test.jpg"
       - name: Run build on Linux
         run: make
       - uses: sarisia/actions-status-discord@v1
-        if: always()
+        if: success()
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          description: "Linux build succeeded"
-          status: ${{ job.status }}
+          description: "**ZPL** tests have succeeded!"
+          nodetail: true
+          nofail: true
+          color: "0x55df2a"
+      - uses: sarisia/actions-status-discord@v1
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          description: "**ZPL** tests have failed!"
+          nodetail: true
+          nofail: true
+          color: "0xdf332a"
+          username: "Michael Scott"
+          avatar_url: "http://raw.madaraszd.net/office/fail.jpg"
 
   build-mac:
     name: Build macOS
