@@ -87,7 +87,7 @@ void zpl_jobs_free(zpl_thread_pool *pool) {
     zpl_array_free(pool->available);
 }
 
-void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_i32 priority) {
+void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_f32 priority) {
     ZPL_ASSERT_NOT_NULL(proc);
     zpl_f32 treshold = 0.0f;
 
@@ -119,7 +119,7 @@ void zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, v
 
 void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data) {
     ZPL_ASSERT_NOT_NULL(proc);
-    zpl_jobs_enqueue_with_priority(pool, proc, data, 1);
+    zpl_jobs_enqueue_with_priority(pool, proc, data, 1.0f);
 }
 
 zpl_thread_local zpl_thread_pool *zpl__thread_pool;
@@ -127,7 +127,7 @@ zpl_thread_local zpl_thread_pool *zpl__thread_pool;
 ZPL_COMPARE_PROC(zpl___jobs_cmp) {
     zpl_thread_job *p = (zpl_thread_job *)(zpl__thread_pool->jobs + *(zpl_u32 *)a);
     zpl_thread_job *q = (zpl_thread_job *)(zpl__thread_pool->jobs + *(zpl_u32 *)b);
-    return p->priority < q->priority ? 1 : p->priority > q->priority;
+    return p->priority < q->priority ? 1.0f : p->priority > q->priority;
 }
 
 ZPL_COMPARE_PROC_PTR(zpl__jobs_cmp(zpl_thread_pool *pool)) {

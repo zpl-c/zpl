@@ -30,7 +30,7 @@ typedef struct {
     zpl_jobs_proc proc;
     void *data;
 
-    zpl_i32 priority;
+    zpl_f32 priority;
 } zpl_thread_job;
 
 typedef struct {
@@ -61,7 +61,7 @@ ZPL_DEF void    zpl_jobs_free(zpl_thread_pool *pool);
 ZPL_DEF void    zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
 
 //! Enqueue a job with specific priority with specified data.
-ZPL_DEF void    zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_i32 priority);
+ZPL_DEF void    zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_f32 priority);
 
 //! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
 ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);
