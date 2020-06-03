@@ -81,6 +81,7 @@ void zpl_co_make(zpl_co *co, zpl_co_proc f) {
     ZPL_ASSERT_MSG(zpl__co_internals.is_ready, "Coroutines module is not initialized. Call zpl_co_init first!");
     ZPL_ASSERT_NOT_NULL(co);
 
+    zpl_zero_item(co);
     co->f = f;
     zpl_atomic32_store(&co->status, ZPL_CO_READY);
     zpl_atomic32_store(&co->resume, 0);
