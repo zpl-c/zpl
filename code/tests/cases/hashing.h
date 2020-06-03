@@ -37,6 +37,16 @@ MODULE(hashing, {
         EQUALS(sum, 0x8c0ec8d1fb9e6e32);
     });
 
+    IT("calculates valid murmur32", {
+        zpl_u32 sum = zpl_murmur32(test, len);
+        EQUALS(sum, 0xFB86EA72);
+    });
+
+    IT("calculates valid murmur64", {
+        zpl_u64 sum = zpl_murmur64((zpl_u8*)test, len);
+        EQUALS(sum, 0x5E778F7430BA686A);
+    });
+
     IT("encodes base64 string", {
         zpl_u8 *enc = zpl_base64_encode(zpl_heap(), test, len);
         
@@ -66,15 +76,5 @@ MODULE(hashing, {
         STREQUALS((const char*)test, (const char*)dec);
         zpl_mfree(enc);
         zpl_mfree(dec);
-    });
-
-    IT("calculates valid murmur32", {
-        zpl_u32 sum = zpl_murmur32(test, len);
-        EQUALS(sum, 0xFB86EA72);
-    });
-
-    IT("calculates valid murmur64", {
-        zpl_u64 sum = zpl_murmur64((zpl_u8*)test, len);
-        EQUALS(sum, 0x5E778F7430BA686A);
     });
 });
