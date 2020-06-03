@@ -17,7 +17,7 @@ int main(void)
     zpl_printf("Output:\n%s is %s\n", enc, dec);
     
     zpl_mfree(enc);
-    zpl_mfree(dec);
+    zpl_mfree(dec);aa
     
     return 0;
 }
