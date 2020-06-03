@@ -410,7 +410,8 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
         case 4: h ^= cast(zpl_u64)(data2[3]) << 24;
         case 3: h ^= cast(zpl_u64)(data2[2]) << 16;
         case 2: h ^= cast(zpl_u64)(data2[1]) << 8;
-        case 1: h ^= cast(zpl_u64)(data2[0]); h *= m;
+        case 1: h ^= cast(zpl_u64)(data2[0]); 
+                h *= m;
     };
 
     h ^= h >> r;

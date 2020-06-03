@@ -20,6 +20,7 @@ ZPL_DEF zpl_u32 zpl_adler32(void const *data, zpl_isize len);
 ZPL_DEF zpl_u32 zpl_crc32(void const *data, zpl_isize len);
 ZPL_DEF zpl_u64 zpl_crc64(void const *data, zpl_isize len);
 
+// These use FNV-1 algorithm
 ZPL_DEF zpl_u32 zpl_fnv32(void const *data, zpl_isize len);
 ZPL_DEF zpl_u64 zpl_fnv64(void const *data, zpl_isize len);
 ZPL_DEF zpl_u32 zpl_fnv32a(void const *data, zpl_isize len);
@@ -28,7 +29,10 @@ ZPL_DEF zpl_u64 zpl_fnv64a(void const *data, zpl_isize len);
 ZPL_DEF zpl_u8 *zpl_base64_encode(zpl_allocator a, void const *data, zpl_isize len);
 ZPL_DEF zpl_u8 *zpl_base64_decode(zpl_allocator a, void const *data, zpl_isize len);
 
+//! Based on MurmurHash3
 ZPL_DEF zpl_u32 zpl_murmur32_seed(void const *data, zpl_isize len, zpl_u32 seed);
+
+//! Based on MurmurHash2
 ZPL_DEF zpl_u64 zpl_murmur64_seed(void const *data, zpl_isize len, zpl_u64 seed);
 
 //! Default seed of 0x9747b28c
