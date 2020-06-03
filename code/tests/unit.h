@@ -45,7 +45,7 @@ static int _g_errors = 0;
 #define GREATER(a, b)       if (a <=b)         { FAIL(a, b); }
 #define LESSEREQ(a, b)      if (a < b)         { FAIL(a, b); }
 #define GREATEREQ(a, b)     if (a > b)         { FAIL(a, b); }
-#define SKIP()                                 { _lasterr = 0xFF; }
+#define SKIP()                                 { _lasterr = 0xFF; break; }
 
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
     #pragma GCC diagnostic push
