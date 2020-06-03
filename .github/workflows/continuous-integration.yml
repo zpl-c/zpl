@@ -22,6 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          description: "ZPL started the fire! (Running tests...)"
+          nodetail: true
+          nofail: true
+          color: "0xFFA500"
       - name: Run build on Linux
         run: make
       - uses: sarisia/actions-status-discord@v1
