@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.5.3  - Removed crc64 and annotated some hashing methods
   10.5.2  - Don't expose ZPL types anymore
   10.5.1  - Fixed zpl_rdtsc for Emscripten
   10.5.0  - Changed casts to memcopy in random methods, added embed cmd
