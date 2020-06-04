@@ -101,7 +101,6 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **DLL** - Helper methods for loading a dynamic library. It also offers an ability to load a procedure address.
 * **Timer** - A simple to use callback-based timer library.
 * **Hashing** - Several hashing methods useful in many domains. Contains: base64, adler32, crc32/64, fnv32/64/a and murmur32/64
-* **Event** - Simple event handler which can fire multiple callbacks per registered event.
 * **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files.
 * **Opts** - Opts is a CLI options parser, it can parse flags, switches and arguments from command line and offers an easy way to express input errors as well as the ability to display help screen.
 * **Process** - Gives you the ability to create a new process, wait for it to end or terminate it. It also exposes standard I/O with configurable options.

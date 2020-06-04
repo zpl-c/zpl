@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.6.0  - Remove event system
   10.5.8  - Remove zpl__memcpy_4byte
   10.5.7  - zpl_file_new is now OS-agnostic constructor
   10.5.6  - Fix coroutine creation
@@ -362,9 +363,6 @@ Version History:
     #if defined(ZPL_ENABLE_REGEX) && !defined(ZPL_MODULE_REGEX)
         #define ZPL_MODULE_REGEX
     #endif
-    #if defined(ZPL_ENABLE_EVENT) && !defined(ZPL_MODULE_EVENT)
-        #define ZPL_MODULE_EVENT
-    #endif
     #if defined(ZPL_ENABLE_DLL) && !defined(ZPL_MODULE_DLL)
         #define ZPL_MODULE_DLL
     #endif
@@ -413,9 +411,6 @@ Version History:
     #endif
     #if defined(ZPL_DISABLE_REGEX) && defined(ZPL_MODULE_REGEX)
         #undef ZPL_MODULE_REGEX
-    #endif
-    #if defined(ZPL_DISABLE_EVENT) && defined(ZPL_MODULE_EVENT)
-        #undef ZPL_MODULE_EVENT
     #endif
     #if defined(ZPL_DISABLE_DLL) && defined(ZPL_MODULE_DLL)
         #undef ZPL_MODULE_DLL
@@ -513,10 +508,6 @@ Version History:
 
 #if defined(ZPL_MODULE_REGEX)
     #include "header/regex.h"
-#endif
-
-#if defined(ZPL_MODULE_EVENT)
-    #include "header/event.h"
 #endif
 
 #if defined(ZPL_MODULE_DLL)
@@ -678,10 +669,6 @@ Version History:
 
 #if defined(ZPL_MODULE_REGEX)
     #include "source/regex.c"
-#endif
-
-#if defined(ZPL_MODULE_EVENT)
-    #include "source/event.c"
 #endif
 
 #if defined(ZPL_MODULE_DLL)
