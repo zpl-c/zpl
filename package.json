@@ -30,7 +30,7 @@
       "tag": false
     },
     "hooks": {
-      "after:bump": "git tag --force $(echo v${tagName})"
+      "after:bump": "git tag --force $(echo v${latestVersion})"
     },
     "github": {
       "release": true,
