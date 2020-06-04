@@ -129,7 +129,7 @@ ZPL_BEGIN_C_DECLS
 #else
 
     #if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
-        zpl_f64 zpl__unix_getime(void) {
+        zpl_f64 zpl__unix_gettime(void) {
             struct timespec t;
             zpl_f64 result;
 
@@ -160,9 +160,9 @@ ZPL_BEGIN_C_DECLS
     #else
         zpl_local_persist zpl_f64 unix_timestart = 0.0;
 
-        if (!unix_timestart) { unix_timestart = zpl__unix_getime( ); }
+        if (!unix_timestart) { unix_timestart = zpl__unix_gettime( ); }
 
-        zpl_f64 now = zpl__unix_getime( );
+        zpl_f64 now = zpl__unix_gettime( );
 
         return (now - unix_timestart);
     #endif
