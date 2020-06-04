@@ -6,6 +6,8 @@ on:
       - review/**
     paths:
       - 'code/**'
+      - 'Makefile'
+      - 'misc/CMakeLists.txt'
     tags-ignore:
       - '[0-9]+.[0-9]+.[0-9]+'
   pull_request:
@@ -13,6 +15,8 @@ on:
       - master
     paths:
       - 'code/**'
+      - 'Makefile'
+      - 'misc/CMakeLists.txt'
 
 jobs:
   prep:
