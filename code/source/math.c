@@ -16,15 +16,6 @@ ZPL_BEGIN_C_DECLS
 // Math
 //
 
-/* NOTE: To remove the need for memcpy */
-static void zpl__memcpy_4byte(void *dest, void const *src, zpl_isize size) {
-    zpl_isize i;
-    unsigned int *d, *s;
-    d = (unsigned int *)dest;
-    s = (unsigned int *)src;
-    for (i = 0; i < size / 4; i++) { *d++ = *s++; }
-}
-
 zpl_f32 zpl_to_radians(zpl_f32 degrees) { return degrees * ZPL_TAU / 360.0f; }
 zpl_f32 zpl_to_degrees(zpl_f32 radians) { return radians * 360.0f / ZPL_TAU; }
 
@@ -619,11 +610,11 @@ void zpl_float22_mul(zpl_f32 (*out)[2], zpl_f32 (*mat1)[2], zpl_f32 (*mat2)[2]) 
     int i, j;
     zpl_f32 temp1[2][2], temp2[2][2];
     if (mat1 == out) {
-        zpl__memcpy_4byte(temp1, mat1, sizeof(temp1));
+        zpl_memcopy(temp1, mat1, sizeof(temp1));
         mat1 = temp1;
     }
     if (mat2 == out) {
-        zpl__memcpy_4byte(temp2, mat2, sizeof(temp2));
+        zpl_memcopy(temp2, mat2, sizeof(temp2));
         mat2 = temp2;
     }
     for (j = 0; j < 2; j++) {
@@ -700,11 +691,11 @@ void zpl_float33_mul(zpl_f32 (*out)[3], zpl_f32 (*mat1)[3], zpl_f32 (*mat2)[3]) 
     int i, j;
     zpl_f32 temp1[3][3], temp2[3][3];
     if (mat1 == out) {
-        zpl__memcpy_4byte(temp1, mat1, sizeof(temp1));
+        zpl_memcopy(temp1, mat1, sizeof(temp1));
         mat1 = temp1;
     }
     if (mat2 == out) {
-        zpl__memcpy_4byte(temp2, mat2, sizeof(temp2));
+        zpl_memcopy(temp2, mat2, sizeof(temp2));
         mat2 = temp2;
     }
     for (j = 0; j < 3; j++) {
@@ -812,11 +803,11 @@ void zpl_float44_mul(zpl_f32 (*out)[4], zpl_f32 (*mat1)[4], zpl_f32 (*mat2)[4]) 
     int i, j;
     zpl_f32 temp1[4][4], temp2[4][4];
     if (mat1 == out) {
-        zpl__memcpy_4byte(temp1, mat1, sizeof(temp1));
+        zpl_memcopy(temp1, mat1, sizeof(temp1));
         mat1 = temp1;
     }
     if (mat2 == out) {
-        zpl__memcpy_4byte(temp2, mat2, sizeof(temp2));
+        zpl_memcopy(temp2, mat2, sizeof(temp2));
         mat2 = temp2;
     }
     for (j = 0; j < 4; j++) {
