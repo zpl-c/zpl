@@ -3,8 +3,7 @@
 </div>
 
 <div align="center">
-    <a href="https://travis-ci.org/zpl-c/zpl"><img src="https://travis-ci.org/zpl-c/zpl.svg?branch=master" alt="Build status" /></a>
-    <a href="https://www.npmjs.com/package/zpl.c"><img src="https://img.shields.io/npm/v/zpl.c.svg?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://github.com/zpl-c/zpl/actions"><img src="https://github.com/zpl-c/zpl/workflows/tester/badge.svg" alt="Build status" /></a>
     <a href="https://discord.gg/2fZVEym"><img src="https://discordapp.com/api/guilds/354670964400848898/embed.png" alt="Discord server" /></a>
 </div>
 
