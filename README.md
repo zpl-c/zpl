@@ -107,17 +107,6 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
 
-## Documentation
-Documentation is available in its generated form at [zpl.pw/docs](https://zpl.pw/docs).
-
-You can see all modules by accessing the **Modules** link.
-
-Note that the documentation is still work in progress and will be tweaked further.
-
-You can build the documentation using Doxygen 1.8.11 or later. We use modified version of [m.css](http://mcss.mosra.cz/doxygen/) to generate styled documentation. It uses Python3 with dependencies: `jinja2, Pygments` to generate files. You can use `docs.bat` to build offline documentation.
-
-m.css is available as submodule, so make sure you clone this repo recursively to obtain it.
-
 # Support Me
 
 While ZPL is free and open source library, I use my spare time to develop features and bug fixes however. With financial support, I'll be able to invest more time in the project and deliver on more interesting features or experiments. Your support would be very appreciated!
