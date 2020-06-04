@@ -26,12 +26,6 @@
     "npm": {
       "publish": true
     },
-    "git": {
-      "tag": false
-    },
-    "hooks": {
-      "before:push": "git tag --force $(echo v${version})"
-    },
     "github": {
       "release": true,
       "assets": [
