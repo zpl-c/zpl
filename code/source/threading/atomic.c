@@ -14,7 +14,7 @@ ZPL_BEGIN_C_DECLS
 // IMPORTANT TODO: Use compiler intrinsics for the atomics
 
 #if defined(ZPL_COMPILER_MSVC) && !defined(ZPL_COMPILER_CLANG)
-    zpl_i32 zpl_atomic32_load (zpl_atomic32 const *a)      { return a->value;  }
+    zpl_i32 zpl_atomic32_load (zpl_atomic32 const *a)      { return a->value;  }r
     void     zpl_atomic32_store(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) value) { a->value = value; }
 
     zpl_i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) expected, zpl_atomicarg(zpl_i32) desired) {
