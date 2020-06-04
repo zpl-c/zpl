@@ -20,16 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: sarisia/actions-status-discord@v1
-          if: always()
-          env:
-            DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          with:
-            description: "**ZPL** has started the fire trial! (Running tests...)"
-            nodetail: true
-            nofail: true
-            color: "0xFFA500"
-            username: "Michael Scott"
-            avatar_url: "http://raw.madaraszd.net/office/test.jpg"
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          description: "**ZPL** has started the fire trial! (Running tests...)"
+          nodetail: true
+          nofail: true
+          color: "0xFFA500"
+          username: "Michael Scott"
+          avatar_url: "http://raw.madaraszd.net/office/test.jpg"
   build-win:
     name: Test Windows
     runs-on: windows-latest
