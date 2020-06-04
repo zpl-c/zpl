@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.6.6  - Fix type mismatch in Jobs system
   10.6.0  - Remove event system
   10.5.8  - Remove zpl__memcpy_4byte
   10.5.7  - zpl_file_new is now OS-agnostic constructor

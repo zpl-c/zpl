@@ -127,7 +127,7 @@ zpl_thread_local zpl_thread_pool *zpl__thread_pool;
 ZPL_COMPARE_PROC(zpl___jobs_cmp) {
     zpl_thread_job *p = (zpl_thread_job *)(zpl__thread_pool->jobs + *(zpl_u32 *)a);
     zpl_thread_job *q = (zpl_thread_job *)(zpl__thread_pool->jobs + *(zpl_u32 *)b);
-    return p->priority < q->priority ? 1.0f : p->priority > q->priority;
+    return cast(zpl_i32)(p->priority < q->priority ? 1.0f : p->priority > q->priority);
 }
 
 ZPL_COMPARE_PROC_PTR(zpl__jobs_cmp(zpl_thread_pool *pool)) {
