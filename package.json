@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "10.6.2",
+  "version": "10.6.1",
   "homepage": "https://github.com/zpl-c/zpl#readme",
   "description": "Single-file header-only C and C++ helper library.",
   "author": "Dominik Madarasz <zaklaus@outlook.com> (http://madaraszd.net/)",
@@ -25,6 +25,12 @@
   "release-it": {
     "npm": {
       "publish": true
+    },
+    "git": {
+      "tag": false
+    },
+    "hooks": {
+      "before:push": "git tag --force $(echo v${version})"
     },
     "github": {
       "release": true,
