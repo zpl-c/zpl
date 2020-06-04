@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.5.7  - zpl_file_new is now OS-agnostic constructor
   10.5.6  - Fix coroutine creation
   10.5.5  - Jobs system uses zpl_f32 for priority setting
   10.5.4  - zpl_buffer_free no longer takes the 2nd argument (allocator)

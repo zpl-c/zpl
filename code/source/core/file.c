@@ -227,9 +227,10 @@ zpl_file_error zpl_file_new(zpl_file *f, zpl_file_descriptor fd, zpl_file_operat
 
     f->ops = ops;
     f->fd = fd;
+    f->dir = NULL;
+    f->last_write_time = 0;
     f->filename = zpl_alloc_array(zpl_heap_allocator( ), char, len + 1);
     zpl_memcopy(cast(char *) f->filename, cast(char *) filename, len + 1);
-    f->last_write_time = zpl_fs_last_write_time(f->filename);
 
     return err;
 }
