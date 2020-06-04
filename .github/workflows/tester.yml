@@ -68,7 +68,7 @@ jobs:
     if: always()
     steps:
       - uses: sarisia/actions-status-discord@v1
-        if: ${{ (needs.build-mac.result == needs.build-lin.result == needs.build-win.result) == "success" }}
+        if: ${{ contains(needs.build-mac.result == needs.build-lin.result == needs.build-win.result, "success") }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
@@ -77,7 +77,7 @@ jobs:
           nofail: true
           color: "0x55df2a"
       - uses: sarisia/actions-status-discord@v1
-        if: ${{ (needs.build-mac.result == needs.build-lin.result == needs.build-win.result) != "success" }}
+        if: ${{ !contains(needs.build-mac.result == needs.build-lin.result == needs.build-win.result, "success") }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
