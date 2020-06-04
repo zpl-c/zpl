@@ -32,7 +32,7 @@ EXAMPLES += $(patsubst %.cc,%,$(wildcard code/apps/examples/*.cc))
 
 BUILD_FILES = $(wildcard build/*)
 
-.PHONY: all clean examples test app
+.PHONY: all clean examples test app embed
 
 all: clean examples test
 
@@ -62,3 +62,8 @@ endif
 	@mkdir -p build
 	@echo '=> Building $(@F)'
 	$(CXX) -g $(CXXFLAGS) $^ $(LDFLAGS) -o build/$(@F)
+
+.SILENT:
+
+embed:
+	./misc/embed.sh
