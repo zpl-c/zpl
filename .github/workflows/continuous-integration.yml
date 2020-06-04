@@ -5,12 +5,12 @@ on:
       - master
       - review/*
     paths:
-      - 'code/*'
+      - 'code/**'
   pull_request:
     branches:
       - master
     paths:
-      - 'code/*'
+      - 'code/**'
 
 jobs:
   build-win:
