@@ -26,6 +26,12 @@
     "npm": {
       "publish": true
     },
+    "git": {
+      "tag": false
+    },
+    "hooks": {
+      "after:bump": "git tag --force $(echo v${tagName})"
+    },
     "github": {
       "release": true,
       "assets": [
