@@ -3,6 +3,14 @@ on:
   push:
     branches:
       - master
+      - review/*
+    paths:
+      - 'code/*'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'code/*'
 
 jobs:
   build-win:
