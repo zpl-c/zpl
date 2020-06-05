@@ -3,8 +3,8 @@
 </div>
 
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl/actions"><img src="https://github.com/zpl-c/zpl/workflows/tester/badge.svg" alt="Build status" /></a>
-    <a href="https://discord.gg/2fZVEym"><img src="https://discordapp.com/api/guilds/354670964400848898/embed.png" alt="Discord server" /></a>
+    <a href="https://github.com/zpl-c/zpl/actions"><img src="https://img.shields.io/github/workflow/status/zpl-c/zpl/tester?label=Tests&style=for-the-badge" alt="Build status" /></a>
+    <a href="https://discord.gg/2fZVEym"><img src="https://img.shields.io/discord/354670964400848898?color=7289DA&style=for-the-badge" alt="discord" /></a>
 </div>
 
 <br />
