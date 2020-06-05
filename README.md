@@ -26,12 +26,12 @@ It's been created to simplify development process under C/C++ language and offer
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX-like systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test ZPL on, feel free to let us know about your experience and we can try to make it work together.
 
-| Platform / Result 	| Windows 	| macOS 	| Linux 	| iOS 	| Android 	| Raspberry Pi 	| OpenBSD 	| FreeBSD 	| Emscripten 	|
-|-	|-	|-	|-	|-	|-	|-	|-	|-	|-	|
-| ❔ 	|  	|  	|  	|  	| gcc 	| gcc, clang 	| gcc 	|  	|  	|
-| ✅ 	| msvc, mingw, clang-cl 	| gcc, clang 	| gcc, clang 	| clang 	| clang 	|  	|  	| gcc, clang 	|  	|
-| ☑️ 	|  	|  	|  	|  	|  	|  	| clang 	|  	|  	|
-| 🔴 	|  	|  	|  	|  	|  	|  	|  	|  	| emcc 	|
+| Platform / Result 	| Windows               	| macOS      	| Linux      	| iOS   	| Android 	| Raspberry Pi 	| OpenBSD 	| FreeBSD    	| Emscripten 	|
+|-------------------	|-----------------------	|------------	|------------	|-------	|---------	|--------------	|---------	|------------	|------------	|
+|         ❔         	|                       	|            	|            	|       	|   gcc   	|  gcc, clang  	|   gcc   	|            	|            	|
+|         ✅         	| msvc, mingw, clang-cl 	| gcc, clang 	| gcc, clang 	| clang 	|  clang  	|              	|         	| gcc, clang 	|            	|
+|         ☑️         	|                       	|            	|            	|       	|         	|              	|  clang  	|            	|            	|
+|         🔴         	|                       	|            	|            	|       	|         	|              	|         	|            	|    emcc    	|
 
 #### Legend:
 
