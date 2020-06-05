@@ -51,7 +51,7 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 
 ## Who uses this library?
 
-* [librg](https://github.com/zpl-c/librg) - Pure C game networking library for building simple and elegant cross-platform client-server solutions.
+* [librg](https://github.com/zpl-c/librg) - Making multi-player simpler since 2017. Single-header cross-platform world replication library in pure C99.
 
 # How to get this library?
 
