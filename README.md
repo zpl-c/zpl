@@ -25,25 +25,20 @@ It's been created to simplify development process under C/C++ language and offer
 
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX-like systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test ZPL on, feel free to let us know about your experience and we can try to make it work together.
-| *****Compiler* / Target**** 	| ****Windows**** 	| ****OpenBSD**** 	| ****FreeBSD**** 	| ****Linux**** 	| ****macOS**** 	| ****iOS**** 	| ****Android**** 	| ****Raspberry Pi**** 	| ****Emscripten**** 	|
+
+| Platform / Result 	| Windows 	| macOS 	| Linux 	| iOS 	| Android 	| Raspberry Pi 	| OpenBSD 	| FreeBSD 	| Emscripten 	|
 |-	|-	|-	|-	|-	|-	|-	|-	|-	|-	|
-| *clang* 	| :grey_question: 	| :ballot_box_with_check: 	| :white_check_mark: 	| :white_check_mark: 	| :white_check_mark: 	| :white_check_mark: 	| :white_check_mark: 	| :grey_question: 	| :grey_question: 	|
-| *gcc* 	| :white_check_mark: 	| :grey_question: 	| :white_check_mark: 	| :white_check_mark: 	| :white_check_mark: 	|  	|  	| :grey_question: 	| :ballot_box_with_check: 	|
-| *msvc C* 	| :white_check_mark: 	|  	|  	|  	|  	|  	|  	|  	|  	|
-| *clang-cl* 	| :white_check_mark: 	|  	|  	|  	|  	|  	|  	|  	|  	|
-| *mingw* 	| :white_check_mark: 	|  	|  	|  	|  	|  	|  	|  	|  	|
-| *clang++* 	| :grey_question: 	| :ballot_box_with_check: 	| :white_check_mark: 	| :white_check_mark: 	| :white_check_mark: 	| :grey_question: 	| :white_check_mark: 	| :grey_question: 	| :grey_question: 	|
-| *g++* 	| :white_check_mark: 	| :grey_question: 	| :white_check_mark: 	| :white_check_mark: 	| :grey_question: 	|  	|  	| :grey_question: 	| :ballot_box_with_check: 	|
-| *msvc C++* 	| :white_check_mark: 	|  	|  	|  	|  	|  	|  	|  	|  	|
-| *mingw++* 	| :white_check_mark: 	|  	|  	|  	|  	|  	|  	|  	|  	|
+| ❔ 	|  	|  	|  	|  	| gcc 	| gcc, clang 	| gcc 	|  	|  	|
+| ✅ 	| msvc, mingw, clang-cl 	| gcc, clang 	| gcc, clang 	| clang 	| clang 	|  	|  	| gcc, clang 	|  	|
+| ☑️ 	|  	|  	|  	|  	|  	|  	| clang 	|  	|  	|
+| 🔴 	|  	|  	|  	|  	|  	|  	|  	|  	| emcc 	|
 
-<sub>
-:white_check_mark: - compiles/runs without any errors.  
-:ballot_box_with_check: - compiles with limited features only.*
-:grey_question: - not tested.  
-:red_circle: - compilation/runtime faults.  
-</sub>
+#### Legend:
 
+* ❔ - Library was not tested on this platform/compiler yet
+* ✅ - Library successfully compiles, and all tests are executed properly
+* ☑️ - compiles with limited features only.
+* 🔴 - compilation/runtime faults.
 <br/><br/>
 
 *This platform's support is unfinished and might lack some features or degree of functionality compared to fully supported platforms. See [Platform Debt](https://github.com/zpl-c/zpl/blob/master/.github/PLATFORM_DEBT.md) to find out which features are missing out for your platform.
