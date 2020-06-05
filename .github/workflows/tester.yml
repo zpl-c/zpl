@@ -1,6 +1,8 @@
 name: tester
 on:
   push:
+    tags-ignore:
+      - '[0-9]+.[0-9]+.[0-9]+'
     branches:
       - master
       - review/**
@@ -8,8 +10,6 @@ on:
       - 'code/**'
       - 'Makefile'
       - 'misc/CMakeLists.txt'
-    tags-ignore:
-      - '[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - master
