@@ -4,7 +4,7 @@
   "homepage": "https://github.com/zpl-c/zpl#readme",
   "description": "Single-file header-only C and C++ helper library.",
   "author": "Dominik Madarasz <zaklaus@outlook.com> (http://madaraszd.net/)",
-  "license": "Apache-2.0",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zpl-c/zpl.git"
