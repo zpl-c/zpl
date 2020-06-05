@@ -310,6 +310,11 @@ ZPL_DEF zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_t
 ZPL_DEF void              zpl_file_free_contents(zpl_file_contents *fc);
 
 /**
+ * Writes content to a file
+ */
+ZPL_DEF zpl_b32           zpl_file_write_contents(char const* filepath, void const* buffer, zpl_isize size, zpl_file_error* err);
+
+/**
  * Reads the file as array of lines
  *
  * Make sure you free both the returned buffer and the lines (zpl_array)

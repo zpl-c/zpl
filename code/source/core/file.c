@@ -447,6 +447,25 @@ void zpl_file_free_contents(zpl_file_contents *fc) {
     fc->size = 0;
 }
 
+zpl_b32 zpl_file_write_contents(char const* filepath, void const* buffer, zpl_isize size, zpl_file_error* err) {
+    zpl_file f = { 0 };
+    zpl_file_error open_err;
+    zpl_b32 write_ok;
+    open_err = zpl_file_open_mode(&f, ZPL_FILE_MODE_WRITE, filepath);
+
+    if (open_err != ZPL_FILE_ERROR_NONE)
+    {
+        if (err)
+            *err = open_err;
+
+        return false;
+    }
+
+    write_ok = zpl_file_write(&f, buffer, size);
+    zpl_file_close(&f);
+    return write_ok;
+}
+
 char *zpl_file_read_lines(zpl_allocator alloc, zpl_array(char *)*lines, char const *filename, zpl_b32 strip_whitespace) {
     zpl_file f = { 0 };
     zpl_file_open(&f, filename);
