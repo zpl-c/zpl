@@ -37,7 +37,7 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 
 * ❔ - Library was not tested on this platform/compiler yet
 * ✅ - Library successfully compiles, and all tests are executed properly
-* ☑️ - compiles with limited features only.
+* ☑️ - compiles with limited features only. *
 * 🔴 - compilation/runtime faults.
 <br/><br/>
 
