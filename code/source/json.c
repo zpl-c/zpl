@@ -182,6 +182,20 @@ void zpl_json_write(zpl_file *f, zpl_json_object *o, zpl_isize indent) {
     }
 }
 
+zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isize indent) {
+    zpl_file tmp;
+    zpl_file_temp(&tmp);
+    zpl_json_write(&tmp, obj, indent);
+    zpl_file_seek(&tmp, 0);
+    zpl_i64 fsize = zpl_file_size(&tmp);
+    zpl_string output = zpl_string_make_reserve(a, fsize);
+    zpl_file_read_at(&tmp, output, fsize, 0);
+    zpl_file_close(&tmp);
+    zpl__set_string_length(output, fsize-1);
+    zpl__set_string_capacity(output, fsize-1);
+    return output;
+}
+
 void zpl__json_write_value(zpl_file *f, zpl_json_object *o, zpl_json_object *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last) {
     zpl_json_object *node = o;
     indent += 4;

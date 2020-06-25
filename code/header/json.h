@@ -140,6 +140,14 @@ ZPL_DEF void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *so
 //! @param indent Text indentation used during export. Use 0 for root objects.
 ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *obj, zpl_isize indent);
 
+//! Exports JSON5 document into text form and returns a zpl_string
+
+//! This method takes JSON object tree and exports it into valid JSON5 form with the support of various styles that were preserved during import or set up programatically.
+//! @param obj JSON object we export data from.
+//! @param indent Text indentation used during export. Use 0 for root objects.
+//! @return zpl_string
+ZPL_DEF zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isize indent);
+
 //! Releases used resources by a JSON object.
 
 //! @param obj JSON object to free.

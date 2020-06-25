@@ -393,10 +393,6 @@ zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 #endif
 
 zpl_file_error zpl_file_temp(zpl_file *file) {
-#if defined(ZPL_SYSTEM_EMSCRIPTEN)
-    ZPL_PANIC("zpl_file_temp is not supported for emscripten");
-#endif
-
     zpl_zero_item(file);
     FILE *fd = NULL;
 
