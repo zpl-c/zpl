@@ -630,6 +630,7 @@ Version History:
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable : 4201)
+    #pragma warning(disable : 4996) // Disable deprecated POSIX functions warning
     #pragma warning(disable : 4127) // Conditional expression is constant
 #endif
 

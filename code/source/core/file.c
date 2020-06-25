@@ -412,7 +412,7 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
 
-    file->fd.p = fd;
+    file->fd.i = fileno(fd);
     file->ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
 }
