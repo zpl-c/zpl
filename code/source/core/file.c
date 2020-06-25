@@ -395,11 +395,12 @@ zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 zpl_file_error zpl_file_temp(zpl_file *file) {
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
     ZPL_PANIC("zpl_file_temp is not supported for emscripten");
-#else
+#endif
+
     zpl_zero_item(file);
     FILE *fd = NULL;
 
-#if ZPL_SYSTEM_WINDOWS && !defined(ZPL_COMPILER_GCC)
+#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
     errno_t errcode = tmpfile_s(&fd);
 
     if (errcode != 0) {
@@ -413,7 +414,6 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 
     file->fd.p = fd;
     file->ops = zpl_default_file_operations;
-#endif
     return ZPL_FILE_ERROR_NONE;
 }
 

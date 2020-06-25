@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.7.1  - Fix zpl_file_temp platform bug
   10.7.0  - Add zpl_file_write_contents
   10.6.6  - Fix type mismatch in Jobs system
   10.6.0  - Remove event system
