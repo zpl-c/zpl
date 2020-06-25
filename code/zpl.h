@@ -285,7 +285,7 @@ Version History:
 
 #define ZPL_VERSION_MAJOR 10
 #define ZPL_VERSION_MINOR 7
-#define ZPL_VERSION_PATCH 1
+#define ZPL_VERSION_PATCH 2
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"
