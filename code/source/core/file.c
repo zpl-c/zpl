@@ -265,14 +265,11 @@ zpl_file_error zpl_file_close(zpl_file *f) {
     if (f->fd.i < 0) return ZPL_FILE_ERROR_INVALID;
 #endif
     
-
-#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
     if (f->is_temp)
     {
-        fclose(f->temp_fh);
+        fclose((FILE*)f->temp_fh);
         return ZPL_FILE_ERROR_NONE;
     }
-#endif
 
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
     f->ops.close(f->fd);
@@ -428,10 +425,10 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 
 #if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
     file->fd.i = _get_osfhandle(_fileno(fd));
-    file->temp_fh = fd;
 #else 
     file->fd.i = fileno(fd);
 #endif
+    file->temp_fh = (void*)fd;
     file->ops = zpl_default_file_operations;
     file->is_temp = true;
     return ZPL_FILE_ERROR_NONE;
