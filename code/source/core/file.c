@@ -19,6 +19,10 @@
 #   include <windows.h>
 #endif
 
+#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
+#include <io.h>
+#endif
+
 ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_WINDOWS) || defined (ZPL_SYSTEM_CYGWIN)
@@ -251,8 +255,6 @@ zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *f
 zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry);
 
 zpl_file_error zpl_file_close(zpl_file *f) {
-    if (f->is_temp)
-        return ZPL_FILE_ERROR_NONE;
     if (!f) return ZPL_FILE_ERROR_INVALID;
 
     if (f->filename) zpl_free(zpl_heap_allocator( ), cast(char *) f->filename);
@@ -261,6 +263,15 @@ zpl_file_error zpl_file_close(zpl_file *f) {
     if (f->fd.p == INVALID_HANDLE_VALUE) return ZPL_FILE_ERROR_INVALID;
 #else
     if (f->fd.i < 0) return ZPL_FILE_ERROR_INVALID;
+#endif
+    
+
+#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
+    if (f->is_temp)
+    {
+        fclose(f->temp_fh);
+        return ZPL_FILE_ERROR_NONE;
+    }
 #endif
 
     if (!f->ops.read_at) f->ops = zpl_default_file_operations;
@@ -399,10 +410,6 @@ zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 
 #endif
 
-#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
-#include <io.h>
-#endif
-
 zpl_file_error zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
     FILE *fd = NULL;
@@ -421,6 +428,7 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 
 #if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
     file->fd.i = _get_osfhandle(_fileno(fd));
+    file->temp_fh = fd;
 #else 
     file->fd.i = fileno(fd);
 #endif
