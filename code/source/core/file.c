@@ -251,6 +251,8 @@ zpl_file_error zpl_file_open_mode(zpl_file *f, zpl_file_mode mode, char const *f
 zpl_internal void zpl__dirinfo_free_entry(zpl_dir_entry *entry);
 
 zpl_file_error zpl_file_close(zpl_file *f) {
+    if (f->is_temp)
+        return ZPL_FILE_ERROR_NONE;
     if (!f) return ZPL_FILE_ERROR_INVALID;
 
     if (f->filename) zpl_free(zpl_heap_allocator( ), cast(char *) f->filename);
@@ -285,6 +287,8 @@ zpl_file_error zpl_file_open(zpl_file *f, char const *filename) {
 char const *zpl_file_name(zpl_file *f) { return f->filename ? f->filename : ""; }
 
 zpl_b32 zpl_file_has_changed(zpl_file *f) {
+    if (f->is_temp)
+        return false;
     zpl_b32 result = false;
     zpl_file_time last_write_time = zpl_fs_last_write_time(f->filename);
     if (f->last_write_time != last_write_time) {
@@ -317,6 +321,9 @@ zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
 void zpl_file_connect_handle(zpl_file *file, void *handle) {
     ZPL_ASSERT_NOT_NULL(file);
     ZPL_ASSERT_NOT_NULL(handle);
+
+    if (file->is_temp)
+        return;
 
     zpl_zero_item(file);
 
@@ -418,6 +425,7 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
     file->fd.i = fileno(fd);
 #endif
     file->ops = zpl_default_file_operations;
+    file->is_temp = true;
     return ZPL_FILE_ERROR_NONE;
 }
 

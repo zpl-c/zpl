@@ -429,6 +429,9 @@ void zpl_dirinfo_step(zpl_dir_entry *entry) {
 }
 
 void zpl_file_dirinfo_refresh(zpl_file *file) {
+    if (file->is_temp)
+        return;
+
     if (file->dir) {
         zpl__dirinfo_free_entry(file->dir);
         zpl_mfree(file->dir);

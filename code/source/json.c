@@ -190,6 +190,7 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isiz
     zpl_i64 fsize = zpl_file_size(&tmp);
     zpl_string output = zpl_string_make_reserve(a, fsize);
     zpl_file_read_at(&tmp, output, fsize, 0);
+    zpl_file_close(&tmp);
     zpl__set_string_length(output, fsize-1);
     zpl__set_string_capacity(output, fsize-1);
     return output;
