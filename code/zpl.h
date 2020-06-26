@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.8.1  - zpl_file_temp Windows fixes
   10.8.0  - Implemented zpl_json_write_string
   10.7.1  - Fix zpl_file_temp platform bug
   10.7.0  - Add zpl_file_write_contents

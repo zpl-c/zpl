@@ -392,6 +392,10 @@ zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 
 #endif
 
+#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
+#include <io.h>
+#endif
+
 zpl_file_error zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
     FILE *fd = NULL;
@@ -408,7 +412,11 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 
     if (fd == NULL) { return ZPL_FILE_ERROR_INVALID; }
 
+#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
+    file->fd.i = _get_osfhandle(_fileno(fd));
+#else 
     file->fd.i = fileno(fd);
+#endif
     file->ops = zpl_default_file_operations;
     return ZPL_FILE_ERROR_NONE;
 }
