@@ -39,7 +39,7 @@ ZPL_ALWAYS_INLINE zpl_b32 zpl__json_validate_name(char *str, char *err) {
 #undef jx
 
 
-void zpl_json_parse(zpl_json_object *root, zpl_usize len, char const *source, zpl_allocator a, zpl_b32 handle_comments,
+void zpl_json_parse(zpl_json_object *root, zpl_usize len, char *source, zpl_allocator a, zpl_b32 handle_comments,
                     zpl_u8 *err_code) {
 
     if (!root || !source)
