@@ -72,6 +72,7 @@ ZPL_BEGIN_C_DECLS
             uint32_t r = 0;
             asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(r));
         #elif (__ARM_ARCH >= 6)
+            uint32_t r = 0;
             uint32_t pmccntr;
             uint32_t pmuseren;
             uint32_t pmcntenset;
