@@ -28,9 +28,9 @@ We're trying to expand the compatibility, but we need your help! If you have a d
 
 | Platform / Result 	| Windows               	| macOS      	| Linux      	| iOS   	| Android 	| Raspberry Pi 	| OpenBSD 	| FreeBSD    	| Emscripten 	|
 |-------------------	|-----------------------	|------------	|------------	|-------	|---------	|--------------	|---------	|------------	|------------	|
-|         ✅         	| msvc, mingw, clang-cl 	| gcc, clang 	| gcc, clang 	| clang 	|  clang  	|              	|         	| gcc, clang 	|            	|
+|         ✅         	| msvc, mingw, clang-cl 	| gcc, clang 	| gcc, clang 	| clang 	|  clang  	|  gcc, clang 	|         	| gcc, clang 	|            	|
 |         ☑️         	|                       	|            	|            	|       	|         	|              	|  clang  	|            	|            	|
-|         ❔         	|                       	|            	|            	|       	|   gcc   	|  gcc, clang  	|   gcc   	|            	|            	|
+|         ❔         	|                       	|            	|            	|       	|   gcc   	|           	|   gcc   	|            	|            	|
 |         🔴         	|                       	|            	|            	|       	|         	|              	|         	|            	|    emcc    	|
 
 #### Legend:
