@@ -68,9 +68,6 @@ ZPL_BEGIN_C_DECLS
         #if defined(__aarch64__)
             int64_t r = 0;
             asm volatile("mrs %0, cntvct_el0" : "=r"(r));
-        #elif defined(__ARM_ARCH_7A__)
-            uint32_t r = 0;
-            asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(r));
         #elif (__ARM_ARCH >= 6)
             uint32_t r = 0;
             uint32_t pmccntr;
