@@ -288,7 +288,7 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
     // remove trailing slashses
     if (directory[length - 1] == '\\') { directory[length - 1] = '\0'; }
 
-    // attach search parttern
+    // attach search pattern
     zpl_string findpath = zpl_string_make(alloc, directory);
     findpath = zpl_string_appendc(findpath, "\\");
     findpath = zpl_string_appendc(findpath, "*");
