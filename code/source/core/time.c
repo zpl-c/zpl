@@ -6,6 +6,7 @@
 
 #if defined(ZPL_SYSTEM_MACOS) || ZPL_SYSTEM_UNIX
     #include <time.h>
+    #include <sys/time.h>
 #endif
 
 #if defined(ZPL_SYSTEM_MACOS)
@@ -18,6 +19,10 @@
     #include <emscripten.h>
 #endif
 
+#if defined(ZPL_SYSTEM_WINDOWS)
+    #include <timezoneapi.h>
+#endif
+
 ZPL_BEGIN_C_DECLS
 
 //! @}
@@ -27,8 +32,6 @@ ZPL_BEGIN_C_DECLS
 // Time
 //
 //
-
-#define ZPL__UNIX_TO_WIN32_EPOCH 11644473600000000ull
 
 #if defined(ZPL_COMPILER_MSVC) && !defined(__clang__)
     zpl_u64 zpl_rdtsc(void) { return __rdtsc( ); }
@@ -109,7 +112,7 @@ ZPL_BEGIN_C_DECLS
 
         QueryPerformanceCounter(&counter);
 
-        result = (counter.QuadPart - win32_perf_counter.QuadPart) * 1e3 / (win32_perf_count_freq.QuadPart);
+        result = (counter.QuadPart - win32_perf_counter.QuadPart) * 1000 / (win32_perf_count_freq.QuadPart);
         return result;
     }
 
@@ -121,7 +124,21 @@ ZPL_BEGIN_C_DECLS
         li.LowPart = ft.dwLowDateTime;
         li.HighPart = ft.dwHighDateTime;
 
-        return li.QuadPart / 10e3;
+        return li.QuadPart / 1000;
+    }
+
+    zpl_u64 zpl_local_time_now_ms(void) {
+        FILETIME ft;
+        SYSTEMTIME st, lst;
+        ULARGE_INTEGER li;
+
+        GetSystemTime(&st);
+        SystemTimeToTzSpecificLocalTime(NULL, &st, &lst);
+        SystemTimeToFileTime(&lst, &ft);
+        li.LowPart = ft.dwLowDateTime;
+        li.HighPart = ft.dwHighDateTime;
+
+        return li.QuadPart / 1000;
     }
 
     void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
@@ -134,16 +151,16 @@ ZPL_BEGIN_C_DECLS
             zpl_u64 result;
 
             clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
-            result = 1e3 * t.tv_sec + 1.0e-6 * t.tv_nsec;
+            result = 1000 * t.tv_sec + 1.0e-6 * t.tv_nsec;
             return result;
         }
     #endif
 
     zpl_u64 zpl_time_now_ms(void) {
     #if defined(ZPL_SYSTEM_OSX)
-        zpl_f64 result;
+        zpl_u64 result;
 
-        zpl_local_persist zpl_f64 timebase = 0.0;
+        zpl_local_persist zpl_u64 timebase = 0;
         zpl_local_persist zpl_u64 timestart = 0;
 
         if (!timestart) {
@@ -151,11 +168,11 @@ ZPL_BEGIN_C_DECLS
             mach_timebase_info(&tb);
             timebase = tb.numer;
             timebase /= tb.denom;
-            timestart = mach_absolute_time( );
+            timestart = mach_absolute_time();
         }
 
         // NOTE: mach_absolute_time() returns things in nanoseconds
-        result = 1.0e-9 * (mach_absolute_time( ) - timestart) * timebase;
+        result = 1.0e-6 * (mach_absolute_time() - timestart) * timebase;
         return result;
     #else
         zpl_local_persist zpl_u64 unix_timestart = 0.0;
@@ -181,7 +198,7 @@ ZPL_BEGIN_C_DECLS
     #else
         clock_gettime(0 /*CLOCK_REALTIME*/, &t);
     #endif
-        return (t.tv_sec * 1e6 + t.tv_nsec * 1e-3 + ZPL__UNIX_TO_WIN32_EPOCH) * 10e-4;
+        return (t.tv_sec * 1000 + t.tv_nsec * 1e-6 + ZPL__UNIX_TO_WIN32_EPOCH);
     }
 
     void zpl_sleep_ms(zpl_u32 ms) {
@@ -189,26 +206,30 @@ ZPL_BEGIN_C_DECLS
         struct timespec rem = { 0, 0 };
         nanosleep(&req, &rem);
     }
+
+    zpl_u64 zpl_local_time_now_ms(void) {
+        struct tm t;
+        zpl_u64 result = zpl_utc_time_now_ms() - ZPL__UNIX_TO_WIN32_EPOCH;
+        zpl_u16 ms = result % 1000;
+        result *= 1e-3;
+        localtime_r((const time_t*)&result, &t);
+        result = (zpl_u64)mktime(&t);
+        return (result - timezone + t.tm_isdst * 3600) * 1000 + ms + ZPL__UNIX_TO_WIN32_EPOCH;
+    }
 #endif
 
 zpl_f64 zpl_time_now(void) {
-    return (zpl_f64)zpl_time_now_ms() * 1e-3;
+    return (zpl_f64)(zpl_time_now_ms() * 1e-3);
 }
 
 zpl_f64 zpl_utc_time_now(void) {
-    return (zpl_f64)zpl_utc_time_now_ms() * 1e-3;
+    return (zpl_f64)(zpl_utc_time_now_ms() * 1e-3);
 }
 
-void zpl_sleep(zpl_f32 s) {
-    zpl_sleep_ms(s * 1e3);
+zpl_f64 zpl_local_time_now(void) {
+    return (zpl_f64)(zpl_local_time_now_ms() * 1e-3);
 }
 
-ZPL_IMPL_INLINE zpl_u64 zpl_win32_to_unix_epoch(zpl_u64 ms) {
-    return ms - ZPL__UNIX_TO_WIN32_EPOCH * 1e-3;
-}
 
-ZPL_IMPL_INLINE zpl_u64 zpl_unix_to_win32_epoch(zpl_u64 ms) {
-    return ms + ZPL__UNIX_TO_WIN32_EPOCH * 1e-3;
-}
 
 ZPL_END_C_DECLS

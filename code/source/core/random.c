@@ -65,7 +65,7 @@ void zpl_random_init(zpl_random *r) {
     r->offsets[2] = 0;
     r->offsets[3] = 1;
 #endif
-    time = cast(zpl_u64)zpl_utc_time_now();
+    time = zpl_local_time_now_ms();
     r->offsets[4] = cast(zpl_u32)(time >> 32);
     r->offsets[5] = cast(zpl_u32)time;
     r->offsets[6] = zpl__get_noise_from_time();

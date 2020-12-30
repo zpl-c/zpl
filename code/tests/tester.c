@@ -8,6 +8,7 @@
 #include "cases/json.h"
 #include "cases/alloc_pool.h"
 #include "cases/hashing.h"
+#include "cases/time.h"
 
 int main() {
     UNIT_CREATE("zpl");
@@ -15,6 +16,7 @@ int main() {
     UNIT_CASE(json5_parser);
     UNIT_CASE(alloc_pool);
     UNIT_CASE(hashing);
+    UNIT_CASE(time);
 
     return UNIT_RUN();
 }
