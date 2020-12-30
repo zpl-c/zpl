@@ -30,6 +30,12 @@ ZPL_DEF zpl_f64 zpl_utc_time_now(void);
 //! Return time since 1601-01-01 UTC.
 ZPL_DEF zpl_u64 zpl_utc_time_now_ms(void);
 
+//! Return local system time since 1601-01-01
+ZPL_DEF zpl_u64 zpl_local_time_now_ms(void);
+
+//! Return local system time in seconds since 1601-01-01
+ZPL_DEF zpl_f64 zpl_local_time_now(void);
+
 //! Convert Win32 epoch (1601-01-01 UTC) to UNIX (1970-01-01 UTC)
 ZPL_DEF_INLINE zpl_u64 zpl_win32_to_unix_epoch(zpl_u64 ms);
 
@@ -40,6 +46,22 @@ ZPL_DEF_INLINE zpl_u64 zpl_unix_to_win32_epoch(zpl_u64 ms);
 ZPL_DEF void zpl_sleep_ms(zpl_u32 ms);
 
 //! Sleep for specified number of seconds.
-ZPL_DEF void zpl_sleep(zpl_f32 s);
+ZPL_DEF_INLINE void zpl_sleep(zpl_f32 s);
+
+#ifndef ZPL__UNIX_TO_WIN32_EPOCH
+#define ZPL__UNIX_TO_WIN32_EPOCH 11644473600000ull
+#endif
+
+ZPL_IMPL_INLINE zpl_u64 zpl_win32_to_unix_epoch(zpl_u64 ms) {
+    return ms - ZPL__UNIX_TO_WIN32_EPOCH;
+}
+
+ZPL_IMPL_INLINE zpl_u64 zpl_unix_to_win32_epoch(zpl_u64 ms) {
+    return ms + ZPL__UNIX_TO_WIN32_EPOCH;
+}
+
+ZPL_IMPL_INLINE void zpl_sleep(zpl_f32 s) {
+    zpl_sleep_ms((zpl_u32)(s * 1000));
+}
 
 ZPL_END_C_DECLS
