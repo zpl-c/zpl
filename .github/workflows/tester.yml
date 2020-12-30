@@ -33,7 +33,7 @@ jobs:
           nofail: true
           color: "0xFFA500"
           username: "Michael Scott"
-          avatar_url: "http://raw.madaraszd.net/office/test.jpg"
+          avatar_url: "https://cdn.zakto.pw/office/test.jpg"
   build-win:
     name: Test Windows
     runs-on: windows-latest
@@ -90,4 +90,4 @@ jobs:
           nofail: true
           color: "0xdf332a"
           username: "Devastated Michael Scott"
-          avatar_url: "http://raw.madaraszd.net/office/fail.jpg"
+          avatar_url: "https://cdn.zakto.pw/office/fail.jpg"
