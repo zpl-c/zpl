@@ -28,6 +28,8 @@ ZPL_BEGIN_C_DECLS
 //
 //
 
+#define ZPL__UNIX_TO_WIN32_EPOCH 11644473600000000ull
+
 #if defined(ZPL_COMPILER_MSVC) && !defined(__clang__)
     zpl_u64 zpl_rdtsc(void) { return __rdtsc( ); }
 #elif defined(__i386__)
@@ -94,9 +96,9 @@ ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
 
-    zpl_f64 zpl_time_now(void) {
+    zpl_u64 zpl_time_now_ms(void) {
         zpl_local_persist LARGE_INTEGER win32_perf_count_freq = { 0 };
-        zpl_f64 result;
+        zpl_u64 result;
         LARGE_INTEGER counter;
         zpl_local_persist LARGE_INTEGER win32_perf_counter = { 0 };
         if (!win32_perf_count_freq.QuadPart) {
@@ -107,11 +109,11 @@ ZPL_BEGIN_C_DECLS
 
         QueryPerformanceCounter(&counter);
 
-        result = (counter.QuadPart - win32_perf_counter.QuadPart) / cast(zpl_f64)(win32_perf_count_freq.QuadPart);
+        result = (counter.QuadPart - win32_perf_counter.QuadPart) * 1e3 / (win32_perf_count_freq.QuadPart);
         return result;
     }
 
-    zpl_f64 zpl_utc_time_now(void) {
+    zpl_u64 zpl_utc_time_now_ms(void) {
         FILETIME ft;
         ULARGE_INTEGER li;
 
@@ -119,7 +121,7 @@ ZPL_BEGIN_C_DECLS
         li.LowPart = ft.dwLowDateTime;
         li.HighPart = ft.dwHighDateTime;
 
-        return li.QuadPart / 10 / 10e5;
+        return li.QuadPart / 10e3;
     }
 
     void zpl_sleep_ms(zpl_u32 ms) { Sleep(ms); }
@@ -127,17 +129,17 @@ ZPL_BEGIN_C_DECLS
 #else
 
     #if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
-        zpl_f64 zpl__unix_gettime(void) {
+        zpl_u64 zpl__unix_gettime(void) {
             struct timespec t;
-            zpl_f64 result;
+            zpl_u64 result;
 
             clock_gettime(1 /*CLOCK_MONOTONIC*/, &t);
-            result = t.tv_sec + 1.0e-9 * t.tv_nsec;
+            result = 1e3 * t.tv_sec + 1.0e-6 * t.tv_nsec;
             return result;
         }
     #endif
 
-    zpl_f64 zpl_time_now(void) {
+    zpl_u64 zpl_time_now_ms(void) {
     #if defined(ZPL_SYSTEM_OSX)
         zpl_f64 result;
 
@@ -156,17 +158,17 @@ ZPL_BEGIN_C_DECLS
         result = 1.0e-9 * (mach_absolute_time( ) - timestart) * timebase;
         return result;
     #else
-        zpl_local_persist zpl_f64 unix_timestart = 0.0;
+        zpl_local_persist zpl_u64 unix_timestart = 0.0;
 
         if (!unix_timestart) { unix_timestart = zpl__unix_gettime( ); }
 
-        zpl_f64 now = zpl__unix_gettime( );
+        zpl_u64 now = zpl__unix_gettime( );
 
         return (now - unix_timestart);
     #endif
     }
 
-    zpl_f64 zpl_utc_time_now(void) {
+    zpl_u64 zpl_utc_time_now_ms(void) {
         struct timespec t;
     #if defined(ZPL_SYSTEM_OSX)
         clock_serv_t cclock;
@@ -179,15 +181,34 @@ ZPL_BEGIN_C_DECLS
     #else
         clock_gettime(0 /*CLOCK_REALTIME*/, &t);
     #endif
-        return (cast(zpl_u64) t.tv_sec * 1000000ull + t.tv_nsec / 1000 + 11644473600000000ull) / 10e5;
+        return (t.tv_sec * 1e6 + t.tv_nsec * 1e-3 + ZPL__UNIX_TO_WIN32_EPOCH) * 10e-4;
     }
 
     void zpl_sleep_ms(zpl_u32 ms) {
-        struct timespec req = { cast(time_t) ms / 1000, cast(long)((ms % 1000) * 1000000) };
+        struct timespec req = { cast(time_t)(ms * 1e-3), cast(long)((ms % 1000) * 1e6) };
         struct timespec rem = { 0, 0 };
         nanosleep(&req, &rem);
     }
-
 #endif
+
+zpl_f64 zpl_time_now(void) {
+    return (zpl_f64)zpl_time_now_ms() * 1e-3;
+}
+
+zpl_f64 zpl_utc_time_now(void) {
+    return (zpl_f64)zpl_utc_time_now_ms() * 1e-3;
+}
+
+void zpl_sleep(zpl_f32 s) {
+    zpl_sleep_ms(s * 1e3);
+}
+
+ZPL_IMPL_INLINE zpl_u64 zpl_win32_to_unix_epoch(zpl_u64 ms) {
+    return ms - ZPL__UNIX_TO_WIN32_EPOCH * 1e-3;
+}
+
+ZPL_IMPL_INLINE zpl_u64 zpl_unix_to_win32_epoch(zpl_u64 ms) {
+    return ms + ZPL__UNIX_TO_WIN32_EPOCH * 1e-3;
+}
 
 ZPL_END_C_DECLS
