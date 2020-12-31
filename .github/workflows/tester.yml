@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - review/**
+      - ci/**
     paths:
       - 'code/**'
       - 'Makefile'
