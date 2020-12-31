@@ -64,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install ARM cross-compiler
-        run: apt install -y gcc-arm-linux-gnueabi
+        run: sudo apt install -y gcc-arm-linux-gnueabi
       - name: Run build on Linux
         run: make
 
