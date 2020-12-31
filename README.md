@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/81554853-31e6bb80-9390-11ea-94c7-c25ab15e57eb.png" alt="zpl" /></a>
+    <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/9026786/103413377-8afe9c00-4b79-11eb-9cda-1caa4800b487.png" alt="zpl" /></a>
 </div>
 
 <div align="center">
