@@ -10,13 +10,13 @@ on:
       - 'code/**'
       - 'Makefile'
       - 'misc/CMakeLists.txt'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'code/**'
-      - 'Makefile'
-      - 'misc/CMakeLists.txt'
+  # pull_request:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - 'code/**'
+  #     - 'Makefile'
+  #     - 'misc/CMakeLists.txt'
 
 jobs:
   prep:
