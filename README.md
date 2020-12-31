@@ -103,10 +103,6 @@ Additionally, ZPL also contains these additional modules that build upon the cor
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL gamedev friendly library for math.
 
-# Support Me
-
-While ZPL is free and open source library, I use my spare time to develop features and bug fixes however. With financial support, I'll be able to invest more time in the project and deliver on more interesting features or experiments. Your support would be very appreciated!
-
 # Example Usage
 In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
 
