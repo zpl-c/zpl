@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.9.0  - Improve the time API
   10.8.3  - zpl_file_close tempfile Windows fixes
   10.8.2  - zpl_file_temp disallow some operations
   10.8.1  - zpl_file_temp Windows fixes
