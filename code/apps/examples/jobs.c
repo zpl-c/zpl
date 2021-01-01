@@ -5,6 +5,7 @@
 #include <zpl.h>
 #define TEST_ENQUEUE_JOB 0.8
 
+#if defined(ZPL_MODULE_THREADING)
 zpl_mutex print_mut;
 
 void calc_nums(void* data) {
@@ -54,4 +55,6 @@ int main() {
 
     return 0;
 }
-
+#else
+int main(){return 0;}
+#endif

@@ -339,6 +339,11 @@ Version History:
     #endif
 #endif
 
+/* Architecture-specific overrides */
+#if defined(__ARM_ARCH)
+    #define ZPL_DISABLE_THREADING
+#endif
+
 /* Distributions */
 #ifndef ZPL_CUSTOM_MODULES
     /* default distribution */
