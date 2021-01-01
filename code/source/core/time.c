@@ -99,7 +99,7 @@ ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_WINDOWS) || defined(ZPL_SYSTEM_CYGWIN)
 
-    zpl_u64 zpl_time_now_ms(void) {
+    zpl_u64 zpl_time_rel_ms(void) {
         zpl_local_persist LARGE_INTEGER win32_perf_count_freq = { 0 };
         zpl_u64 result;
         LARGE_INTEGER counter;
@@ -116,7 +116,7 @@ ZPL_BEGIN_C_DECLS
         return result;
     }
 
-    zpl_u64 zpl_utc_time_now_ms(void) {
+    zpl_u64 zpl_time_utc_ms(void) {
         FILETIME ft;
         ULARGE_INTEGER li;
 
@@ -127,7 +127,7 @@ ZPL_BEGIN_C_DECLS
         return li.QuadPart / 1000;
     }
 
-    zpl_u64 zpl_local_time_now_ms(void) {
+    zpl_u64 zpl_time_tz_ms(void) {
         FILETIME ft;
         SYSTEMTIME st, lst;
         ULARGE_INTEGER li;
@@ -156,7 +156,7 @@ ZPL_BEGIN_C_DECLS
         }
     #endif
 
-    zpl_u64 zpl_time_now_ms(void) {
+    zpl_u64 zpl_time_rel_ms(void) {
     #if defined(ZPL_SYSTEM_OSX)
         zpl_u64 result;
 
@@ -185,7 +185,7 @@ ZPL_BEGIN_C_DECLS
     #endif
     }
 
-    zpl_u64 zpl_utc_time_now_ms(void) {
+    zpl_u64 zpl_time_utc_ms(void) {
         struct timespec t;
     #if defined(ZPL_SYSTEM_OSX)
         clock_serv_t cclock;
@@ -207,9 +207,9 @@ ZPL_BEGIN_C_DECLS
         nanosleep(&req, &rem);
     }
 
-    zpl_u64 zpl_local_time_now_ms(void) {
+    zpl_u64 zpl_time_tz_ms(void) {
         struct tm t;
-        zpl_u64 result = zpl_utc_time_now_ms() - ZPL__UNIX_TO_WIN32_EPOCH;
+        zpl_u64 result = zpl_time_utc_ms() - ZPL__UNIX_TO_WIN32_EPOCH;
         zpl_u16 ms = result % 1000;
         result *= 1e-3;
         localtime_r((const time_t*)&result, &t);
@@ -218,16 +218,16 @@ ZPL_BEGIN_C_DECLS
     }
 #endif
 
-zpl_f64 zpl_time_now(void) {
-    return (zpl_f64)(zpl_time_now_ms() * 1e-3);
+zpl_f64 zpl_time_rel(void) {
+    return (zpl_f64)(zpl_time_rel_ms() * 1e-3);
 }
 
-zpl_f64 zpl_utc_time_now(void) {
-    return (zpl_f64)(zpl_utc_time_now_ms() * 1e-3);
+zpl_f64 zpl_time_utc(void) {
+    return (zpl_f64)(zpl_time_utc_ms() * 1e-3);
 }
 
-zpl_f64 zpl_local_time_now(void) {
-    return (zpl_f64)(zpl_local_time_now_ms() * 1e-3);
+zpl_f64 zpl_time_tz(void) {
+    return (zpl_f64)(zpl_time_tz_ms() * 1e-3);
 }
 
 

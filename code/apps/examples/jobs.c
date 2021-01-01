@@ -39,10 +39,10 @@ int main() {
     zpl_jobs_enqueue(&p, calc_nums, NULL);
     zpl_jobs_enqueue(&p, calc_nums, NULL);
 
-    zpl_f64 time=zpl_time_now();
+    zpl_f64 time=zpl_time_rel();
 
     for (;;) {
-        zpl_f64 now=zpl_time_now();
+        zpl_f64 now=zpl_time_rel();
         zpl_f64 dt =now-time;
         if (dt > TEST_ENQUEUE_JOB) {
             time=now;
