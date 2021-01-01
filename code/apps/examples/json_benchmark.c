@@ -50,9 +50,9 @@ int main(int argc, char **argv) {
     zpl_json_object root = {0};
 
     zpl_u8 err;
-    zpl_f64 time = zpl_time_now();
+    zpl_f64 time = zpl_time_rel();
     zpl_json_parse(&root, fc.size, (char *)fc.data, zpl_heap(), strip_comments, &err);
-    zpl_f64 delta = zpl_time_now() - time;
+    zpl_f64 delta = zpl_time_rel() - time;
 
     if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)
     {

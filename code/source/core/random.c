@@ -17,12 +17,12 @@ zpl_internal zpl_u32 zpl__get_noise_from_time(void) {
     zpl_f64 start, remaining, end, curr = 0;
     zpl_u64 interval = 100000ll;
 
-    start     = zpl_time_now();
+    start     = zpl_time_rel();
     remaining = (interval - cast(zpl_u64)(interval*start)%interval) / cast(zpl_f64)interval;
     end       = start + remaining;
 
     do {
-        curr = zpl_time_now();
+        curr = zpl_time_rel();
         accum += cast(zpl_u32)curr;
     } while (curr >= end);
     return accum;
@@ -65,7 +65,7 @@ void zpl_random_init(zpl_random *r) {
     r->offsets[2] = 0;
     r->offsets[3] = 1;
 #endif
-    time = zpl_local_time_now_ms();
+    time = zpl_time_tz_ms();
     r->offsets[4] = cast(zpl_u32)(time >> 32);
     r->offsets[5] = cast(zpl_u32)time;
     r->offsets[6] = zpl__get_noise_from_time();

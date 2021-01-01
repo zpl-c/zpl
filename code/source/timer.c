@@ -33,7 +33,7 @@ void zpl_timer_start(zpl_timer *t, zpl_f64 delay_start) {
 
     t->enabled = true;
     t->remaining_calls = t->initial_calls;
-    t->next_call_ts = zpl_time_now( ) + delay_start;
+    t->next_call_ts = zpl_time_rel( ) + delay_start;
 }
 
 void zpl_timer_stop(zpl_timer *t) {
@@ -45,7 +45,7 @@ void zpl_timer_stop(zpl_timer *t) {
 void zpl_timer_update(zpl_timer_pool pool) {
     ZPL_ASSERT(pool);
 
-    zpl_f64 now = zpl_time_now( );
+    zpl_f64 now = zpl_time_rel( );
 
     for (zpl_isize i = 0; i < zpl_array_count(pool); ++i) {
         zpl_timer *t = pool + i;

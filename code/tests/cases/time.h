@@ -8,22 +8,22 @@
 
 MODULE(time, {
     IT("provides a relative time since the first call with 50ms delay", {
-        (void)zpl_time_now_ms();
+        (void)zpl_time_rel_ms();
         zpl_sleep_ms(50);
-        zpl_u64 b = zpl_time_now_ms();
+        zpl_u64 b = zpl_time_rel_ms();
         GREATER(b, 0);
     });
 
     IT("provides a UTC time since Win32 epoch", {
-        GREATER(zpl_utc_time_now_ms(), __WIN32_TIMESTAMP_REFERENCE);
+        GREATER(zpl_time_utc_ms(), __WIN32_TIMESTAMP_REFERENCE);
     });
 
     IT("can convert Win32 to UNIX epoch", {
-        EQUALS(__WIN32_TIMESTAMP_REFERENCE, zpl_unix_to_win32_epoch(__UNIX_TIMESTAMP_REFERENCE));
+        EQUALS(__WIN32_TIMESTAMP_REFERENCE, zpl_time_unix_to_win32(__UNIX_TIMESTAMP_REFERENCE));
     });
 
     IT("can convert UNIX to Win32 epoch", {
-        EQUALS(__UNIX_TIMESTAMP_REFERENCE, zpl_win32_to_unix_epoch(__WIN32_TIMESTAMP_REFERENCE));
+        EQUALS(__UNIX_TIMESTAMP_REFERENCE, zpl_time_win32_to_unix(__WIN32_TIMESTAMP_REFERENCE));
     });
 });
 
