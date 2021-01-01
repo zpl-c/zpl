@@ -5,6 +5,7 @@
 #define ZPL_ENABLE_JOBS
 #include <zpl.h>
 
+#if defined(ZPL_MODULE_THREADING)
 zpl_global zpl_mutex test__print;
 void printf_safe(const char *fmt, ...);
 
@@ -92,4 +93,6 @@ void printf_safe(const char *fmt, ...) {
     va_end(va);
     zpl_mutex_unlock(&test__print);
 }
-
+#else
+int main(){return 0;}
+#endif
