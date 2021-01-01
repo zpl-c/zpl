@@ -8,6 +8,7 @@ on:
       - review/**
       - ci/**
     paths:
+      - '.github/workflows/**'
       - 'code/**'
       - 'Makefile'
       - 'misc/CMakeLists.txt'
@@ -24,17 +25,12 @@ jobs:
     name: Notify about testing
     runs-on: ubuntu-latest
     steps:
-      - uses: sarisia/actions-status-discord@v1
-        if: always()
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - uses: inlife/actiord-action@v1
+        if: "!contains(github.event.head_commit.message, 'Release')"
         with:
-          description: "**ZPL** has started the fire trial! (Running tests...)"
-          nodetail: true
-          nofail: true
-          color: "0xFFA500"
-          username: "Michael Scott"
-          avatar_url: "https://cdn.zakto.pw/office/test.jpg"
+          url: ${{ secrets.ACTIORD_URL }}
+          icon: "https://cdn.zakto.pw/office/test.jpg"
+          state: started
   build-win:
     name: Test Windows
     runs-on: windows-latest
@@ -81,25 +77,16 @@ jobs:
     name: Notify about status
     runs-on: ubuntu-latest
     needs: [build-mac, build-lin, build-win]
-    if: always()
+    if: "!contains(github.event.head_commit.message, 'Release')"
     steps:
-      - uses: sarisia/actions-status-discord@v1
+      - uses: inlife/actiord-action@v1
         if: ${{ contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success') }}
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          description: "**ZPL** tests have succeeded!"
-          nodetail: true
-          nofail: true
-          color: "0x55df2a"
-      - uses: sarisia/actions-status-discord@v1
+          url: ${{ secrets.ACTIORD_URL }}
+          state: succeeded
+      - uses: inlife/actiord-action@v1
         if: ${{ !(contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success')) }}
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          description: "**ZPL** tests have failed!"
-          nodetail: true
-          nofail: true
-          color: "0xdf332a"
-          username: "Devastated Michael Scott"
-          avatar_url: "https://cdn.zakto.pw/office/fail.jpg"
+          url: ${{ secrets.ACTIORD_URL }}
+          icon: "https://cdn.zakto.pw/office/fail.jpg"
+          state: failed
