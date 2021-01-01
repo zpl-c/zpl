@@ -256,7 +256,7 @@ Version History:
 
   BSD 3-Clause
 
-  Copyright (c) 2016-2020 Dominik Madarász. All rights reserved.
+  Copyright (c) 2016-2021 Dominik Madarász. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
