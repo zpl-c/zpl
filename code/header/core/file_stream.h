@@ -19,10 +19,15 @@ typedef enum {
     ZPL_FILE_STREAM_CLONE_WRITABLE = (1 << 1),
 } zpl_file_stream_flags;
 
+/**
+ * Opens a new memory stream
+ * @param file
+ * @param allocator
+ */
 ZPL_DEF void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
 
 /**
- * Opens a file stream on an existing buffer
+ * Opens a memory stream over an existing buffer
  * @param  file
  * @param  allocator
  * @param  buffer   Memory to create stream from

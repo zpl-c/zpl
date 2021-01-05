@@ -184,15 +184,13 @@ void zpl_json_write(zpl_file *f, zpl_json_object *o, zpl_isize indent) {
 
 zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isize indent) {
     zpl_file tmp;
-    zpl_file_temp(&tmp);
+    zpl_file_stream_new(&tmp, a);
     zpl_json_write(&tmp, obj, indent);
     zpl_file_seek(&tmp, 0);
     zpl_i64 fsize = zpl_file_size(&tmp)-1;
     zpl_string output = zpl_string_make_reserve(a, fsize+1);
-    zpl_file_read_at(&tmp, output, fsize, 0);
+    zpl_file_read(&tmp, output, fsize);
     zpl_file_close(&tmp);
-    zpl__set_string_length(output, fsize);
-    zpl__set_string_capacity(output, fsize);
     return output;
 }
 
