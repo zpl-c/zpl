@@ -40,6 +40,13 @@ ZPL_DEF void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
  */
 ZPL_DEF void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags);
 
+/**
+ * Retrieves the stream's underlying buffer and buffer size.
+ * @param file memory stream
+ * @param size (Optional) buffer size
+ */
+ZPL_DEF zpl_u8 *zpl_file_stream_buf(zpl_file* file, zpl_isize *size);
+
 extern zpl_file_operations const zpl_memory_file_operations;
 
 //! @}

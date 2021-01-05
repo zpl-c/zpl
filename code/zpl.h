@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.11.0 - Added zpl_file_stream_buf
   10.10.3 - Math type-punning fixes
   10.10.1 - Fix memory writing issue + new write-only in-situ flag
   10.10.0 - Implement memory streaming API
