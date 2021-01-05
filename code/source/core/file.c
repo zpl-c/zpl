@@ -339,13 +339,6 @@ void zpl_file_connect_handle(zpl_file *file, void *handle) {
     file->ops = zpl_default_file_operations;
 }
 
-
-zpl_i64 zpl_file_size(zpl_file *f) {
-    LARGE_INTEGER size;
-    GetFileSizeEx(f->fd.p, &size);
-    return size.QuadPart;
-}
-
 zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
     zpl_file_error err = ZPL_FILE_ERROR_NONE;
     zpl_i64 prev_offset = zpl_file_tell(f);
@@ -387,15 +380,6 @@ zpl_file *zpl_file_get_standard(zpl_file_standard_type std) {
     return &zpl__std_files[std];
 }
 
-zpl_i64 zpl_file_size(zpl_file *f) {
-    zpl_i64 size = 0;
-    zpl_i64 prev_offset = zpl_file_tell(f);
-    zpl_file_seek_to_end(f);
-    size = zpl_file_tell(f);
-    zpl_file_seek(f, prev_offset);
-    return size;
-}
-
 zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
     zpl_file_error err = ZPL_FILE_ERROR_NONE;
     int i = ftruncate(f->fd.i, size);
@@ -406,6 +390,15 @@ zpl_file_error zpl_file_truncate(zpl_file *f, zpl_i64 size) {
 zpl_b32 zpl_fs_exists(char const *name) { return access(name, F_OK) != -1; }
 
 #endif
+
+zpl_i64 zpl_file_size(zpl_file *f) {
+    zpl_i64 size = 0;
+    zpl_i64 prev_offset = zpl_file_tell(f);
+    zpl_file_seek_to_end(f);
+    size = zpl_file_tell(f);
+    zpl_file_seek(f, prev_offset);
+    return size;
+}
 
 zpl_file_error zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
