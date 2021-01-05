@@ -18,7 +18,7 @@ MODULE(stream, {
 
     IT("can append data to the stream", {
         const char hello2yello[] = "Yello";
-        zpl_file_stream_open(&f, zpl_heap(), cast(zpl_u8*) test, len, ZPL_FILE_STREAM_CLONE_WRITABLE);
+        zpl_file_stream_open(&f, zpl_heap(), cast(zpl_u8*) test, len+1, ZPL_FILE_STREAM_CLONE_WRITABLE);
         zpl_file_write_at(&f, hello2yello, zpl_strlen(hello2yello), 0);
         STREQUALS((char*)zpl_file_stream_buf(&f, 0), "Yello World!");
         zpl_file_close(&f);
