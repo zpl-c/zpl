@@ -35,7 +35,6 @@ ZPL_DEF void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
  * @param  flags
  */
 ZPL_DEF void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags);
-ZPL_DEF void zpl_file_stream_close(zpl_file* file);
 
 extern zpl_file_operations const zpl_memory_file_operations;
 
