@@ -89,7 +89,7 @@ jobs:
           url: ${{ secrets.ACTIORD_URL }}
           state: succeeded
       - uses: inlife/actiord-action@v1
-        if: ${{ !(contains(needs.build-mac.result, 'success') && !contains(needs.build-lin.result, 'success') && !contains(needs.build-win.result, 'success')) }}
+        if: ${{ !(contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success')) }}
         with:
           url: ${{ secrets.ACTIORD_URL }}
           icon: "https://cdn.zakto.pw/office/fail.jpg"
