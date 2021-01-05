@@ -27,13 +27,15 @@ zpl_f32 zpl_angle_diff(zpl_f32 radians_a, zpl_f32 radians_b) {
 }
 
 zpl_f32 zpl_copy_sign(zpl_f32 x, zpl_f32 y) {
-    int ix, iy;
-    ix = *(int *)&x;
-    iy = *(int *)&y;
+    zpl_i32 ix, iy;
+    zpl_f32 r;
+    zpl_memcopy(&ix, &x, zpl_size_of(x));
+    zpl_memcopy(&iy, &y, zpl_size_of(y));
 
     ix &= 0x7fffffff;
     ix |= iy & 0x80000000;
-    return *(zpl_f32 *)&ix;
+    zpl_memcopy(&r, &ix, zpl_size_of(ix));
+    return r;
 }
 
 zpl_f32 zpl_remainder(zpl_f32 x, zpl_f32 y) { return x - (zpl_round(x / y) * y); }
@@ -48,12 +50,14 @@ zpl_f32 zpl_mod(zpl_f32 x, zpl_f32 y) {
 
 zpl_f64 zpl_copy_sign64(zpl_f64 x, zpl_f64 y) {
     zpl_i64 ix, iy;
-    ix = *(zpl_i64 *)&x;
-    iy = *(zpl_i64 *)&y;
+    zpl_f64 r;
+    zpl_memcopy(&ix, &x, zpl_size_of(x));
+    zpl_memcopy(&iy, &y, zpl_size_of(y));
 
     ix &= 0x7fffffffffffffff;
     ix |= iy & 0x8000000000000000;
-    return *cast(zpl_f64 *) & ix;
+    zpl_memcopy(&r, &ix, zpl_size_of(ix));
+    return r;
 }
 
 zpl_f64 zpl_floor64(zpl_f64 x)                { return cast(zpl_f64)((x >= 0.0) ? cast(zpl_i64) x : cast(zpl_i64)(x - 0.9999999999999999)); }

@@ -44,9 +44,8 @@ test: clean code/tests/tester
 examples: $(EXAMPLES)
 	@echo '> Building examples'
 
-app:
+app: code/apps/examples/$(NAME)
 	@echo '=> Building $(NAME)'
-	$(CC) -g $(CFLAGS) code/apps/examples/$(NAME).c $(LDFLAGS) -o build/$(NAME)
 
 clean:
 ifneq ($(BUILD_FILES),)
