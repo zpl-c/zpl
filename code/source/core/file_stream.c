@@ -117,10 +117,10 @@ zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__memory_file_write) {
             zpl_array_grow(d->buf, (zpl_i64)(new_cap));
         }
     }
-    zpl_memcopy(d->buf + d->cursor, buffer, rwlen);
+    zpl_memcopy(d->buf + offset, buffer, rwlen);
 
     if ((d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE) && extralen > 0) {
-        zpl_memcopy(d->buf + d->cursor + rwlen, zpl_ptr_add_const(buffer, rwlen), extralen);
+        zpl_memcopy(d->buf + offset + rwlen, zpl_ptr_add_const(buffer, rwlen), extralen);
         d->cap = zpl_array_count(d->buf) = new_cap;
     } else {
         extralen = 0;
