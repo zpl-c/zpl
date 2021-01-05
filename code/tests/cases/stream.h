@@ -20,7 +20,8 @@ MODULE(stream, {
         const char hello2yello[] = "Yello";
         zpl_file_stream_open(&f, zpl_heap(), cast(zpl_u8*) test, len+1, ZPL_FILE_STREAM_CLONE_WRITABLE);
         zpl_file_write_at(&f, hello2yello, zpl_strlen(hello2yello), 0);
-        zpl_file_write_at(&f, " OK?", 5 /* strlen + 1 */, zpl_file_size(&f)-1);
+        zpl_isize curr_offset = zpl_file_seek_to_end(&f);
+        zpl_file_write_at(&f, " OK?", 5 /* strlen + 1 */, curr_offset-1);
         STREQUALS((char*)zpl_file_stream_buf(&f, 0), "Yello World! OK?");
         zpl_file_close(&f);
     });
