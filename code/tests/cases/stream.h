@@ -20,8 +20,8 @@ MODULE(stream, {
         const char hello2yello[] = "Yello";
         zpl_file_stream_open(&f, zpl_heap(), cast(zpl_u8*) test, len, ZPL_FILE_STREAM_CLONE_WRITABLE);
         zpl_file_write_at(&f, hello2yello, zpl_strlen(hello2yello), 0);
-        zpl_file_close(&f);
         STREQUALS((char*)zpl_file_stream_buf(&f, 0), "Yello World!");
+        zpl_file_close(&f);
     });
 
     IT("can create a new memory stream", {
@@ -29,8 +29,8 @@ MODULE(stream, {
         zpl_isize msglen = zpl_strlen(message);
         zpl_file_stream_new(&f, zpl_heap());
         zpl_file_write(&f, message, msglen);
-        zpl_file_close(&f);
         STREQUALS((char*)zpl_file_stream_buf(&f, 0), message);
+        zpl_file_close(&f);
     });
 
     IT("can overwrite an existing buffer directly", {
@@ -39,8 +39,8 @@ MODULE(stream, {
         const zpl_isize wordlen = zpl_strlen(hello);
         zpl_file_stream_open(&f, zpl_heap(), cast(zpl_u8*) hello, wordlen, ZPL_FILE_STREAM_WRITABLE);
         zpl_file_write_at(&f, olleh, zpl_strlen(olleh), 0);
+        STRCEQUALS((char*)zpl_file_stream_buf(&f, 0), olleh, wordlen);
         zpl_file_close(&f);
         zpl_string_free(hello);
-        STRCEQUALS((char*)zpl_file_stream_buf(&f, 0), olleh, wordlen);
     });
 });

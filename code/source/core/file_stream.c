@@ -32,7 +32,7 @@ ZPL_ALWAYS_INLINE zpl_file_descriptor zpl__file_stream_fd_make(zpl__memory_fd* d
 
 ZPL_ALWAYS_INLINE zpl__memory_fd *zpl__file_stream_from_fd(zpl_file_descriptor fd) {
     zpl__memory_fd *d = (zpl__memory_fd*)fd.p;
-    ZPL_ASSERT(d->magic != ZPL__FILE_STREAM_FD_MAGIC);
+    ZPL_ASSERT(d->magic == ZPL__FILE_STREAM_FD_MAGIC);
     return d;
 }
 
