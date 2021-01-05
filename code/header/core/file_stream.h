@@ -15,8 +15,12 @@ File streaming operations on memory.
 ZPL_BEGIN_C_DECLS
 
 typedef enum {
+    /* Allows us to write to the buffer directly. Beware: you can not append a new data! */
+    ZPL_FILE_STREAM_WRITABLE = ZPL_BIT(0),
+
     /* Clones the input buffer so you can write (zpl_file_write*) data into it. */
-    ZPL_FILE_STREAM_CLONE_WRITABLE = (1 << 1),
+    /* Since we work with a clone, the buffer size can dynamically grow as well. */
+    ZPL_FILE_STREAM_CLONE_WRITABLE = ZPL_BIT(1),
 } zpl_file_stream_flags;
 
 /**

@@ -39,6 +39,7 @@ void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator) {
     file->dir = NULL;
     file->last_write_time = 0;
     file->filename = NULL;
+    file->is_temp = true;
 }
 void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags) {
     zpl__memory_fd *d = (zpl__memory_fd*)zpl_alloc(allocator, zpl_size_of(zpl__memory_fd));
@@ -58,6 +59,7 @@ void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffe
     file->dir = NULL;
     file->last_write_time = 0;
     file->filename = NULL;
+    file->is_temp = true;
 }
 zpl_internal ZPL_FILE_SEEK_PROC(zpl__memory_file_seek) {
     zpl__memory_fd *d = (zpl__memory_fd*)fd.p;
@@ -66,9 +68,9 @@ zpl_internal ZPL_FILE_SEEK_PROC(zpl__memory_file_seek) {
     if (whence == ZPL_SEEK_WHENCE_BEGIN)
         d->cursor = 0;
     else if (whence == ZPL_SEEK_WHENCE_END)
-        d->cursor = buflen-1;
+        d->cursor = buflen;
 
-    d->cursor = zpl_max(0, zpl_clamp(d->cursor + offset, 0, buflen-1));
+    d->cursor = zpl_max(0, zpl_clamp(d->cursor + offset, 0, buflen));
     if (new_offset) *new_offset = d->cursor;
     return true;
 }
@@ -83,19 +85,27 @@ zpl_internal ZPL_FILE_READ_AT_PROC(zpl__memory_file_read) {
 
 zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__memory_file_write) {
     zpl__memory_fd *d = (zpl__memory_fd*)fd.p;
-    if (!(d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE))
+    if (!(d->flags & (ZPL_FILE_STREAM_CLONE_WRITABLE|ZPL_FILE_STREAM_WRITABLE)))
         return false;
     zpl_isize buflen = d->cap;
     zpl_isize extralen = zpl_max(0, size-(buflen-offset));
-    if (zpl_array_capacity(d->buf) < buflen+extralen) {
-        zpl_array_grow(d->buf, (zpl_i64)(buflen+extralen));
+    zpl_isize rwlen = size-extralen;
+    zpl_isize new_cap = buflen+extralen;
+    if (d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE) {
+        if(zpl_array_capacity(d->buf) < new_cap) {
+            zpl_array_grow(d->buf, (zpl_i64)(new_cap));
+        }
+    }
+    zpl_memcopy(d->buf + d->cursor, buffer, rwlen);
+
+    if ((d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE) && extralen > 0) {
+        zpl_memcopy(d->buf + d->cursor + rwlen, buffer + rwlen, extralen);
+        d->cap = zpl_array_count(d->buf) = new_cap;
+    } else {
+        extralen = 0;
     }
 
-    buflen += extralen;
-    zpl_memcopy(d->buf + d->cursor, buffer, size);
-    d->cap = zpl_array_count(d->buf) = buflen+1;
-
-    if (bytes_written) *bytes_written = size;
+    if (bytes_written) *bytes_written = (rwlen+extralen);
     return true;
 }
 

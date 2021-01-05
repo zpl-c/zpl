@@ -43,6 +43,8 @@ static int _g_errors = 0;
 #define STRFAIL(a, b)                          { _errstr = zpl_bprintf("\n\n\tassert: \x1B[31m%s:%s %s %s:%s\x1B[0m\n\tat %s:%d\n", #a, (char *)a, (!strcmp(a,b))?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
 #define EQUALS(a, b)        if (a != b)        { FAIL(a, b); }
 #define STREQUALS(a, b)     if (!!strcmp(a,b)) { STRFAIL(a, b); }
+#define STRCEQUALS(a, b, c)     if (!!strncmp(a,b, c)) { STRFAIL(a, b); }
+#define STRCNEQUALS(a, b, c)     if (!strncmp(a,b, c)) { STRFAIL(a, b); }
 #define STRNEQUALS(a, b)    if (!strcmp(a,b))  { STRFAIL(a, b); }
 #define NEQUALS(a, b)       if (a == b)        { FAIL(a, b); }
 #define LESSER(a, b)        if (a >= b)        { FAIL(a, b); }

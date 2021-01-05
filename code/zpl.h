@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.10.1 - Fix memory writing issue + new write-only in-situ flag
   10.10.0 - Implement memory streaming API
   10.9.1  - Support ARMv6, ARMv7 and ARMv8-a builds
   10.9.0  - Improve the time API
