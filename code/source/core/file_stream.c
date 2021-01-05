@@ -59,12 +59,6 @@ void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffe
     file->last_write_time = 0;
     file->filename = NULL;
 }
-void zpl_file_stream_close(zpl_file* file) {
-    if (!file->ops.read_at)
-        file->ops = zpl_memory_file_operations;
-    file->ops.close(file->fd);
-}
-
 zpl_internal ZPL_FILE_SEEK_PROC(zpl__memory_file_seek) {
     zpl__memory_fd *d = (zpl__memory_fd*)fd.p;
     zpl_isize buflen = d->cap;

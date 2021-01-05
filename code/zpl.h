@@ -1,5 +1,5 @@
 /**
-  ZPL - Global module
+  ZPL - Your (almost) C99 Powerkit
 
 Usage:
   #define ZPL_IMPLEMENTATION exactly in ONE source file right BEFORE including the library, like:
@@ -520,7 +520,7 @@ Version History:
     #include "header/core/stringlib.h"
     #include "header/core/file.h"
     #include "header/core/file_stream.h"
-    #include "header/core/filesystem.h"
+    #include "header/core/file_misc.h"
     #include "header/core/print.h"
     #include "header/core/time.h"
     #include "header/core/random.h"
@@ -683,7 +683,7 @@ Version History:
     #include "source/core/stringlib.c"
     #include "source/core/file.c"
     #include "source/core/file_stream.c"
-    #include "source/core/filesystem.c"
+    #include "source/core/file_misc.c"
     #include "source/core/print.c"
     #include "source/core/time.c"
     #include "source/core/random.c"
@@ -794,7 +794,7 @@ Version History:
 // header/core/stringlib.h
 // header/core/file.h
 // header/core/file_stream.h
-// header/core/filesystem.h
+// header/core/file_misc.h
 // header/core/print.h
 // header/core/time.h
 // header/core/random.h
@@ -827,7 +827,7 @@ Version History:
 // source/core/stringlib.c
 // source/core/file.c
 // source/core/file_stream.c
-// source/core/filesystem.c
+// source/core/file_misc.c
 // source/core/print.c
 // source/core/time.c
 // source/core/random.c
