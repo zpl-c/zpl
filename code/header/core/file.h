@@ -101,7 +101,6 @@ typedef struct zpl_file {
     zpl_file_operations ops;
     zpl_file_descriptor fd;
     zpl_b32 is_temp;
-    void* temp_fh;
 
     char const    *filename;
     zpl_file_time last_write_time;

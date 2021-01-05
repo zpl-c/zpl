@@ -267,7 +267,7 @@ zpl_file_error zpl_file_close(zpl_file *f) {
     
     if (f->is_temp)
     {
-        fclose((FILE*)f->temp_fh);
+        f->ops.close(f->fd);
         return ZPL_FILE_ERROR_NONE;
     }
 
@@ -428,7 +428,6 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
 #else 
     file->fd.i = fileno(fd);
 #endif
-    file->temp_fh = (void*)fd;
     file->ops = zpl_default_file_operations;
     file->is_temp = true;
     return ZPL_FILE_ERROR_NONE;
