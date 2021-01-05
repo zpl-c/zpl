@@ -12,7 +12,7 @@ int main(void) {
         zpl_printf("Value: %d\n", b);
     }
 
-    zpl_file_stream_close(&f);
+    zpl_file_close(&f);
 
     zpl_file_stream_open(&f, zpl_heap(), (zpl_u8*)numbers, 4, true);
     for (int i=0; i<4; i++) {
@@ -21,6 +21,6 @@ int main(void) {
         zpl_printf("Value: %d\n", b);
     }
 
-    zpl_file_stream_close(&f);
+    zpl_file_close(&f);
     return 0;
 }
