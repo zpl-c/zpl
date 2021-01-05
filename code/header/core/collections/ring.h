@@ -90,7 +90,7 @@ type *ZPL_JOIN3(zpl_ring_, type, _get)(ZPL_JOIN2(zpl_ring_, type) * pad) {      
 \
 zpl_array(type)                                                                                                    \
 ZPL_JOIN3(zpl_ring_, type, _get_array)(ZPL_JOIN2(zpl_ring_, type) * pad, zpl_usize max_size, zpl_allocator a) {    \
-    zpl_array(type) vals;                                                                                          \
+    zpl_array(type) vals = 0;                                                                                          \
     zpl_array_init(vals, a);                                                                                       \
     while (--max_size && !ZPL_JOIN3(zpl_ring_, type, _empty)(pad)) {                                               \
         zpl_array_append(vals, *ZPL_JOIN3(zpl_ring_, type, _get)(pad));                                            \
