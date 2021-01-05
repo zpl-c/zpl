@@ -9,6 +9,7 @@
 #include "cases/alloc_pool.h"
 #include "cases/hashing.h"
 #include "cases/time.h"
+#include "cases/stream.h"
 
 int main() {
     UNIT_CREATE("zpl");
@@ -17,6 +18,7 @@ int main() {
     UNIT_CASE(alloc_pool);
     UNIT_CASE(hashing);
     UNIT_CASE(time);
+    UNIT_CASE(stream);
 
     return UNIT_RUN();
 }
