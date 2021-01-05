@@ -21,6 +21,12 @@ typedef struct {
     zpl_isize cap;
 } zpl__memory_fd;
 
+ZPL_ALWAYS_INLINE zpl_file_descriptor zpl__file_stream_fd_make(zpl__memory_fd* d) {
+    zpl_file_descriptor fd = {0};
+    fd.p = (void*)d;
+    return fd;
+}
+
 void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator) {
     zpl__memory_fd *d = (zpl__memory_fd*)zpl_alloc(allocator, zpl_size_of(zpl__memory_fd));
     zpl_zero_item(file);
@@ -29,7 +35,7 @@ void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator) {
     d->cap = 0;
     zpl_array_init(d->buf, allocator);
     file->ops = zpl_memory_file_operations;
-    file->fd = (zpl_file_descriptor)((void*)d);
+    file->fd = zpl__file_stream_fd_make(d);
     file->dir = NULL;
     file->last_write_time = 0;
     file->filename = NULL;
@@ -48,7 +54,7 @@ void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffe
         d->cap = size;
     }
     file->ops = zpl_memory_file_operations;
-    file->fd = (zpl_file_descriptor)((void*)d);
+    file->fd = zpl__file_stream_fd_make(d);
     file->dir = NULL;
     file->last_write_time = 0;
     file->filename = NULL;
