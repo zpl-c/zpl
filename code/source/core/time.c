@@ -198,7 +198,7 @@ ZPL_BEGIN_C_DECLS
     #else
         clock_gettime(0 /*CLOCK_REALTIME*/, &t);
     #endif
-        return (t.tv_sec * 1000 + t.tv_nsec * 1e-6 + ZPL__UNIX_TO_WIN32_EPOCH);
+        return ((zpl_u64)t.tv_sec * 1000 + t.tv_nsec * 1e-6 + ZPL__UNIX_TO_WIN32_EPOCH);
     }
 
     void zpl_sleep_ms(zpl_u32 ms) {
