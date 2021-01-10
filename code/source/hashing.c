@@ -319,7 +319,6 @@ zpl_u32 zpl_murmur32_seed(void const *data, zpl_isize len, zpl_u32 seed) {
 }
 
 zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
-#if defined(ZPL_ARCH_64_BIT)
     zpl_u64 const m = 0xc6a4a7935bd1e995ULL;
     zpl_i32 const r = 47;
 
@@ -356,65 +355,6 @@ zpl_u64 zpl_murmur64_seed(void const *data_, zpl_isize len, zpl_u64 seed) {
     h ^= h >> r;
 
     return h;
-#else
-    zpl_u64 h;
-    zpl_u32 const m = 0x5bd1e995;
-    zpl_i32 const r = 24;
-
-    zpl_u32 h1 = cast(zpl_u32)(seed) ^ cast(zpl_u32)(len);
-    zpl_u32 h2 = cast(zpl_u32)(seed >> 32);
-
-    zpl_u32 const *data = cast(zpl_u32 const *) data_;
-
-    while (len >= 8) {
-        zpl_u32 k1, k2;
-        k1 = *data++;
-        k1 *= m;
-        k1 ^= k1 >> r;
-        k1 *= m;
-        h1 *= m;
-        h1 ^= k1;
-        len -= 4;
-
-        k2 = *data++;
-        k2 *= m;
-        k2 ^= k2 >> r;
-        k2 *= m;
-        h2 *= m;
-        h2 ^= k2;
-        len -= 4;
-    }
-
-    if (len >= 4) {
-        zpl_u32 k1 = *data++;
-        k1 *= m;
-        k1 ^= k1 >> r;
-        k1 *= m;
-        h1 *= m;
-        h1 ^= k1;
-        len -= 4;
-    }
-
-    switch (len) {
-        case 3: h2 ^= (cast(zpl_u8 const *) data)[2] << 16;
-        case 2: h2 ^= (cast(zpl_u8 const *) data)[1] << 8;
-        case 1: h2 ^= (cast(zpl_u8 const *) data)[0] << 0; h2 *= m;
-    };
-
-    h1 ^= h2 >> 18;
-    h1 *= m;
-    h2 ^= h1 >> 22;
-    h2 *= m;
-    h1 ^= h2 >> 17;
-    h1 *= m;
-    h2 ^= h1 >> 19;
-    h2 *= m;
-
-    h = h1;
-    h = (h << 32) | h2;
-
-    return h;
-#endif
 }
 
 ZPL_END_C_DECLS
