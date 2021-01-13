@@ -21,6 +21,7 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: 'cpp'
+        config-file: ./.github/codeql/config.yml
     - run: make test
 
     - name: Perform CodeQL Analysis
