@@ -619,8 +619,6 @@ static zpl_regex_error zpl_re__parse(zpl_re *re, char const *pattern, zpl_isize 
 
                 if ((offset < len) && (pattern[offset] == '?')) {
                     quantifier = ZPL_RE_OP_ONE_OR_MORE_SHORTEST;
-                    if (quantifier == ZPL_RE_OP_ZERO_OR_MORE)
-                        quantifier = ZPL_RE_OP_ZERO_OR_MORE_SHORTEST;
                     offset++;
                 }
 

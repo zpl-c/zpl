@@ -113,12 +113,12 @@ ZPL_BEGIN_C_DECLS
         ZPL_NOT_IMPLEMENTED;
         return 0;
     #else
-        zpl_isize size;
         int existing_fd = open(existing_filename, O_RDONLY, 0);
-        int new_fd = open(new_filename, O_WRONLY | O_CREAT, 0666);
-
         struct stat stat_existing;
         fstat(existing_fd, &stat_existing);
+
+        zpl_isize size;
+        int new_fd = open(new_filename, O_WRONLY | O_CREAT, stat_existing.st_mode);
 
     #if defined(ZPL_SYSTEM_FREEBSD)
         size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size, NULL, 0, 0);

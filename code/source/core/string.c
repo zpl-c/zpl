@@ -368,7 +368,7 @@ zpl_isize zpl_utf8_decode(zpl_u8 const *str, zpl_isize str_len, zpl_rune *codepo
 
         sz = x & 7;
         accept = zpl__utf8_accept_ranges[x >> 4];
-        if (str_len < zpl_size_of(sz)) goto invalid_codepoint;
+        if (str_len < sz) goto invalid_codepoint;
 
         b1 = str[1];
         if (b1 < accept.lo || accept.hi < b1) goto invalid_codepoint;
