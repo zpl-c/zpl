@@ -17,6 +17,11 @@ MODULE(hashing, {
         EQUALS(sum, 0x1C291CA3);
     });
 
+    IT("calculates valid crc64", {
+        zpl_u64 sum = zpl_crc64(test, len);
+        UEQUALS(sum, 0x5434e638d5449866);
+    });
+
     IT("calculates valid fnv32", {
         zpl_u32 sum = zpl_fnv32(test, len);
         EQUALS(sum, 0x12a9a41c);
