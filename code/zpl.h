@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.12.1 - Fix missing zpL_alloc_str
   10.12.0 - Add zpl_crc64
   10.11.1 - Fix zpl_time_utc_ms on 32-bit OSes
   10.11.0 - Added zpl_file_stream_buf
