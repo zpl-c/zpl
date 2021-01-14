@@ -281,6 +281,10 @@ ZPL_IMPL_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl
     return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size);
 }
 
+ZPL_IMPL_INLINE char *zpl_alloc_str(zpl_allocator a, char const *str) {
+    return zpl_alloc_str_len(a, str, zpl_strlen(str));
+}
+
 ZPL_IMPL_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
     char *result;
     result = cast(char *) zpl_alloc_copy(a, str, len + 1);
