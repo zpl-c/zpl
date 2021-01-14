@@ -23,6 +23,10 @@
 
 ZPL_BEGIN_C_DECLS
 
+char *zpl_alloc_str(zpl_allocator a, char const *str) {
+    return zpl_alloc_str_len(a, str, zpl_strlen(str));
+}
+
 ////////////////////////////////////////////////////////////////
 //
 // Custom Allocation

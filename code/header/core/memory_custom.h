@@ -67,7 +67,7 @@ ZPL_DEF_INLINE void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize 
 ZPL_DEF_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment);
 
 //! Allocate memory for null-terminated C-String.
-ZPL_DEF_INLINE char *zpl_alloc_str(zpl_allocator a, char const *str);
+ZPL_DEF char *zpl_alloc_str(zpl_allocator a, char const *str);
 
 //! Allocate memory for C-String with specified size.
 ZPL_DEF_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len);
@@ -279,10 +279,6 @@ ZPL_IMPL_INLINE void *zpl_alloc_copy(zpl_allocator a, void const *src, zpl_isize
 }
 ZPL_IMPL_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl_isize size, zpl_isize alignment) {
     return zpl_memcopy(zpl_alloc_align(a, size, alignment), src, size);
-}
-
-ZPL_IMPL_INLINE char *zpl_alloc_str(zpl_allocator a, char const *str) {
-    return zpl_alloc_str_len(a, str, zpl_strlen(str));
 }
 
 ZPL_IMPL_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
