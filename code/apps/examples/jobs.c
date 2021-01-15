@@ -26,7 +26,7 @@ int main() {
     zpl_u64 process_time = 0;
     zpl_f64 avg_delta_time = 0;
 
-    zpl_printf("Jobs test, %d iterations ran on %d cores.\nPer each iteration, we spawn %d jobs.\n", N, CORES, NL);
+    zpl_printf("Jobs test, %d iterations ran on %d cores.\nPer each iteration, we spawn %d jobs.\nTotal jobs to push: %d.\nJobs processed by each core approximately: %d.\n", N, CORES, NL, N*NL, (N*NL)/CORES);
 
     while (counter < N) {
         if (zpl_jobs_done(&p)) {
