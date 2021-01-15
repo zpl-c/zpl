@@ -46,7 +46,6 @@ typedef struct {
 typedef struct {
     zpl_allocator alloc;
     zpl_u32 max_threads, max_jobs;
-    zpl_f32 job_spawn_treshold;
     zpl_thread_worker *workers; ///< zpl_buffer
     zpl__jobs_ring_zpl_thread_job jobs; ///< zpl_ring
 } zpl_thread_pool;
@@ -63,8 +62,11 @@ ZPL_DEF void    zpl_jobs_free(zpl_thread_pool *pool);
 //! Enqueue a job with specified data.
 ZPL_DEF void    zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
 
-//! Check if the work queue is empty
+//! Check if the work queue is empty.
 ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool);
+
+//! Check if all workers are done.
+ZPL_DEF zpl_b32 zpl_jobs_done(zpl_thread_pool *pool);
 
 //! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
 ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);

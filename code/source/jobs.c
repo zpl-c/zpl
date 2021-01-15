@@ -88,6 +88,17 @@ zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool) {
     return zpl__jobs_ring_empty(&pool->jobs);
 }
 
+zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
+    for (zpl_usize i = 0; i < pool->max_threads; ++i) {
+        zpl_thread_worker *tw = pool->workers + i;
+        if (zpl_atomic32_load(&tw->status) != ZPL_JOBS_STATUS_WAITING) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
     if (zpl_jobs_empty(pool)) {
         return false;
