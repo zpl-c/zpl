@@ -5,19 +5,20 @@
 
 int rand(void);
 
-#define N 30
+#define N 300
 #define NL 100
-#define CORES 2
+#define CORES 4
 #define JOBS 100
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
 zpl_global zpl_u32 counter = 0;
+zpl_global zpl_u32 iter = 0;
 
 #if defined(ZPL_MODULE_THREADING)
 
 void do_work(void *data) {
     zpl_unused(data);
-    zpl_sleep_ms(RAND_RANGE(5, 10));
+    zpl_sleep_ms(1);
 }
 
 int main() {
@@ -41,14 +42,14 @@ int main() {
         zpl_jobs_process(&p);
         zpl_u64 delta_time = zpl_time_rel_ms() - curr_time;
         avg_delta_time += delta_time;
-        zpl_sleep_ms(10);
+        iter++;
     }
 
     process_time = avg_delta_time;
-    avg_delta_time /= N;
+    avg_delta_time /= iter;
     zpl_printf("\nDone!\n");
     zpl_jobs_free(&p);
-    zpl_printf("Test is done, results:\n* %lld ms process time (overall).\n* %.02f ms process time (average).\n", process_time, avg_delta_time);
+    zpl_printf("Test is done, results:\n* %lld ms total.\n* %.08f ms average.\n", process_time, avg_delta_time);
     return 0;
 }
 #else
