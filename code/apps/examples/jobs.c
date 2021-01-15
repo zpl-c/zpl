@@ -2,7 +2,8 @@
 #define ZPL_NANO
 #define ZPL_ENABLE_JOBS
 #include <zpl.h>
-#include <stdlib.h>
+
+int rand(void);
 
 #define N 300
 #define NL 100
