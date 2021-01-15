@@ -340,7 +340,7 @@ ZPL_BEGIN_C_DECLS
         #endif
     }
 
-#elif !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus)
+#elif !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus) && !defined(ZPL_COMPILER_MSVC)
     zpl_i32 zpl_atomic32_load (zpl_atomic32 const *a)      { return a->value;  }
     void zpl_atomic32_store(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) value) { a->value = value; }
 

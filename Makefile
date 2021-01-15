@@ -24,7 +24,7 @@ else
 	endif
 endif
 
-WARNS = -Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces
+WARNS = -Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-unused-value -Wno-unused-function -Wno-missing-braces -Wno-ignored-qualifiers
 CFLAGS += $(LEVEL) $(STDC) -Icode $(WARNS)
 CXXFLAGS += $(LEVEL) -std=c++11 -Icode $(WARNS)
 

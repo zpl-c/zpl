@@ -100,7 +100,7 @@ defined(__ppc64__) || defined(__aarch64__)
 
 /* Platform CPU */
 
-#if defined(__arm__) || defined(__aarch64__)
+#if defined(__arm__) || defined(__aarch64__) || defined(__ARM_ARCH)
     #ifndef ZPL_CPU_ARM
         #define ZPL_CPU_ARM 1
     #endif

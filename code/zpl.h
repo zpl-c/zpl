@@ -349,8 +349,8 @@ Version History:
 #endif
 
 /* Architecture-specific overrides */
-#if defined(__ARM_ARCH)
-    // #define ZPL_DISABLE_THREADING
+#if defined(__ARM_ARCH) && !defined(__cplusplus)
+    #define ZPL_DISABLE_THREADING
 #endif
 
 /* Distributions */
@@ -645,6 +645,7 @@ Version History:
     #pragma GCC diagnostic ignored "-Wmissing-braces"
     #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+    #pragma GCC diagnostic ignored "-Wignored-qualifiers"
 #endif
 
 #if defined(_MSC_VER)

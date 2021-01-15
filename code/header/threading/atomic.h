@@ -8,7 +8,7 @@
 // TODO: Be specific with memory order?
 // e.g. relaxed, acquire, release, acquire_release
 
-#if !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus)
+#if !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus) && !defined(ZPL_COMPILER_MSVC)
 # include <stdatomic.h>
 # define zpl_atomic(X) volatile _Atomic(X)
 #else
