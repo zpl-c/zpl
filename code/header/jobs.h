@@ -19,6 +19,10 @@ typedef void (*zpl_jobs_proc)(void *data);
 
 #define ZPL_INVALID_JOB ZPL_U32_MAX
 
+#ifndef ZPL_JOBS_MAX_QUEUE
+#define ZPL_JOBS_MAX_QUEUE 100
+#endif
+
 typedef enum {
     ZPL_JOBS_STATUS_READY,
     ZPL_JOBS_STATUS_BUSY,
@@ -29,39 +33,35 @@ typedef enum {
 typedef struct {
     zpl_jobs_proc proc;
     void *data;
-
-    zpl_f32 priority;
 } zpl_thread_job;
+
+ZPL_RING_DECLARE(zpl__jobs_ring_, zpl_thread_job);
 
 typedef struct {
     zpl_thread thread;
     zpl_atomic32 status;
-    zpl_u32 jobid;
-    void *pool;
+    zpl_thread_job job;
 } zpl_thread_worker;
 
 typedef struct {
     zpl_allocator alloc;
-    zpl_u32 max_threads;
+    zpl_u32 max_threads, max_jobs;
     zpl_f32 job_spawn_treshold;
-    zpl_mutex access;
     zpl_thread_worker *workers; ///< zpl_buffer
-    zpl_thread_job *jobs; ///< zpl_array
-    zpl_u32 *queue; ///< zpl_array
-    zpl_u32 *available; ///< zpl_array
+    zpl__jobs_ring_zpl_thread_job jobs; ///< zpl_ring
 } zpl_thread_pool;
 
 //! Initialize thread pool with specified amount of fixed threads.
 ZPL_DEF void    zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads);
+
+//! Initialize thread pool with specified amount of fixed threads and custom job limit.
+ZPL_DEF void    zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads, zpl_u32 max_jobs);
 
 //! Release the resources use by thread pool.
 ZPL_DEF void    zpl_jobs_free(zpl_thread_pool *pool);
 
 //! Enqueue a job with specified data.
 ZPL_DEF void    zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
-
-//! Enqueue a job with specific priority with specified data.
-ZPL_DEF void    zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_f32 priority);
 
 //! Check if the work queue is empty
 ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool);
