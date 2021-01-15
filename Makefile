@@ -14,13 +14,13 @@ else
 		STDC=-std=c11
 		CC=clang
 		CXX=clang++
-		LDFLAGS += -pthread -lm
+		LDFLAGS += -pthread -lm -latomic
 	endif
 	ifeq ($(OSDEF),FreeBSD)
 		STDC=-std=c11
 		CC=clang
 		CXX=clang++
-		LDFLAGS+=-pthread -lm
+		LDFLAGS+=-pthread -lm -latomic
 	endif
 endif
 
