@@ -6,9 +6,9 @@
 int rand(void);
 
 #define N 30000
-#define NL 100
+#define NL 1000
 #define CORES 4
-#define JOBS 100
+#define JOBS 1000
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
 zpl_global zpl_u32 counter = 0;
