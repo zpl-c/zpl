@@ -112,7 +112,9 @@ zpl_u64 zpl_random_gen_u64(zpl_random *r) {
 
 zpl_isize zpl_random_gen_isize(zpl_random *r) {
     zpl_u64 u = zpl_random_gen_u64(r);
-    return *cast(zpl_isize *)&u;
+    zpl_isize i;
+    zpl_memcopy(&i, &u, zpl_size_of(u));
+    return i;
 }
 
 
@@ -127,7 +129,8 @@ zpl_i64 zpl_random_range_i64(zpl_random *r, zpl_i64 lower_inc, zpl_i64 higher_in
 
 zpl_isize zpl_random_range_isize(zpl_random *r, zpl_isize lower_inc, zpl_isize higher_inc) {
     zpl_u64 u = zpl_random_gen_u64(r);
-    zpl_isize i = *cast(zpl_isize *)&u;
+    zpl_isize i;
+    zpl_memcopy(&i, &u, zpl_size_of(u));
     zpl_isize diff = higher_inc-lower_inc+1;
     i %= diff;
     i += lower_inc;
