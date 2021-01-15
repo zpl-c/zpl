@@ -27,11 +27,11 @@ zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
 
                 job->proc(job->data);
 
-                zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_WAITING);
+                zpl_atomic32_compare_exchange(&tw->status, ZPL_JOBS_STATUS_BUSY, ZPL_JOBS_STATUS_WAITING);
             } break;
 
             case ZPL_JOBS_STATUS_WAITING: {
-                zpl_yield( );
+                zpl_yield();
             } break;
 
             case ZPL_JOBS_STATUS_TERM: {
@@ -133,6 +133,10 @@ ZPL_COMPARE_PROC(zpl___jobs_cmp) {
 ZPL_COMPARE_PROC_PTR(zpl__jobs_cmp(zpl_thread_pool *pool)) {
     zpl__thread_pool = pool;
     return &zpl___jobs_cmp;
+}
+
+zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool) {
+    return zpl_array_count(pool->queue) == 0;
 }
 
 zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {

@@ -63,6 +63,9 @@ ZPL_DEF void    zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void
 //! Enqueue a job with specific priority with specified data.
 ZPL_DEF void    zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_f32 priority);
 
+//! Check if the work queue is empty
+ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool);
+
 //! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
 ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);
 
