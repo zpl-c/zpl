@@ -349,7 +349,7 @@ Version History:
 #endif
 
 /* Architecture-specific overrides */
-#if defined(__ARM_ARCH) && !defined(__cplusplus)
+#if defined(__ARM_ARCH) && defined(__cplusplus)
     #define ZPL_DISABLE_THREADING
 #endif
 
