@@ -5,7 +5,7 @@
 
 int rand(void);
 
-#define N 300
+#define N 30000
 #define NL 100
 #define CORES 4
 #define JOBS 100
@@ -18,7 +18,6 @@ zpl_global zpl_u32 iter = 0;
 
 void do_work(void *data) {
     zpl_unused(data);
-    zpl_sleep_ms(1);
 }
 
 int main() {
