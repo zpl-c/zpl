@@ -96,7 +96,7 @@ zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
         }
     }
 
-    return true;
+    return zpl_jobs_empty(pool);
 }
 
 zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {

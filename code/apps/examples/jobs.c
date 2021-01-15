@@ -5,7 +5,7 @@
 
 int rand(void);
 
-#define N 300
+#define N 30
 #define NL 100
 #define CORES 2
 #define JOBS 100
@@ -41,7 +41,7 @@ int main() {
         zpl_jobs_process(&p);
         zpl_u64 delta_time = zpl_time_rel_ms() - curr_time;
         avg_delta_time += delta_time;
-        zpl_sleep_ms(1);
+        zpl_sleep_ms(10);
     }
 
     process_time = avg_delta_time;
