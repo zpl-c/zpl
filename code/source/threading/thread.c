@@ -107,6 +107,8 @@ void zpl_thread_join(zpl_thread *t) {
         __asm__("mov %%gs:0x08,%0" : "=r"(thread_id));
     #elif defined(ZPL_ARCH_64_BIT) && defined(ZPL_CPU_X86)
         __asm__("mov %%fs:0x10,%0" : "=r"(thread_id));
+    #elif defined(__ARM_ARCH)
+        thread_id = pthread_self();
     #else
         #error Unsupported architecture for zpl_thread_current_id()
     #endif

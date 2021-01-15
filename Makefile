@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
 else
 	OSDEF := $(shell uname -s)
 	ifeq ($(OSDEF),Linux)
-		LDFLAGS += -pthread -ldl -lm
+		LDFLAGS += -pthread -ldl -lm -latomic
 	endif
 	ifeq ($(OSDEF),OpenBSD)
 		STDC=-std=c11

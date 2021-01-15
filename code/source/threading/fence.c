@@ -33,8 +33,6 @@ void zpl_yield_thread(void) {
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)
         _mm_pause();
-    #else
-        #error Unknown architecture
     #endif
 }
 
@@ -45,8 +43,6 @@ void zpl_mfence(void) {
         __sync_synchronize();
     #elif defined(ZPL_CPU_X86)
         _mm_mfence();
-    #else
-        #error Unknown architecture
     #endif
 }
 
@@ -57,8 +53,6 @@ void zpl_sfence(void) {
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)
         _mm_sfence();
-    #else
-        #error Unknown architecture
     #endif
 }
 
@@ -69,8 +63,6 @@ void zpl_lfence(void) {
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)
         _mm_lfence();
-    #else
-        #error Unknown architecture
     #endif
 }
 

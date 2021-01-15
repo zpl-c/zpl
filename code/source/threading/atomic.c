@@ -340,6 +340,62 @@ ZPL_BEGIN_C_DECLS
         #endif
     }
 
+#elif !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus)
+    zpl_i32 zpl_atomic32_load (zpl_atomic32 const *a)      { return a->value;  }
+    void zpl_atomic32_store(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) value) { a->value = value; }
+
+    zpl_i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) expected, zpl_atomicarg(zpl_i32) desired) {
+        zpl_atomicarg(zpl_i32) original = a->value;
+        atomic_compare_exchange_strong(&a->value, &expected, desired);
+        return original;
+    }
+
+    zpl_i32 zpl_atomic32_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) desired) {
+        return atomic_exchange(&a->value, desired);
+    }
+
+    zpl_i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
+        return atomic_fetch_add(&a->value, operand);
+    }
+
+    zpl_i32 zpl_atomic32_fetch_and(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
+        return atomic_fetch_and(&a->value, operand);
+    }
+
+    zpl_i32 zpl_atomic32_fetch_or(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
+        return atomic_fetch_or(&a->value, operand);
+    }
+
+    zpl_i64 zpl_atomic64_load(zpl_atomic64 const *a) {
+        return a->value;
+    }
+
+    void zpl_atomic64_store(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) value) {
+        a->value = value;
+    }
+
+    zpl_i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) expected, zpl_atomicarg(zpl_i64) desired) {
+        zpl_atomicarg(zpl_i64) original;
+        atomic_compare_exchange_strong(&a->value, &expected, desired);
+        return original;
+    }
+
+    zpl_i64 zpl_atomic64_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) desired) {
+        return atomic_exchange(&a->value, desired);
+    }
+
+    zpl_i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
+        return atomic_fetch_add(&a->value, operand);
+    }
+
+    zpl_i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
+        return atomic_fetch_and(&a->value, operand);
+    }
+
+    zpl_i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
+        return atomic_fetch_or(&a->value, operand);
+    }
+
 #else
     #error TODO: Implement Atomics for this CPU
 #endif

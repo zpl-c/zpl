@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  10.13.0 - Initial ARM threading support
   10.12.1 - Fix missing zpL_alloc_str
   10.12.0 - Add zpl_crc64
   10.11.1 - Fix zpl_time_utc_ms on 32-bit OSes
@@ -349,7 +350,7 @@ Version History:
 
 /* Architecture-specific overrides */
 #if defined(__ARM_ARCH)
-    #define ZPL_DISABLE_THREADING
+    // #define ZPL_DISABLE_THREADING
 #endif
 
 /* Distributions */
@@ -730,8 +731,8 @@ Version History:
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
-    #include "source/threading/atomic.c"
     #include "source/threading/fence.c"
+    #include "source/threading/atomic.c"
     #include "source/threading/sem.c"
     #include "source/threading/mutex.c"
     #include "source/threading/thread.c"
