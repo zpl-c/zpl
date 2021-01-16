@@ -63,7 +63,7 @@ int main() {
     avg_delta_time /= iter;
     zpl_u32 jobs_result = zpl_atomic32_load(&total_jobs);
     printf("%-80s\n", "Done!");
-    zpl_printf("\nTest is done, results:\n* %ld ms total.\n* %.08f ms average.\n* total jobs processed: %d.\n", process_time, avg_delta_time, jobs_result);
+    zpl_printf("\n\"zpl_jobs_process\" results:\n* %ld ms total.\n* %.08f ms average.\n* total jobs processed: %d.\n", process_time, avg_delta_time, jobs_result);
     zpl_printf("\nPer priority queue stats:\n");
     for (int i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &p.queues[i];
