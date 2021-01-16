@@ -1,24 +1,36 @@
 #define ZPL_IMPLEMENTATION
 #define ZPL_NANO
 #define ZPL_ENABLE_JOBS
+#define ZPL_JOBS_ENABLE_DEBUG
 #include <zpl.h>
 
 int rand(void);
 
-#define N 3000
+#define N (10 * 1000)
 #define NL 1000
 #define CORES 4
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
-zpl_global zpl_u32 counter = 0;
+zpl_global zpl_u64 counter = 0;
 zpl_global zpl_u32 iter = 0;
-zpl_global zpl_atomic32 total_jobs;
+zpl_global zpl_atomic32 total_jobs, realtime_hits, idle_hits;
 
 #if defined(ZPL_MODULE_THREADING)
 
 void do_work(void *data) {
-    zpl_unused(data);
+    zpl_jobs_priority p = (zpl_jobs_priority)data;
     zpl_atomic32_fetch_add(&total_jobs, 1);
+
+    if (p == ZPL_JOBS_PRIORITY_REALTIME) {
+        zpl_atomic32_fetch_add(&realtime_hits, 1);
+    }
+    else if (p == ZPL_JOBS_PRIORITY_IDLE) {
+        zpl_atomic32_fetch_add(&idle_hits, 1);
+        zpl_sleep_ms(4);
+    }
+    else {
+        zpl_sleep_ms(1);
+    }
 }
 
 const char *levels[] = {
@@ -29,30 +41,25 @@ const char *levels[] = {
     "ZPL_JOBS_PRIORITY_IDLE",
 };
 
-int used_levels[ZPL_JOBS_MAX_PRIORITIES];
-
 int main() {
     zpl_thread_pool p={0};
     zpl_jobs_init_with_limit(&p, zpl_heap(), CORES, NL);
     zpl_u64 process_time = 0;
     zpl_f64 avg_delta_time = 0;
     zpl_atomic32_store(&total_jobs, 0);
-    zpl_zero_array(used_levels, ZPL_JOBS_MAX_PRIORITIES);
+    counter = N;
 
-    zpl_printf("Jobs test, %d iterations ran on %d cores.\nPer each iteration, we spawn %d jobs.\nTotal jobs to push: %d.\nJobs processed by each core approximately: %d.\n", N, CORES, NL, N*NL, (N*NL)/CORES);
+    printf("Jobs test, run duration: %d ms. Ran on %d cores.\nWe spawn %d jobs per cycle.\n", N, CORES, NL);
 
-    while (true) {
-        if (zpl_jobs_done(&p)) {
-            if (counter == N) {
-                break;
-            }
-            counter++;
-            zpl_printf("Iterations left: %d.      \r", (N-counter));
-            for (int i=0; i<NL; i++) {
-                zpl_u32 prio = RAND_RANGE(0, ZPL_JOBS_MAX_PRIORITIES);
-                zpl_jobs_enqueue_with_priority(&p, do_work, 0, prio);
-                ++used_levels[prio];
-            }
+    while (counter > 0) {
+        zpl_u64 last_time = zpl_time_rel_ms();
+        for (int i=0; i<NL; i++) {
+            zpl_u32 prio = i % ZPL_JOBS_MAX_PRIORITIES;
+            zpl_jobs_enqueue_with_priority(&p, do_work, (void*)prio, (zpl_jobs_priority)prio);
+        }
+
+        if (iter % 15 == 0) {
+            printf("Time left: %lld %-4s counter: %4d realtime hits: %4d idle hits: %d          \r", counter, "ms", p.counter, zpl_atomic32_load(&realtime_hits), zpl_atomic32_load(&idle_hits));
         }
 
         zpl_u64 curr_time = zpl_time_rel_ms();
@@ -60,17 +67,24 @@ int main() {
         zpl_u64 delta_time = zpl_time_rel_ms() - curr_time;
         avg_delta_time += delta_time;
         iter++;
+        counter -= zpl_time_rel_ms() - last_time;
     }
 
     process_time = avg_delta_time;
     avg_delta_time /= iter;
     zpl_u32 jobs_result = zpl_atomic32_load(&total_jobs);
-    zpl_printf("\nDone!\n");
-    zpl_printf("Test is done, results:\n* %lld ms total.\n* %.08f ms average.\n* total jobs processed: %d (valid? %s).\n", process_time, avg_delta_time, jobs_result, (jobs_result == N*NL) ? "yes" : "no");
-    zpl_printf("Per priority queue stats:\n");
+    printf("%-80s\n", "Done!");
+    printf("\nTest is done, results:\n* %lld ms total.\n* %.08f ms average.\n* total jobs processed: %d.\n", process_time, avg_delta_time, jobs_result);
+    printf("\nPer priority queue stats:\n");
     for (int i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &p.queues[i];
-        printf("* %-26s chance: %-4d hits: %d.\n", levels[i], q->chance, used_levels[i]);
+        printf("* %-26s chance: %-4d hits: %d.\n", levels[i], q->chance, q->hits);
+    }
+
+    printf("\nPer thread worker stats:\n");
+    for (zpl_usize i = 0; i < p.max_threads; ++i) {
+        zpl_thread_worker *tw = p.workers + i;
+        printf("* worker %-2d hits: %-8d idle: %d cy.\n", i, tw->hits, tw->idle);
     }
     zpl_jobs_free(&p);
     return 0;

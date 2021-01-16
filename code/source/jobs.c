@@ -12,6 +12,10 @@ ZPL_BEGIN_C_DECLS
 
 ZPL_RING_DEFINE(zpl__jobs_ring_, zpl_thread_job);
 
+zpl_global const zpl_u32 zpl__jobs_chances[ZPL_JOBS_MAX_PRIORITIES] = {
+    2, 3, 5, 7, 11
+};
+
 zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
     zpl_thread_worker *tw = (zpl_thread_worker *)thread->user_data;
 
@@ -23,9 +27,16 @@ zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
                 zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_BUSY);
                 tw->job.proc(tw->job.data);
                 zpl_atomic32_compare_exchange(&tw->status, ZPL_JOBS_STATUS_BUSY, ZPL_JOBS_STATUS_WAITING);
+
+            #ifdef ZPL_JOBS_DEBUG
+                ++tw->hits;
+            #endif
             } break;
 
             case ZPL_JOBS_STATUS_WAITING: {
+            #ifdef ZPL_JOBS_DEBUG
+                ++tw->idle;
+            #endif
                 zpl_yield();
             } break;
 
@@ -56,7 +67,7 @@ void zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 ma
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &pool->queues[i];
         zpl__jobs_ring_init(&q->jobs, a, max_jobs);
-        q->chance = cast(zpl_u32) (((i+1) << 2)/2);
+        q->chance = zpl__jobs_chances[i];
     }
 
     for (zpl_usize i = 0; i < max_threads; ++i) {
@@ -158,13 +169,16 @@ zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
                     last_empty = true;
                     continue;
                 }
-                if (!last_empty && (pool->counter++ % q->chance) != 0) {
+                if (!last_empty && ((pool->counter++ % q->chance) != 0)) {
                     continue;
                 }
 
                 last_empty = false;
                 tw->job = *zpl__jobs_ring_get(&q->jobs);
                 zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
+            #ifdef ZPL_JOBS_DEBUG
+                ++q->hits;
+            #endif
                 break;
             }
         }
