@@ -56,7 +56,7 @@ void zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 ma
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &pool->queues[i];
         zpl__jobs_ring_init(&q->jobs, a, max_jobs);
-        q->chance = ((i+1) << 2)/2;
+        q->chance = cast(zpl_u32) (((i+1) << 2)/2);
     }
 
     for (zpl_usize i = 0; i < max_threads; ++i) {
@@ -154,7 +154,7 @@ zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
         if (status == ZPL_JOBS_STATUS_WAITING) {
             for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
                 zpl_thread_queue *q = &pool->queues[i];
-                if (zpl_jobs_empty(pool, i)) {
+                if (zpl_jobs_empty(pool, (zpl_jobs_priority)i)) {
                     last_empty = true;
                     continue;
                 }
