@@ -49,9 +49,15 @@ void zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 ma
     pool->alloc = a;
     pool->max_threads = max_threads;
     pool->max_jobs = max_jobs;
+    pool->counter = 0;
 
     zpl_buffer_init(pool->workers, a, max_threads);
-    zpl__jobs_ring_init(&pool->jobs, a, max_jobs);
+
+    for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
+        zpl_thread_queue *q = &pool->queues[i];
+        zpl__jobs_ring_init(&q->jobs, a, max_jobs);
+        q->chance = ((i+1) << 2)/2;
+    }
 
     for (zpl_usize i = 0; i < max_threads; ++i) {
         zpl_thread_worker worker_ = { 0 };
@@ -73,19 +79,37 @@ void zpl_jobs_free(zpl_thread_pool *pool) {
     }
 
     zpl_buffer_free(pool->workers);
-    zpl__jobs_ring_free(&pool->jobs);
+
+    for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
+        zpl_thread_queue *q = &pool->queues[i];
+        zpl__jobs_ring_free(&q->jobs);
+    }
 }
 
-void zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data) {
+zpl_b32 zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority) {
     ZPL_ASSERT_NOT_NULL(proc);
+    ZPL_ASSERT(priority >= 0 && priority < ZPL_JOBS_MAX_PRIORITIES);
     zpl_thread_job job = {0};
     job.proc = proc;
     job.data = data;
-    zpl__jobs_ring_append(&pool->jobs, job);
+
+    if (!zpl_jobs_full(pool, priority)) {
+        zpl__jobs_ring_append(&pool->queues[priority].jobs, job);
+        return true;
+    }
+    return false;
 }
 
-zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool) {
-    return zpl__jobs_ring_empty(&pool->jobs);
+zpl_b32 zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data) {
+    return zpl_jobs_enqueue_with_priority(pool, proc, data, ZPL_JOBS_PRIORITY_NORMAL);
+}
+
+zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool, zpl_jobs_priority priority) {
+    return zpl__jobs_ring_empty(&pool->queues[priority].jobs);
+}
+
+zpl_b32 zpl_jobs_full(zpl_thread_pool *pool, zpl_jobs_priority priority) {
+    return zpl__jobs_ring_full(&pool->queues[priority].jobs);
 }
 
 zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
@@ -96,21 +120,53 @@ zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
         }
     }
 
-    return zpl_jobs_empty(pool);
+    return zpl_jobs_empty_all(pool);
+}
+
+zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool) {
+    for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
+        if (!zpl_jobs_empty(pool, i)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool) {
+    for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
+        if (!zpl_jobs_full(pool, i)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
-    if (zpl_jobs_empty(pool)) {
+    if (zpl_jobs_empty_all(pool)) {
         return false;
     }
     // NOTE: Process the jobs
     for (zpl_usize i = 0; i < pool->max_threads; ++i) {
         zpl_thread_worker *tw = pool->workers + i;
         zpl_u32 status = zpl_atomic32_load(&tw->status);
+        zpl_b32 last_empty = false;
 
-        if (status == ZPL_JOBS_STATUS_WAITING && (!zpl_jobs_empty(pool))) {
-            tw->job = *zpl__jobs_ring_get(&pool->jobs);
-            zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
+        if (status == ZPL_JOBS_STATUS_WAITING) {
+            for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
+                zpl_thread_queue *q = &pool->queues[i];
+                if (zpl_jobs_empty(pool, i)) {
+                    last_empty = true;
+                    continue;
+                }
+                if (!last_empty && (pool->counter++ % q->chance) != 0) {
+                    continue;
+                }
+
+                last_empty = false;
+                tw->job = *zpl__jobs_ring_get(&q->jobs);
+                zpl_atomic32_store(&tw->status, ZPL_JOBS_STATUS_READY);
+                break;
+            }
         }
     }
 
