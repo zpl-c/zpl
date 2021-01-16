@@ -30,7 +30,10 @@ ZPL_DEF zpl_timer *zpl_timer_add(zpl_timer_pool pool);
 //! Perform timer pool update.
 
 //! Traverse over all timers and update them accordingly. Should be called by Main Thread in a tight loop.
-ZPL_DEF void zpl_timer_update(zpl_timer_pool pool);
+ZPL_DEF void zpl_timer_update_array(zpl_timer_pool pool);
+
+ZPL_DEF void zpl_timer_update(zpl_timer *timer);
+
 
 //! Set up timer.
 

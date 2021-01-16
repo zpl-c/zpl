@@ -38,7 +38,7 @@ int main(void) {
     zpl_timer_stop(t3); // NOTE(ZaKlaus): This won't be fired!
 
     while (1) {
-        zpl_timer_update(timers);
+        zpl_timer_update_array(timers);
     }
 
     zpl_array_free(timers);

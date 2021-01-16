@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  11.0.0  - Rewrite the timer module
   10.13.0 - Initial ARM threading support
   10.12.1 - Fix missing zpL_alloc_str
   10.12.0 - Add zpl_crc64

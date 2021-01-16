@@ -42,29 +42,32 @@ void zpl_timer_stop(zpl_timer *t) {
     t->enabled = false;
 }
 
-void zpl_timer_update(zpl_timer_pool pool) {
-    ZPL_ASSERT(pool);
+void zpl_timer_update(zpl_timer *timer) {
+    zpl_f64 now = zpl_time_rel();
+    if (timer->enabled) {
+        if (timer->remaining_calls > 0 || timer->initial_calls == -1) {
+            if (timer->next_call_ts <= now) {
+                if (timer->initial_calls != -1) { --timer->remaining_calls; }
 
-    zpl_f64 now = zpl_time_rel( );
+                if (timer->remaining_calls == 0) {
+                    timer->enabled = false;
+                } else {
+                    timer->next_call_ts = now + timer->duration;
+                }
+
+                timer->callback(timer->user_data);
+            }
+        }
+    }
+}
+
+void zpl_timer_update_array(zpl_timer_pool pool) {
+    ZPL_ASSERT(pool);
 
     for (zpl_isize i = 0; i < zpl_array_count(pool); ++i) {
         zpl_timer *t = pool + i;
 
-        if (t->enabled) {
-            if (t->remaining_calls > 0 || t->initial_calls == -1) {
-                if (t->next_call_ts <= now) {
-                    if (t->initial_calls != -1) { --t->remaining_calls; }
-
-                    if (t->remaining_calls == 0) {
-                        t->enabled = false;
-                    } else {
-                        t->next_call_ts = now + t->duration;
-                    }
-
-                    t->callback(t->user_data);
-                }
-            }
-        }
+        zpl_timer_update(t);
     }
 }
 
