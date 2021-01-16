@@ -25,6 +25,8 @@ add_executable(tester ../code/tests/tester.c)
 
 if (WIN32)
     target_link_libraries(tester winmm)
+elseif (APPLE)
+    target_link_libraries(tester pthread m dl)
 elseif (UNIX)
     target_link_libraries(tester pthread m dl atomic)
 endif()
