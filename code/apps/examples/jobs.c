@@ -48,7 +48,7 @@ int main() {
         }
 
         if (iter % 15 == 0) {
-            printf("Time left: %ld ms            \r", counter);
+            zpl_printf("Time left: %lld ms            \r", counter);
         }
 
         zpl_u64 curr_time = zpl_time_rel_ms();
@@ -63,8 +63,8 @@ int main() {
     avg_delta_time /= iter;
     zpl_u32 jobs_result = zpl_atomic32_load(&total_jobs);
     printf("%-80s\n", "Done!");
-    printf("\nTest is done, results:\n* %ld ms total.\n* %.08f ms average.\n* total jobs processed: %d.\n", process_time, avg_delta_time, jobs_result);
-    printf("\nPer priority queue stats:\n");
+    zpl_printf("\nTest is done, results:\n* %ld ms total.\n* %.08f ms average.\n* total jobs processed: %d.\n", process_time, avg_delta_time, jobs_result);
+    zpl_printf("\nPer priority queue stats:\n");
     for (int i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &p.queues[i];
         printf("* %-8s chance: %-4d hits: %d.\n", levels[i], q->chance, q->hits);
@@ -73,7 +73,7 @@ int main() {
     printf("\nPer thread worker stats:\n");
     for (zpl_usize i = 0; i < p.max_threads; ++i) {
         zpl_thread_worker *tw = p.workers + i;
-        printf("* worker %-2lu hits: %-8d idle: %d cy.\n", i, tw->hits, tw->idle);
+        printf("* worker %-2u hits: %-8d idle: %d cy.\n", (unsigned int)i, tw->hits, tw->idle);
     }
     zpl_jobs_free(&p);
     return 0;
