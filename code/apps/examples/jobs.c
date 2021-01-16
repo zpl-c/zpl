@@ -31,7 +31,7 @@ const char *levels[] = {
 };
 
 int main() {
-    zpl_thread_pool p={0};
+    zpl_jobs_system p={0};
     zpl_jobs_init_with_limit(&p, zpl_heap(), CORES, NL);
     zpl_u64 process_time = 0;
     zpl_f64 avg_delta_time = 0;

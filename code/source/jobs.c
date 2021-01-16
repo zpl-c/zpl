@@ -49,12 +49,12 @@ zpl_isize zpl__jobs_entry(struct zpl_thread *thread) {
     return 0;
 }
 
-void zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads) {
+void zpl_jobs_init(zpl_jobs_system *pool, zpl_allocator a, zpl_u32 max_threads) {
     zpl_jobs_init_with_limit(pool, a, max_threads, ZPL_JOBS_MAX_QUEUE);
 }
 
-void zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads, zpl_u32 max_jobs) {
-    zpl_thread_pool pool_ = { 0 };
+void zpl_jobs_init_with_limit(zpl_jobs_system *pool, zpl_allocator a, zpl_u32 max_threads, zpl_u32 max_jobs) {
+    zpl_jobs_system pool_ = { 0 };
     *pool = pool_;
 
     pool->alloc = a;
@@ -81,7 +81,7 @@ void zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 ma
     }
 }
 
-void zpl_jobs_free(zpl_thread_pool *pool) {
+void zpl_jobs_free(zpl_jobs_system *pool) {
     for (zpl_usize i = 0; i < pool->max_threads; ++i) {
         zpl_thread_worker *tw = pool->workers + i;
 
@@ -97,7 +97,7 @@ void zpl_jobs_free(zpl_thread_pool *pool) {
     }
 }
 
-zpl_b32 zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority) {
+zpl_b32 zpl_jobs_enqueue_with_priority(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority) {
     ZPL_ASSERT_NOT_NULL(proc);
     ZPL_ASSERT(priority >= 0 && priority < ZPL_JOBS_MAX_PRIORITIES);
     zpl_thread_job job = {0};
@@ -111,19 +111,19 @@ zpl_b32 zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc
     return false;
 }
 
-zpl_b32 zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data) {
+zpl_b32 zpl_jobs_enqueue(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data) {
     return zpl_jobs_enqueue_with_priority(pool, proc, data, ZPL_JOBS_PRIORITY_NORMAL);
 }
 
-zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool, zpl_jobs_priority priority) {
+zpl_b32 zpl_jobs_empty(zpl_jobs_system *pool, zpl_jobs_priority priority) {
     return zpl__jobs_ring_empty(&pool->queues[priority].jobs);
 }
 
-zpl_b32 zpl_jobs_full(zpl_thread_pool *pool, zpl_jobs_priority priority) {
+zpl_b32 zpl_jobs_full(zpl_jobs_system *pool, zpl_jobs_priority priority) {
     return zpl__jobs_ring_full(&pool->queues[priority].jobs);
 }
 
-zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
+zpl_b32 zpl_jobs_done(zpl_jobs_system *pool) {
     for (zpl_usize i = 0; i < pool->max_threads; ++i) {
         zpl_thread_worker *tw = pool->workers + i;
         if (zpl_atomic32_load(&tw->status) != ZPL_JOBS_STATUS_WAITING) {
@@ -134,7 +134,7 @@ zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
     return zpl_jobs_empty_all(pool);
 }
 
-zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool) {
+zpl_b32 zpl_jobs_empty_all(zpl_jobs_system *pool) {
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         if (!zpl_jobs_empty(pool, (zpl_jobs_priority)i)) {
             return false;
@@ -143,7 +143,7 @@ zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool) {
     return true;
 }
 
-zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool) {
+zpl_b32 zpl_jobs_full_all(zpl_jobs_system *pool) {
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         if (!zpl_jobs_full(pool, (zpl_jobs_priority)i)) {
             return false;
@@ -152,7 +152,7 @@ zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool) {
     return true;
 }
 
-zpl_b32 zpl_jobs_process(zpl_thread_pool *pool) {
+zpl_b32 zpl_jobs_process(zpl_jobs_system *pool) {
     if (zpl_jobs_empty_all(pool)) {
         return false;
     }
