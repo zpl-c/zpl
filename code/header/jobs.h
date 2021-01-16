@@ -30,6 +30,15 @@ typedef enum {
     ZPL_JOBS_STATUS_TERM,
 } zpl_jobs_status;
 
+typedef enum {
+    ZPL_JOBS_PRIORITY_REALTIME,
+    ZPL_JOBS_PRIORITY_HIGH,
+    ZPL_JOBS_PRIORITY_NORMAL,
+    ZPL_JOBS_PRIORITY_LOW,
+    ZPL_JOBS_PRIORITY_IDLE,
+    ZPL_JOBS_MAX_PRIORITIES,
+} zpl_jobs_priority;
+
 typedef struct {
     zpl_jobs_proc proc;
     void *data;
@@ -44,10 +53,15 @@ typedef struct {
 } zpl_thread_worker;
 
 typedef struct {
-    zpl_allocator alloc;
-    zpl_u32 max_threads, max_jobs;
-    zpl_thread_worker *workers; ///< zpl_buffer
     zpl__jobs_ring_zpl_thread_job jobs; ///< zpl_ring
+    zpl_u32 chance;
+} zpl_thread_queue;
+
+typedef struct {
+    zpl_allocator alloc;
+    zpl_u32 max_threads, max_jobs, counter;
+    zpl_thread_worker *workers; ///< zpl_buffer
+    zpl_thread_queue queues[ZPL_JOBS_MAX_PRIORITIES];
 } zpl_thread_pool;
 
 //! Initialize thread pool with specified amount of fixed threads.
@@ -59,11 +73,20 @@ ZPL_DEF void    zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a,
 //! Release the resources use by thread pool.
 ZPL_DEF void    zpl_jobs_free(zpl_thread_pool *pool);
 
+//! Enqueue a job with specified data and custom priority.
+ZPL_DEF zpl_b32 zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority);
+
 //! Enqueue a job with specified data.
-ZPL_DEF void    zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
+ZPL_DEF zpl_b32 zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
 
 //! Check if the work queue is empty.
-ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool);
+ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool, zpl_jobs_priority priority);
+
+ZPL_DEF zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool);
+ZPL_DEF zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool);
+
+//! Check if the work queue is full.
+ZPL_DEF zpl_b32 zpl_jobs_full(zpl_thread_pool *pool, zpl_jobs_priority priority);
 
 //! Check if all workers are done.
 ZPL_DEF zpl_b32 zpl_jobs_done(zpl_thread_pool *pool);
