@@ -98,8 +98,8 @@ void zpl_jobs_free(zpl_jobs_system *pool) {
 }
 
 zpl_b32 zpl_jobs_enqueue_with_priority(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority) {
-    ZPL_ASSERT_NOT_NULL(proc);
     ZPL_ASSERT(priority >= 0 && priority < ZPL_JOBS_MAX_PRIORITIES);
+    ZPL_ASSERT_NOT_NULL(proc);
     zpl_thread_job job = {0};
     job.proc = proc;
     job.data = data;
@@ -116,10 +116,12 @@ zpl_b32 zpl_jobs_enqueue(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data) 
 }
 
 zpl_b32 zpl_jobs_empty(zpl_jobs_system *pool, zpl_jobs_priority priority) {
+    ZPL_ASSERT(priority >= 0 && priority < ZPL_JOBS_MAX_PRIORITIES);
     return zpl__jobs_ring_empty(&pool->queues[priority].jobs);
 }
 
 zpl_b32 zpl_jobs_full(zpl_jobs_system *pool, zpl_jobs_priority priority) {
+    ZPL_ASSERT(priority >= 0 && priority < ZPL_JOBS_MAX_PRIORITIES);
     return zpl__jobs_ring_full(&pool->queues[priority].jobs);
 }
 
