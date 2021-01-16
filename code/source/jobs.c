@@ -163,10 +163,10 @@ zpl_b32 zpl_jobs_process(zpl_jobs_system *pool) {
         zpl_b32 last_empty = false;
 
         if (status == ZPL_JOBS_STATUS_WAITING) {
-            for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
-                zpl_thread_queue *q = &pool->queues[i];
-                if (zpl_jobs_empty(pool, (zpl_jobs_priority)i)) {
-                    last_empty = true;
+            for (zpl_usize j = 0; j < ZPL_JOBS_MAX_PRIORITIES; ++j) {
+                zpl_thread_queue *q = &pool->queues[j];
+                if (zpl_jobs_empty(pool, (zpl_jobs_priority)j)) {
+                    last_empty = (j+1 == ZPL_JOBS_MAX_PRIORITIES);
                     continue;
                 }
                 if (!last_empty && ((pool->counter++ % q->chance) != 0)) {
