@@ -34,11 +34,11 @@ void do_work(void *data) {
 }
 
 const char *levels[] = {
-    "ZPL_JOBS_PRIORITY_REALTIME",
-    "ZPL_JOBS_PRIORITY_HIGH",
-    "ZPL_JOBS_PRIORITY_NORMAL",
-    "ZPL_JOBS_PRIORITY_LOW",
-    "ZPL_JOBS_PRIORITY_IDLE",
+    "REALTIME",
+    "HIGH",
+    "NORMAL",
+    "LOW",
+    "IDLE",
 };
 
 int main() {
@@ -78,7 +78,7 @@ int main() {
     printf("\nPer priority queue stats:\n");
     for (int i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
         zpl_thread_queue *q = &p.queues[i];
-        printf("* %-26s chance: %-4d hits: %d.\n", levels[i], q->chance, q->hits);
+        printf("* %-8s chance: %-4d hits: %d.\n", levels[i], q->chance, q->hits);
     }
 
     printf("\nPer thread worker stats:\n");
