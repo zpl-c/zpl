@@ -7,11 +7,11 @@
 int rand(void);
 
 #define N (10 * 1000)
-#define NL 1000
+#define NL 10000
 #define CORES 4
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
-zpl_global zpl_u64 counter = 0;
+zpl_global zpl_i64 counter = 0;
 zpl_global zpl_u32 iter = 0;
 zpl_global zpl_atomic32 total_jobs;
 
