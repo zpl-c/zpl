@@ -13,24 +13,13 @@ int rand(void);
 
 zpl_global zpl_u64 counter = 0;
 zpl_global zpl_u32 iter = 0;
-zpl_global zpl_atomic32 total_jobs, realtime_hits, idle_hits;
+zpl_global zpl_atomic32 total_jobs;
 
 #if defined(ZPL_MODULE_THREADING)
 
 void do_work(void *data) {
-    zpl_jobs_priority p = (zpl_jobs_priority)data;
+    zpl_unused(data);
     zpl_atomic32_fetch_add(&total_jobs, 1);
-
-    if (p == ZPL_JOBS_PRIORITY_REALTIME) {
-        zpl_atomic32_fetch_add(&realtime_hits, 1);
-    }
-    else if (p == ZPL_JOBS_PRIORITY_IDLE) {
-        zpl_atomic32_fetch_add(&idle_hits, 1);
-        zpl_sleep_ms(4);
-    }
-    else {
-        zpl_sleep_ms(1);
-    }
 }
 
 const char *levels[] = {
@@ -55,11 +44,11 @@ int main() {
         zpl_u64 last_time = zpl_time_rel_ms();
         for (int i=0; i<NL; i++) {
             zpl_u32 prio = i % ZPL_JOBS_MAX_PRIORITIES;
-            zpl_jobs_enqueue_with_priority(&p, do_work, (void*)prio, (zpl_jobs_priority)prio);
+            zpl_jobs_enqueue_with_priority(&p, do_work, 0, (zpl_jobs_priority)prio);
         }
 
         if (iter % 15 == 0) {
-            printf("Time left: %lld %-4s counter: %4d realtime hits: %4d idle hits: %d          \r", counter, "ms", p.counter, zpl_atomic32_load(&realtime_hits), zpl_atomic32_load(&idle_hits));
+            printf("Time left: %lld ms            \r", counter);
         }
 
         zpl_u64 curr_time = zpl_time_rel_ms();
