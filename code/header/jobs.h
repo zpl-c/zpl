@@ -23,6 +23,10 @@ typedef void (*zpl_jobs_proc)(void *data);
 #define ZPL_JOBS_MAX_QUEUE 100
 #endif
 
+#ifdef ZPL_JOBS_ENABLE_DEBUG
+#define ZPL_JOBS_DEBUG
+#endif
+
 typedef enum {
     ZPL_JOBS_STATUS_READY,
     ZPL_JOBS_STATUS_BUSY,
@@ -50,11 +54,18 @@ typedef struct {
     zpl_thread thread;
     zpl_atomic32 status;
     zpl_thread_job job;
+#ifdef ZPL_JOBS_DEBUG
+    zpl_u32 hits;
+    zpl_u32 idle;
+#endif
 } zpl_thread_worker;
 
 typedef struct {
     zpl__jobs_ring_zpl_thread_job jobs; ///< zpl_ring
     zpl_u32 chance;
+#ifdef ZPL_JOBS_DEBUG
+    zpl_u32 hits;
+#endif
 } zpl_thread_queue;
 
 typedef struct {
