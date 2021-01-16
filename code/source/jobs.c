@@ -125,7 +125,7 @@ zpl_b32 zpl_jobs_done(zpl_thread_pool *pool) {
 
 zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool) {
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
-        if (!zpl_jobs_empty(pool, i)) {
+        if (!zpl_jobs_empty(pool, (zpl_jobs_priority)i)) {
             return false;
         }
     }
@@ -134,7 +134,7 @@ zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool) {
 
 zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool) {
     for (zpl_usize i = 0; i < ZPL_JOBS_MAX_PRIORITIES; ++i) {
-        if (!zpl_jobs_full(pool, i)) {
+        if (!zpl_jobs_full(pool, (zpl_jobs_priority)i)) {
             return false;
         }
     }
