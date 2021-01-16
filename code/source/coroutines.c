@@ -13,7 +13,7 @@ ZPL_BEGIN_C_DECLS
 
 struct {
     zpl_b32 is_ready;
-    zpl_thread_pool coroutines;
+    zpl_jobs_system coroutines;
     zpl_thread runner;
     zpl_atomic32 request_term;
     zpl_mutex is_processing;
