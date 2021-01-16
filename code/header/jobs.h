@@ -73,36 +73,36 @@ typedef struct {
     zpl_u32 max_threads, max_jobs, counter;
     zpl_thread_worker *workers; ///< zpl_buffer
     zpl_thread_queue queues[ZPL_JOBS_MAX_PRIORITIES];
-} zpl_thread_pool;
+} zpl_jobs_system;
 
 //! Initialize thread pool with specified amount of fixed threads.
-ZPL_DEF void    zpl_jobs_init(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads);
+ZPL_DEF void    zpl_jobs_init(zpl_jobs_system *pool, zpl_allocator a, zpl_u32 max_threads);
 
 //! Initialize thread pool with specified amount of fixed threads and custom job limit.
-ZPL_DEF void    zpl_jobs_init_with_limit(zpl_thread_pool *pool, zpl_allocator a, zpl_u32 max_threads, zpl_u32 max_jobs);
+ZPL_DEF void    zpl_jobs_init_with_limit(zpl_jobs_system *pool, zpl_allocator a, zpl_u32 max_threads, zpl_u32 max_jobs);
 
 //! Release the resources use by thread pool.
-ZPL_DEF void    zpl_jobs_free(zpl_thread_pool *pool);
+ZPL_DEF void    zpl_jobs_free(zpl_jobs_system *pool);
 
 //! Enqueue a job with specified data and custom priority.
-ZPL_DEF zpl_b32 zpl_jobs_enqueue_with_priority(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority);
+ZPL_DEF zpl_b32 zpl_jobs_enqueue_with_priority(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data, zpl_jobs_priority priority);
 
 //! Enqueue a job with specified data.
-ZPL_DEF zpl_b32 zpl_jobs_enqueue(zpl_thread_pool *pool, zpl_jobs_proc proc, void *data);
+ZPL_DEF zpl_b32 zpl_jobs_enqueue(zpl_jobs_system *pool, zpl_jobs_proc proc, void *data);
 
 //! Check if the work queue is empty.
-ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_thread_pool *pool, zpl_jobs_priority priority);
+ZPL_DEF zpl_b32 zpl_jobs_empty(zpl_jobs_system *pool, zpl_jobs_priority priority);
 
-ZPL_DEF zpl_b32 zpl_jobs_empty_all(zpl_thread_pool *pool);
-ZPL_DEF zpl_b32 zpl_jobs_full_all(zpl_thread_pool *pool);
+ZPL_DEF zpl_b32 zpl_jobs_empty_all(zpl_jobs_system *pool);
+ZPL_DEF zpl_b32 zpl_jobs_full_all(zpl_jobs_system *pool);
 
 //! Check if the work queue is full.
-ZPL_DEF zpl_b32 zpl_jobs_full(zpl_thread_pool *pool, zpl_jobs_priority priority);
+ZPL_DEF zpl_b32 zpl_jobs_full(zpl_jobs_system *pool, zpl_jobs_priority priority);
 
 //! Check if all workers are done.
-ZPL_DEF zpl_b32 zpl_jobs_done(zpl_thread_pool *pool);
+ZPL_DEF zpl_b32 zpl_jobs_done(zpl_jobs_system *pool);
 
 //! Process all jobs and check all threads. Should be called by Main Thread in a tight loop.
-ZPL_DEF zpl_b32 zpl_jobs_process(zpl_thread_pool *pool);
+ZPL_DEF zpl_b32 zpl_jobs_process(zpl_jobs_system *pool);
 
 ZPL_END_C_DECLS
