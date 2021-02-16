@@ -27,6 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
+  11.0.1  - Fixes for Apple M1 chip
   11.0.0  - New jobs system
           - Rewrite the timer module
           - zpl_ring rework
