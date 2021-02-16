@@ -9,9 +9,6 @@
     "type": "git",
     "url": "git+https://github.com/zpl-c/zpl.git"
   },
-  "devDependencies": {
-    "release-it": "^12.4.3"
-  },
   "scripts": {
     "embed": "node -e 'require(\"./misc/packager\").embedIncludes()'",
     "release": "release-it",
@@ -35,5 +32,8 @@
     "plugins": {
       "./misc/packager.js": {}
     }
+  },
+  "devDependencies": {
+    "release-it": "^14.4.0"
   }
 }
