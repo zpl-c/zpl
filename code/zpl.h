@@ -27,7 +27,7 @@ GitHub:
   https://github.com/zpl-c/zpl
 
 Version History:
-  11.0.1  - Fixes for Apple M1 chip
+  11.0.2  - Fixes for Apple M1 chip
   11.0.0  - New jobs system
           - Rewrite the timer module
           - zpl_ring rework
@@ -304,7 +304,7 @@ Version History:
 
 #define ZPL_VERSION_MAJOR 11
 #define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 0
+#define ZPL_VERSION_PATCH 1
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"
