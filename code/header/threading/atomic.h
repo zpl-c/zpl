@@ -17,7 +17,11 @@
 # define zpl_atomic(X) volatile X /*std::atomic<X>*/
 #endif
 
+#if defined(__STDC_NO_ATOMICS__) || defined(__cplusplus) || defined(ZPL_COMPILER_MSVC)
 #define zpl_atomicarg(X) volatile X
+#else
+#define zpl_atomicarg(X) X
+#endif
 
 ZPL_BEGIN_C_DECLS
 

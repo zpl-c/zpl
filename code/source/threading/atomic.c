@@ -375,7 +375,7 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) expected, zpl_atomicarg(zpl_i64) desired) {
-        zpl_atomicarg(zpl_i64) original;
+        zpl_atomicarg(zpl_i64) original = 0;
         atomic_compare_exchange_strong(&a->value, &expected, desired);
         return original;
     }
