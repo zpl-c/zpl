@@ -4,6 +4,7 @@ const {Plugin} = require('release-it')
 
 const basefile = path.join(__dirname, '..', 'code', 'zpl.h')
 const changelogfile = path.join(__dirname, '..', 'CHANGELOG')
+const licensefile = path.join(__dirname, '..', 'LICENSE')
 const workdir = path.join(__dirname, 'deploy')
 
 const versionGet = () => {
@@ -39,18 +40,21 @@ const embedIncludes = (print) => {
     let data = fs.readFileSync(basefile, 'utf8')
     let lines = data.split('\n')
 
-    const hedley = lines.find(a => a.indexOf('zpl_hedley.h') !== -1)
-    const hedleyIndex = lines.indexOf(hedley)
-
-    lines = lines.map(line => {
-        if (line.indexOf('@{CHANGELOG}') === -1) return line
+    const embedFile = (filename, symbol, spaces='  ') => lines.map(line => {
+        if (line.indexOf(`@{${symbol}}`) === -1) return line
         return fs
-            .readFileSync(changelogfile, 'utf8')
+            .readFileSync(filename, 'utf8')
             .split('\n')
-            .map(l => `  ${l}`)
-            .map(l => l === '  ' ? '' : l)
+            .map(l => `${spaces}${l}`)
+            .map(l => l === spaces ? '' : l)
             .join('\n')
     })
+
+    lines = embedFile(changelogfile, 'CHANGELOG')
+    lines = embedFile(licensefile, 'LICENSE')
+
+    const hedley = lines.find(a => a.indexOf('zpl_hedley.h') !== -1)
+    const hedleyIndex = lines.indexOf(hedley)
 
     lines = lines.map((line, i) => {
         if (i < hedleyIndex) return line
