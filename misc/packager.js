@@ -3,6 +3,7 @@ const path = require('path')
 const {Plugin} = require('release-it')
 
 const basefile = path.join(__dirname, '..', 'code', 'zpl.h')
+const changelogfile = path.join(__dirname, '..', 'CHANGELOG')
 const workdir = path.join(__dirname, 'deploy')
 
 const versionGet = () => {
@@ -40,6 +41,16 @@ const embedIncludes = (print) => {
 
     const hedley = lines.find(a => a.indexOf('zpl_hedley.h') !== -1)
     const hedleyIndex = lines.indexOf(hedley)
+
+    lines = lines.map(line => {
+        if (line.indexOf('@{CHANGELOG}') === -1) return line
+        return fs
+            .readFileSync(changelogfile, 'utf8')
+            .split('\n')
+            .map(l => `  ${l}`)
+            .map(l => l === '  ' ? '' : l)
+            .join('\n')
+    })
 
     lines = lines.map((line, i) => {
         if (i < hedleyIndex) return line
