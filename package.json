@@ -17,7 +17,8 @@
     "release-major": "release-it major --ci",
     "release-patch-pre": "release-it patch --preRelease=pre --ci",
     "release-minor-pre": "release-it minor --preRelease=pre --ci",
-    "release-major-pre": "release-it major --preRelease=pre --ci"
+    "release-major-pre": "release-it major --preRelease=pre --ci",
+    "test": "make test"
   },
   "release-it": {
     "npm": {
