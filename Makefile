@@ -22,8 +22,10 @@ else
 		CXX=clang++
 		LDFLAGS+=-pthread -lm
 	endif
-	ifneq ($(CC),tcc)
-		LDFLAGS += -latomic
+	ifneq ($(OSDEF),Darwin)
+		ifneq ($(CC),tcc)
+			LDFLAGS += -latomic
+		endif
 	endif
 endif
 
