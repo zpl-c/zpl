@@ -13,6 +13,10 @@ Various printing methods.
 
 ZPL_BEGIN_C_DECLS
 
+#ifndef ZPL_PRINTF_MAXLEN
+#define ZPL_PRINTF_MAXLEN 4096
+#endif
+
 ZPL_DEF zpl_isize zpl_printf(char const *fmt, ...);
 ZPL_DEF zpl_isize zpl_printf_va(char const *fmt, va_list va);
 ZPL_DEF zpl_isize zpl_printf_err(char const *fmt, ...);

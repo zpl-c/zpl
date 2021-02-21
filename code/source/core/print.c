@@ -15,14 +15,14 @@ zpl_isize zpl_printf_err_va(char const *fmt, va_list va) {
 }
 
 zpl_isize zpl_fprintf_va(struct zpl_file *f, char const *fmt, va_list va) {
-    zpl_local_persist char buf[4096];
+    zpl_local_persist char buf[ZPL_PRINTF_MAXLEN];
     zpl_isize len = zpl_snprintf_va(buf, zpl_size_of(buf), fmt, va);
     zpl_file_write(f, buf, len - 1); // NOTE: prevent extra whitespace
     return len;
 }
 
 char *zpl_bprintf_va(char const *fmt, va_list va) {
-    zpl_local_persist char buffer[4096];
+    zpl_local_persist char buffer[ZPL_PRINTF_MAXLEN];
     zpl_snprintf_va(buffer, zpl_size_of(buffer), fmt, va);
     return buffer;
 }

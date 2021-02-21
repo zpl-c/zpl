@@ -1,3 +1,4 @@
+11.0.7  - Add ZPL_PRINTF_MAXLEN
 11.0.6  - Fix zpl_printf left padding bug
 11.0.4  - Disable ZPL_NO_MATH_H on TinyC
 11.0.3  - Added support for TinyC compiler
