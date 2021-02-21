@@ -1,8 +1,12 @@
 /**
-  ZPL - Tester framework
+  ZPL - Unit testing framework
 
 Usage:
-  #include "unit.h"
+  #include "unit.h" in EXACTLY one source file, usually the one containing your testing app's entry point.
+
+  There really is no need to include this file multiple times within a project, unless you wish to run
+  multiple tests within a single executable or split test cases to multiple compilation units, in such case
+  define UNIT_STATIC to ensure the library won't leak symbols outside compilation units.
 
   and cover your beautiful code already!
 
@@ -10,19 +14,69 @@ GitHub:
   https://github.com/zpl-c/tester
 
 Version History:
+  1.0.1 - Small tweaks
   1.0.0 - Where it all started... (not really)
 
 License:
-  See LICENSE
+  This Software is dual licensed under the following licenses:
+
+  Unlicense
+  This is free and unencumbered software released into the public domain.
+
+  Anyone is free to copy, modify, publish, use, compile, sell, or
+  distribute this software, either in source code form or as a compiled
+  binary, for any purpose, commercial or non-commercial, and by any
+  means.
+
+  In jurisdictions that recognize copyright laws, the author or authors
+  of this software dedicate any and all copyright interest in the
+  software to the public domain. We make this dedication for the benefit
+  of the public at large and to the detriment of our heirs and
+  successors. We intend this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights to this
+  software under copyright law.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+
+  For more information, please refer to <http://unlicense.org/>
+
+  BSD 3-Clause
+  Copyright (c) 2016-2021 Dominik Madarász. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+  3. Neither the name of the copyright holder nor the names of its contributors
+  may be used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 */
 
-static int _g_modules = 0;
-static int _g_modules_err = 0;
-static int _g_total = 0;
-static int _g_errors = 0;
-
-#ifndef UNIT_MAX_CASES
-#define UNIT_MAX_CASES 256
+/* Adjust it to your needs, preferably to the number of modules you wish to test against. */
+#ifndef UNIT_MAX_MODULES
+#define UNIT_MAX_MODULES 256
 #endif
 
 #ifndef UNIT_SKIP_MAGIC
@@ -33,31 +87,29 @@ static int _g_errors = 0;
 #define UNIT_JOIN2(a,b) a##b
 #endif
 
+/* Isolates test results within compilation units, this allows for running
+    multiple test suites per single binary. */
+#ifdef UNIT_STATIC
+#define UNIT_DEF static
+#else
+#define UNIT_DEF
+#endif
+
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-// Locally persisting buffer
-static inline char* unit__bprintf(const char* fmt, ...)
-{
-    static char buf[128];
-    va_list args;
-    va_start(args, fmt);
-    vsprintf(buf, fmt, args);
-    va_end(args);
-    return buf;
-}
+#include <stdint.h>
 
 #define MODULE(name, scope) \
-    int UNIT_JOIN2(module__,name)() { \
+    int32_t UNIT_JOIN2(module__,name)() { \
         printf("--------------------------------------\n"); \
         printf(" module: %s\n", #name); \
         printf("--------------------------------------\n"); \
         fflush(stdout); \
         _g_modules++; \
-        int _total = 0; \
-        int _errors = 0; \
-        int _lasterr = 0; \
+        int32_t _total = 0; \
+        int32_t _errors = 0; \
+        int32_t _lasterr = 0; \
         char *_errstr = 0; \
         scope; \
         fflush(stdout); \
@@ -76,6 +128,7 @@ static inline char* unit__bprintf(const char* fmt, ...)
     if (_lasterr != UNIT_SKIP_MAGIC) _errors += _lasterr; \
     printf(" * [%s]: It %s %s\n", (_lasterr == UNIT_SKIP_MAGIC) ? "\x1B[33mSKIP\x1B[0m" : (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", desc, _errstr);
 
+/* TEST CHECKS */
 #define FAIL(a, b)                             { _errstr = unit__bprintf("\n\n\tassert: \x1B[31m%s:%lld %s %s:%lld\x1B[0m\n\tat %s:%d\n", #a, a, (a == b)?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
 #define UFAIL(a, b)                             { _errstr = unit__bprintf("\n\n\tassert: \x1B[31m%s:%llu %s %s:%llu\x1B[0m\n\tat %s:%d\n", #a, a, (a == b)?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
 #define STRFAIL(a, b)                          { _errstr = unit__bprintf("\n\n\tassert: \x1B[31m%s:%s %s %s:%s\x1B[0m\n\tat %s:%d\n", #a, (char *)a, (!strcmp(a,b))?"==":"!=", #b, b, __FILE__, __LINE__); _lasterr = 1; break; }
@@ -113,12 +166,12 @@ static inline char* unit__bprintf(const char* fmt, ...)
     #pragma warning(disable : 4127) // Conditional expression is constant
 #endif
 
-typedef int (*unit_case)();
+typedef int32_t (*unit_case)();
 
 #define UNIT_CREATE(name) \
     const char *unit_name = name; \
-    unit_case unit_cases[UNIT_MAX_CASES] = {0}; \
-    int unit_count = 0;
+    unit_case unit_cases[UNIT_MAX_MODULES] = {0}; \
+    int32_t unit_count = 0;
 
 #define UNIT_CASE(name) \
     unit_cases[unit_count++] = UNIT_JOIN2(module__,name)
@@ -126,14 +179,21 @@ typedef int (*unit_case)();
 #define UNIT_RUN() \
         unit_main(unit_name, unit_cases, unit_count)
 
-int unit_main(const char *name, unit_case *cases, int count) {
-    int err = 0, cnt = count;
+/* INTERNALS */
+
+UNIT_DEF int32_t _g_modules = 0;
+UNIT_DEF int32_t _g_modules_err = 0;
+UNIT_DEF int32_t _g_total = 0;
+UNIT_DEF int32_t _g_errors = 0;
+
+UNIT_DEF int32_t unit_main(const char *name, unit_case *cases, int32_t count) {
+    int32_t err = 0, cnt = count;
     printf("> testing suite:\n\n");
-    printf("   * library: %s\n", name);
+    printf("   *   suite: %s\n", name);
     printf("   * modules: %d\n", cnt);
     printf("\n");
 
-    for (int i = 0; i < count; ++i) {
+    for (int32_t i = 0; i < count; ++i) {
         err += cases[i]();
     }
 
@@ -145,6 +205,17 @@ int unit_main(const char *name, unit_case *cases, int count) {
     printf("\n");
 
     return -err;
+}
+
+// Locally persisting buffer
+static inline char* unit__bprintf(const char* fmt, ...)
+{
+    static char buf[128];
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(buf, fmt, args);
+    va_end(args);
+    return buf;
 }
 
 #if defined(ZPL_COMPILER_MSVC)
