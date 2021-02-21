@@ -49,10 +49,10 @@ zpl_string zpl_string_make_length(zpl_allocator a, void const *init_str, zpl_isi
 }
 
 zpl_string zpl_string_sprintf_buf(zpl_allocator a, const char *fmt, ...) {
-    zpl_local_persist char buf[4096] = { 0 };
+    zpl_local_persist zpl_thread_local char buf[ZPL_PRINTF_MAXLEN] = { 0 };
     va_list va;
     va_start(va, fmt);
-    zpl_snprintf_va(buf, 4096, fmt, va);
+    zpl_snprintf_va(buf, ZPL_PRINTF_MAXLEN, fmt, va);
     va_end(va);
 
     return zpl_string_make(a, buf);
@@ -196,7 +196,7 @@ zpl_string zpl_string_append_rune(zpl_string str, zpl_rune r) {
 
 zpl_string zpl_string_append_fmt(zpl_string str, const char *fmt, ...) {
     zpl_isize res;
-    char buf[4096] = { 0 };
+    char buf[ZPL_PRINTF_MAXLEN] = { 0 };
     va_list va;
     va_start(va, fmt);
     res = zpl_snprintf_va(buf, zpl_count_of(buf) - 1, fmt, va) - 1;
