@@ -14,11 +14,11 @@
 int main() {
     UNIT_CREATE("zpl");
 
-    UNIT_CASE(json5_parser);
-    UNIT_CASE(alloc_pool);
-    UNIT_CASE(hashing);
-    UNIT_CASE(time);
-    UNIT_CASE(stream);
+    UNIT_MODULE(json5_parser);
+    UNIT_MODULE(alloc_pool);
+    UNIT_MODULE(hashing);
+    UNIT_MODULE(time);
+    UNIT_MODULE(stream);
 
     return UNIT_RUN();
 }

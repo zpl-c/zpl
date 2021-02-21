@@ -170,14 +170,14 @@ typedef int32_t (*unit_case)();
 
 #define UNIT_CREATE(name) \
     const char *unit_name = name; \
-    unit_case unit_cases[UNIT_MAX_MODULES] = {0}; \
+    unit_case unit_modules[UNIT_MAX_MODULES] = {0}; \
     int32_t unit_count = 0;
 
-#define UNIT_CASE(name) \
-    unit_cases[unit_count++] = UNIT_JOIN2(module__,name)
+#define UNIT_MODULE(name) \
+    unit_modules[unit_count++] = UNIT_JOIN2(module__,name)
 
 #define UNIT_RUN() \
-        unit_main(unit_name, unit_cases, unit_count)
+        unit_main(unit_name, unit_modules, unit_count)
 
 /* INTERNALS */
 
