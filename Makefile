@@ -8,19 +8,22 @@ ifeq ($(OS),Windows_NT)
 else
 	OSDEF := $(shell uname -s)
 	ifeq ($(OSDEF),Linux)
-		LDFLAGS += -pthread -ldl -lm -latomic
+		LDFLAGS += -pthread -ldl -lm
 	endif
 	ifeq ($(OSDEF),OpenBSD)
 		STDC=-std=c11
 		CC=clang
 		CXX=clang++
-		LDFLAGS += -pthread -lm -latomic
+		LDFLAGS += -pthread -lm
 	endif
 	ifeq ($(OSDEF),FreeBSD)
 		STDC=-std=c11
 		CC=clang
 		CXX=clang++
-		LDFLAGS+=-pthread -lm -latomic
+		LDFLAGS+=-pthread -lm
+	endif
+	ifneq ($(CC),tcc)
+		LDFLAGS += -latomic
 	endif
 endif
 

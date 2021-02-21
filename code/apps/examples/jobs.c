@@ -11,11 +11,11 @@ int rand(void);
 #define CORES 4
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
+#if defined(ZPL_MODULE_THREADING)
+
 zpl_global zpl_i64 counter = 0;
 zpl_global zpl_u32 iter = 0;
 zpl_global zpl_atomic32 total_jobs;
-
-#if defined(ZPL_MODULE_THREADING)
 
 void do_work(void *data) {
     zpl_unused(data);
