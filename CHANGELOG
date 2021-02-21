@@ -1,5 +1,5 @@
 11.0.9  - stringlib uses ZPL_PRINTF_MAXLEN now
-11.0.8  - zpl_printf family is now thread-safe
+        - zpl_printf family is now thread-safe
 11.0.7  - Add ZPL_PRINTF_MAXLEN
 11.0.6  - Fix zpl_printf left padding bug
 11.0.4  - Disable ZPL_NO_MATH_H on TinyC
