@@ -94,6 +94,8 @@ defined(__ppc64__) || defined(__aarch64__)
     #define ZPL_COMPILER_CLANG 1
 #elif defined(__MINGW32__)
     #define ZPL_COMPILER_MINGW 1
+#elif defined(__TINYC__)
+    #define ZPL_COMPILER_TINYC 1
 #else
     #error Unknown compiler
 #endif

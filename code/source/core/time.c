@@ -68,7 +68,7 @@ ZPL_BEGIN_C_DECLS
     zpl_u64 zpl_rdtsc(void) {
         return (zpl_u64)(emscripten_get_now() * 1e+6);
     }
-#elif defined(ZPL_CPU_ARM)
+#elif defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
     zpl_u64 zpl_rdtsc(void) {
         #if defined(__aarch64__)
             int64_t r = 0;
@@ -94,6 +94,11 @@ ZPL_BEGIN_C_DECLS
         #endif
 
         return r;
+    }
+#else
+    zpl_u64 zpl_rdtsc(void) {
+        ZPL_PANIC("zpl_rdtsc is not supported on this particular setup");
+        return -0;
     }
 #endif
 
