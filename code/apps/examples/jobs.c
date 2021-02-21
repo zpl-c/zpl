@@ -30,15 +30,19 @@ const char *levels[] = {
     "IDLE",
 };
 
-int main() {
+int main(int argc, char **argv) {
+    zpl_u32 num_cores = CORES;
+    if (argc > 1) {
+        num_cores = zpl_str_to_u64(argv[1], NULL, 10);
+    }
     zpl_jobs_system p={0};
-    zpl_jobs_init_with_limit(&p, zpl_heap(), CORES, NL);
+    zpl_jobs_init_with_limit(&p, zpl_heap(), num_cores, NL);
     zpl_u64 process_time = 0;
     zpl_f64 avg_delta_time = 0;
     zpl_atomic32_store(&total_jobs, 0);
     counter = N;
 
-    printf("Jobs test, run duration: %d ms. Ran on %d cores.\nWe spawn %d jobs per cycle.\n", N, CORES, NL);
+    printf("Jobs test, run duration: %d ms. Ran on %d cores.\nWe spawn %d jobs per cycle.\n", N, num_cores, NL);
 
     while (counter > 0) {
         zpl_u64 last_time = zpl_time_rel_ms();
