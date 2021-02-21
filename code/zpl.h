@@ -356,6 +356,10 @@ License:
     #if defined(ZPL_MODULE_COROUTINES)
         #include "header/coroutines.h"
     #endif
+#else
+    #if !defined(zpl_thread_local)
+        #define zpl_thread_local
+    #endif
 #endif
 
 #if defined(ZPL_COMPILER_MSVC)
