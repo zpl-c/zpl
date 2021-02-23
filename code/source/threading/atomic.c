@@ -343,69 +343,69 @@ ZPL_BEGIN_C_DECLS
 #elif !defined(ZPL_COMPILER_MSVC)
     zpl_i32 zpl_atomic32_load (zpl_atomic32 const *a) {
         zpl_atomicarg(zpl_i32) ret;
-        __atomic_load(&a->value, &ret, __ATOMIC_SEQ_CST);
+        __atomic_load((zpl_i32*)&a->value, (zpl_i32*)&ret, __ATOMIC_SEQ_CST);
         return ret;
     }
     void zpl_atomic32_store(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) value) {
-        __atomic_store(&a->value, &value, __ATOMIC_SEQ_CST);
+        __atomic_store((zpl_i32*)&a->value, (zpl_i32*)&value, __ATOMIC_SEQ_CST);
     }
 
     zpl_i32 zpl_atomic32_compare_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) expected, zpl_atomicarg(zpl_i32) desired) {
         zpl_atomicarg(zpl_i32) original = a->value;
-        __atomic_compare_exchange_n(&a->value, (void*)&expected, desired, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+        __atomic_compare_exchange_n((zpl_i32*)&a->value, (zpl_i32*)&expected, desired, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
         return original;
     }
 
     zpl_i32 zpl_atomic32_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) desired) {
         zpl_atomicarg(zpl_i32) ret;
-        __atomic_exchange(&a->value, &desired, &ret, __ATOMIC_SEQ_CST);
+        __atomic_exchange((zpl_i32*)&a->value, (zpl_i32*)&desired, (zpl_i32*)&ret, __ATOMIC_SEQ_CST);
         return ret;
     }
 
     zpl_i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
-        return __atomic_fetch_add(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_add((zpl_i32*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
     zpl_i32 zpl_atomic32_fetch_and(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
-        return __atomic_fetch_and(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_and((zpl_i32*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
     zpl_i32 zpl_atomic32_fetch_or(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
-        return __atomic_fetch_or(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_or((zpl_i32*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
     zpl_i64 zpl_atomic64_load(zpl_atomic64 const *a) {
         zpl_atomicarg(zpl_i64) ret;
-        __atomic_load(&a->value, &ret, __ATOMIC_SEQ_CST);
+        __atomic_load((zpl_i64*)&a->value, (zpl_i64*)&ret, __ATOMIC_SEQ_CST);
         return ret;
     }
 
     void zpl_atomic64_store(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) value) {
-        __atomic_store(&a->value, &value, __ATOMIC_SEQ_CST);
+        __atomic_store((zpl_i64*)&a->value, (zpl_i64*)&value, __ATOMIC_SEQ_CST);
     }
 
     zpl_i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) expected, zpl_atomicarg(zpl_i64) desired) {
         zpl_atomicarg(zpl_i64) original = 0;
-        __atomic_compare_exchange_n(&a->value, (void*)&expected, desired, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+        __atomic_compare_exchange_n((zpl_i64*)&a->value, (zpl_i64*)&expected, desired, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
         return original;
     }
 
     zpl_i64 zpl_atomic64_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) desired) {
         zpl_atomicarg(zpl_i64) ret;
-        __atomic_exchange(&a->value, &desired, &ret, __ATOMIC_SEQ_CST);
+        __atomic_exchange((zpl_i64*)&a->value, (zpl_i64*)&desired, (zpl_i64*)&ret, __ATOMIC_SEQ_CST);
         return ret;
     }
 
     zpl_i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        return __atomic_fetch_add(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_add((zpl_i64*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
     zpl_i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        return __atomic_fetch_and(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_and((zpl_i64*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
     zpl_i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        return __atomic_fetch_or(&a->value, operand, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_or((zpl_i64*)&a->value, operand, __ATOMIC_SEQ_CST);
     }
 
 #else
