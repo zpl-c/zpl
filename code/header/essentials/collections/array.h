@@ -1,4 +1,4 @@
-// file: header/core/collections/array.h
+// file: header/essentials/collections/array.h
 
 ////////////////////////////////////////////////////////////////
 //

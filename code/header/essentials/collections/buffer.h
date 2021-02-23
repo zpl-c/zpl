@@ -1,4 +1,4 @@
-// file: header/core/collections/buffer.h
+// file: header/essentials/collections/buffer.h
 
 ////////////////////////////////////////////////////////////////
 //

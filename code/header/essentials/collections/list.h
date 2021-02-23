@@ -1,4 +1,4 @@
-// file: header/core/collections/list.h
+// file: header/essentials/collections/list.h
 
 ////////////////////////////////////////////////////////////////
 //
