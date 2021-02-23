@@ -24,7 +24,7 @@
 ZPL_BEGIN_C_DECLS
 
 char *zpl_alloc_str(zpl_allocator a, char const *str) {
-    return zpl_alloc_str_len(a, str, zpl_strlen(str));
+    return zpl_alloc_str_len(a, str, zpl__strlen(str));
 }
 
 ////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
 
             // NOTE: Out of memory
             if (arena->total_allocated + total_size > cast(zpl_isize) arena->total_size) {
-                zpl_printf_err("Arena out of memory\n");
+                zpl__printf_err("%s", "Arena out of memory\n");
                 return NULL;
             }
 

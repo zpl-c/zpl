@@ -77,7 +77,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 # Table of Contents
 
 ZPL consists of modules that are packed to various distributions. By default, ZPL offers most of the modules from the go.
-It also offers a nano distribution consisting only of essential parts that form the basis of the library, those are:
+It also offers a **nano** distribution consisting only of essential parts that form the basis of the library, those are:
 * **Macro helpers** - This module contains many useful macros helpful for debugging as well as development itself.
 * **Memory** - Consists of pointer arithmetic methods, virtual memory management and custom memory allocators.
 * **Collections** - Consists of C++-template-like macros that define containers for any type. All of these collections are C friendly and accessible using `de-reference` or `[]` operators. These are: buffer, array, linked-list, ring buffer.
@@ -90,6 +90,8 @@ It also offers a nano distribution consisting only of essential parts that form 
 * **Random** - Fast and simple RNG library.
 * **Sorting** - Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains simple implementation of binary search, as well as an easy to use API to define your own comparators.
 * **Miscellaneous** - Methods that don't belong anywhere but are still very useful in many occasions.
+
+From which we also made a **pico** distribution that only contains: **Macro helpers**, **Memory** and **Collections** modules. Useful in embedded environments where you know exactly which modules you want to make use of. As always, you can easily enable additional modules as you'd like, do note that not all combinations were tested and might even cause issues when the **pico** distribution is enabled. There is no ability to enable specific core submodules within the **pico** distribution however, consider using the **nano** distribution in that case.
 
 Additionally, ZPL also contains these additional modules that build upon the core itself:
 * **Threading** - This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
