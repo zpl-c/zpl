@@ -83,8 +83,8 @@ License:
     #endif
 #endif
 
-/* Architecture-specific overrides */
-#if (defined(__ARM_ARCH) && defined(__cplusplus)) || defined(__TINYC__)
+/* overrides */
+#if defined(__TINYC__)
     #define ZPL_DISABLE_THREADING
 #endif
 

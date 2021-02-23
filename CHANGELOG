@@ -1,3 +1,4 @@
+11.0.10 - get rid of c11 atomics lib
 11.0.9  - stringlib uses ZPL_PRINTF_MAXLEN now
         - zpl_printf family is now thread-safe
 11.0.7  - Add ZPL_PRINTF_MAXLEN
