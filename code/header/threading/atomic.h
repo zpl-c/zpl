@@ -9,7 +9,6 @@
 // e.g. relaxed, acquire, release, acquire_release
 
 #if !defined(__STDC_NO_ATOMICS__) && !defined(__cplusplus) && !defined(ZPL_COMPILER_MSVC)
-# include <stdatomic.h>
 # define zpl_atomic(X) volatile _Atomic(X)
 #else
 // TODO: Fix once C++ guys bother to add C atomics to std.
