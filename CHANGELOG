@@ -1,3 +1,4 @@
+11.1.0  - Introduce new ZPL_PICO distro
 11.0.11 - remove stdatomic.h include
 11.0.10 - get rid of c11 atomics lib
 11.0.9  - stringlib uses ZPL_PRINTF_MAXLEN now

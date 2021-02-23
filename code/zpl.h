@@ -7,10 +7,18 @@ Usage:
   #define ZPL_IMPLEMENTATION
   #include "zpl.h"
 
-  You can also use a freestanding version of ZPL by using ZPL_NANO, like:
+  You can also use a lightweight version of ZPL by using ZPL_NANO, like:
 
   #define ZPL_IMPLEMENTATION
   #define ZPL_NANO
+  #include "zpl.h"
+
+  There is also a distribution that provides only the essential modules, you can enable it by defining ZPL_PICO.
+  Currently, the distro offers: preprocessor helpers, debug module, memory API (except vm) and collections.
+  Some of these modules used to depend on zpl_printf, but they use the standard library if the distro is enabled now.
+
+  #define ZPL_IMPLEMENTATION
+  #define ZPL_PICO
   #include "zpl.h"
 
 Options:
@@ -91,6 +99,7 @@ License:
 /* Distributions */
 #ifndef ZPL_CUSTOM_MODULES
     /* default distribution */
+    #define ZPL_MODULE_ESSENTIALS
     #define ZPL_MODULE_CORE
     #define ZPL_MODULE_TIMER
     #define ZPL_MODULE_HASHING
@@ -106,7 +115,7 @@ License:
     #define ZPL_MODULE_COROUTINES
 
     /* zpl nano distribution */
-    #if defined(ZPL_NANO)
+    #if defined(ZPL_NANO) || defined(ZPL_PICO)
         #undef ZPL_MODULE_TIMER
         #undef ZPL_MODULE_HASHING
         #undef ZPL_MODULE_REGEX
@@ -119,6 +128,10 @@ License:
         #undef ZPL_MODULE_THREADING
         #undef ZPL_MODULE_JOBS
         #undef ZPL_MODULE_COROUTINES
+    #endif
+
+    #if defined(ZPL_PICO)
+        #undef ZPL_MODULE_CORE
     #endif
 
     /* module enabling overrides */
@@ -248,26 +261,28 @@ License:
 #include "header/core/types.h"
 #include "header/core/helpers.h"
 
-#if defined(ZPL_MODULE_CORE)
+#if defined(ZPL_MODULE_ESSENTIALS)
     #include "header/core/debug.h"
     #include "header/core/memory.h"
-    #include "header/core/memory_virtual.h"
     #include "header/core/memory_custom.h"
     #include "header/core/collections/array.h"
     #include "header/core/collections/buffer.h"
     #include "header/core/collections/list.h"
     #include "header/core/collections/ring.h"
     #include "header/core/collections/hashtable.h"
-    #include "header/core/string.h"
-    #include "header/core/stringlib.h"
-    #include "header/core/file.h"
-    #include "header/core/file_stream.h"
-    #include "header/core/file_misc.h"
-    #include "header/core/print.h"
-    #include "header/core/time.h"
-    #include "header/core/random.h"
-    #include "header/core/misc.h"
-    #include "header/core/sort.h"
+    #if defined(ZPL_MODULE_CORE)
+        #include "header/core/memory_virtual.h"
+        #include "header/core/string.h"
+        #include "header/core/stringlib.h"
+        #include "header/core/file.h"
+        #include "header/core/file_stream.h"
+        #include "header/core/file_misc.h"
+        #include "header/core/print.h"
+        #include "header/core/time.h"
+        #include "header/core/random.h"
+        #include "header/core/misc.h"
+        #include "header/core/sort.h"
+    #endif
 #endif
 
 #if defined(ZPL_MODULE_TIMER)
@@ -398,6 +413,19 @@ License:
 
 #include <stdio.h>
 
+// NOTE: Ensure we use standard methods for these calls if we use ZPL_PICO
+#if !defined(ZPL_PICO_CUSTOM_ROUTINES)
+    #if !defined(ZPL_MODULE_CORE)
+        #define zpl__strlen strlen
+        #define zpl__printf_err(fmt, ...) fprintf(stderr, fmt, __VA_ARGS__)
+        #define zpl__printf_err_va(fmt, va) vfprintf(stderr, fmt, va)
+    #else
+        #define zpl__strlen zpl_strlen
+        #define zpl__printf_err(fmt, ...) zpl_printf_err(fmt, __VA_ARGS__)
+        #define zpl__printf_err_va(fmt, va) zpl_printf_err_va(fmt, va)
+    #endif
+#endif
+
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
     #include <unistd.h>
     #include <errno.h>
@@ -420,22 +448,24 @@ License:
     #endif
 #endif
 
-#if defined(ZPL_MODULE_CORE)
+#if defined(ZPL_MODULE_ESSENTIALS)
     #include "source/core/debug.c"
     #include "source/core/memory.c"
-    #include "source/core/memory_virtual.c"
     #include "source/core/memory_custom.c"
     #include "source/core/array.c"
-    #include "source/core/string.c"
-    #include "source/core/stringlib.c"
-    #include "source/core/file.c"
-    #include "source/core/file_stream.c"
-    #include "source/core/file_misc.c"
-    #include "source/core/print.c"
-    #include "source/core/time.c"
-    #include "source/core/random.c"
-    #include "source/core/misc.c"
-    #include "source/core/sort.c"
+    #if defined(ZPL_MODULE_CORE)
+        #include "source/core/memory_virtual.c"
+        #include "source/core/string.c"
+        #include "source/core/stringlib.c"
+        #include "source/core/file.c"
+        #include "source/core/file_stream.c"
+        #include "source/core/file_misc.c"
+        #include "source/core/print.c"
+        #include "source/core/time.c"
+        #include "source/core/random.c"
+        #include "source/core/misc.c"
+        #include "source/core/sort.c"
+    #endif
 #endif
 
 #if defined(ZPL_MODULE_TIMER)
@@ -498,6 +528,12 @@ License:
 #endif
 
 #endif // ZPL_IMPLEMENTATION
+
+#if !defined(ZPL_PICO_CUSTOM_ROUTINES)
+    #undef zpl__printf_err
+    #undef zpl__printf_err_va
+    #undef zpl__strlen
+#endif
 
 #if defined(ZPL_EXPOSE_TYPES)
     typedef zpl_u8 u8;
