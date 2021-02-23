@@ -1,4 +1,4 @@
-// file: header/core/memory.h
+// file: header/essentials/memory.h
 
 /** @file mem.c
 @brief Memory manipulation and helpers.

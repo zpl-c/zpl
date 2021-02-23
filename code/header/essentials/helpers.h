@@ -1,4 +1,4 @@
-// file: header/core/helpers.h
+// file: header/essentials/helpers.h
 
 /* Various macro based helpers */
 #ifdef ZPL_EDITOR

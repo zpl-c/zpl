@@ -1,4 +1,4 @@
-// file: source/core/debug.c
+// file: source/essentials/debug.c
 
 #ifdef ZPL_EDITOR
 #include <zpl.h>

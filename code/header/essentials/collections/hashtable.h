@@ -1,4 +1,4 @@
-// file: header/core/collections/hashtable.h
+// file: header/essentials/collections/hashtable.h
 
 /** @file hashtable.c
 @brief Instantiated hash table

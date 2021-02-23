@@ -1,4 +1,4 @@
-// file: header/core/debug.h
+// file: header/essentials/debug.h
 
 /* Debugging stuff */
 #ifdef ZPL_EDITOR

@@ -1,4 +1,4 @@
-// file: header/core/types.h
+// file: header/essentials/types.h
 
 #ifdef ZPL_EDITOR
 #include <zpl.h>

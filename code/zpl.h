@@ -258,18 +258,18 @@ License:
     #include <intrin.h>
 #endif
 
-#include "header/core/types.h"
-#include "header/core/helpers.h"
+#include "header/essentials/types.h"
+#include "header/essentials/helpers.h"
 
 #if defined(ZPL_MODULE_ESSENTIALS)
-    #include "header/core/debug.h"
-    #include "header/core/memory.h"
-    #include "header/core/memory_custom.h"
-    #include "header/core/collections/array.h"
-    #include "header/core/collections/buffer.h"
-    #include "header/core/collections/list.h"
-    #include "header/core/collections/ring.h"
-    #include "header/core/collections/hashtable.h"
+    #include "header/essentials/debug.h"
+    #include "header/essentials/memory.h"
+    #include "header/essentials/memory_custom.h"
+    #include "header/essentials/collections/array.h"
+    #include "header/essentials/collections/buffer.h"
+    #include "header/essentials/collections/list.h"
+    #include "header/essentials/collections/ring.h"
+    #include "header/essentials/collections/hashtable.h"
     #if defined(ZPL_MODULE_CORE)
         #include "header/core/memory_virtual.h"
         #include "header/core/string.h"
@@ -449,10 +449,10 @@ License:
 #endif
 
 #if defined(ZPL_MODULE_ESSENTIALS)
-    #include "source/core/debug.c"
-    #include "source/core/memory.c"
-    #include "source/core/memory_custom.c"
-    #include "source/core/array.c"
+    #include "source/essentials/debug.c"
+    #include "source/essentials/memory.c"
+    #include "source/essentials/memory_custom.c"
+    #include "source/essentials/array.c"
     #if defined(ZPL_MODULE_CORE)
         #include "source/core/memory_virtual.c"
         #include "source/core/string.c"
@@ -561,18 +561,18 @@ License:
 // TOC:
 // zpl.h
 // zpl_hedley.h
-// header/core/system.h
-// header/core/types.h
-// header/core/helpers.h
-// header/core/debug.h
-// header/core/memory.h
+// header/essentials/system.h
+// header/essentials/types.h
+// header/essentials/helpers.h
+// header/essentials/debug.h
+// header/essentials/memory.h
+// header/essentials/memory_custom.h
+// header/essentials/collections/array.h
+// header/essentials/collections/buffer.h
+// header/essentials/collections/list.h
+// header/essentials/collections/ring.h
+// header/essentials/collections/hashtable.h
 // header/core/memory_virtual.h
-// header/core/memory_custom.h
-// header/core/collections/array.h
-// header/core/collections/buffer.h
-// header/core/collections/list.h
-// header/core/collections/ring.h
-// header/core/collections/hashtable.h
 // header/core/string.h
 // header/core/stringlib.h
 // header/core/file.h
@@ -601,11 +601,11 @@ License:
 // header/threading/affinity.h
 // header/jobs.h
 // header/coroutines.h
-// source/core/debug.c
-// source/core/memory.c
+// source/essentials/debug.c
+// source/essentials/memory.c
+// source/essentials/memory_custom.c
+// source/essentials/array.c
 // source/core/memory_virtual.c
-// source/core/memory_custom.c
-// source/core/array.c
 // source/core/string.c
 // source/core/stringlib.c
 // source/core/file.c

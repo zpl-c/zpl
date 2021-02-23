@@ -1,4 +1,4 @@
-// file: header/core/collections/ring.h
+// file: header/essentials/collections/ring.h
 
 ////////////////////////////////////////////////////////////////
 //

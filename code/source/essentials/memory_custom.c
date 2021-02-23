@@ -1,4 +1,4 @@
-// file: source/core/memory_custom.c
+// file: source/essentials/memory_custom.c
 
 #ifdef ZPL_EDITOR
 #include <zpl.h>
