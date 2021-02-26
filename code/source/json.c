@@ -185,10 +185,9 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isiz
     zpl_file tmp;
     zpl_file_stream_new(&tmp, a);
     zpl_json_write(&tmp, obj, indent);
-    zpl_file_seek(&tmp, 0);
-    zpl_i64 fsize = zpl_file_size(&tmp)-1;
-    zpl_string output = zpl_string_make_reserve(a, fsize+1);
-    zpl_file_read(&tmp, output, fsize);
+    zpl_isize fsize;
+    zpl_u8* buf = zpl_file_stream_buf(&tmp, &fsize);
+    zpl_string output = zpl_string_make_length(a, (char *)buf, fsize+1);
     zpl_file_close(&tmp);
     return output;
 }
