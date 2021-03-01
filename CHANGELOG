@@ -1,3 +1,4 @@
+11.2.1  - JSON zero-initialise node
 11.2.0  - JSON API improvements
 11.1.2  - Improve atomics
 11.1.1  - Fix zpl_json_write_string providing incorrect length

@@ -765,6 +765,7 @@ zpl_json_object *zpl_json_find(zpl_json_object *obj, char const *name, zpl_b32 d
 
 void zpl_json_init_node(zpl_json_object *obj, zpl_allocator backing, char const *name, zpl_u8 type)
 {
+    zpl_zero_item(obj);
     obj->name = (char *)name;
     obj->type = type;
     obj->backing = backing;
