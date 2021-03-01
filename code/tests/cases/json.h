@@ -289,7 +289,6 @@ MODULE(json5_parser, {
         o = zpl_json_inset_str(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
 
         zpl_string a = zpl_json_write_string(zpl_heap(), &doc, 0);
-        zpl_printf("%s\n", a);
         STREQUALS(original, a);
         zpl_string_free(a);
         zpl_string_free(original);
