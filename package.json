@@ -1,6 +1,6 @@
 {
   "name": "zpl.c",
-  "version": "11.2.2",
+  "version": "11.2.3",
   "homepage": "https://github.com/zpl-c/zpl#readme",
   "description": "Single-file header-only C and C++ helper library.",
   "author": "Dominik Madarasz <zaklaus@outlook.com> (http://madaraszd.net/)",
