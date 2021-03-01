@@ -41,7 +41,7 @@ int main(void) {
         first->string = "I am first!";
         first->assign_style = ZPL_JSON_ASSIGN_STYLE_EQUALS;
     }
-    
+
 
     zpl_printf("Error code: %d\n", err);
 
