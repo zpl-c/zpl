@@ -58,7 +58,7 @@ void zpl_json_parse(zpl_json_object *root, zpl_usize len, char *source, zpl_allo
             if (!!zpl_strchr("\"'`", *p)) {
                 char c = *p;
                 const char *e = zpl_str_skip(p+1, c);
-                p += (e-p)+1;
+                p += (e-p);
             }
             else if (!zpl_strncmp(p, "//", 2)) {
                 const char *e = zpl_str_skip(p, '\n');
