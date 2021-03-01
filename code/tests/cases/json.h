@@ -269,24 +269,24 @@ MODULE(json5_parser, {
         zpl_json_object doc, *o, *o2;
         zpl_json_set_obj(&doc, NULL, zpl_heap());
 
-        o = zpl_json_inset(&doc, "$api", "opengl");
-        o = zpl_json_inset(&doc, "name", "Diffuse shader");
-        o = zpl_json_inset(&doc, "version", 150);
-        o = zpl_json_inset(&doc, "type", "fragment");
+        o = zpl_json_inset_str(&doc, "$api", "opengl");
+        o = zpl_json_inset_str(&doc, "name", "Diffuse shader");
+        o = zpl_json_inset_int(&doc, "version", 150);
+        o = zpl_json_inset_str(&doc, "type", "fragment");
         o = zpl_json_inset_arr(&doc, "uniforms");
         {
             o2 = zpl_json_inset_obj(o, NULL);
             {
-                zpl_json_inset(o2, "name", "l_pos");
-                zpl_json_inset(o2, "type", "vec3");
+                zpl_json_inset_str(o2, "name", "l_pos");
+                zpl_json_inset_str(o2, "type", "vec3");
             }
             o2 = zpl_json_inset_obj(o, NULL);
             {
-                zpl_json_inset(o2, "name", "l_mat");
-                zpl_json_inset(o2, "type", "mat4");
+                zpl_json_inset_str(o2, "name", "l_mat");
+                zpl_json_inset_str(o2, "type", "mat4");
             }
         }
-        o = zpl_json_inset(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
+        o = zpl_json_inset_str(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
 
         zpl_string a = zpl_json_write_string(zpl_heap(), &doc, 0);
         zpl_printf("%s\n", a);
