@@ -61,7 +61,6 @@ MODULE(json5_parser, {
     });
 
     IT("parses commented JSON5 object", {
-        // const char *t = "{/* TEST CODE */ \"a\": 123 }";
         zpl_string t = zpl_string_make(zpl_heap(), "{/* TEST CODE */ \"a\": 123 }");
         __PARSE(true);
 

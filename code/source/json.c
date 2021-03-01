@@ -53,64 +53,29 @@ void zpl_json_parse(zpl_json_object *root, zpl_usize len, char *source, zpl_allo
     char *dest = (char *)source;
 
     if (handle_comments) {
-        zpl_b32 is_lit = false;
-        char lit_c = '\0';
         char *p = dest;
-        char *b = dest;
-        zpl_isize l = 0;
-
-        while (*p) {
-            if (!is_lit) {
-                if ((*p == '"' || *p == '\'')) {
-                    lit_c = *p;
-                    is_lit = true;
-                    ++p;
-                    continue;
-                }
-            } else {
-                if (*p == '\\' && *(p + 1) && *(p + 1) == lit_c) {
-                    p += 2;
-                    continue;
-                } else if (*p == lit_c) {
-                    is_lit = false;
-                    ++p;
-                    continue;
-                }
+        do {
+            if (!!zpl_strchr("\"'`", *p)) {
+                char c = *p;
+                const char *e = zpl_str_skip(p+1, c);
+                p += (p-e)+1;
             }
-
-            if (!is_lit) {
-                // NOTE(ZaKlaus): block comment
-                if (p[0] == '/' && p[1] == '*') {
-                    b = p;
-                    l = 2;
-                    p += 2;
-
-                    while (p[0] != '*' && p[1] != '/') {
-                        ++p;
-                        ++l;
-                    }
-                    p += 2;
-                    l += 2;
-                    zpl_memset(b, ' ', l);
-                }
-
-                // NOTE(ZaKlaus): inline comment
-                if (p[0] == '/' && p[1] == '/') {
-                    b = p;
-                    l = 2;
-                    p += 2;
-
-                    while (p[0] != '\n') {
-                        ++p;
-                        ++l;
-                    }
-                    ++l;
-                    zpl_memset(b, ' ', l);
-                }
+            else if (!zpl_strncmp(p, "//", 2)) {
+                const char *e = zpl_str_skip(p, '\n');
+                zpl_memset(p, ' ', (e-p));
+                p += (e-p)+1;
             }
-
-            ++p;
-        }
+            else if (!zpl_strncmp(p, "/*", 2)) {
+                const char *e = zpl_str_skip(p+2, '*');
+                if (*e && *(e+1) == '/') {
+                    e+=2; /* advance past end comment block */
+                    zpl_memset(p, ' ', (e-p));
+                    p += (e-p)+1;
+                }
+                else p++;
+            }
+            else p++;
+        } while (*p);
     }
 
     if (err_code) *err_code = ZPL_JSON_ERROR_NONE;
