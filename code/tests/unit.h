@@ -100,7 +100,7 @@ License:
 #include <stdio.h>
 #include <stdint.h>
 
-#define MODULE(name, scope) \
+#define MODULE(name, ...) \
     int32_t UNIT_JOIN2(module__,name)() { \
         printf("--------------------------------------\n"); \
         printf(" module: %s\n", #name); \
@@ -111,7 +111,7 @@ License:
         int32_t _errors = 0; \
         int32_t _lasterr = 0; \
         char *_errstr = 0; \
-        scope; \
+        {__VA_ARGS__}; \
         fflush(stdout); \
         printf("\n results: %d total, %s%d failed\x1B[0m, %s%d passed\x1B[0m\n", _total, _errors>0?"\x1B[31m":"", _errors, _errors==0?"\x1B[32m":"", _total - _errors); \
         _g_total += _total; \
@@ -120,11 +120,11 @@ License:
         return (_errors); \
     }
 
-#define IT(desc, scope) \
+#define IT(desc, ...) \
     _lasterr = 0; \
     _errstr = ""; \
     _total += 1; \
-    do scope while(0); \
+    do {__VA_ARGS__} while(0); \
     if (_lasterr != UNIT_SKIP_MAGIC) _errors += _lasterr; \
     printf(" * [%s]: It %s %s\n", (_lasterr == UNIT_SKIP_MAGIC) ? "\x1B[33mSKIP\x1B[0m" : (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", desc, _errstr);
 

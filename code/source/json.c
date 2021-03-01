@@ -790,7 +790,6 @@ zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, char con
 
     zpl_json_object o = {0};
     zpl_json_init_node(&o, obj->backing, name, type);
-
     zpl_array_append_at(obj->nodes, o, index);
 
     return obj->nodes + index;
@@ -807,6 +806,49 @@ zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 typ
         return NULL;
 
     return zpl_json_add_at(obj, zpl_array_count(obj->nodes), name, type);
+}
+
+void zpl_json_set_obj(zpl_json_object *obj, char const *name, zpl_allocator backing) {
+    zpl_json_init_node(obj, backing, name, ZPL_JSON_TYPE_OBJECT);
+}
+void zpl_json_set_arr(zpl_json_object *obj, char const *name, zpl_allocator backing) {
+    zpl_json_init_node(obj, backing, name, ZPL_JSON_TYPE_ARRAY);
+}
+void zpl_json_set_str(zpl_json_object *obj, char const *name, char const *value) {
+    obj->type = ZPL_JSON_TYPE_STRING;
+    obj->string = value;
+}
+void zpl_json_set_flt(zpl_json_object *obj, char const *name, zpl_f64 value) {
+    obj->type = ZPL_JSON_TYPE_REAL;
+    obj->real = value;
+}
+void zpl_json_set_int(zpl_json_object *obj, char const *name, zpl_i64 value) {
+    obj->type = ZPL_JSON_TYPE_INTEGER;
+    obj->integer = value;
+}
+
+zpl_json_object *zpl_json_inset_obj(zpl_json_object *parent, char const *name) {
+    zpl_json_object *o = zpl_json_add(parent, name, ZPL_JSON_TYPE_OBJECT);
+    return o;
+}
+zpl_json_object *zpl_json_inset_arr(zpl_json_object *parent, char const *name) {
+    zpl_json_object *o = zpl_json_add(parent, name, ZPL_JSON_TYPE_ARRAY);
+    return o;
+}
+zpl_json_object *zpl_json_inset_str(zpl_json_object *parent, char const *name, char const *value) {
+    zpl_json_object *o = zpl_json_add(parent, name, ZPL_JSON_TYPE_STRING);
+    o->string = value;
+    return o;
+}
+zpl_json_object *zpl_json_inset_flt(zpl_json_object *parent, char const *name, zpl_f64 value) {
+    zpl_json_object *o = zpl_json_add(parent, name, ZPL_JSON_TYPE_REAL);
+    o->real = value;
+    return o;
+}
+zpl_json_object *zpl_json_inset_int(zpl_json_object *parent, char const *name, zpl_i64 value) {
+    zpl_json_object *o = zpl_json_add(parent, name, ZPL_JSON_TYPE_INTEGER);
+    o->integer = value;
+    return o;
 }
 
 ZPL_END_C_DECLS

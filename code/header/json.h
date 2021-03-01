@@ -88,8 +88,6 @@ typedef enum zpl_json_delim_style {
     ZPL_JSON_DELIM_STYLE_NEWLINE,
 } zpl_json_delim_style;
 
-#define zpl_json_object zpl_json_object
-
 //! JSON object definition.
 typedef struct zpl_json_object {
     zpl_allocator backing;
@@ -105,7 +103,7 @@ typedef struct zpl_json_object {
     union {
         struct zpl_json_object *nodes;  ///< zpl_array
         zpl_i64 integer;
-        char *string;
+        char const *string;
 
         struct {
             zpl_f64 real;
@@ -187,6 +185,33 @@ ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, 
 //! @param type JSON node's type. (See zpl_json_type)
 //! @see zpl_json_type
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 type);
+
+//! Initializes a JSON node with a given value.
+ZPL_DEF void zpl_json_set_obj(zpl_json_object *obj, char const *name, zpl_allocator backing);
+ZPL_DEF void zpl_json_set_arr(zpl_json_object *obj, char const *name, zpl_allocator backing);
+ZPL_DEF void zpl_json_set_str(zpl_json_object *obj, char const *name, char const *value);
+ZPL_DEF void zpl_json_set_flt(zpl_json_object *obj, char const *name, zpl_f64 value);
+ZPL_DEF void zpl_json_set_int(zpl_json_object *obj, char const *name, zpl_i64 value);
+
+//! Initializes a JSON node with a given value and appends it into a JSON document.
+ZPL_DEF zpl_json_object *zpl_json_inset_obj(zpl_json_object *parent, char const *name);
+ZPL_DEF zpl_json_object *zpl_json_inset_arr(zpl_json_object *parent, char const *name);
+ZPL_DEF zpl_json_object *zpl_json_inset_str(zpl_json_object *parent, char const *name, char const *value);
+ZPL_DEF zpl_json_object *zpl_json_inset_flt(zpl_json_object *parent, char const *name, zpl_f64 value);
+ZPL_DEF zpl_json_object *zpl_json_inset_int(zpl_json_object *parent, char const *name, zpl_i64 value);
+
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define zpl_json_inset(parent, name, value) _Generic((value), \
+                                                              char*: zpl_json_inset_str, \
+                                                              char const*: zpl_json_inset_str, \
+                                                              zpl_f64: zpl_json_inset_flt, \
+                                                              default: zpl_json_inset_int)(parent, name, value)
+#define zpl_json_set(obj, name, value) _Generic((value), \
+                                                              char*: zpl_json_set_str, \
+                                                              char const*: zpl_json_set_str, \
+                                                              zpl_f64: zpl_json_set_flt, \
+                                                              default: zpl_json_set_int)(obj, name, value)
+#endif
 
 //! @}
 
