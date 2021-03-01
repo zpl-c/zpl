@@ -353,7 +353,7 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_i32 zpl_atomic32_exchange(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) desired) {
-        return __atomic_exchange_n((zpl_i32*)&a->value, (zpl_i32*)&desired, __ATOMIC_SEQ_CST);
+        return __atomic_exchange_n((zpl_i32*)&a->value, desired, __ATOMIC_SEQ_CST);
     }
 
     zpl_i32 zpl_atomic32_fetch_add(zpl_atomic32 *a, zpl_atomicarg(zpl_i32) operand) {
@@ -381,7 +381,7 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_i64 zpl_atomic64_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) desired) {
-        return __atomic_exchange_n((zpl_i64*)&a->value, (zpl_i64*)&desired, __ATOMIC_SEQ_CST);
+        return __atomic_exchange_n((zpl_i64*)&a->value, desired, __ATOMIC_SEQ_CST);
     }
 
     zpl_i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
