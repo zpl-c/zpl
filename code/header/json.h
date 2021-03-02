@@ -4,12 +4,9 @@
 @brief JSON5 Parser/Writer
 @defgroup json JSON5 parser/writer
 
-Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains simple JSON5 writer and acts as a good library for handling config files. The parser also supports the **Simplified JSON (SJSON)** format.
-
-We can parse JSON5 files in two different modes:
-    @n 1) Fast way (useful for raw data), which can not handle comments and might cause parsing failure if comment is present.
-    @n 2) Slower way (useful for config files), which handles comments perfectly but **might** have performance impact
-        on bigger JSON files. (+50MiB)
+Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second.
+It also contains simple JSON5 writer and acts as a good library for handling config files.
+The parser also supports the **Simplified JSON (SJSON)** format.
 @{
 */
 #ifdef ZPL_EDITOR
@@ -123,10 +120,8 @@ typedef struct zpl_json_object {
 
 //! This method takes text form of JSON document as a source and parses its contents into JSON object structure we can work with.
 //! @param root JSON object we store data to.
-//! @param len Text length. (reserved)
 //! @param source Text to be processed. This string will be modified during the process!
 //! @param allocator Memory allocator to use. (ex. zpl_heap())
-//! @param handle_comments Whether to handle possible comments or not. Note that if we won't handle comments in a document containing them, the parser will error out. See remark in source code.
 //! @param err_code Variable we will store error code in.
 ZPL_DEF void zpl_json_parse(zpl_json_object *root, char *source, zpl_allocator allocator, zpl_u8 *err_code);
 
