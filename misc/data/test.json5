@@ -36,16 +36,22 @@ not_a_number: -NaN
 world = 'small'
 happy = "sad"
 huge  = 2.3455050e2
-arr = [1, 2, 3, 4, 5]
+arr = [
+    1,
+    2,
+    3,
+    4,
+    5
+]
 
 replace_me = 12345
 
 
 // table styled data
 
-foo   | "bar"                           |
-stars | 430                             |
-qwerty| 'Simple day in a simple life.'  |
+foo     | "bar"                           |
+stars   | 430                             |
+qwerty  | 'Simple day in a simple life.'  |
 
 
 meta: {

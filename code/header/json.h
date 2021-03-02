@@ -99,6 +99,7 @@ typedef struct zpl_json_object {
     zpl_u8 assign_style:4;
     zpl_u8 delim_style :4;
     zpl_u8 delim_line_width;
+    zpl_u8 assign_line_width;
 
     union {
         struct zpl_json_object *nodes;  ///< zpl_array
@@ -185,6 +186,9 @@ ZPL_DEF zpl_json_object *zpl_json_add_at(zpl_json_object *obj, zpl_isize index, 
 //! @param type JSON node's type. (See zpl_json_type)
 //! @see zpl_json_type
 ZPL_DEF zpl_json_object *zpl_json_add(zpl_json_object *obj, char const *name, zpl_u8 type);
+
+//! Convert a number stored in a JSON node as a string into a real numeric representation.
+ZPL_DEF void zpl_json_str_to_flt(zpl_json_object *obj);
 
 //! Initializes a JSON node with a given value.
 ZPL_DEF void zpl_json_set_obj(zpl_json_object *obj, char const *name, zpl_allocator backing);
