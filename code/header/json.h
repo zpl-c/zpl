@@ -121,15 +121,14 @@ typedef struct zpl_json_object {
 
 //! Parses JSON5/SJSON text.
 
-//! This method takes text form of JSON document as a source and parses its contents into JSON object structure we can work with. It also optionally handles comments that usually appear in documents used for configuration.
+//! This method takes text form of JSON document as a source and parses its contents into JSON object structure we can work with.
 //! @param root JSON object we store data to.
 //! @param len Text length. (reserved)
 //! @param source Text to be processed. This string will be modified during the process!
 //! @param allocator Memory allocator to use. (ex. zpl_heap())
 //! @param handle_comments Whether to handle possible comments or not. Note that if we won't handle comments in a document containing them, the parser will error out. See remark in source code.
 //! @param err_code Variable we will store error code in.
-ZPL_DEF void zpl_json_parse(zpl_json_object *root, zpl_usize len, char *source, zpl_allocator allocator, zpl_b32 handle_comments,
-                            zpl_u8 *err_code);
+ZPL_DEF void zpl_json_parse(zpl_json_object *root, char *source, zpl_allocator allocator, zpl_u8 *err_code);
 
 //! Exports JSON5 document into text form and outputs it into a file.
 
