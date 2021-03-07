@@ -169,18 +169,9 @@ ZPL_IMPL_INLINE void zpl_str_to_upper(char *str) {
 
 ZPL_IMPL_INLINE zpl_isize zpl_strlen(const char *str) {
     if (str == NULL) { return 0; }
-
-    const char *begin = str;
-    zpl_isize const *w;
-    while (cast(zpl_uintptr) str % sizeof(zpl_usize)) {
-        if (!*str) return str - begin;
-        str++;
-    }
-    w = cast(zpl_isize const *) str;
-    while (!ZPL__HAS_ZERO(*w)) w++;
-    str = cast(const char *) w;
+    const char *p = str;
     while (*str) str++;
-    return str - begin;
+    return str-p;
 }
 
 ZPL_IMPL_INLINE zpl_isize zpl_strnlen(const char *str, zpl_isize max_len) {

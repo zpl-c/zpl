@@ -127,6 +127,14 @@ ZPL_BEGIN_C_DECLS
     #define zpl_is_between(x, lower, upper) (((lower) <= (x)) && ((x) <= (upper)))
 #endif
 
+#ifndef zpl_is_between_limit
+    #define zpl_is_between_limit(x, lower, upper) (((lower) <= (x)) && ((x) < (upper)))
+#endif
+
+#ifndef zpl_step
+#define zpl_step(x,y) (((x)/y)*y)
+#endif
+
 #ifndef zpl_abs
     #define zpl_abs(x) ((x) < 0 ? -(x) : (x))
 #endif

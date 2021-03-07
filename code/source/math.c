@@ -1438,47 +1438,49 @@ zpl_b8 zpl_frustum_point_inside(zpl_frustum* frustum, zpl_vec3 point) {
 }
 
 zpl_b8 zpl_frustum_box_inside(zpl_frustum* frustum, zpl_aabb3 aabb) {
-    
-    zpl_vec3 box = aabb.half_size;
+    zpl_vec3 box, center;
     zpl_vec3 v, b;
+    zpl_vec3_sub(&box, aabb.max, aabb.min);
+    zpl_vec3_diveq(&box, 2.0f);
+    zpl_vec3_add(&center, aabb.min, box);
 
     b = zpl_vec3f(-box.x, -box.y, -box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(+box.x, -box.y, -box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(-box.x, +box.y, -box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(+box.x, +box.y, -box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(+box.x, +box.y, +box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(-box.x, +box.y, +box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(-box.x, -box.y, +box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
     b = zpl_vec3f(+box.x, -box.y, +box.z);
-    zpl_vec3_add(&v, b, aabb.centre);
+    zpl_vec3_add(&v, b, center);
 
     if (zpl_frustum_point_inside(frustum, v)) return 1;
 
@@ -1641,6 +1643,45 @@ zpl_rect3 zpl_rect3f(zpl_vec3 pos, zpl_vec3 dim) {
     return r;
 }
 
+zpl_aabb2 zpl_aabb2f(zpl_f32 minx, zpl_f32 miny, zpl_f32 maxx, zpl_f32 maxy) {
+    zpl_aabb2 r;
+    r.min = zpl_vec2f(minx, miny);
+    r.max = zpl_vec2f(maxx, maxy);
+    return r;
+}
+zpl_aabb3 zpl_aabb3f(zpl_f32 minx, zpl_f32 miny, zpl_f32 minz, zpl_f32 maxx, zpl_f32 maxy, zpl_f32 maxz) {
+    zpl_aabb3 r;
+    r.min = zpl_vec3f(minx, miny, minz);
+    r.max = zpl_vec3f(maxx, maxy, maxz);
+    return r;
+}
+
+zpl_aabb2 zpl_aabb2_rect2(zpl_rect2 a) {
+    zpl_aabb2 r;
+    r.min = a.pos;
+    zpl_vec2_add(&r.max, a.pos, a.dim);
+    return r;
+}
+zpl_aabb3 zpl_aabb3_rect3(zpl_rect3 a) {
+    zpl_aabb3 r;
+    r.min = a.pos;
+    zpl_vec3_add(&r.max, a.pos, a.dim);
+    return r;
+}
+
+zpl_rect2 zpl_rect2_aabb2(zpl_aabb2 a) {
+    zpl_rect2 r;
+    r.pos = a.min;
+    zpl_vec2_sub(&r.dim, a.max, a.min);
+    return r;
+}
+zpl_rect3 zpl_rect3_aabb3(zpl_aabb3 a) {
+    zpl_rect3 r;
+    r.pos = a.min;
+    zpl_vec3_sub(&r.dim, a.max, a.min);
+    return r;
+}
+
 int zpl_rect2_contains(zpl_rect2 a, zpl_f32 x, zpl_f32 y) {
     zpl_f32 min_x = zpl_min(a.pos.x, a.pos.x + a.dim.x);
     zpl_f32 max_x = zpl_max(a.pos.x, a.pos.x + a.dim.x);
@@ -1682,6 +1723,84 @@ int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersect
         *intersection = r;
         return 0;
     }
+}
+
+int zpl_aabb2_contains(zpl_aabb2 a, zpl_f32 x, zpl_f32 y) {
+    return (zpl_is_between_limit(x, a.min.x, a.max.x) && zpl_is_between_limit(y, a.min.y, a.max.y));
+}
+
+int zpl_aabb3_contains(zpl_aabb3 a, zpl_f32 x, zpl_f32 y, zpl_f32 z) {
+    return (zpl_is_between_limit(x, a.min.x, a.max.x) && zpl_is_between_limit(y, a.min.y, a.max.y) && zpl_is_between_limit(z, a.min.z, a.max.z));
+}
+
+zpl_aabb2 zpl_aabb2_cut_left(zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 minx = a->min.x;
+    a->min.x = zpl_min(a->max.x, a->min.x + b);
+    return zpl_aabb2f(minx, a->min.y, a->min.x, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_cut_right(zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 maxx = a->max.x;
+    a->max.x = zpl_max(a->min.x, a->max.x - b);
+    return zpl_aabb2f(a->max.x, a->min.y, maxx, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_cut_top(zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 miny = a->min.y;
+    a->min.y = zpl_min(a->max.y, a->min.y + b);
+    return zpl_aabb2f(a->min.x, miny, a->max.x, a->min.y);
+}
+zpl_aabb2 zpl_aabb2_cut_bottom(zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 maxy = a->max.y;
+    a->max.y = zpl_max(a->min.y, a->max.y - b);
+    return zpl_aabb2f(a->min.x, a->max.y, a->max.x, maxy);
+}
+
+zpl_aabb2 zpl_aabb2_get_left(const zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 minx = a->min.x;
+    zpl_f32 aminx = zpl_min(a->max.x, a->min.x + b);
+    return zpl_aabb2f(minx, a->min.y, aminx, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_get_right(const zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 maxx = a->max.x;
+    zpl_f32 amaxx = zpl_max(a->min.x, a->max.x - b);
+    return zpl_aabb2f(amaxx, a->min.y, maxx, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_get_top(const zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 miny = a->min.y;
+    zpl_f32 aminy = zpl_min(a->max.y, a->min.y + b);
+    return zpl_aabb2f(a->min.x, miny, a->max.x, aminy);
+}
+zpl_aabb2 zpl_aabb2_get_bottom(const zpl_aabb2 *a, zpl_f32 b) {
+    zpl_f32 maxy = a->max.y;
+    zpl_f32 amaxy = zpl_max(a->min.y, a->max.y - b);
+    return zpl_aabb2f(a->min.x, amaxy, a->max.x, maxy);
+}
+
+zpl_aabb2 zpl_aabb2_add_left(const zpl_aabb2 *a, zpl_f32 b) {
+    return zpl_aabb2f(a->min.x-b, a->min.y, a->min.x, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_add_right(const zpl_aabb2 *a, zpl_f32 b) {
+    return zpl_aabb2f(a->max.x, a->min.y, a->max.x+b, a->max.y);
+}
+zpl_aabb2 zpl_aabb2_add_top(const zpl_aabb2 *a, zpl_f32 b) {
+    return zpl_aabb2f(a->min.x, a->min.y-b, a->max.x, a->min.y);
+}
+zpl_aabb2 zpl_aabb2_add_bottom(const zpl_aabb2 *a, zpl_f32 b) {
+    return zpl_aabb2f(a->min.x, a->max.y, a->max.x, a->max.y+b);
+}
+
+zpl_aabb2 zpl_aabb2_contract(const zpl_aabb2 *a, zpl_f32 b) {
+    zpl_aabb2 r = *a;
+    zpl_vec2 vb = zpl_vec2f(b, b);
+    zpl_vec2_addeq(&r.min, vb);
+    zpl_vec2_subeq(&r.max, vb);
+
+    if (zpl_vec2_mag2(r.min) > zpl_vec2_mag2(r.max)) {
+        return zpl_aabb2f(0,0,0,0);
+    }
+    return r;
+}
+zpl_aabb2 zpl_aabb2_expand(const zpl_aabb2 *a, zpl_f32 b) {
+    return zpl_aabb2_contract(a, -b);
 }
 
 ZPL_END_C_DECLS

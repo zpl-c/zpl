@@ -124,10 +124,10 @@ typedef struct zpl_rect3 {
 } zpl_rect3;
 
 typedef struct zpl_aabb2 {
-    zpl_vec2 centre, half_size;
+    zpl_vec2 min, max;
 } zpl_aabb2;
 typedef struct zpl_aabb3 {
-    zpl_vec3 centre, half_size;
+    zpl_vec3 min, max;
 } zpl_aabb3;
 
 typedef short zpl_half;
@@ -439,14 +439,43 @@ ZPL_DEF void zpl_quat_squad(zpl_quat *d, zpl_quat p, zpl_quat a, zpl_quat b, zpl
 ZPL_DEF void zpl_quat_slerp_approx(zpl_quat *d, zpl_quat a, zpl_quat b, zpl_f32 t);
 ZPL_DEF void zpl_quat_squad_approx(zpl_quat *d, zpl_quat p, zpl_quat a, zpl_quat b, zpl_quat q, zpl_f32 t);
 
-/* Rects */
+/* rects */
 ZPL_DEF zpl_rect2 zpl_rect2f(zpl_vec2 pos, zpl_vec2 dim);
 ZPL_DEF zpl_rect3 zpl_rect3f(zpl_vec3 pos, zpl_vec3 dim);
+
+ZPL_DEF zpl_aabb2 zpl_aabb2f(zpl_f32 minx, zpl_f32 miny, zpl_f32 maxx, zpl_f32 maxy);
+ZPL_DEF zpl_aabb3 zpl_aabb3f(zpl_f32 minx, zpl_f32 miny, zpl_f32 minz, zpl_f32 maxx, zpl_f32 maxy, zpl_f32 maxz);
+
+ZPL_DEF zpl_aabb2 zpl_aabb2_rect2(zpl_rect2 a);
+ZPL_DEF zpl_aabb3 zpl_aabb3_rect3(zpl_rect3 a);
+ZPL_DEF zpl_rect2 zpl_rect2_aabb2(zpl_aabb2 a);
+ZPL_DEF zpl_rect3 zpl_rect3_aabb3(zpl_aabb3 a);
 
 ZPL_DEF int zpl_rect2_contains(zpl_rect2 a, zpl_f32 x, zpl_f32 y);
 ZPL_DEF int zpl_rect2_contains_vec2(zpl_rect2 a, zpl_vec2 p);
 ZPL_DEF int zpl_rect2_intersects(zpl_rect2 a, zpl_rect2 b);
 ZPL_DEF int zpl_rect2_intersection_result(zpl_rect2 a, zpl_rect2 b, zpl_rect2 *intersection);
+ZPL_DEF int zpl_aabb2_contains(zpl_aabb2 a, zpl_f32 x, zpl_f32 y);
+ZPL_DEF int zpl_aabb3_contains(zpl_aabb3 a, zpl_f32 x, zpl_f32 y, zpl_f32 z);
+
+/* rectangle partitioning: based on https://halt.software/dead-simple-layouts/ */
+ZPL_DEF zpl_aabb2 zpl_aabb2_cut_left(zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_cut_right(zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_cut_top(zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_cut_bottom(zpl_aabb2 *a, zpl_f32 b);
+
+ZPL_DEF zpl_aabb2 zpl_aabb2_get_left(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_get_right(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_get_top(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_get_bottom(const zpl_aabb2 *a, zpl_f32 b);
+
+ZPL_DEF zpl_aabb2 zpl_aabb2_add_left(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_add_right(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_add_top(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_add_bottom(const zpl_aabb2 *a, zpl_f32 b);
+
+ZPL_DEF zpl_aabb2 zpl_aabb2_contract(const zpl_aabb2 *a, zpl_f32 b);
+ZPL_DEF zpl_aabb2 zpl_aabb2_expand(const zpl_aabb2 *a, zpl_f32 b);
 
 //! @}
 ZPL_END_C_DECLS
