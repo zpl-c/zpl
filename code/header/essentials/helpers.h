@@ -132,7 +132,7 @@ ZPL_BEGIN_C_DECLS
 #endif
 
 #ifndef zpl_step
-#define zpl_step(x,y) (((x)/y)*y)
+#define zpl_step(x,y) (((x)/(y))*(y))
 #endif
 
 #ifndef zpl_abs

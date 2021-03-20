@@ -34,7 +34,7 @@ int main(void) {
     zpl_aabb2 fr = zpl_aabb2f(0, 0, BMP_W, BMP_H);
 
     zpl_file_contents fc = zpl_file_read_contents(zpl_heap(), 0, "bg.png");
-    zpl_isize imgw, imgh, imgc;
+    zpl_i32 imgw, imgh, imgc;
     stbi_uc *imgdata = stbi_load_from_memory(fc.data, fc.size, &imgw, &imgh, &imgc, 4);
     draw_rect_tex(fr, imgdata, imgw, imgh);
 
@@ -62,7 +62,7 @@ int main(void) {
             zpl_aabb2 content = zpl_aabb2_contract(&fill, 15);
             zpl_rect2 crect = zpl_rect2_aabb2(content);
             for (zpl_isize i=0; i<LINES_C; i++) {
-                zpl_rect2 line = zpl_rect2f(content.min, zpl_vec2f(zpl_step(rand() % cast(zpl_isize)crect.dim.x, 10), LINE_H));
+                zpl_rect2 line = zpl_rect2f(content.min, zpl_vec2f(zpl_step(zpl_max(crect.dim.x/4, rand() % cast(zpl_isize)crect.dim.x), 10), LINE_H));
                 line.pos.y += (i*(LINE_H+LINE_S));
                 draw_rect_round(zpl_aabb2_rect2(line), 0xFF666666);
             }
