@@ -1,3 +1,4 @@
+12.2.0  - Add zpl_array_fill and zpl_array_appendv_at
 12.1.0  - Add rectangle partitioning
 12.0.1  - Optimize zpl_strlen
 12.0.0  - JSON API revamp + improvements
