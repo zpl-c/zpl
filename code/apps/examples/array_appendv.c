@@ -23,5 +23,7 @@ int main() {
 
     zpl_array_fill(arr, 1, 6, 5);
     display_arr(arr);
+
+    zpl_array_free(arr);
     return 0;
 }
