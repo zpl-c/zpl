@@ -13,7 +13,7 @@ void display_arr(zpl_i32 *arr) {
 }
 
 int main() {
-    zpl_i32 *arr;
+    zpl_i32 *arr = NULL;
     zpl_array_init(arr, zpl_heap());
     zpl_array_appendv(arr, nums, zpl_count_of(nums));
     display_arr(arr);
