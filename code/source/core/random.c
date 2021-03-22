@@ -150,27 +150,11 @@ ZPL_ALWAYS_INLINE zpl_f64 zpl__random_copy_sign64(zpl_f64 x, zpl_f64 y) {
     return r;
 }
 
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_floor64    (zpl_f64 x)        { return cast(zpl_f64)((x >= 0.0) ? cast(zpl_i64)x : cast(zpl_i64)(x-0.9999999999999999)); }
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_ceil64     (zpl_f64 x)        { return cast(zpl_f64)((x < 0) ? cast(zpl_i64)x : (cast(zpl_i64)x)+1); }
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_round64    (zpl_f64 x)        { return cast(zpl_f64)((x >= 0.0) ? zpl__random_floor64(x + 0.5) : zpl__random_ceil64(x - 0.5)); }
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_remainder64(zpl_f64 x, zpl_f64 y) { return x - (zpl__random_round64(x/y)*y); }
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_abs64      (zpl_f64 x)        { return x < 0 ? -x : x; }
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_sign64     (zpl_f64 x)        { return x < 0 ? -1.0 : +1.0; }
-
-ZPL_ALWAYS_INLINE zpl_f64 zpl__random_mod64(zpl_f64 x, zpl_f64 y) {
-    zpl_f64 result;
-    y = zpl__random_abs64(y);
-    result = zpl__random_remainder64(zpl__random_abs64(x), y);
-    if (zpl__random_sign64(result)) result += y;
-    return zpl__random_copy_sign64(result, x);
-}
-
 zpl_f64 zpl_random_range_f64(zpl_random *r, zpl_f64 lower_inc, zpl_f64 higher_inc) {
-    zpl_u64 u = zpl_random_gen_u64(r);
-    zpl_f64 f = 0;
-    zpl_memcopy(&f, &u, zpl_size_of(zpl_f64));
-    zpl_f64 diff = higher_inc-lower_inc+1.0;
-    f = zpl__random_mod64(f, diff);
+    zpl_f64 f = cast(zpl_f64)zpl_random_gen_u64(r) / cast(zpl_f64)ZPL_U64_MAX;
+    zpl_f64 diff = higher_inc-lower_inc;
+
+    f *= diff;
     f += lower_inc;
     return f;
 }
