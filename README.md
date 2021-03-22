@@ -2,6 +2,8 @@
     <a href="https://github.com/zpl-c/zpl"><img src="https://user-images.githubusercontent.com/2182108/111961338-9ff42700-8af9-11eb-83bf-f74c45d4eac8.png" alt="zpl" /></a>
 </div>
 
+<br />
+
 <div align="center">
     <a href="https://github.com/zpl-c/zpl/actions"><img src="https://img.shields.io/github/workflow/status/zpl-c/zpl/tester?label=Tests&style=for-the-badge" alt="Build status" /></a>
     <a href="https://discord.gg/2fZVEym"><img src="https://img.shields.io/discord/354670964400848898?color=7289DA&style=for-the-badge" alt="discord" /></a>
