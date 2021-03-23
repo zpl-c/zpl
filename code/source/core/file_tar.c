@@ -103,7 +103,7 @@ zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize paths_le
     return 0;
 }
 
-zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
+zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, void *user_data) {
     ZPL_ASSERT_NOT_NULL(archive);
     ZPL_ASSERT_NOT_NULL(unpack_proc);
 
@@ -132,7 +132,7 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
         zpl_usize checksum2 = zpl__tar_checksum(&hr);
         rec.error = (checksum1 != checksum2) ? cast(zpl_isize)ZPL_TAR_ERROR_BAD_CHECKSUM : rec.error;
 
-        rec.error = unpack_proc(archive, &rec);
+        rec.error = unpack_proc(archive, &rec, user_data);
 
         if (rec.error > 0) {
             err = ZPL_TAR_ERROR_INTERRUPTED;
@@ -145,4 +145,75 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
     while(err == ZPL_TAR_ERROR_NONE);
 
     return -(err);
+}
+
+ZPL_TAR_UNPACK_PROC(zpl_tar_default_list_file) {
+    (void)archive;
+    (void)user_data;
+    if (file->error != ZPL_TAR_ERROR_NONE)
+        return 0; /* skip file */
+
+    if (file->type != ZPL_TAR_TYPE_REGULAR)
+        return 0; /* we only care about regular files */
+
+    /* proceed as usual */
+    zpl_printf("name: %s, offset: %d, length: %d\n", file->path, file->offset, file->length);
+    return 0;
+}
+
+ZPL_TAR_UNPACK_PROC(zpl_tar_default_unpack_file) {
+    if (file->error != ZPL_TAR_ERROR_NONE)
+        return 0; /* skip file */
+
+    if (file->type != ZPL_TAR_TYPE_REGULAR)
+        return 0; /* we only care about regular files */
+
+    char tmp[PATH_MAX] = {0};
+    char *base_path = cast(char*)user_data;
+    zpl_isize base_len = zpl_strlen(base_path);
+    zpl_isize len = zpl_strlen(file->path);
+    ZPL_ASSERT(base_len+len-2 < PATH_MAX); /* todo: account for missing leading path sep */
+
+    zpl_strcpy(tmp, base_path);
+    zpl_path_fix_slashes(tmp); /* todo: need to do twice as base_path is checked before concat */
+
+    if (*tmp && tmp[base_len-1] != ZPL_PATH_SEPARATOR) {
+        char sep[2] = {ZPL_PATH_SEPARATOR, 0};
+        zpl_strcat(tmp, sep);
+    }
+    zpl_strcat(tmp, file->path);
+    zpl_path_fix_slashes(tmp);
+
+    const char *last_slash = zpl_char_last_occurence(tmp, ZPL_PATH_SEPARATOR);
+
+    if (last_slash) {
+        zpl_isize i = cast(zpl_isize)(last_slash-tmp);
+        tmp[i] = 0;
+        zpl_path_mkdir_recursive(tmp, 0755);
+        tmp[i] = ZPL_PATH_SEPARATOR;
+    }
+
+    zpl_file f;
+    zpl_file_create(&f, tmp);
+    {
+        char buf[4096] = {0};
+        zpl_isize remaining_data = file->length;
+        zpl_isize bytes_read = 0;
+        zpl_i64 pos = file->offset;
+        do {
+            if (!zpl_file_read_at_check(archive, buf, zpl_min(4096, remaining_data), pos, &bytes_read)) {
+                zpl_file_close(&f);
+                return 1;
+            } else if (bytes_read == 0) {
+                break;
+            }
+
+            zpl_file_write(&f, buf, bytes_read);
+            pos += bytes_read;
+            remaining_data -= bytes_read;
+        }
+        while (remaining_data > 0);
+    }
+    zpl_file_close(&f);
+    return 0;
 }

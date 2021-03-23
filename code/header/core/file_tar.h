@@ -47,7 +47,7 @@ typedef struct {
     zpl_isize error;
 } zpl_tar_record;
 
-#define ZPL_TAR_UNPACK_PROC(name) zpl_isize name(zpl_file *archive, zpl_tar_record *file);
+#define ZPL_TAR_UNPACK_PROC(name) zpl_isize name(zpl_file *archive, zpl_tar_record *file, void* user_data)
 typedef ZPL_TAR_UNPACK_PROC(zpl_tar_unpack_proc);
 
 /**
@@ -67,10 +67,12 @@ ZPL_DEF zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize 
  * Library does not unpack files to the filesystem nor reads any file data.
  * @param archive archive we unpack files from
  * @param unpack_proc callback we call per each file parsed
+ * @param user_data user provided data
  * @return error
  */
-ZPL_DEF zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc);
+ZPL_DEF zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, void* user_data);
 
+ZPL_DEF ZPL_TAR_UNPACK_PROC(zpl_tar_default_list_file);
 
 //! @}
 
