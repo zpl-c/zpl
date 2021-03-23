@@ -230,7 +230,7 @@ zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode) {
 }
 
 zpl_isize zpl_path_mkdir_recursive(char const *path, zpl_i32 mode) {
-    char tmp[PATH_MAX];
+    char tmp[4096] = {0};
     char *p = 0;
     zpl_isize len = zpl_strlen(path);
 
