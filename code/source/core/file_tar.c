@@ -168,11 +168,11 @@ ZPL_TAR_UNPACK_PROC(zpl_tar_default_unpack_file) {
     if (file->type != ZPL_TAR_TYPE_REGULAR)
         return 0; /* we only care about regular files */
 
-    char tmp[4096] = {0};
+    char tmp[ZPL_MAX_PATH] = {0};
     char *base_path = cast(char*)user_data;
     zpl_isize base_len = zpl_strlen(base_path);
     zpl_isize len = zpl_strlen(file->path);
-    ZPL_ASSERT(base_len+len-2 < 4096); /* todo: account for missing leading path sep */
+    ZPL_ASSERT(base_len+len-2 < ZPL_MAX_PATH); /* todo: account for missing leading path sep */
 
     zpl_strcpy(tmp, base_path);
     zpl_path_fix_slashes(tmp); /* todo: need to do twice as base_path is checked before concat */

@@ -14,6 +14,16 @@ ZPL_BEGIN_C_DECLS
     #endif
 #endif
 
+#ifndef ZPL_MAX_PATH
+    #if defined(ZPL_SYSTEM_WINDOWS)
+        #define ZPL_MAX_PATH MAX_PATH
+    #elif defined(ZPL_SYSTEM_UNIX)
+        #define ZPL_MAX_PATH PATH_MAX
+    #else
+        #define ZPL_MAX_PATH 4096
+    #endif
+#endif
+
 /**
  * Checks if file/directory exists
  * @param  filepath
