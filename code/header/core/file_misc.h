@@ -63,6 +63,7 @@ ZPL_DEF_INLINE char const *zpl_path_extension(char const *path);
 ZPL_DEF void    zpl_path_fix_slashes(char *path);
 
 ZPL_DEF zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode);
+ZPL_DEF zpl_isize zpl_path_mkdir_recursive(char const *path, zpl_i32 mode);
 ZPL_DEF zpl_file_error zpl_path_rmdir(char const *path);
 
 ZPL_DEF char       *zpl_path_get_full_name(zpl_allocator a, char const *path);
