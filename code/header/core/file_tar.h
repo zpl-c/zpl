@@ -54,12 +54,22 @@ typedef ZPL_TAR_UNPACK_PROC(zpl_tar_unpack_proc);
  * @brief Packs a list of files
  * Packs a list of provided files. Note that this method only supports regular files
  * and does not provide extended info such as GID/UID or permissions.
- * @param archive file we pack files into
+ * @param archive archive we pack files into
  * @param paths list of files
  * @param paths_len number of files provided
  * @return error
  */
 ZPL_DEF zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize paths_len);
+
+/**
+ * @brief Packs an entire directory
+ * Packs an entire directory of files recursively.
+ * @param archive archive we pack files to
+ * @param path folder to pack
+ * @param alloc memory allocator to use (ex. zpl_heap())
+ * @return error
+ */
+ZPL_DEF zpl_isize zpl_tar_pack_dir(zpl_file *archive, char const *path, zpl_allocator alloc);
 
 /**
  * @brief Unpacks an existing archive
