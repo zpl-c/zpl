@@ -131,7 +131,7 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
 
         zpl_usize checksum1 = cast(zpl_usize)(zpl_str_to_i64(hr.checksum, 0, 8));
         zpl_usize checksum2 = zpl__tar_checksum(&hr);
-        rec.error = (checksum1 != checksum2) ? ZPL_TAR_ERROR_BAD_CHECKSUM : rec.error;
+        rec.error = (checksum1 != checksum2) ? cast(zpl_isize)ZPL_TAR_ERROR_BAD_CHECKSUM : rec.error;
 
         rec.error = unpack_proc(archive, &rec);
 
