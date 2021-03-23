@@ -46,6 +46,7 @@ ZPL_DEF_INLINE zpl_isize   zpl_strnlen(const char *str, zpl_isize max_len);
 ZPL_DEF_INLINE zpl_i32     zpl_strcmp(const char *s1, const char *s2);
 ZPL_DEF_INLINE zpl_i32     zpl_strncmp(const char *s1, const char *s2, zpl_isize len);
 ZPL_DEF_INLINE char       *zpl_strcpy(char *dest, const char *source);
+ZPL_DEF_INLINE char       *zpl_strcat(char *dest, const char *source);
 ZPL_DEF_INLINE char       *zpl_strncpy(char *dest, const char *source, zpl_isize len);
 ZPL_DEF_INLINE zpl_isize   zpl_strlcpy(char *dest, const char *source, zpl_isize len);
 ZPL_DEF_INLINE char       *zpl_strrev(char *str); // NOTE: ASCII only
@@ -232,6 +233,16 @@ ZPL_IMPL_INLINE char *zpl_strcpy(char *dest, const char *source) {
     ZPL_ASSERT_NOT_NULL(dest);
     if (source) {
         char *str = dest;
+        while (*source) *str++ = *source++;
+    }
+    return dest;
+}
+
+ZPL_IMPL_INLINE char *zpl_strcat(char *dest, const char *source) {
+    ZPL_ASSERT_NOT_NULL(dest);
+    if (source) {
+        char *str = dest;
+        while (*str) ++str;
         while (*source) *str++ = *source++;
     }
     return dest;

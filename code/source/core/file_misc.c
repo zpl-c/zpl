@@ -238,6 +238,7 @@ zpl_isize zpl_path_mkdir_recursive(char const *path, zpl_i32 mode) {
         return -1;
     }
     zpl_strcpy(tmp, path);
+    zpl_path_fix_slashes(tmp);
     for (p = tmp + 1; *p; p++) {
         if (*p == ZPL_PATH_SEPARATOR) {
             *p = 0;
