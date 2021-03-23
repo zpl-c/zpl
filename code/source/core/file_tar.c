@@ -103,6 +103,15 @@ zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize paths_le
     return 0;
 }
 
+zpl_isize zpl_tar_pack_dir(zpl_file *archive, char const *path, zpl_allocator alloc) {
+    zpl_string filelst = zpl_path_dirlist(alloc, path, true);
+    char const **files = cast(char const**)zpl_str_split_lines(alloc, filelst, false);
+    zpl_isize err = zpl_tar_pack(archive, files, zpl_array_count(files));
+    zpl_string_free(filelst);
+    zpl_array_free(files);
+    return err;
+}
+
 zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, void *user_data) {
     ZPL_ASSERT_NOT_NULL(archive);
     ZPL_ASSERT_NOT_NULL(unpack_proc);
