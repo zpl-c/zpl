@@ -229,6 +229,26 @@ zpl_file_error zpl_path_mkdir(char const *path, zpl_i32 mode) {
     return ZPL_FILE_ERROR_UNKNOWN;
 }
 
+zpl_isize zpl_path_mkdir_recursive(char const *path, zpl_i32 mode) {
+    char tmp[PATH_MAX];
+    char *p = 0;
+    zpl_isize len = zpl_strlen(path);
+
+    if (len > zpl_size_of(tmp)-1) {
+        return -1;
+    }
+    zpl_strcpy(tmp, path);
+    for (p = tmp + 1; *p; p++) {
+        if (*p == ZPL_PATH_SEPARATOR) {
+            *p = 0;
+            zpl_path_mkdir(tmp, mode);
+            *p = ZPL_PATH_SEPARATOR;
+        }
+    }
+    zpl_path_mkdir(tmp, mode);
+    return 0;
+}
+
 zpl_file_error zpl_path_rmdir(char const *path) {
     zpl_i32 error = 0;
 #if defined(ZPL_SYSTEM_WINDOWS)
