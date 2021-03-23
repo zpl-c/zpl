@@ -33,6 +33,8 @@ int main() {
     zpl_file_open(&b, "misc/data/test_archive.tar");
     zpl_tar_unpack(&b, zpl_tar_default_list_file, 0);
     zpl_file_seek(&b, 0);
+    zpl_tar_unpack(&b, print_files, 0);
+    zpl_file_seek(&b, 0);
     zpl_tar_unpack(&b, zpl_tar_default_unpack_file, "build");
     zpl_file_close(&b);
     return 0;
