@@ -23,7 +23,7 @@
 </div>
 
 # Introduction
-It's been created to simplify development process under C/C++ language and offers commonly used set of features that C developers often re-invent or search libraries for. Apart from helper methods that replace/extend C standard library, this toolkit also consists of modules that are very helpful in specific areas of expertise, such as graph culling algorithms, JSON5 parser, OpenGL-friendly math library as well as OpenGL helper module and many more...
+It was created to simplify development process under C/C++ language and offers commonly used set of features that C developers often re-invent or search libraries for. Apart from helper methods that replace/extend C standard library, this toolkit also consists of modules that are very helpful in specific areas of expertise, such as graph culling algorithms, JSON5 parser, OpenGL-friendly math library as well as OpenGL helper module and many more...
 
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX-like systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test ZPL on, feel free to let us know about your experience and we can try to make it work together.
@@ -185,23 +185,15 @@ Have fun!
 
 # Frequently Asked Questions
 
-**What led you to the creation of this library?**
+**What is this library based on?**
 
-I personally found it rather cumbersome to re-implement commonly used features in C language. I used to use others' libraries to rely on those features. However, I once started extending those libraries by my own modules, breaking the style the original libraries were made. Thanks to FOSS, I've decided to fork [@gingerBill](https://github.com/gingerBill)'s library and adjusted it to my personal style and needs, while also returning bugfixes and some features back. ZPL later became independent and its own thing, adding new features,
-code structure and QoL changes.
+ZPL is a fork of a library made by [@gingerBill](https://github.com/gingerBill) called [gb](https://github.com/gingerBill/gb) that we've decided to expand and rewrite
+to better fit our needs. Although many parts of the library still stay true to their original, a great amount of work went into shaping the library into what we present now.
 
 **Can I contribute to the project?**
 
 Yes, indeed. This project is dual-licensed according to LICENSE, you are free to fork it, contribute to it or even sell it as you see fit.
 
-**Why almost C99?**
-
-Most parts of the library are written in pure C99. There are however, some additional components that require C11 to work (notably in the `Threading` module). As long as you are using minimal version (`ZPL_NANO`), and manually enable modules, the C99 support should be just fine.
-
-**Why C99 though?**
-
-Why not?
-
 **Can I submit suggestions?**
 
-Indeed, I'd also gladly discuss those with you on Discord, if possible.
+Indeed, We'd also gladly discuss those with you on Discord, if possible.
