@@ -12,6 +12,7 @@ package-lock.json
 
 # workdir
 work/
+misc/data/test_archive_zpl.tar
 
 # qtcreator
 zpl.creator

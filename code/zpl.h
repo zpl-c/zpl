@@ -277,6 +277,7 @@ License:
         #include "header/core/file.h"
         #include "header/core/file_stream.h"
         #include "header/core/file_misc.h"
+        #include "header/core/file_tar.h"
         #include "header/core/print.h"
         #include "header/core/time.h"
         #include "header/core/random.h"
@@ -460,6 +461,7 @@ License:
         #include "source/core/file.c"
         #include "source/core/file_stream.c"
         #include "source/core/file_misc.c"
+        #include "source/core/file_tar.c"
         #include "source/core/print.c"
         #include "source/core/time.c"
         #include "source/core/random.c"
@@ -578,6 +580,7 @@ License:
 // header/core/file.h
 // header/core/file_stream.h
 // header/core/file_misc.h
+// header/core/file_tar.h
 // header/core/print.h
 // header/core/time.h
 // header/core/random.h
@@ -611,6 +614,7 @@ License:
 // source/core/file.c
 // source/core/file_stream.c
 // source/core/file_misc.c
+// source/core/file_tar.c
 // source/core/print.c
 // source/core/time.c
 // source/core/random.c
