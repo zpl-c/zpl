@@ -86,6 +86,7 @@ It also offers a **nano** distribution consisting only of essential parts that f
 * **String** - Offers methods for c-string manipulation, but also a string library that is c-string read-only compatible.
 * **Hashtable** - An instantiated hashtable implementation which works for any type defined.
 * **File** - File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
+* **TAR archiving** - Provides a simple API to archive files or read existing archives.
 * **Memory streamer** - Allows us to use the file API to manipulate the memory. (e.g. parse media files from memory, export JSON5 object to string, ...)
 * **Print** - Re-implementation of printf methods.
 * **Time** - Helper methods for retrieving the current time in many forms under different precisions.
