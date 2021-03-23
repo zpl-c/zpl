@@ -108,7 +108,6 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
     ZPL_ASSERT_NOT_NULL(unpack_proc);
 
     zpl_i64 pos = zpl_file_tell(archive);
-    zpl_i64 begin_pos = pos;
     zpl__tar_header hr = {0};
     zpl_isize err = ZPL_TAR_ERROR_NONE;
 
@@ -145,6 +144,5 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc) {
     }
     while(err == ZPL_TAR_ERROR_NONE);
 
-    zpl_file_seek(archive, begin_pos);
     return -(err);
 }
