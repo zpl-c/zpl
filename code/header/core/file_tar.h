@@ -70,10 +70,24 @@ ZPL_DEF zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize 
  * @param user_data user provided data
  * @return error
  */
-ZPL_DEF zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, void* user_data);
+ZPL_DEF zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, void *user_data);
+
+/**
+ * @brief Unpacks an existing archive into directory
+ * Unpacks an existing archive into directory. The folder structure will be re-created automatically.
+ * @param archive archive we unpack files from
+ * @param dest directory to unpack files to
+ * @return error
+ */
+ZPL_DEF_INLINE zpl_isize zpl_tar_unpack_dir(zpl_file *archive, char const *dest);
 
 ZPL_DEF ZPL_TAR_UNPACK_PROC(zpl_tar_default_list_file);
+ZPL_DEF ZPL_TAR_UNPACK_PROC(zpl_tar_default_unpack_file);
 
 //! @}
+
+ZPL_IMPL_INLINE zpl_isize zpl_tar_unpack_dir(zpl_file *archive, char const *dest) {
+    return zpl_tar_unpack(archive, zpl_tar_default_unpack_file, cast(void*)dest);
+}
 
 ZPL_END_C_DECLS
