@@ -7,6 +7,10 @@
 Allows to easily pack/unpack files.
 Based on: https://github.com/rxi/microtar/
 
+Disclaimer: The pack method does not support file permissions nor GID/UID information. Only regular files are supported.
+It is not possible to pack a folder, please refer to "zpl_dir_info" or "zpl_path_dirlist" to collect a file list.
+Empty folders are ignored.
+
 @{
 */
 
