@@ -25,7 +25,7 @@ zpl_isize print_files(zpl_file *archive, zpl_tar_record *file, void* user_data) 
 int main() {
     char const *paths[] = {"misc/data/glsl_diffuse.json5", "misc/data/test.json5", "misc/data/bg.png"};
     zpl_file a;
-    zpl_file_create(&a, "misc/data/test_archive_zpl.tar");
+    zpl_file_create(&a, "build/test_archive_zpl.tar");
     zpl_tar_pack(&a, paths, 3);
     zpl_file_close(&a);
 
