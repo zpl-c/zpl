@@ -123,8 +123,8 @@ typedef enum zpl_file_standard_type {
 ZPL_DEF zpl_file      *zpl_file_get_standard(zpl_file_standard_type std);
 
 /**
- * Connects a system handle to a ZPL file.
- * @param  file   Pointer to ZPL file
+ * Connects a system handle to a zpl file.
+ * @param  file   Pointer to zpl file
  * @param  handle Low-level OS handle to connect
  */
 ZPL_DEF void           zpl_file_connect_handle(zpl_file *file, void *handle);

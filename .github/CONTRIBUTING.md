@@ -18,7 +18,7 @@ If you feel up for it, feel free to code and pull request any changes you've mad
 ## Code submission policy
 
 Please follow the following rules when contributing to the project:
-- Write in idiomatic ZPL C11 style
+- Write in idiomatic zpl C11 style
 - Do not create external dependencies when introducing new features
 - Split your changes to separate, atomic commits
 - Rebase your commits on the master branch

@@ -61,10 +61,10 @@ curl -L zpl.pw/fetch > zpl.h
 wget zpl.pw/fetch -O zpl.h
 ```
 
-This approach will download the latest release of ZPL with everything prepared for you.
+This approach will download the latest release of zpl with everything prepared for you.
 
 ## 2. Via GitHub releases page:
-* Navigate to the [releases page](https://github.com/zpl-c/zpl/releases) of the ZPL repository and pick the version you want to use. Each release contains the distributed version of zpl for you to use easily.
+* Navigate to the [releases page](https://github.com/zpl-c/zpl/releases) of the zpl repository and pick the version you want to use. Each release contains the distributed version of zpl for you to use easily.
 
 ## 3. Cloning the repository:
 * Clone the repository by pressing the **Clone or download** button for instructions or use your terminal to clone:
@@ -110,13 +110,13 @@ Additionally, zpl also contains these additional modules that build upon the cor
 * **Math** - OpenGL game dev friendly library for math.
 
 # Example Usage
-In this example, I'll show you how to write a simple JSON5 benchmark tool by using ZPL only.
+In this example, I'll show you how to write a simple JSON5 benchmark tool by using zpl only.
 
 First, I recommend looking at [zpl.h](https://github.com/zpl-c/zpl/releases/latest) header file from the releases, which describes how to use the library. Now you know that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE**, including the zpl.h file itself, to embed it successfully.
 
 Afterward, we need to deal with file loading, navigate the `code` folder and find the respective module [file.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/file.h)
 
-As you can see, each module contains its own header/source file. These are bundled together on each release. When we develop ZPL, we include [code/zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h), as it allows us to have full syntax and semantics support while coding the library. However, as an end-user, you can use ZPL from the releases page, as it contains everything bundled together and ready to be used within the project.
+As you can see, each module contains its own header/source file. These are bundled together on each release. When we develop ZPL, we include [code/zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h), as it allows us to have full syntax and semantics support while coding the library. However, as an end-user, you can use zpl from the releases page, as it contains everything bundled together and ready to be used within the project.
 
 File module takes care of necessary file i/o operations. Write a code to read `test.json5` file (you can use `zpl_file_read_contents`) and try to print its content (either use libc's printf or methods from [print.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/print.h)) Check [code/apps](https://github.com/zpl-c/zpl/blob/master/code/apps/examples/) folder for code examples.
 
@@ -188,7 +188,7 @@ Have fun!
 
 **What is this library based on?**
 
-ZPL is a fork of a library made by [@gingerBill](https://github.com/gingerBill) called [gb](https://github.com/gingerBill/gb) that we've decided to expand and rewrite
+zpl is a fork of a library made by [@gingerBill](https://github.com/gingerBill) called [gb](https://github.com/gingerBill/gb) that we've decided to expand and rewrite
 to fit our needs better. Although many parts of the library still stay faithful to their original, a significant amount of work shaped the library into what we present now.
 
 **Can I contribute to the project?**

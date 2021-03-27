@@ -1,5 +1,5 @@
 /**
-  ZPL - Unit testing framework
+  zpl - Unit testing framework
 
 Usage:
   #include "unit.h" in EXACTLY one source file, usually the one containing your testing app's entry point.

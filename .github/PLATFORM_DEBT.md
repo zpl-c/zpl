@@ -1,6 +1,6 @@
 # Platform debt
 
-This file analyses and describes which platforms lack what functionality that ZPL implements.
+This file analyses and describes which platforms lack what functionality that zpl implements.
 
 ## General
 

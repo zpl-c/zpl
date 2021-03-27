@@ -4,7 +4,7 @@
 @brief Hashing and Checksum Functions
 @defgroup hashing Hashing and Checksum Functions
 
-Several hashing methods used by ZPL internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
+Several hashing methods used by zpl internally but possibly useful outside of it. Contains: adler32, crc32/64, fnv32/64/a and murmur32/64
 
 @{
 */
