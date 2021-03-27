@@ -28,10 +28,6 @@ We have created the library to simplify the development process under C/C++ lang
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX-like systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test zpl on, please let us know about your experience, and we can try to make it work together.
 
-## Who uses this library?
-
-* [librg](https://github.com/zpl-c/librg) - Making multi-player simpler since 2017. Single-header cross-platform world replication library in pure C99.
-
 # How to obtain this library?
 
 There are several options in getting hands-on zpl:
@@ -62,34 +58,39 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 
 zpl consists of modules that we pack to various distributions. By default, it offers most of the modules from the go.
 It also offers a **nano** distribution consisting only of essential parts that form the basis of the library, those are:
-* **Macro helpers** - This module contains many useful macros helpful for debugging and development itself.
-* **Memory** - Consists of pointer arithmetic methods, virtual memory management, and custom memory allocators.
-* **Collections** - Consists of C++-template-like macros that define containers for any type. These collections are C-friendly and accessible using `de-reference` or `[]` operators. These are buffer, array, linked-list, ring buffer.
-* **String** - Offers methods for c-string manipulation and a string library that is c-string read-only compatible.
-* **Hashtable** - An instantiated hashtable implementation that works for any type defined.
-* **File** - File I/O operations as well as path and folder structure manipulation methods. With threading enabled, it also offers async read/write methods.
-* **TAR archiving** - Provides a simple API to archive files or read existing archives.
-* **Memory streamer** - This allows us to use the file API to manipulate the memory. (e.g., parse media files from memory, export JSON5 object to a string, ...)
-* **Print** - Re-implementation of printf methods.
-* **Time** - Helper methods for retrieving the current time in many forms under different precisions.
-* **Random** - Fast and simple RNG library.
-* **Sorting** - Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It also contains a simple implementation of binary search and an easy-to-use API to define your comparators.
-* **Miscellaneous** - Methods that don't belong anywhere but are still very useful on many occasions.
+| Module | Description | Test Coverage | Example Coverage |
+| ------ | ---------- | :----: | :----: |
+| **Memory** | Low-level memory management and allocation strategy models. | 🟡 | ✅ |
+| **Collections** | Versatile set of collections: `array`, `buffer`, `linked list`, `ring buffer`. | 🔴 | ✅ |
+| **String** | Set of helpful string manipulation methods. | 🔴 | ✅ |
+| **String Libary** | C-friendly string library. | 🔴 | ✅ |
+| **Hashtable** | Instantiated hashtable implementation that works with any type. | 🔴 | ✅ |
+| **File** | File I/O operations forming a basis for other modules. | 🔴 | ✅ |
+| **File System** | Path and folder structure manipulation methods. | 🔴 | ✅ |
+| **TAR Archive** | Ability to archive files or analyze/unpack them. | 🔴 | ✅ |
+| **Memory Streamer** | Memory-mapped file I/O operations. | ✅ | ✅ |
+| **Print** | Re-implementation of various printf-family methods. | 🔴 | ✅ |
+| **Time** | Helper methods for retrieving the current time in many forms under different precisions. | ✅ | ✅ |
+| **Random** | Fast and simple RNG library. | 🔴 | ✅ |
+| **Sorting** | Various sorting and searching algorithms. | 🔴 | ✅ |
+| **Miscellaneous** | Other valuable methods that are part of the core distribution. | ✅ | ✅ |
 
-From which we also made a **pico** distribution that only contains: **Macro helpers**, **Memory** and **Collections** modules. Useful in embedded environments where you know exactly which modules you want to use. As always, you can easily enable additional modules as you'd like, do note that not all combinations were tested and might even cause issues when the **pico** distribution is enabled. There is no ability to enable specific core submodules within the **pico** distribution; however, consider using the **nano** distribution in that case.
+With this trend, we've also made a **pico** distribution that only contains: **Macro helpers**, **Memory** and **Collections** modules. Useful in embedded environments where you know exactly which modules you want to use. As always, you can easily enable additional modules as you'd like, do note that not all combinations were tested and might even cause issues when the **pico** distribution is enabled. There is no ability to enable specific core submodules within the **pico** distribution; however, consider using the **nano** distribution in that case.
 
 Additionally, zpl also contains these additional modules that build upon the core library itself:
-* **Threading** - This module features common threading and blocking principles. It contains thread merge operation based on stb_sync, as well as CPU affinity management.
-* **Regex** - Port of gb_regex with several bugfixes applied. That is a simple regex library and is fast to perform.
-* **DLL** - Helper methods for loading a dynamic library. It also offers the ability to load a procedure address.
-* **Timer** - A simple to use callback-based timer library.
-* **Hashing** - Several hashing methods useful in many domains. Contains: base64, adler32, crc32/64, fnv32/64/a and murmur32/64
-* **JSON5 parser** - Easy to use and very fast JSON5 parser that can easily load 50 megabytes of JSON content under half a second. It also contains a simple JSON5 writer and acts as a good library for handling config files.
-* **Opts** - Opts is a CLI options parser. It can parse flags, switches, and arguments from the command line and offers an easy way to express input errors and display a help screen.
-* **Process** - Gives you the ability to create a new process, wait for it to end, or terminate it. It also exposes standard I/O with configurable options.
-* **Jobs system** - Can set up a batch of workers which use thread-pool pattern to handle async tasks without the unnecessary threading overhead.
-* **Co-routines** - This module implements co-routines feature for C11.
-* **Math** - OpenGL game dev friendly library for math.
+| Module | Description | Test Coverage | Example Coverage |
+| ------ | ---------- | :----: | :----: |
+| **Threading** | Threading, and blocking models, thread merge operation based on stb_sync, as well as CPU affinity management. | 🔴 | ✅ |
+| **Regex** | Regular expressions library. | 🔴 | ✅ |
+| **DLL** | Cross-platform methods for loading dynamic libraries. | 🔴 | ✅ |
+| **Timer** | Callback-based primitive timer library. | 🔴 | ✅ |
+| **Hashing** | Various hashing methods. Contains: `base64`, `adler32`, `crc32/64`, `fnv32/64/a` and `murmur32/64` | ✅ | ✅ |
+| **JSON5 Parser** | SJSON/JSON5 parser that offers speedy performance and great stability. | ✅ | ✅ |
+| **Options** | CLI options parser. Parsing flags, switches, and arguments from the command line. | 🔴 | ✅ |
+| **Process** | Primitives for low-level process management. | 🔴 | ✅ |
+| **Jobs System** | Asynchronous task-based scheduling system. | 🔴 | ✅ |
+| **Co-routines** | LUA-inspired module implementing co-routines feature for C11. | 🔴 | ✅ |
+| **Math** | Gamedev friendly library for math. | 🔴 | ✅ |
 
 ## Examples
 We cover many of these modules with example code you can explore at [apps/examples](https://github.com/zpl-c/zpl/tree/master/code/apps/examples) folder. They serve as a good starting point to better understand how the library works. Have a look at this base64 text encoder:
