@@ -91,80 +91,43 @@ Additionally, zpl also contains these additional modules that build upon the cor
 * **Co-routines** - This module implements co-routines feature for C11.
 * **Math** - OpenGL game dev friendly library for math.
 
-# Example Usage
-In this example, I'll show you how to write a simple JSON5 benchmark tool by using zpl only.
-
-First, I recommend looking at [zpl.h](https://github.com/zpl-c/zpl/releases/latest) header file from the releases, which describes how to use the library. Now you know that to use zpl.h in your project, you have to define `ZPL_IMPLEMENTATION` exactly in **ONE SOURCE** file **BEFORE**, including the zpl.h file itself, to embed it successfully.
-
-Afterward, we need to deal with file loading, navigate the `code` folder and find the respective module [file.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/file.h)
-
-As you can see, each module contains its own header/source file. These are bundled together on each release. When we develop ZPL, we include [code/zpl.h](https://github.com/zpl-c/zpl/blob/master/code/zpl.h), as it allows us to have full syntax and semantics support while coding the library. However, as an end-user, you can use zpl from the releases page, as it contains everything bundled together and ready to be used within the project.
-
-File module takes care of necessary file i/o operations. Write a code to read `test.json5` file (you can use `zpl_file_read_contents`) and try to print its content (either use libc's printf or methods from [print.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/print.h)) Check [code/apps](https://github.com/zpl-c/zpl/blob/master/code/apps/examples/) folder for code examples.
-
-Done? Great! Now we need to parse this file, but how? Well, guess what, [json.h](https://github.com/zpl-c/zpl/blob/master/code/header/json.h) is precisely what you're looking after! Now you might wonder, you can parse JSON5 files...
-
-But what uses is it for a benchmark tool if it doesn't even let you know how long the process took? It is time (pun intended) to visit [time.h](https://github.com/zpl-c/zpl/blob/master/code/header/core/time.h) file now, capture two timestamps, one before, another after the operation happened, and the difference is your time you can display to the user. Or check out code examples in the test folder.
-
-What's left? We can read a specific JSON5 file, parse it and display the time it took to do so. Did I say... specific? How about we let the user customize the options on the command line?
-
-Visit [opts.h](https://github.com/zpl-c/zpl/blob/master/code/header/opts.h) and get to know it. As always, the test folder can be useful in this case.
-
-Actually, the following snippet comes from the [json_benchmark.c](https://github.com/zpl-c/zpl/blob/master/code/apps/examples/json_benchmark.c) test file:
+## Examples
+We cover many of these modules with example code you can explore at [apps/examples](https://github.com/zpl-c/zpl/tree/master/code/apps/examples) folder. They serve as a good starting point to better understand how the library works. Have a look at this base64 text encoder:
 
 ```c
-#define ZPL_IMPLEMENTATION
+#define ZPL_IMPL
 #define ZPL_NANO
 #define ZPL_ENABLE_OPTS
+#define ZPL_ENABLE_HASHING
 #include <zpl.h>
 
-int main(int argc, char **argv)
-{
+void exit_with_help(zpl_opts *opts);
+
+int main(int argc, char **argv) {
     zpl_opts opts={0};
 
     zpl_opts_init(&opts, zpl_heap(), argv[0]);
+    zpl_opts_add(&opts, "s", "string", "input string.", ZPL_OPTS_STRING);
+    zpl_opts_positional_add(&opts, "string");
+    zpl_b32 ok = zpl_opts_compile(&opts, argc, argv);
+    if (!ok || !zpl_opts_positionals_filled(&opts))
+        exit_with_help(&opts);
 
-    zpl_opts_add(&opts, "?", "help", "the HELP section", ZPL_OPTS_FLAG);
-    zpl_opts_add(&opts, "f", "foo", "the test *foo* entry.", ZPL_OPTS_STRING);
-    zpl_opts_add(&opts, "p", "pi", "PI Value Redefined !!!", ZPL_OPTS_FLOAT);
-    zpl_opts_add(&opts, "4", "4pay", "hmmmm", ZPL_OPTS_INT);
-    zpl_opts_add(&opts, "E", "enablegfx", "Enables HD resource pack", ZPL_OPTS_FLAG);
+    zpl_string input = zpl_opts_string(&opts, "string", 0);
+    zpl_u8 *encoded_str = zpl_base64_encode(zpl_heap(), cast(void*)input, zpl_string_length(input));
+    zpl_printf("Original: %s\nEncoded: %s\n", input, encoded_str);
 
-    zpl_opts_positional_add(&opts, "4pay");
-
-    zpl_b32 ok=zpl_opts_compile(&opts, argc, argv);
-
-    if (ok && zpl_opts_positionals_filled(&opts)) {
-
-        zpl_b32 help=zpl_opts_has_arg(&opts, "help");
-        if (help) {
-            zpl_opts_print_help(&opts);
-            return 0;
-        }
-        zpl_string foo=zpl_opts_string(&opts, "foo", "WRONG!");
-        zpl_f64 some_num=zpl_opts_real(&opts, "pi", 0.0);
-        zpl_i32 right=(zpl_i32)zpl_opts_integer(&opts, "4pay", 42);
-        zpl_printf("The arg is %s\nPI value is: %f\nright: %d?\n", foo, some_num,
-                   right);
-
-        zpl_b32 gfx=zpl_opts_has_arg(&opts, "enablegfx");
-        if (gfx) {
-            zpl_printf("You wanted HD graphics? Here:\n\n");
-            for (int i=0; i<5; ++i) {
-                zpl_printf("iiiii\n");
-            }
-        }
-    }
-    else {
-        zpl_opts_print_errors(&opts);
-        zpl_opts_print_help(&opts);
-    }
-
+    zpl_mfree(encoded_str);
+    zpl_opts_free(&opts);
     return 0;
 }
-```
 
-Have fun!
+void exit_with_help(zpl_opts *opts) {
+    zpl_opts_print_errors(opts);
+    zpl_opts_print_help(opts);
+    zpl_exit(-1);
+}
+```
 
 # Frequently Asked Questions
 
