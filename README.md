@@ -28,33 +28,15 @@ We have created the library to simplify the development process under C/C++ lang
 Library is cross-platform and currently works on **i386**, **amd64** and some **ARM** architectures. It has been tested on **Windows**, **UNIX-like systems**, **iOS**, **Emscripten** and **Android**.
 We're trying to expand the compatibility, but we need your help! If you have a device you want to test zpl on, please let us know about your experience, and we can try to make it work together.
 
-| Platform / Result     | Windows                   | macOS         | Linux         | iOS       | Android   | Raspberry Pi  | OpenBSD   | FreeBSD       | Emscripten    |
-|-------------------    |-----------------------    |------------   |------------   |-------    |---------  |-------------- |---------  |------------   |------------   |
-|         ✅             | msvc, mingw, clang-cl     | gcc, clang    | gcc, clang    | clang     |  clang    |  gcc, clang   |           | gcc, clang    |               |
-|         ☑️            |                           |               |               |           |           |               |  clang    |               |               |
-|         ❔             |                           |               |               |           |   gcc     |               |   gcc     |               |               |
-|         🔴            |                           |               |               |           |           |               |           |               |    emcc       |
-
-#### Legend:
-
-* ❔ - Library was not tested on this platform/compiler yet
-* ✅ - Library successfully compiles, and all tests are executed properly
-* ☑️ - compiles with limited features only. *
-* 🔴 - compilation/runtime faults.
-<br/><br/>
-
-*This platform's support is unfinished and might lack some features or degree of functionality compared to fully supported platforms. See [Platform Debt](https://github.com/zpl-c/zpl/blob/master/.github/PLATFORM_DEBT.md) to see which parts are missing out for your platform.
-
-
 ## Who uses this library?
 
 * [librg](https://github.com/zpl-c/librg) - Making multi-player simpler since 2017. Single-header cross-platform world replication library in pure C99.
 
-# How to get this library?
+# How to obtain this library?
 
 There are several options in getting hands-on zpl:
 
-## 1. Via CLI (the simplest option):
+## 1. Via CLI (the simplest option)
 ```sh
 curl -L zpl.pw/fetch > zpl.h
 # OR
@@ -63,10 +45,10 @@ wget zpl.pw/fetch -O zpl.h
 
 This approach will download the latest release of zpl with everything prepared for you.
 
-## 2. Via GitHub releases page:
+## 2. Via GitHub releases page
 * Navigate to the [releases page](https://github.com/zpl-c/zpl/releases) of the zpl repository and pick the version you want to use. Each release contains the distributed version of zpl for you to use easily.
 
-## 3. Cloning the repository:
+## 3. Cloning the repository
 * Clone the repository by pressing the **Clone or download** button for instructions or use your terminal to clone:
 ```sh
 git clone https://github.com/zpl-c/zpl.git
@@ -76,7 +58,7 @@ We use this method to develop zpl as it contains all the development sources tha
 
 Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how to contribute to the project.
 
-# Table of Contents
+# Modules
 
 zpl consists of modules that we pack to various distributions. By default, it offers most of the modules from the go.
 It also offers a **nano** distribution consisting only of essential parts that form the basis of the library, those are:
