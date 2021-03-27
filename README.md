@@ -56,8 +56,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 
 # Modules
 
-zpl consists of the following modules:
-| Module | Description | Test Coverage | Example Coverage |
+| Name | Description | Test Coverage | Example Coverage |
 | ------ | ---------- | :----: | :----: |
 | **Memory** | Low-level memory management and allocation strategy models. | 🟡 | ✅ |
 | **Collections** | Versatile set of collections: `array`, `buffer`, `linked list`, `ring buffer`. | 🔴 | ✅ |
@@ -104,7 +103,7 @@ We've also made a **pico** distribution that only contains: **Memory** and **Col
 
 zpl also allows you to enable/disable various modules at will, allowing you to create your distribution suiting your needs.
 
-## Examples
+# Examples
 We cover many of these modules with example code you can explore at [apps/examples](https://github.com/zpl-c/zpl/tree/master/code/apps/examples) folder. They serve as a good starting point to better understand how the library works. Have a look at this base64 text encoder:
 
 ```c
