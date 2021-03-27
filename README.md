@@ -56,8 +56,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 
 # Modules
 
-zpl consists of modules that we pack to various distributions. By default, it offers most of the modules from the go.
-It also offers a **nano** distribution consisting only of essential parts that form the basis of the library, those are:
+zpl consists of the following modules:
 | Module | Description | Test Coverage | Example Coverage |
 | ------ | ---------- | :----: | :----: |
 | **Memory** | Low-level memory management and allocation strategy models. | 🟡 | ✅ |
@@ -74,12 +73,6 @@ It also offers a **nano** distribution consisting only of essential parts that f
 | **Random** | Fast and simple RNG library. | 🔴 | ✅ |
 | **Sorting** | Various sorting and searching algorithms. | 🔴 | ✅ |
 | **Miscellaneous** | Other valuable methods that are part of the core distribution. | ✅ | ✅ |
-
-With this trend, we've also made a **pico** distribution that only contains: **Macro helpers**, **Memory** and **Collections** modules. Useful in embedded environments where you know exactly which modules you want to use. As always, you can easily enable additional modules as you'd like, do note that not all combinations were tested and might even cause issues when the **pico** distribution is enabled. There is no ability to enable specific core submodules within the **pico** distribution; however, consider using the **nano** distribution in that case.
-
-Additionally, zpl also contains these additional modules that build upon the core library itself:
-| Module | Description | Test Coverage | Example Coverage |
-| ------ | ---------- | :----: | :----: |
 | **Threading** | Threading, and blocking models, thread merge operation based on stb_sync, as well as CPU affinity management. | 🔴 | ✅ |
 | **Regex** | Regular expressions library. | 🔴 | ✅ |
 | **DLL** | Cross-platform methods for loading dynamic libraries. | 🔴 | ✅ |
@@ -91,6 +84,25 @@ Additionally, zpl also contains these additional modules that build upon the cor
 | **Jobs System** | Asynchronous task-based scheduling system. | 🔴 | ✅ |
 | **Co-routines** | LUA-inspired module implementing co-routines feature for C11. | 🔴 | ✅ |
 | **Math** | Gamedev friendly library for math. | 🔴 | ✅ |
+
+## Distributions
+
+All distributions are defined at compile-time. You can always opt-in to any distribution kind without a need to maintain different copies of the library.
+
+### Default
+
+zpl enables all of its modules by default, which allows you to make full use of the library effortlessly.
+
+### ZPL_NANO
+
+The **nano** distribution provides the core parts of the library. It omits some specialized modules in favor of broader compatibility, and that also makes the library lightweight.
+
+### ZPL_PICO
+We've also made a **pico** distribution that only contains: **Memory** and **Collections** modules. There is no ability to enable specific core submodules within the **pico** distribution; however, consider using the **nano** distribution in that case.
+
+### Custom distributions
+
+zpl also allows you to enable/disable various modules at will, allowing you to create your distribution suiting your needs.
 
 ## Examples
 We cover many of these modules with example code you can explore at [apps/examples](https://github.com/zpl-c/zpl/tree/master/code/apps/examples) folder. They serve as a good starting point to better understand how the library works. Have a look at this base64 text encoder:
