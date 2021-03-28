@@ -1,3 +1,4 @@
+12.3.1  - avoid symbolic link cycle in zpl_path_dirlist
 12.3.0  - add TAR archiving support
 12.2.1  - fix zpl_random_gen_f64
 12.2.0  - Add zpl_array_fill and zpl_array_appendv_at

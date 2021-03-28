@@ -279,8 +279,10 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
 
     if (d) {
         while ((dir = readdir(d))) {
+            if (dir == 0) break;
             if (!zpl_strncmp(dir->d_name, "..", 2)) continue;
             if (dir->d_name[0] == '.' && dir->d_name[1] == 0) continue;
+            if (!(dir->d_type == DT_REG || dir->d_type == DT_DIR)) continue;
 
             zpl_string dirpath = zpl_string_make(alloc, dirname);
             dirpath = zpl_string_appendc(dirpath, "/");
@@ -326,6 +328,12 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             zpl_string dirpath = zpl_string_make(alloc, directory);
             dirpath = zpl_string_appendc(dirpath, "\\");
             dirpath = zpl_string_appendc(dirpath, filename);
+            DWORD attrs = GetFileAttributesW((const wchar_t *)zpl_utf8_to_ucs2_buf((const zpl_u8 *)dirpath));
+
+            if (attrs & FILE_ATTRIBUTE_REPARSE_POINT) {
+                zpl_string_free(dirpath);
+                continue;
+            }
 
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
@@ -402,25 +410,19 @@ zpl_u8 zpl_fs_get_type(char const *path) {
         return ZPL_DIR_TYPE_UNKNOWN;
     }
 
-    if (attrs & FILE_ATTRIBUTE_DIRECTORY) {
+    if (attrs & FILE_ATTRIBUTE_DIRECTORY)
         return ZPL_DIR_TYPE_FOLDER;
-    }
-    else {
+    else
         return ZPL_DIR_TYPE_FILE;
-    }
 
 #else
     struct stat s;
     if( stat(path,&s) == 0 )
     {
-        if( s.st_mode & S_IFDIR )
-        {
+        if(s.st_mode & S_IFDIR)
             return ZPL_DIR_TYPE_FOLDER;
-        }
         else
-        {
             return ZPL_DIR_TYPE_FILE;
-        }
     }
 #endif
 

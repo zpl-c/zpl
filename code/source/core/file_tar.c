@@ -177,6 +177,9 @@ ZPL_TAR_UNPACK_PROC(zpl_tar_default_unpack_file) {
     if (file->type != ZPL_TAR_TYPE_REGULAR)
         return 0; /* we only care about regular files */
 
+    if (!zpl_strncmp(file->path, "..", 2))
+        return 0;
+
     char tmp[ZPL_MAX_PATH] = {0};
     char *base_path = cast(char*)user_data;
     zpl_isize base_len = zpl_strlen(base_path);
