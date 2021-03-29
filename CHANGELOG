@@ -1,3 +1,4 @@
+12.5.0  - add zpl_asprintf
 12.4.0  - zpl_printf improvements
 12.3.2  - allow zpl_path_dirlist to include symlinks, but don't enter them
 12.3.1  - avoid symbolic link cycle in zpl_path_dirlist

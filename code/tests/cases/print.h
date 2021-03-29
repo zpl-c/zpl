@@ -22,6 +22,15 @@ MODULE(print, {
     RUN("can print table data", "* worker 1  hits: 1234     idle: 34 cy.", "* worker %-2u hits: %-8d idle: %d cy.", 1, 1234, 34);
     RUN("can pad text out with arbitrary symbol and width", "==== hello", "%4r hello", '=');
 
+    IT("can allocate formatted string", {
+        char *test;
+        zpl_isize res;
+        res = zpl_asprintf(zpl_heap(), &test, "hello %s", "world");
+        EQUALS(12, res);
+        STREQUALS(test, "hello world");
+        zpl_mfree(test);
+    });
+
     IT("can print hexadecimal floating-point value", {
         SKIP();
     });

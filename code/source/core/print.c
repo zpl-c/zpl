@@ -27,6 +27,15 @@ char *zpl_bprintf_va(char const *fmt, va_list va) {
     return buffer;
 }
 
+zpl_isize zpl_asprintf_va(zpl_allocator allocator, char **buffer, char const *fmt, va_list va) {
+    zpl_local_persist zpl_thread_local char tmp[ZPL_PRINTF_MAXLEN];
+    ZPL_ASSERT_NOT_NULL(buffer);
+    zpl_isize res;
+    res = zpl_snprintf_va(tmp, zpl_size_of(tmp), fmt, va);
+    *buffer = zpl_alloc_str(allocator, tmp);
+    return res;
+}
+
 zpl_isize zpl_printf(char const *fmt, ...) {
     zpl_isize res;
     va_list va;
@@ -61,6 +70,15 @@ char *zpl_bprintf(char const *fmt, ...) {
     str = zpl_bprintf_va(fmt, va);
     va_end(va);
     return str;
+}
+
+zpl_isize zpl_asprintf(zpl_allocator allocator, char **buffer, char const *fmt, ...) {
+    zpl_isize res;
+    va_list va;
+    va_start(va, fmt);
+    res = zpl_asprintf_va(allocator, buffer, fmt, va);
+    va_end(va);
+    return res;
 }
 
 zpl_isize zpl_snprintf(char *str, zpl_isize n, char const *fmt, ...) {

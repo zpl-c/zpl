@@ -30,6 +30,9 @@ ZPL_DEF char *zpl_bprintf(char const *fmt, ...);
 // NOTE: A locally persisting buffer is used internally
 ZPL_DEF char *zpl_bprintf_va(char const *fmt, va_list va);
 
+ZPL_DEF zpl_isize zpl_asprintf(zpl_allocator allocator, char **buffer, char const *fmt, ...);
+ZPL_DEF zpl_isize zpl_asprintf_va(zpl_allocator allocator, char **buffer, char const *fmt, va_list va);
+
 ZPL_DEF zpl_isize zpl_snprintf(char *str, zpl_isize n, char const *fmt, ...);
 ZPL_DEF zpl_isize zpl_snprintf_va(char *str, zpl_isize n, char const *fmt, va_list va);
 
