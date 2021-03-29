@@ -110,6 +110,7 @@ typedef struct {
 zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__format_info *info, char const *str) {
     zpl_isize res = 0, len = 0;
     zpl_isize remaining = max_len;
+    char *begin = text;
 
     if (str == NULL && max_len >= 6) {
         res += zpl_strlcpy(text, "(null)", 6);
@@ -148,9 +149,9 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
 
     if (info) {
         if (info->flags & ZPL_FMT_UPPER)
-            zpl_str_to_upper(text);
+            zpl_str_to_upper(begin);
         else if (info->flags & ZPL_FMT_LOWER)
-            zpl_str_to_lower(text);
+            zpl_str_to_lower(begin);
     }
 
     return res;

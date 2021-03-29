@@ -151,7 +151,6 @@ ZPL_IMPL_INLINE zpl_u8 zpl_char_to_hex_digit(char c) {
     return 0;
 }
 
-
 ZPL_IMPL_INLINE void zpl_str_to_lower(char *str) {
     if (!str) return;
     while (*str) {

@@ -10,6 +10,7 @@
 #include "cases/hashing.h"
 #include "cases/time.h"
 #include "cases/stream.h"
+#include "cases/print.h"
 
 int main() {
     UNIT_CREATE("zpl");
@@ -19,6 +20,7 @@ int main() {
     UNIT_MODULE(hashing);
     UNIT_MODULE(time);
     UNIT_MODULE(stream);
+    UNIT_MODULE(print);
 
     return UNIT_RUN();
 }
