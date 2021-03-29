@@ -163,6 +163,14 @@ zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zpl__forma
     return zpl__print_string(text, max_len, info, str);
 }
 
+zpl_internal zpl_isize zpl__print_repeated_char(char *text, zpl_isize max_len, zpl__format_info *info, char arg) {
+    zpl_isize res = 0;
+    zpl_i32 rem = res = (info) ? (info->width > 0) ? info->width : 1 : 1;
+    while (rem-- > 0) *text++ = arg;
+
+    return res;
+}
+
 zpl_internal zpl_isize zpl__print_i64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_i64 value) {
     char num[130];
     zpl_i64_to_str(value, num, info ? info->base : 10);
@@ -370,6 +378,8 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
             case 'c': len = zpl__print_char(text, remaining, &info, cast(char) va_arg(va, int)); break;
 
             case 's': len = zpl__print_string(text, remaining, &info, va_arg(va, char *)); break;
+
+            case 'r': len = zpl__print_repeated_char(text, remaining, &info, va_arg(va, int)); break;
 
             case 'p':
                 info.base = 16;

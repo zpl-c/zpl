@@ -20,12 +20,9 @@ MODULE(print, {
     RUN("can print hexadecimal numbers", "0xDEADBEEF", "0x%X", 0xDEADBEEF);
     RUN("can print hexadecimal numbers (lowercase)", "0xdeadbeef", "0x%x", 0xdeadbeef);
     RUN("can print table data", "* worker 1  hits: 1234     idle: 34 cy.", "* worker %-2u hits: %-8d idle: %d cy.", 1, 1234, 34);
+    RUN("can pad text out with arbitrary symbol and width", "==== hello", "%4r hello", '=');
 
     IT("can print hexadecimal floating-point value", {
-        SKIP();
-    });
-
-    IT("can pad text out with arbitrary symbol and width", {
         SKIP();
     });
 });
