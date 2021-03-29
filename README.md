@@ -67,7 +67,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **File System** | Path and folder structure manipulation methods. | 🔴 | ✅ |
 | **TAR Archive** | Ability to archive files or analyze/unpack them. | 🔴 | ✅ |
 | **Memory Streamer** | Memory-mapped file I/O operations. | ✅ | ✅ |
-| **Print** | Re-implementation of various printf-family methods. | 🔴 | ✅ |
+| **Print** | Re-implementation of various printf-family methods. | ✅ | ✅ |
 | **Time** | Helper methods for retrieving the current time in many forms under different precisions. | ✅ | ✅ |
 | **Random** | Fast and simple RNG library. | 🔴 | ✅ |
 | **Sorting** | Various sorting and searching algorithms. | 🔴 | ✅ |
