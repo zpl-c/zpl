@@ -22,9 +22,9 @@ zpl_internal zpl_usize zpl__tar_checksum(zpl__tar_header *hr) {
     zpl_usize i;
     zpl_usize res = 256;
     zpl_u8 *p = cast(zpl_u8*)(hr);
-    for (i = 0; i < zpl_offset_of(zpl__tar_header, checksum); i++)
+    for (i = 0; i < cast(zpl_usize)zpl_offset_of(zpl__tar_header, checksum); i++)
         res += p[i];
-    for (i = zpl_offset_of(zpl__tar_header, type); i < zpl_size_of(zpl__tar_header); i++)
+    for (i = cast(zpl_usize)zpl_offset_of(zpl__tar_header, type); i < cast(zpl_usize)zpl_size_of(zpl__tar_header); i++)
         res += p[i];
     return res;
 }

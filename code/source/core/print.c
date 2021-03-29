@@ -183,7 +183,8 @@ zpl_internal zpl_isize zpl__print_char(char *text, zpl_isize max_len, zpl__forma
 
 zpl_internal zpl_isize zpl__print_repeated_char(char *text, zpl_isize max_len, zpl__format_info *info, char arg) {
     zpl_isize res = 0;
-    zpl_i32 rem = res = (info) ? (info->width > 0) ? info->width : 1 : 1;
+    zpl_i32 rem = (info) ? (info->width > 0) ? info->width : 1 : 1;
+    res = rem;
     while (rem-- > 0) *text++ = arg;
 
     return res;
