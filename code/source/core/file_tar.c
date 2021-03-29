@@ -14,10 +14,6 @@ typedef struct {
   char _padding[255];
 } zpl__tar_header;
 
-zpl_internal ZPL_ALWAYS_INLINE zpl_i64 zpl__tar_round_size(zpl_i64 n, zpl_i64 incr) {
-    return n + (incr - n % incr) % incr;
-}
-
 zpl_internal zpl_usize zpl__tar_checksum(zpl__tar_header *hr) {
     zpl_usize i;
     zpl_usize res = 256;
@@ -66,7 +62,7 @@ zpl_isize zpl_tar_pack(zpl_file *archive, char const **paths, zpl_isize paths_le
         // write data
         {
             zpl_i64 remaining_data = file_size;
-            zpl_i64 total_data = zpl__tar_round_size(remaining_data, 512);
+            zpl_i64 total_data = zpl_align_forward_i64(remaining_data, 512);
             zpl_i64 padding = (total_data-file_size);
             char buf[4096] = {0};
             zpl_i64 pos = 0;
@@ -149,7 +145,7 @@ zpl_isize zpl_tar_unpack(zpl_file *archive, zpl_tar_unpack_proc *unpack_proc, vo
         }
 
         /* tar rounds files to 512 byte boundary */
-        zpl_file_seek(archive, pos + zpl__tar_round_size(rec.length, 512));
+        zpl_file_seek(archive, pos + zpl_align_forward_i64(rec.length, 512));
     }
     while(err == ZPL_TAR_ERROR_NONE);
 

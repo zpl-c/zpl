@@ -20,6 +20,12 @@ ZPL_DEF_INLINE zpl_b32 zpl_is_power_of_two(zpl_isize x);
 //! Aligns address to specified alignment.
 ZPL_DEF_INLINE void *zpl_align_forward(void *ptr, zpl_isize alignment);
 
+//! Aligns value to a specified alignment.
+ZPL_DEF_INLINE zpl_i64 zpl_align_forward_i64(zpl_i64 value, zpl_isize alignment);
+
+//! Aligns value to a specified alignment.
+ZPL_DEF_INLINE zpl_u64 zpl_align_forward_u64(zpl_u64 value, zpl_usize alignment);
+
 //! Moves pointer forward by bytes.
 ZPL_DEF_INLINE void *zpl_pointer_add(void *ptr, zpl_isize bytes);
 
@@ -116,6 +122,14 @@ ZPL_IMPL_INLINE void *zpl_align_forward(void *ptr, zpl_isize alignment) {
 
     p = cast(zpl_uintptr) ptr;
     return cast(void *)((p + (alignment - 1)) & ~(alignment - 1));
+}
+
+ZPL_IMPL_INLINE zpl_i64 zpl_align_forward_i64(zpl_i64 value, zpl_isize alignment) {
+    return value + (alignment - value % alignment) % alignment;
+}
+
+ZPL_IMPL_INLINE zpl_u64 zpl_align_forward_u64(zpl_u64 value, zpl_usize alignment) {
+    return value + (alignment - value % alignment) % alignment;
 }
 
 ZPL_IMPL_INLINE void *zpl_pointer_add(void *ptr, zpl_isize bytes) { return cast(void *)(cast(zpl_u8 *) ptr + bytes); }
