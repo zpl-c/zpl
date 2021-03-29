@@ -26,11 +26,9 @@ zpl_internal zpl_usize zpl__tar_checksum(zpl__tar_header *hr) {
 }
 
 zpl_internal zpl_b32 zpl__tar_write_null(zpl_file *archive, zpl_isize cnt) {
-    char nil = 0;
-    for (zpl_isize i = 0; i < cnt; i++) {
-        if (!zpl_file_write(archive, &nil, 1))
-            return 0;
-    }
+    char *out = zpl_bprintf("%*r", cnt, '\0');
+    if (!zpl_file_write(archive, out, cnt))
+        return 0;
     return 1;
 }
 

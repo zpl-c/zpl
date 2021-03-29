@@ -1,3 +1,4 @@
+12.6.1  - improve tar null padding code
 12.6.0  - introduce zpl_align_forward_u64/i64
 12.5.1  - small type casting fixes
 12.5.0  - add zpl_asprintf
