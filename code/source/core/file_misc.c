@@ -282,7 +282,6 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             if (dir == 0) break;
             if (!zpl_strncmp(dir->d_name, "..", 2)) continue;
             if (dir->d_name[0] == '.' && dir->d_name[1] == 0) continue;
-            if (!(dir->d_type == DT_REG || dir->d_type == DT_DIR)) continue;
 
             zpl_string dirpath = zpl_string_make(alloc, dirname);
             dirpath = zpl_string_appendc(dirpath, "/");
@@ -291,7 +290,7 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
 
-            if (recurse && (cd = opendir(dirpath)) != NULL) { zpl__file_direntry(alloc, dirpath, output, recurse); }
+            if (recurse && (cd = opendir(dirpath)) != NULL && dir->d_type == DT_DIR) { zpl__file_direntry(alloc, dirpath, output, recurse); }
             zpl_string_free(dirpath);
         }
     }
@@ -330,15 +329,10 @@ void zpl__file_direntry(zpl_allocator alloc, char const *dirname, zpl_string *ou
             dirpath = zpl_string_appendc(dirpath, filename);
             DWORD attrs = GetFileAttributesW((const wchar_t *)zpl_utf8_to_ucs2_buf((const zpl_u8 *)dirpath));
 
-            if (attrs & FILE_ATTRIBUTE_REPARSE_POINT) {
-                zpl_string_free(dirpath);
-                continue;
-            }
-
             *output = zpl_string_appendc(*output, dirpath);
             *output = zpl_string_appendc(*output, "\n");
 
-            if (recurse && (data.attrib & _A_SUBDIR)) { zpl__file_direntry(alloc, dirpath, output, recurse); }
+            if (recurse && (data.attrib & _A_SUBDIR) && !(attrs & FILE_ATTRIBUTE_REPARSE_POINT)) { zpl__file_direntry(alloc, dirpath, output, recurse); }
 
             zpl_string_free(dirpath);
         } while (_wfindnext(findhandle, &data) != -1);
