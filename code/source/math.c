@@ -1335,7 +1335,7 @@ void zpl_frustum_create(zpl_frustum* out, zpl_mat4* camera, zpl_mat4* proj) {
 
     zpl_mat4_mul(&pv, camera, proj);
 
-    register zpl_plane* fp = 0;
+    zpl_plane* fp = 0;
     zpl_f32 rmag;
 
     fp = &out->x1;
