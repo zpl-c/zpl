@@ -54,6 +54,7 @@ zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, zpl_usize len, 
     for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
         e = opts->entries + i;
         char const *n = (longname ? e->lname : e->name);
+        if(!n) return NULL;
 
         if (zpl_strnlen(name, len) == zpl_strlen(n) && !zpl_strncmp(n, name, len)) { return e; }
     }
@@ -137,7 +138,10 @@ void zpl_opts_print_help(zpl_opts *opts) {
     for (zpl_isize i = 0; i < zpl_array_count(opts->entries); ++i) {
         zpl_opts_entry *e = opts->entries + i;
 
-        zpl_printf("\t-%s, --%s: %s\n", e->name, e->lname, e->desc);
+        if(e->name) {
+            if(e->lname) { zpl_printf("\t-%s, --%s: %s\n", e->name, e->lname, e->desc); }
+            else { zpl_printf("\t-%s: %s\n", e->name, e->desc); }
+        } else { zpl_printf("\t--%s: %s\n", e->lname, e->desc); }
     }
 }
 
@@ -185,7 +189,7 @@ zpl_b32 zpl_opts_compile(zpl_opts *opts, int argc, char **argv) {
 
                 char *b = p + 1, *e = b;
 
-                while (zpl_char_is_alphanumeric(*e)) { ++e; }
+                while (zpl_char_is_alphanumeric(*e) || *e == '-' || *e == '_') { ++e; }
 
                 t = zpl__opts_find(opts, b, (e - b), checkln);
 
