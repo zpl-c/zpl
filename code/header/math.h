@@ -348,9 +348,14 @@ ZPL_DEF void zpl_float44_transpose(zpl_f32 (*vec)[4]);
 ZPL_DEF void zpl_float44_mul(zpl_f32 (*out)[4], zpl_f32 (*mat1)[4], zpl_f32 (*mat2)[4]);
 ZPL_DEF void zpl_float44_mul_vec4(zpl_vec4 *out, zpl_f32 m[4][4], zpl_vec4 in);
 
-ZPL_DEF void zpl_mat4_translate(zpl_mat4 *out, zpl_vec3 v);
-ZPL_DEF void zpl_mat4_rotate(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians);
-ZPL_DEF void zpl_mat4_scale(zpl_mat4 *out, zpl_vec3 v);
+ZPL_DEF void zpl_mat4_axis_angle(zpl_mat4* out, zpl_vec3 v, zpl_f32 angle_radians);
+ZPL_DEF void zpl_mat4_to_translate(zpl_mat4* out, zpl_vec3 v);
+ZPL_DEF void zpl_mat4_to_rotate(zpl_mat4* out, zpl_vec3 v, zpl_f32 angle_radians);
+ZPL_DEF void zpl_mat4_to_scale(zpl_mat4* out, zpl_vec3 v);
+ZPL_DEF void zpl_mat4_to_scalef(zpl_mat4* out, zpl_f32 s);
+ZPL_DEF void zpl_mat4_translate(zpl_mat4* out, zpl_vec3 v);
+ZPL_DEF void zpl_mat4_rotate(zpl_mat4* out, zpl_vec3 v, zpl_f32 angle_radians);
+ZPL_DEF void zpl_mat4_scale(zpl_mat4* out, zpl_vec3 v);
 ZPL_DEF void zpl_mat4_scalef(zpl_mat4 *out, zpl_f32 s);
 ZPL_DEF void zpl_mat4_ortho2d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top);
 ZPL_DEF void zpl_mat4_ortho3d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top, zpl_f32 z_near, zpl_f32 z_far);

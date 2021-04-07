@@ -1,3 +1,4 @@
+12.7.0  - math improvements
 12.6.2  - remove register usage (BeastLe9enD)
 12.6.1  - improve tar null padding code
 12.6.0  - introduce zpl_align_forward_u64/i64
@@ -11,6 +12,7 @@
 12.2.0  - Add zpl_array_fill and zpl_array_appendv_at
 12.1.0  - Add rectangle partitioning
 12.0.1  - Optimize zpl_strlen
+
 12.0.0  - JSON API revamp + improvements
 11.3.0  - JSON zpl_json_str_to_flt + cleanup
 11.2.5  - fix small atomics typo

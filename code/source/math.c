@@ -508,12 +508,12 @@ void zpl_vec2_norm(zpl_vec2 *d, zpl_vec2 v) {
     zpl_vec2_mul(d, v, inv_mag);
 }
 void zpl_vec3_norm(zpl_vec3 *d, zpl_vec3 v) {
-    zpl_f32 mag = zpl_vec3_mag(v);
-    zpl_vec3_div(d, v, mag);
+    zpl_f32 inv_mag = zpl_rsqrt(zpl_vec3_dot(v, v));
+    zpl_vec3_mul(d, v, inv_mag);
 }
 void zpl_vec4_norm(zpl_vec4 *d, zpl_vec4 v) {
-    zpl_f32 mag = zpl_vec4_mag(v);
-    zpl_vec4_div(d, v, mag);
+    zpl_f32 inv_mag = zpl_rsqrt(zpl_vec4_dot(v, v));
+    zpl_vec4_mul(d, v, inv_mag);
 }
 
 void zpl_vec2_norm0(zpl_vec2 *d, zpl_vec2 v) {
@@ -887,13 +887,7 @@ void zpl_mat4_inverse(zpl_mat4 *out, zpl_mat4 *in) {
     o[0][3] *= ood; o[1][3] *= ood; o[2][3] *= ood; o[3][3] *= ood;
 }
 
-void zpl_mat4_translate(zpl_mat4 *out, zpl_vec3 v) {
-    zpl_mat4_identity(out);
-    out->col[3].xyz = v;
-    out->col[3].w = 1;
-}
-
-void zpl_mat4_rotate(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians) {
+void zpl_mat4_axis_angle(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians) {
     zpl_f32 c, s;
     zpl_vec3 axis, t;
     zpl_float4 *rot;
@@ -923,18 +917,50 @@ void zpl_mat4_rotate(zpl_mat4 *out, zpl_vec3 v, zpl_f32 angle_radians) {
     rot[2][3] = 0;
 }
 
-void zpl_mat4_scale(zpl_mat4 *out, zpl_vec3 v) {
+void zpl_mat4_to_translate(zpl_mat4* out, zpl_vec3 v) {
     zpl_mat4_identity(out);
-    out->e[0]  = v.x;
-    out->e[5]  = v.y;
-    out->e[10] = v.z;
+    out->col[3].xyz = v;
 }
 
-void zpl_mat4_scalef(zpl_mat4 *out, zpl_f32 s) {
+void zpl_mat4_to_rotate(zpl_mat4* out, zpl_vec3 v, zpl_f32 angle_radians) {
+    zpl_mat4_axis_angle(out, v, angle_radians);
+}
+
+void zpl_mat4_to_scale(zpl_mat4* out, zpl_vec3 v) {
     zpl_mat4_identity(out);
-    out->e[0]  = s;
-    out->e[5]  = s;
-    out->e[10] = s;
+    out->col[0].x = v.x;
+    out->col[1].y = v.y;
+    out->col[2].z = v.z;
+}
+void zpl_mat4_to_scalef(zpl_mat4* out, zpl_f32 s) {
+    zpl_mat4_identity(out);
+    out->col[0].x = s;
+    out->col[1].y = s;
+    out->col[2].z = s;
+}
+
+void zpl_mat4_translate(zpl_mat4* m, zpl_vec3 v) {
+    zpl_mat4 mm;
+    zpl_mat4_to_translate(&mm, v);
+    zpl_mat4_mul(m, m, &mm);
+}
+
+void zpl_mat4_rotate(zpl_mat4* m, zpl_vec3 v, zpl_f32 angle_radians) {
+    zpl_mat4 mm;
+    zpl_mat4_axis_angle(&mm,v, angle_radians);
+    zpl_mat4_mul(m, m, &mm);
+}
+
+void zpl_mat4_scale(zpl_mat4* m, zpl_vec3 v) {
+    zpl_mat4 mm;
+    zpl_mat4_to_scale(&mm, v);
+    zpl_mat4_mul(m, m, &mm);
+}
+
+void zpl_mat4_scalef(zpl_mat4* m, zpl_f32 s) {
+    zpl_mat4 mm;
+    zpl_mat4_to_scalef(&mm, s);
+    zpl_mat4_mul(m, m, &mm);
 }
 
 void zpl_mat4_ortho2d(zpl_mat4 *out, zpl_f32 left, zpl_f32 right, zpl_f32 bottom, zpl_f32 top) {
