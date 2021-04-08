@@ -54,7 +54,7 @@ zpl_opts_entry *zpl__opts_find(zpl_opts *opts, char const *name, zpl_usize len, 
     for (int i = 0; i < zpl_array_count(opts->entries); ++i) {
         e = opts->entries + i;
         char const *n = (longname ? e->lname : e->name);
-        if(!n) return NULL;
+        if(!n) continue;
 
         if (zpl_strnlen(name, len) == zpl_strlen(n) && !zpl_strncmp(n, name, len)) { return e; }
     }
