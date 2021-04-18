@@ -107,51 +107,6 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_ast_node *obj, zpl_isize i
     return output;
 }
 
-void zpl_json_set_obj(zpl_ast_node *obj, char *name, zpl_allocator backing) {
-    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_OBJECT);
-}
-void zpl_json_set_arr(zpl_ast_node *obj, char *name, zpl_allocator backing) {
-    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_ARRAY);
-}
-void zpl_json_set_str(zpl_ast_node *obj, char *name, char const *value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_STRING);
-    obj->string = value;
-}
-void zpl_json_set_flt(zpl_ast_node *obj, char *name, zpl_f64 value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_REAL);
-    obj->real = value;
-}
-void zpl_json_set_int(zpl_ast_node *obj, char *name, zpl_i64 value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_INTEGER);
-    obj->integer = value;
-}
-
-zpl_ast_node *zpl_json_inset_obj(zpl_ast_node *parent, char *name) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_json_set_obj(o, name, parent->backing);
-    return o;
-}
-zpl_ast_node *zpl_json_inset_arr(zpl_ast_node *parent, char *name) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_json_set_arr(o, name, parent->backing);
-    return o;
-}
-zpl_ast_node *zpl_json_inset_str(zpl_ast_node *parent, char *name, char const *value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_json_set_str(o, name, value);
-    return o;
-}
-zpl_ast_node *zpl_json_inset_flt(zpl_ast_node *parent, char *name, zpl_f64 value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_json_set_flt(o, name, value);
-    return o;
-}
-zpl_ast_node *zpl_json_inset_int(zpl_ast_node *parent, char *name, zpl_i64 value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_json_set_int(o, name, value);
-    return o;
-}
-
 void zpl_json_str_to_flt(zpl_ast_node *obj) {
     ZPL_ASSERT(obj);
 
