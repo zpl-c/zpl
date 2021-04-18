@@ -43,13 +43,6 @@ int main(int argc, char **argv) {
     zpl_f64 time = zpl_time_rel();
     err = zpl_json_parse(&root, (char *)fc.data, zpl_heap());
     zpl_f64 delta = zpl_time_rel() - time;
-
-    if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)
-    {
-        zpl_printf("File not found!\n");
-        return -2;
-    }
-
     zpl_printf("Delta: %fms\nNo. of nodes: %td\nError code: %d\nFile size: %td bytes\n", delta*1000, zpl_array_count(root.nodes), err, fc.size);
 
     zpl_json_free(&root);
