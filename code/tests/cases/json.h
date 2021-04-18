@@ -3,7 +3,7 @@
     #include "unit.h"
 #endif
 
-#define __PARSE(comments) \
+#define __PARSE() \
     zpl_json_object r={0}; \
     zpl_u8 err = zpl_json_parse(&r, (char *const)t, zpl_heap());
 
@@ -13,7 +13,7 @@
 MODULE(json5_parser, {
     IT("parses empty JSON5 object", {
         const char *t = "{}";
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, 0);
         EQUALS(zpl_array_count(r.nodes), 0);
@@ -24,7 +24,7 @@ MODULE(json5_parser, {
 
     IT("parses empty JSON5 array", {
         const char *t = "  [    ]";
-        __PARSE(false); 
+        __PARSE();
 
         EQUALS(err, 0);
         EQUALS(r.type, ZPL_AST_TYPE_ARRAY);
@@ -32,9 +32,18 @@ MODULE(json5_parser, {
         __CLEANUP();
     });
 
+    IT("parses cfg mode document", {
+        zpl_string t = zpl_string_make(zpl_heap(), "\n\nfoo = \"bar\"\nbaz = 123\n\n");
+        __PARSE();
+
+        EQUALS(err, 0);
+
+        __CLEANUP();
+    });
+
     IT("fails to parse broken JSON5 array", {
         const char *t = "[   }";
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
@@ -43,7 +52,7 @@ MODULE(json5_parser, {
 
     IT("fails to parse broken JSON5 object", {
         const char *t = "{ \t]";
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
@@ -52,7 +61,7 @@ MODULE(json5_parser, {
 
     IT("fails to parse invalid data", {
         const char *t = "{{jsdljsdksd{}}{]][{}";
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
 
@@ -61,7 +70,7 @@ MODULE(json5_parser, {
 
     IT("parses commented JSON5 object", {
         zpl_string t = zpl_string_make(zpl_heap(), "{/* TEST CODE */ \"a\": 123 }");
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
@@ -74,7 +83,7 @@ MODULE(json5_parser, {
 
     IT("parses commented JSON5 array", {
         zpl_string t = zpl_string_make(zpl_heap(), "[/* TEST CODE */ 123 ]");
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
@@ -87,7 +96,7 @@ MODULE(json5_parser, {
 
     IT("parses JSON array of multiple values", {
         zpl_string t = zpl_string_make(zpl_heap(), "[ 123, 456, `hello` ]");
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 3);
@@ -123,7 +132,7 @@ MODULE(json5_parser, {
                         }
                     `,
                 }));
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 7);
@@ -140,7 +149,7 @@ MODULE(json5_parser, {
                         ]
                     ]
                 ]);
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
@@ -155,7 +164,7 @@ MODULE(json5_parser, {
                         ]
                     ]
                 ]}));
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
@@ -174,7 +183,7 @@ MODULE(json5_parser, {
                     NaN,
                     -NaN
                 ]));
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
@@ -187,7 +196,7 @@ MODULE(json5_parser, {
                 {
                     "foo": {}
                 }));
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
 
@@ -202,7 +211,7 @@ MODULE(json5_parser, {
                     "bar": 42.23e4,
                     "baz": .032
                 }));
-        __PARSE(true);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(r.nodes[0].base, 1);
@@ -224,7 +233,7 @@ MODULE(json5_parser, {
 
     IT("parses minified JSON array", {
         zpl_string t = zpl_string_make(zpl_heap(), "[{\"Name\":\"ATLAS0.png\",\"Width\":256,\"Height\":128,\"Images\":[{\"Name\":\"4\",\"X\":0,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"0\",\"X\":41,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"6\",\"X\":82,\"Y\":0,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"2\",\"X\":0,\"Y\":28,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"7\",\"X\":36,\"Y\":28,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"3\",\"X\":118,\"Y\":0,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"5\",\"X\":157,\"Y\":0,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34},{\"Name\":\"1\",\"X\":118,\"Y\":32,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34}],\"IsRotated\":true,\"IsTrimmed\":false,\"IsPremultiplied\":false}]");
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 1);
@@ -237,7 +246,7 @@ MODULE(json5_parser, {
 
     IT("parses geojson.io data", {
         zpl_string t = zpl_string_make(zpl_heap(), "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[19.09149169921875,48.55786390423251],[19.172515869140625,48.55786390423251],[19.172515869140625,48.60101970261553],[19.09149169921875,48.60101970261553],[19.09149169921875,48.55786390423251]]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[19.149169921875,48.56024979174329],[16.63330078125,49.160154652338015],[18.28125,49.82380908513249],[18.720703125,49.210420445650286],[19.62158203125,48.929717630629554],[19.13818359375,48.58205840283824]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[17.962646484375,48.17341248658084]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[18.4130859375,47.68388118858139],[19.951171875,47.00647991252098],[20.819091796874996,47.83159592699297],[19.237060546875,48.19904897935913],[18.380126953125,48.06706753191901],[17.633056640625,47.67648444221321],[17.764892578124996,47.21583707523794],[18.4130859375,47.68388118858139]]]}}]}");
-        __PARSE(false);
+        __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
