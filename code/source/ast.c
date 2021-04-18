@@ -124,3 +124,102 @@ zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char const *name, zpl_i64 
     zpl_ast_set_int(o, name, value);
     return o;
 }
+
+char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
+    ZPL_ASSERT(node && base);
+    char *p = base;
+    char *b = base;
+    char *e = base;
+
+    node->type = ZPL_AST_TYPE_INTEGER;
+
+    b = p;
+    e = b;
+
+    zpl_isize ib = 0;
+    char buf[48] = { 0 };
+
+    if (*e == '+')
+        ++e;
+    else if (*e == '-') {
+        buf[ib++] = *e++;
+    }
+
+    if (*e == '.') {
+        node->type = ZPL_AST_TYPE_REAL;
+        node->props = ZPL_AST_PROPS_IS_PARSED_REAL;
+        buf[ib++] = '0';
+        node->lead_digit = false;
+
+        do {
+            buf[ib++] = *e;
+        } while (zpl_char_is_digit(*++e));
+    } else {
+        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node->props = ZPL_AST_PROPS_IS_HEX; }
+        while (zpl_char_is_hex_digit(*e) || zpl_char_to_lower(*e) == 'x') { buf[ib++] = *e++; }
+
+        if (*e == '.') {
+            node->type = ZPL_AST_TYPE_REAL;
+            node->lead_digit = true;
+            zpl_u32 step = 0;
+
+            do {
+                buf[ib++] = *e;
+                ++step;
+            } while (zpl_char_is_digit(*++e));
+
+            if (step < 2) { buf[ib++] = '0'; }
+        }
+    }
+
+    zpl_i32 exp = 0;
+    zpl_f32 eb = 10;
+    char expbuf[6] = { 0 };
+    zpl_isize expi = 0;
+
+    if (zpl_char_to_lower(*e) == 'e') {
+        ++e;
+        if (*e == '+' || *e == '-' || zpl_char_is_digit(*e)) {
+            if (*e == '-') { eb = 0.1f; }
+            if (!zpl_char_is_digit(*e)) { ++e; }
+            while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
+        }
+
+        exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
+    }
+
+    if (node->type == ZPL_AST_TYPE_INTEGER) {
+        node->integer = zpl_str_to_i64(buf, 0, 0);
+
+        while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
+    } else {
+        node->real = zpl_str_to_f64(buf, 0);
+
+        char *q = buf, *qp = q, *qp2 = q;
+        while (*qp != '.') ++qp;
+        *qp = '\0';
+        qp2 = qp + 1;
+        char *qpOff = qp2;
+        while (*qpOff++ == '0') node->base2_offset++;
+
+        node->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
+        node->base2 = (zpl_i32)zpl_str_to_i64(qp2, 0, 0);
+
+        if (exp) {
+            node->exp = exp;
+            node->exp_neg = !(eb == 10.f);
+            node->props = ZPL_AST_PROPS_IS_EXP;
+        }
+
+        while (exp-- > 0) { node->real *= eb; }
+    }
+    return e;
+}
+
+void zpl_ast_str_to_flt(zpl_ast_node *node) {
+    ZPL_ASSERT(node);
+
+    if (node->type == ZPL_AST_TYPE_REAL) return; /* this is already converted/parsed */
+    ZPL_ASSERT(node->type == ZPL_AST_TYPE_STRING || node->type == ZPL_AST_TYPE_MULTISTRING);
+    zpl_ast_parse_number(node, (char *)node->string);
+}

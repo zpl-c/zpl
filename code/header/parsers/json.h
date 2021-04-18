@@ -20,6 +20,4 @@ ZPL_DEF void zpl_json_free(zpl_json_object *obj);
 ZPL_DEF void zpl_json_write(zpl_file *file, zpl_json_object *obj, zpl_isize indent);
 ZPL_DEF zpl_string zpl_json_write_string(zpl_allocator a, zpl_json_object *obj, zpl_isize indent);
 
-ZPL_DEF void zpl_json_str_to_flt(zpl_json_object *obj);
-
 ZPL_END_C_DECLS
