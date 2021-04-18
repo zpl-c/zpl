@@ -10,6 +10,12 @@
 #include <zpl.h>
 #endif
 
+#ifdef ZPL_JSON_DEBUG
+#define ZPL_JSON_ASSERT ZPL_ASSERT(0)
+#else
+#define ZPL_JSON_ASSERT
+#endif
+
 #include <math.h> /* needed for INFINITY and NAN */
 
 ZPL_BEGIN_C_DECLS
@@ -22,18 +28,17 @@ char *zpl__json_trim(char *base, zpl_b32 skip_newline);
 void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last);
 #define zpl___ind(x) for (int i = 0; i < x; ++i) zpl_fprintf(f, " ");
 
-void zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a, zpl_u8 *err_code) {
+zpl_u8 zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a) {
+    zpl_u8 err_code = ZPL_JSON_ERROR_NONE;
 
-    if (!root || !source)
-    {
+    if (!root || !source) {
         ZPL_JSON_ASSERT;
-        if (err_code) *err_code = ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL;
-        return;
+        err_code = ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL;
+        return err_code;
     }
 
     char *dest = (char *)source;
 
-    if (err_code) *err_code = ZPL_JSON_ERROR_NONE;
     zpl_ast_node root_ = { 0 };
 
     dest = zpl__json_trim(dest, false);
@@ -46,12 +51,12 @@ void zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a, zpl_u8 *e
     char *endp = NULL;
 
     if (!starts_with_bracket)
-        endp = zpl__json_parse_object(&root_, dest, a, err_code);
+        endp = zpl__json_parse_object(&root_, dest, a, &err_code);
     else
-        endp = zpl__json_parse_array(&root_, (dest+1), a, err_code);
+        endp = zpl__json_parse_array(&root_, (dest+1), a, &err_code);
 
     if (!root_.cfg_mode && endp == NULL) {
-        if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+        err_code = ZPL_JSON_ERROR_INVALID_VALUE;
     }
 
     // Replace root node with its child if the JSON document is an array.
@@ -61,6 +66,7 @@ void zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a, zpl_u8 *e
     }
 
     *root = root_;
+    return err_code;
 }
 
 void zpl_json_free(zpl_ast_node *obj) {

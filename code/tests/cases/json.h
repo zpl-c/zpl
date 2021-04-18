@@ -5,13 +5,12 @@
 
 #define __PARSE(comments) \
     zpl_json_object r={0}; \
-    zpl_json_parse(&r, (char *const)t, zpl_heap(), &err);
+    zpl_u8 err = zpl_json_parse(&r, (char *const)t, zpl_heap());
 
 #define __CLEANUP() \
     zpl_json_free(&r);
 
 MODULE(json5_parser, {
-    zpl_u8 err = 0;
     IT("parses empty JSON5 object", {
         const char *t = "{}";
         __PARSE(false);
