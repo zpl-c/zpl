@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 
     zpl_u8 err;
     zpl_u64 time = zpl_time_rel_ms();
-    zpl_json_parse(&root, (char *)fc.data, zpl_arena_allocator(&arena), &err);
+    err = zpl_json_parse(&root, (char *)fc.data, zpl_arena_allocator(&arena));
     zpl_u64 delta = zpl_time_rel_ms() - time;
 
     if (err == ZPL_JSON_ERROR_OBJECT_OR_SOURCE_WAS_NULL)

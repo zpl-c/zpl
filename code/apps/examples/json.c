@@ -10,7 +10,7 @@ int main(void) {
     zpl_json_object root = {0};
 
     zpl_u8 err;
-    zpl_json_parse(&root, (char *)fc.data, zpl_heap_allocator(), &err);
+    err = zpl_json_parse(&root, (char *)fc.data, zpl_heap_allocator());
 
     zpl_json_object *replace = NULL;
     replace = zpl_ast_find(&root, "replace_me", false);
