@@ -335,7 +335,7 @@ License:
 #endif
 
 #if defined(ZPL_MODULE_JSON)
-    #include "header/json.h"
+    #include "header/parsers/json.h"
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
@@ -519,7 +519,7 @@ License:
 #endif
 
 #if defined(ZPL_MODULE_JSON)
-    #include "source/json.c"
+    #include "source/parsers/json.c"
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
@@ -609,6 +609,7 @@ License:
 // header/core/random.h
 // header/core/misc.h
 // header/core/sort.h
+// header/parsers/json.h
 // header/ast.h
 // header/timer.h
 // header/hashing.h
@@ -618,7 +619,6 @@ License:
 // header/opts.h
 // header/process.h
 // header/math.h
-// header/json.h
 // header/threading/atomic.h
 // header/threading/fence.h
 // header/threading/sem.h
@@ -644,6 +644,7 @@ License:
 // source/core/random.c
 // source/core/misc.c
 // source/core/sort.c
+// source/parsers/json.c
 // source/ast.c
 // source/timer.c
 // source/hashing.c
@@ -653,7 +654,6 @@ License:
 // source/opts.c
 // source/process.c
 // source/math.c
-// source/json.c
 // source/threading/atomic.c
 // source/threading/fence.c
 // source/threading/sem.c
