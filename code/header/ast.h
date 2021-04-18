@@ -97,4 +97,31 @@ ZPL_DEF zpl_ast_node *zpl_ast_find(zpl_ast_node *node, char *name, zpl_b32 deep_
 ZPL_DEF zpl_ast_node *zpl_ast_alloc_at(zpl_ast_node *parent, zpl_isize index);
 ZPL_DEF zpl_ast_node *zpl_ast_alloc(zpl_ast_node *parent);
 
+
+ZPL_DEF void zpl_ast_set_obj(zpl_ast_node *obj, char *name, zpl_allocator backing);
+ZPL_DEF void zpl_ast_set_arr(zpl_ast_node *obj, char *name, zpl_allocator backing);
+ZPL_DEF void zpl_ast_set_str(zpl_ast_node *obj, char *name, char const *value);
+ZPL_DEF void zpl_ast_set_flt(zpl_ast_node *obj, char *name, zpl_f64 value);
+ZPL_DEF void zpl_ast_set_int(zpl_ast_node *obj, char *name, zpl_i64 value);
+
+ZPL_DEF zpl_ast_node *zpl_ast_inset_obj(zpl_ast_node *parent, char *name);
+ZPL_DEF zpl_ast_node *zpl_ast_inset_arr(zpl_ast_node *parent, char *name);
+ZPL_DEF zpl_ast_node *zpl_ast_inset_str(zpl_ast_node *parent, char *name, char const *value);
+ZPL_DEF zpl_ast_node *zpl_ast_inset_flt(zpl_ast_node *parent, char *name, zpl_f64 value);
+ZPL_DEF zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char *name, zpl_i64 value);
+
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define zpl_ast_inset(parent, name, value) _Generic((value), \
+                                                              char*: zpl_ast_inset_str, \
+                                                              char const*: zpl_ast_inset_str, \
+                                                              zpl_f64: zpl_ast_inset_flt, \
+                                                              default: zpl_ast_inset_int)(parent, name, value)
+#define zpl_ast_set(obj, name, value) _Generic((value), \
+                                                              char*: zpl_ast_set_str, \
+                                                              char const*: zpl_ast_set_str, \
+                                                              zpl_f64: zpl_ast_set_flt, \
+                                                              default: zpl_ast_set_int)(obj, name, value)
+#endif
+
+
 ZPL_END_C_DECLS

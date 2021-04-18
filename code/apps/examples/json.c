@@ -18,16 +18,16 @@ int main(void) {
     if (replace != NULL)
     {
         zpl_printf("Field was found! Current value: %ld\nReplacing with an array!\n", (long)replace->integer);
-        zpl_json_set_arr(replace, "i_am_replaced", root.backing);
+        zpl_ast_set_arr(replace, "i_am_replaced", root.backing);
 
         for (size_t i = 0; i < 5; i++)
-            zpl_json_inset_int(replace, NULL, (zpl_i64)i+1);
+            zpl_ast_inset_int(replace, NULL, (zpl_i64)i+1);
     }
 
     zpl_json_object *first = zpl_ast_alloc_at(&root, 0);
 
     if (first) {
-        zpl_json_set_str(first, "first", "I am first!");
+        zpl_ast_set_str(first, "first", "I am first!");
         first->assign_style = ZPL_AST_ASSIGN_STYLE_EQUALS;
     }
 

@@ -78,3 +78,49 @@ zpl_ast_node *zpl_ast_alloc(zpl_ast_node *parent) {
 
     return zpl_ast_alloc_at(parent, zpl_array_count(parent->nodes));
 }
+
+
+void zpl_ast_set_obj(zpl_ast_node *obj, char *name, zpl_allocator backing) {
+    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_OBJECT);
+}
+void zpl_ast_set_arr(zpl_ast_node *obj, char *name, zpl_allocator backing) {
+    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_ARRAY);
+}
+void zpl_ast_set_str(zpl_ast_node *obj, char *name, char const *value) {
+    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_STRING);
+    obj->string = value;
+}
+void zpl_ast_set_flt(zpl_ast_node *obj, char *name, zpl_f64 value) {
+    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_REAL);
+    obj->real = value;
+}
+void zpl_ast_set_int(zpl_ast_node *obj, char *name, zpl_i64 value) {
+    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_INTEGER);
+    obj->integer = value;
+}
+
+zpl_ast_node *zpl_ast_inset_obj(zpl_ast_node *parent, char *name) {
+    zpl_ast_node *o = zpl_ast_alloc(parent);
+    zpl_ast_set_obj(o, name, parent->backing);
+    return o;
+}
+zpl_ast_node *zpl_ast_inset_arr(zpl_ast_node *parent, char *name) {
+    zpl_ast_node *o = zpl_ast_alloc(parent);
+    zpl_ast_set_arr(o, name, parent->backing);
+    return o;
+}
+zpl_ast_node *zpl_ast_inset_str(zpl_ast_node *parent, char *name, char const *value) {
+    zpl_ast_node *o = zpl_ast_alloc(parent);
+    zpl_ast_set_str(o, name, value);
+    return o;
+}
+zpl_ast_node *zpl_ast_inset_flt(zpl_ast_node *parent, char *name, zpl_f64 value) {
+    zpl_ast_node *o = zpl_ast_alloc(parent);
+    zpl_ast_set_flt(o, name, value);
+    return o;
+}
+zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char *name, zpl_i64 value) {
+    zpl_ast_node *o = zpl_ast_alloc(parent);
+    zpl_ast_set_int(o, name, value);
+    return o;
+}
