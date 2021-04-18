@@ -258,7 +258,7 @@ char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
     while (*p) {
         p = zpl__json_trim(p, false);
 
-        if (p && *p == ']') {
+        if (*p == ']') {
             return p;
         }
 
@@ -266,7 +266,7 @@ char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
         elem.backing = a;
         p = zpl__json_parse_value(&elem, p, a, err_code);
 
-        if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
+        if (*err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
 
         zpl_array_append(obj->nodes, elem);
 
@@ -277,14 +277,15 @@ char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             continue;
         } else {
             if (*p != ']') {
-                { *err_code = ZPL_JSON_ERROR_INVALID_VALUE; }
+                *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+                return NULL;
             }
             return p;
         }
     }
 
-    { *err_code = ZPL_JSON_ERROR_INVALID_VALUE; }
-    return p;
+    *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+    return NULL;
 }
 
 char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code) {
@@ -368,15 +369,10 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
         zpl_ast_node node = { 0 };
         p = zpl__json_trim(p, false);
         if (*p == '}' && obj->type == ZPL_AST_TYPE_OBJECT) return p;
-        if (*p == ']' && obj->type == ZPL_AST_TYPE_ARRAY) return p;
-
-        if (*p == ']' && obj->type == ZPL_AST_TYPE_OBJECT)  {
+        else if (*p == ']' && obj->type == ZPL_AST_TYPE_ARRAY) return p;
+        else if (!!zpl_strchr("}]", *p)) {
             *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-            return p;
-        }
-        if (*p == '}' && obj->type == ZPL_AST_TYPE_ARRAY)   {
-            *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-            return p;
+            return NULL;
         }
 
         if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
