@@ -26,7 +26,7 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
 char *zpl__json_parse_number(zpl_ast_node *obj, char *base);
 char *zpl__json_trim(char *base, zpl_b32 skip_newline);
 void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last);
-#define zpl___ind(x) for (int i = 0; i < x; ++i) zpl_fprintf(f, " ");
+#define zpl___ind(x) if (x > 0) zpl_fprintf(f, "%*r", x, ' ');
 
 zpl_u8 zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a) {
     zpl_u8 err_code = ZPL_JSON_ERROR_NONE;
