@@ -122,5 +122,9 @@ ZPL_DEF zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char const *name, 
                                                               default: zpl_ast_set_int)(obj, name, value)
 #endif
 
+/* parser helpers */
+
+ZPL_DEF char *zpl_ast_parse_number(zpl_ast_node *node, char* base);
+ZPL_DEF void zpl_ast_str_to_flt(zpl_ast_node *node);
 
 ZPL_END_C_DECLS

@@ -23,7 +23,6 @@ ZPL_BEGIN_C_DECLS
 char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
-char *zpl__json_parse_number(zpl_ast_node *obj, char *base);
 char *zpl__json_trim(char *base, zpl_b32 skip_newline);
 void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last);
 #define zpl___ind(x) if (x > 0) zpl_fprintf(f, "%*r", x, ' ');
@@ -111,14 +110,6 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_ast_node *obj, zpl_isize i
     zpl_string output = zpl_string_make_length(a, (char *)buf, fsize+1);
     zpl_file_close(&tmp);
     return output;
-}
-
-void zpl_json_str_to_flt(zpl_ast_node *obj) {
-    ZPL_ASSERT(obj);
-
-    if (obj->type == ZPL_AST_TYPE_REAL) return; /* this is already converted/parsed */
-    ZPL_ASSERT(obj->type == ZPL_AST_TYPE_STRING || obj->type == ZPL_AST_TYPE_MULTISTRING);
-    zpl__json_parse_number(obj, (char *)obj->string);
 }
 
 /* private */
@@ -308,97 +299,6 @@ char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
     return p;
 }
 
-char *zpl__json_parse_number(zpl_ast_node *obj, char* base) {
-    ZPL_ASSERT(obj && base);
-    char *p = base;
-    char *b = base;
-    char *e = base;
-
-    obj->type = ZPL_AST_TYPE_INTEGER;
-
-    b = p;
-    e = b;
-
-    zpl_isize ib = 0;
-    char buf[48] = { 0 };
-
-    if (*e == '+')
-        ++e;
-    else if (*e == '-') {
-        buf[ib++] = *e++;
-    }
-
-    if (*e == '.') {
-        obj->type = ZPL_AST_TYPE_REAL;
-        obj->props = ZPL_AST_PROPS_IS_PARSED_REAL;
-        buf[ib++] = '0';
-        obj->lead_digit = false;
-
-        do {
-            buf[ib++] = *e;
-        } while (zpl_char_is_digit(*++e));
-    } else {
-        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { obj->props = ZPL_AST_PROPS_IS_HEX; }
-        while (zpl_char_is_hex_digit(*e) || zpl_char_to_lower(*e) == 'x') { buf[ib++] = *e++; }
-
-        if (*e == '.') {
-            obj->type = ZPL_AST_TYPE_REAL;
-            obj->lead_digit = true;
-            zpl_u32 step = 0;
-
-            do {
-                buf[ib++] = *e;
-                ++step;
-            } while (zpl_char_is_digit(*++e));
-
-            if (step < 2) { buf[ib++] = '0'; }
-        }
-    }
-
-    zpl_i32 exp = 0;
-    zpl_f32 eb = 10;
-    char expbuf[6] = { 0 };
-    zpl_isize expi = 0;
-
-    if (zpl_char_to_lower(*e) == 'e') {
-        ++e;
-        if (*e == '+' || *e == '-' || zpl_char_is_digit(*e)) {
-            if (*e == '-') { eb = 0.1f; }
-            if (!zpl_char_is_digit(*e)) { ++e; }
-            while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
-        }
-
-        exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
-    }
-
-    if (obj->type == ZPL_AST_TYPE_INTEGER) {
-        obj->integer = zpl_str_to_i64(buf, 0, 0);
-
-        while (exp-- > 0) { obj->integer *= (zpl_i64)eb; }
-    } else {
-        obj->real = zpl_str_to_f64(buf, 0);
-
-        char *q = buf, *qp = q, *qp2 = q;
-        while (*qp != '.') ++qp;
-        *qp = '\0';
-        qp2 = qp + 1;
-        char *qpOff = qp2;
-        while (*qpOff++ == '0') obj->base2_offset++;
-
-        obj->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
-        obj->base2 = (zpl_i32)zpl_str_to_i64(qp2, 0, 0);
-
-        if (exp) {
-            obj->exp = exp;
-            obj->exp_neg = !(eb == 10.f);
-            obj->props = ZPL_AST_PROPS_IS_EXP;
-        }
-
-        while (exp-- > 0) { obj->real *= eb; }
-    }
-    return e;
-}
-
 char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code) {
     ZPL_ASSERT(obj && base);
     char *p = base;
@@ -459,7 +359,7 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             return NULL;
         }
     } else if (zpl_char_is_digit(*p) || *p == '+' || *p == '-' || *p == '.') {
-        p = zpl__json_parse_number(obj, p);
+        p = zpl_ast_parse_number(obj, p);
     } else if (*p == '[') {
         p = zpl__json_trim(p + 1, false);
         obj->type = ZPL_AST_TYPE_ARRAY;
