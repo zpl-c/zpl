@@ -17,16 +17,16 @@ typedef enum zpl_ast_type {
 } zpl_ast_type;
 
 typedef enum zpl_ast_props {
-    ZPL_AST_PROPS_NONE         = 0,
-    ZPL_AST_PROPS_NAN          = 1,
-    ZPL_AST_PROPS_NAN_NEG      = 2,
-    ZPL_AST_PROPS_INFINITY     = 3,
-    ZPL_AST_PROPS_INFINITY_NEG = 4,
-    ZPL_AST_PROPS_IS_EXP       = 5,
-    ZPL_AST_PROPS_IS_HEX       = 6,
+    ZPL_AST_PROPS_NONE,
+    ZPL_AST_PROPS_NAN,
+    ZPL_AST_PROPS_NAN_NEG,
+    ZPL_AST_PROPS_INFINITY,
+    ZPL_AST_PROPS_INFINITY_NEG,
+    ZPL_AST_PROPS_IS_EXP,
+    ZPL_AST_PROPS_IS_HEX,
 
     // Used internally so that people can fill in real numbers they plan to write.
-    ZPL_AST_PROPS_IS_PARSED_REAL = 7,
+    ZPL_AST_PROPS_IS_PARSED_REAL,
 } zpl_ast_props;
 
 typedef enum zpl_ast_const {
