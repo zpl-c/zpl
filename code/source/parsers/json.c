@@ -336,7 +336,6 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             obj->props = ZPL_AST_PROPS_NAN_NEG;
             p += 4;
         } else {
-            ZPL_JSON_ASSERT;
             *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
             return NULL;
         }

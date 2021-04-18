@@ -1,4 +1,5 @@
 #define ZPL_IMPL
+#define ZPL_JSON_DEBUG
 #include "zpl.h"
 
 #define UNIT_MAX_MODULES 16
