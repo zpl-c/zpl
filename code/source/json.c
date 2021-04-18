@@ -127,7 +127,7 @@ static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
 
 #define jx(x) !zpl_char_is_hex_digit(str[x])
-ZPL_ALWAYS_INLINE zpl_b32 zpl__json_validate_name(char *str, char *err) {
+ZPL_ALWAYS_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err) {
     while (*str) {
         if ((str[0] == '\\' && !zpl_char_is_control(str[1])) &&
             (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
@@ -508,7 +508,7 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
 
         if (*p == '[') {
             starts_with_bracket = true;
-            if (node.name) *node.name = '\0';
+            if (node.name) *cast(char*)node.name = '\0';
             p = zpl__json_parse_value(&node, p, a, err_code);
             goto l_parsed;
         }
