@@ -42,26 +42,15 @@ zpl_u8 zpl_json_parse(zpl_ast_node *root, char *source, zpl_allocator a) {
 
     dest = zpl__json_trim(dest, false);
 
-    zpl_b32 starts_with_bracket = false;
-
-    if (*dest != '{' && *dest != '[') { root_.cfg_mode = true; }
-    if (*dest == '[') { starts_with_bracket = true; }
+    if (!zpl_strchr("{[", *dest)) { root_.cfg_mode = true; }
+    if (*dest == '[') {  root_.type = ZPL_AST_TYPE_ARRAY; }
 
     char *endp = NULL;
 
-    if (!starts_with_bracket)
-        endp = zpl__json_parse_object(&root_, dest, a, &err_code);
-    else
-        endp = zpl__json_parse_array(&root_, (dest+1), a, &err_code);
+    endp = zpl__json_parse_object(&root_, dest, a, &err_code);
 
     if (!root_.cfg_mode && endp == NULL) {
         err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-    }
-
-    // Replace root node with its child if the JSON document is an array.
-    if (starts_with_bracket && root_.type != ZPL_AST_TYPE_ARRAY) {
-        zpl_ast_node *replace = &root_;
-        *replace = root_.nodes[0];
     }
 
     *root = root_;
@@ -83,8 +72,7 @@ void zpl_json_write(zpl_file *f, zpl_ast_node *o, zpl_isize indent) {
         indent -= 4;
     }
 
-    if (o->nodes)
-    {
+    if (o->nodes) {
         zpl_isize cnt = zpl_array_count(o->nodes);
 
         for (int i = 0; i < cnt; ++i) {
@@ -324,31 +312,31 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
     } else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*(p + 1)))) {
         obj->type = ZPL_AST_TYPE_CONSTANT;
 
-        if (!zpl_strncmp(p, "true", 4)) {
+        if (zpl_str_has_prefix(p, "true")) {
             obj->constant = ZPL_AST_CONST_TRUE;
             p += 4;
-        } else if (!zpl_strncmp(p, "false", 5)) {
+        } else if (zpl_str_has_prefix(p, "false")) {
             obj->constant = ZPL_AST_CONST_FALSE;
             p += 5;
-        } else if (!zpl_strncmp(p, "null", 4)) {
+        } else if (zpl_str_has_prefix(p, "null")) {
             obj->constant = ZPL_AST_CONST_NULL;
             p += 4;
-        } else if (!zpl_strncmp(p, "Infinity", 8)) {
+        } else if (zpl_str_has_prefix(p, "Infinity")) {
             obj->type = ZPL_AST_TYPE_REAL;
             obj->real = INFINITY;
             obj->props = ZPL_AST_PROPS_INFINITY;
             p += 8;
-        } else if (!zpl_strncmp(p, "-Infinity", 9)) {
+        } else if (zpl_str_has_prefix(p, "-Infinity")) {
             obj->type = ZPL_AST_TYPE_REAL;
             obj->real = -INFINITY;
             obj->props = ZPL_AST_PROPS_INFINITY_NEG;
             p += 9;
-        } else if (!zpl_strncmp(p, "NaN", 3)) {
+        } else if (zpl_str_has_prefix(p, "NaN")) {
             obj->type = ZPL_AST_TYPE_REAL;
             obj->real = NAN;
             obj->props = ZPL_AST_PROPS_NAN;
             p += 3;
-        } else if (!zpl_strncmp(p, "-NaN", 4)) {
+        } else if (zpl_str_has_prefix(p, "-NaN")) {
             obj->type = ZPL_AST_TYPE_REAL;
             obj->real = -NAN;
             obj->props = ZPL_AST_PROPS_NAN_NEG;
@@ -360,21 +348,8 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
         }
     } else if (zpl_char_is_digit(*p) || *p == '+' || *p == '-' || *p == '.') {
         p = zpl_ast_parse_number(obj, p);
-    } else if (*p == '[') {
-        p = zpl__json_trim(p + 1, false);
-        obj->type = ZPL_AST_TYPE_ARRAY;
-        if (*p == ']') return (p+1);
-        p = zpl__json_parse_array(obj, p, a, err_code);
-        if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
-
-        ++p;
-    } else if (*p == '{') {
-        p = zpl__json_trim(p + 1, false);
-        obj->type = ZPL_AST_TYPE_OBJECT;
-        if (*p == '}') return (p+1);
+    } else if (!!zpl_strchr("[{", *p)) {
         p = zpl__json_parse_object(obj, p, a, err_code);
-        if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
-
         ++p;
     }
 
@@ -391,28 +366,29 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
     obj->backing = a;
 
     p = zpl__json_trim(p, false);
-    zpl_b32 starts_with_brace = false;
-    zpl_b32 starts_with_bracket = false;
-    /**/ if (*p == '{') { ++p; starts_with_brace = true; obj->type = ZPL_AST_TYPE_OBJECT; }
-    else if (*p == '[') { ++p; starts_with_bracket = true; obj->type = ZPL_AST_TYPE_ARRAY; }
+    /**/ if (*p == '{') { ++p; obj->type = ZPL_AST_TYPE_OBJECT; }
+    else if (*p == '[') {
+        ++p;
+        obj->type = ZPL_AST_TYPE_ARRAY;
+        return zpl__json_parse_array(obj, p, a, err_code);
+    }
 
     while (*p) {
         zpl_ast_node node = { 0 };
         p = zpl__json_trim(p, false);
-        if (*p == '}' && starts_with_brace) return p;
-        if (*p == ']' && starts_with_bracket) return p;
-        if (*p == '\0') return p;
+        if (*p == '}' && obj->type == ZPL_AST_TYPE_OBJECT) return p;
+        if (*p == ']' && obj->type == ZPL_AST_TYPE_ARRAY) return p;
 
-        if (*p == ']' && starts_with_brace)     { if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE; return p; }
-        if (*p == '}' && starts_with_bracket)   { if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE; return p; }
-
-        if (*p == '[') {
-            starts_with_bracket = true;
-            if (node.name) *cast(char*)node.name = '\0';
-            p = zpl__json_parse_value(&node, p, a, err_code);
-            goto l_parsed;
+        if (*p == ']' && obj->type == ZPL_AST_TYPE_OBJECT)  {
+            if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+            return p;
         }
-        else if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
+        if (*p == '}' && obj->type == ZPL_AST_TYPE_ARRAY)   {
+            if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+            return p;
+        }
+
+        if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
             if (*p == '"' || *p == '\'') {
                 if (*p == '"') {
                     node.name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
@@ -469,8 +445,6 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
 
         p = zpl__json_trim(p + 1, false);
         p = zpl__json_parse_value(&node, p, a, err_code);
-        l_parsed:
-
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
 
         zpl_array_append(obj->nodes, node);
@@ -478,7 +452,7 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
         char *end_p = p;
         p = zpl__json_trim(p, true);
 
-        if (zpl__json_is_delim_char(*p) || *p == '\0') {
+        if (zpl__json_is_delim_char(*p)) {
             zpl_ast_node *n = zpl_array_end(obj->nodes);
             n->delim_style = ZPL_AST_DELIM_STYLE_COMMA;
 
@@ -488,27 +462,7 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
                 n->delim_style = ZPL_AST_DELIM_STYLE_LINE;
                 n->delim_line_width = cast(zpl_u8)(p-end_p);
             }
-            else if (*p == '\0') {
-                return p;
-            }
             ++p;
-        }
-
-        p = zpl__json_trim(p, false);
-        if (*p == '\0' || *p == '}' || *p == ']') {
-            if (*p == '\0') {
-                return p;
-            }
-            if (starts_with_brace && *p != '}') {
-                if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-                return NULL;
-            }
-
-            if (starts_with_bracket && *p != ']') {
-                if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
-                return NULL;
-            }
-            return p;
         }
     }
     if (err_code) *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
