@@ -113,6 +113,7 @@ License:
     #define ZPL_MODULE_THREADING
     #define ZPL_MODULE_JOBS
     #define ZPL_MODULE_COROUTINES
+    #define ZPL_MODULE_PARSER
 
     /* zpl nano distribution */
     #if defined(ZPL_NANO) || defined(ZPL_PICO)
@@ -128,6 +129,7 @@ License:
         #undef ZPL_MODULE_THREADING
         #undef ZPL_MODULE_JOBS
         #undef ZPL_MODULE_COROUTINES
+        #undef ZPL_MODULE_PARSER
     #endif
 
     #if defined(ZPL_PICO)
@@ -161,6 +163,10 @@ License:
     #endif
     #if defined(ZPL_ENABLE_JSON) && !defined(ZPL_MODULE_JSON)
         #define ZPL_MODULE_JSON
+
+        #ifndef ZPL_MODULE_PARSER
+        #define ZPL_MODULE_PARSER
+        #endif
     #endif
     #if defined(ZPL_ENABLE_THREADING) && !defined(ZPL_MODULE_THREADING)
         #define ZPL_MODULE_THREADING
@@ -181,6 +187,9 @@ License:
         #endif
 
         #define ZPL_MODULE_COROUTINES
+    #endif
+    #if defined(ZPL_ENABLE_PARSER) && !defined(ZPL_MODULE_PARSER)
+        #define ZPL_MODULE_PARSER
     #endif
 
     /* module disabling overrides */
@@ -231,6 +240,13 @@ License:
     #endif
     #if defined(ZPL_DISABLE_COROUTINES) && defined(ZPL_MODULE_COROUTINES)
         #undef ZPL_MODULE_COROUTINES
+    #endif
+    #if defined(ZPL_DISABLE_PARSER) && defined(ZPL_MODULE_PARSER)
+        #undef ZPL_MODULE_PARSER
+
+        #ifdef ZPL_MODULE_JSON
+        #undef ZPL_MODULE_JSON
+        #endif
     #endif
 #endif
 
@@ -312,6 +328,10 @@ License:
 
 #if defined(ZPL_MODULE_MATH)
     #include "header/math.h"
+#endif
+
+#if defined(ZPL_MODULE_PARSER)
+    #include "header/ast.h"
 #endif
 
 #if defined(ZPL_MODULE_JSON)
@@ -520,6 +540,9 @@ License:
     #endif
 #endif
 
+#if defined(ZPL_MODULE_PARSER)
+    #include "source/ast.c"
+#endif
 
 #if defined(ZPL_COMPILER_MSVC)
     #pragma warning(pop)
@@ -586,6 +609,7 @@ License:
 // header/core/random.h
 // header/core/misc.h
 // header/core/sort.h
+// header/ast.h
 // header/timer.h
 // header/hashing.h
 // header/regex.h
@@ -620,6 +644,7 @@ License:
 // source/core/random.c
 // source/core/misc.c
 // source/core/sort.c
+// source/ast.c
 // source/timer.c
 // source/hashing.c
 // source/regex.c

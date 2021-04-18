@@ -18,7 +18,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, 0);
         EQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.type, ZPL_JSON_TYPE_OBJECT);
+        EQUALS(r.type, ZPL_AST_TYPE_OBJECT);
 
         __CLEANUP();
     });
@@ -28,7 +28,7 @@ MODULE(json5_parser, {
         __PARSE(false);
 
         EQUALS(err, 0);
-        EQUALS(r.type, ZPL_JSON_TYPE_ARRAY);
+        EQUALS(r.type, ZPL_AST_TYPE_ARRAY);
 
         __CLEANUP();
     });
@@ -66,7 +66,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.nodes[0].type, ZPL_JSON_TYPE_INTEGER);
+        EQUALS(r.nodes[0].type, ZPL_AST_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
         __CLEANUP();
@@ -79,7 +79,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.nodes[0].type, ZPL_JSON_TYPE_INTEGER);
+        EQUALS(r.nodes[0].type, ZPL_AST_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
         __CLEANUP();
@@ -230,7 +230,7 @@ MODULE(json5_parser, {
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 1);
         EQUALS(zpl_array_count(r.nodes[0].nodes), 7);
-        EQUALS(r.nodes[0].nodes[3].type, ZPL_JSON_TYPE_ARRAY);
+        EQUALS(r.nodes[0].nodes[3].type, ZPL_AST_TYPE_ARRAY);
         EQUALS(zpl_array_count(r.nodes[0].nodes[3].nodes), 8);
 
         __CLEANUP();
