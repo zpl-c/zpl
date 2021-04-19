@@ -21,10 +21,20 @@ MODULE(csv_parser, {
     });
 
     IT("fails to parse mismatched csv rows", {
-        zpl_string t = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,,2");
+        zpl_string t = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,2");
         __PARSE(true);
 
         EQUALS(err, ZPL_CSV_ERROR_MISMATCHED_ROWS);
+
+        __CLEANUP();
+        zpl_string_free(t);
+    });
+
+    IT("parses csv data with empty field in a row", {
+        zpl_string t = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,,2");
+        __PARSE(true);
+
+        EQUALS(err, 0);
 
         __CLEANUP();
         zpl_string_free(t);
@@ -152,6 +162,68 @@ MODULE(csv_parser, {
             {
                 zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "2");
                 n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+            baz = zpl_ast_inset_arr(&doc, "baz");
+            baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
+                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+        }
+        zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
+        STREQUALS(original, a);
+        zpl_string_free(a);
+        zpl_string_free(original);
+    });
+
+    IT("outputs valid csv data with one empty field", {
+        zpl_string original = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,,3\n");
+
+        zpl_json_object doc, *foo, *bar, *baz;
+        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        {
+            foo = zpl_ast_inset_arr(&doc, "foo");
+            foo->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(foo, NULL, "1");
+                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+            bar = zpl_ast_inset_arr(&doc, "bar");
+            bar->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "");
+                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+            baz = zpl_ast_inset_arr(&doc, "baz");
+            baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
+                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+        }
+        zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
+        STREQUALS(original, a);
+        zpl_string_free(a);
+        zpl_string_free(original);
+    });
+
+    IT("outputs valid csv data with one empty quoted field", {
+        zpl_string original = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,\"\",3\n");
+
+        zpl_json_object doc, *foo, *bar, *baz;
+        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        {
+            foo = zpl_ast_inset_arr(&doc, "foo");
+            foo->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(foo, NULL, "1");
+                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+            bar = zpl_ast_inset_arr(&doc, "bar");
+            bar->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "");
+                n->name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
             }
             baz = zpl_ast_inset_arr(&doc, "baz");
             baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;

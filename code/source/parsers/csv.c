@@ -28,10 +28,12 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         if (*p == 0) break;
         zpl_ast_node row_item = {0};
         row_item.type = ZPL_AST_TYPE_STRING;
+        row_item.name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
 
         if (*p == '"') {
             p = b = e = p+1;
             row_item.string = b;
+            row_item.name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
             do {
                 e = zpl_str_skip(e, '"');
                 if (*(e+1) == '"') {
@@ -48,10 +50,13 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             p = zpl_str_trim(e+1, true);
             d = *p;
         }
+        else if (*p == delim) {
+            d = *p;
+            row_item.string = "";
+        }
         else {
             b = e = p;
             row_item.string = b;
-            row_item.name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
             do {
                 e++;
             } while (*e != delim && *e != '\n' && *e);

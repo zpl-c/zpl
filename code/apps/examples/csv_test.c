@@ -7,7 +7,7 @@
 
 int main(void) {
     zpl_file_contents fc;
-    fc = zpl_file_read_contents(zpl_heap(), true, "misc/data/cities.csv");
+    fc = zpl_file_read_contents(zpl_heap(), true, "misc/data/airtravel.csv");
 
     zpl_csv_object root = {0};
 
