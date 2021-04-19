@@ -11,7 +11,7 @@
 
 <br />
 <div align="center">
-  C99 cross-platform header-only library that offers a powerful toolkit to accelerate your development progress.
+  C99 cross-platform header-only library oriented towards improving the coding experience.
 </div>
 
 <div align="center">
@@ -150,8 +150,8 @@ to fit our needs better. Although many parts of the library still stay faithful 
 
 **Can I contribute to the project?**
 
-Yes, indeed. This project is dual-licensed according to LICENSE. You are free to fork it, contribute to it, or even sell it as you see fit.
+Yes, indeed. This project is dual-licensed according to [LICENSE](LICENSE). You are free to fork it, contribute to it, or even sell it as you see fit.
 
 **Can I submit suggestions?**
 
-Indeed, We'd also gladly discuss those with you on Discord, if possible.
+Indeed, we'd also gladly discuss those with you on Discord, if possible.
