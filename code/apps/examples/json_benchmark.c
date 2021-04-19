@@ -3,7 +3,7 @@
 //
 #define ZPL_IMPLEMENTATION
 #define ZPL_NANO
-#define ZPL_ENABLE_JSON
+#define ZPL_ENABLE_PARSER
 #define ZPL_ENABLE_OPTS
 #include <zpl.h>
 

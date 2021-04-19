@@ -2,6 +2,7 @@
 
 zpl_u8 zpl_ast_make_branch(zpl_ast_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
     ZPL_ASSERT(type == ZPL_AST_TYPE_OBJECT || type == ZPL_AST_TYPE_ARRAY);
+    if (node->nodes) zpl_ast_destroy_branch(node);
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
@@ -125,16 +126,13 @@ zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char const *name, zpl_i64 
     return o;
 }
 
+/* parser helpers */
+
 char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
-    ZPL_ASSERT(node && base);
-    char *p = base;
-    char *b = base;
-    char *e = base;
-
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(base);
+    char *p = base, *e = p;
     node->type = ZPL_AST_TYPE_INTEGER;
-
-    b = p;
-    e = b;
 
     zpl_isize ib = 0;
     char buf[48] = { 0 };
@@ -148,9 +146,8 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
     if (*e == '.') {
         node->type = ZPL_AST_TYPE_REAL;
         node->props = ZPL_AST_PROPS_IS_PARSED_REAL;
-        buf[ib++] = '0';
         node->lead_digit = false;
-
+        buf[ib++] = '0';
         do {
             buf[ib++] = *e;
         } while (zpl_char_is_digit(*++e));
@@ -190,20 +187,19 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
 
     if (node->type == ZPL_AST_TYPE_INTEGER) {
         node->integer = zpl_str_to_i64(buf, 0, 0);
-
         while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
     } else {
         node->real = zpl_str_to_f64(buf, 0);
 
-        char *q = buf, *qp = q, *qp2 = q;
-        while (*qp != '.') ++qp;
-        *qp = '\0';
-        qp2 = qp + 1;
-        char *qpOff = qp2;
-        while (*qpOff++ == '0') node->base2_offset++;
+        char *q = buf, *base_str = q, *base_str2 = q;
+        base_str = zpl_str_skip(base_str, '.');
+        *base_str = '\0';
+        base_str2 = base_str + 1;
+        char *base_str_off = base_str2;
+        while (*base_str_off++ == '0') node->base2_offset++;
 
         node->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
-        node->base2 = (zpl_i32)zpl_str_to_i64(qp2, 0, 0);
+        node->base2 = (zpl_i32)zpl_str_to_i64(base_str2, 0, 0);
 
         if (exp) {
             node->exp = exp;
