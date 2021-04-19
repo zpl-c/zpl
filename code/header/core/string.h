@@ -37,10 +37,10 @@ ZPL_DEF_INLINE zpl_b32 zpl_char_is_control(char c);
 ZPL_DEF_INLINE void zpl_str_to_lower(char *str);
 ZPL_DEF_INLINE void zpl_str_to_upper(char *str);
 
-ZPL_DEF_INLINE char *zpl_str_trim(char *str, zpl_b32 catch_newline);
-ZPL_DEF_INLINE char *zpl_str_skip(char *str, char c);
-ZPL_DEF_INLINE char *zpl_str_skip_literal(char *str, char c);
-ZPL_DEF_INLINE char *zpl_str_control_skip(char *str, char c);
+ZPL_DEF_INLINE char const *zpl_str_trim(char const *str, zpl_b32 catch_newline);
+ZPL_DEF_INLINE char const *zpl_str_skip(char const *str, char c);
+ZPL_DEF_INLINE char const *zpl_str_skip_literal(char const *str, char c);
+ZPL_DEF_INLINE char const *zpl_str_control_skip(char const *str, char c);
 
 ZPL_DEF_INLINE zpl_isize   zpl_strlen(const char *str);
 ZPL_DEF_INLINE zpl_isize   zpl_strnlen(const char *str, zpl_isize max_len);
@@ -326,7 +326,7 @@ ZPL_IMPL_INLINE zpl_b32 zpl__is_assign_char(char c) { return !!zpl_strchr(":=|",
 ZPL_IMPL_INLINE zpl_b32 zpl__is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
 
 
-ZPL_IMPL_INLINE char *zpl_str_control_skip(char *str, char c) {
+ZPL_IMPL_INLINE char const *zpl_str_control_skip(char const *str, char c) {
     while ((*str && *str != c) || (*(str - 1) == '\\' && *str == c && zpl_char_is_control(c))) { ++str; }
 
     return str;
@@ -364,18 +364,18 @@ ZPL_IMPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
     return result;
 }
 
-ZPL_IMPL_INLINE char *zpl_str_trim(char *str, zpl_b32 catch_newline)
+ZPL_IMPL_INLINE char const *zpl_str_trim(char const *str, zpl_b32 catch_newline)
 {
     while (*str && zpl_char_is_space(*str) && (!catch_newline || (catch_newline && *str != '\n'))) { ++str; }
     return str;
 }
 
-ZPL_IMPL_INLINE char *zpl_str_skip(char *str, char c) {
+ZPL_IMPL_INLINE char const *zpl_str_skip(char const *str, char c) {
     while (*str && *str != c) { ++str; }
     return str;
 }
 
-ZPL_IMPL_INLINE char *zpl_str_skip_literal(char *str, char c) {
+ZPL_IMPL_INLINE char const *zpl_str_skip_literal(char const *str, char c) {
     while (*str && *str != c && *(str-1) != '\\') { ++str; }
     return str;
 }

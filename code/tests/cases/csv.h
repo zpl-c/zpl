@@ -80,14 +80,13 @@ MODULE(csv_parser, {
         zpl_string_free(t);
     });
 
-    IT("parses csv file with quoted strings and escaped quotes", {
-        SKIP();
-        zpl_string t = zpl_string_make(zpl_heap(), "\"\"foo\"\"");
+    IT("parses csv file with quoted strings that contain escaped quotes", {
+        zpl_string t = zpl_string_make(zpl_heap(), "\" \"\"foo\"\" \"");
         __PARSE(false);
 
         EQUALS(err, 0);
 
-        STREQUALS(r.nodes[0].nodes[0].string, "\"foo\"")
+        STREQUALS(r.nodes[0].nodes[0].string, " \"foo\" ")
 
         __CLEANUP();
         zpl_string_free(t);
@@ -230,6 +229,24 @@ MODULE(csv_parser, {
             {
                 zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
                 n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            }
+        }
+        zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
+        STREQUALS(original, a);
+        zpl_string_free(a);
+        zpl_string_free(original);
+    });
+
+    IT("outputs valid csv data with escaped double quotes", {
+        zpl_string original = zpl_string_make(zpl_heap(), "\"x \"\"test\"\" x\"\n");
+
+        zpl_json_object doc, *node;
+        zpl_ast_set_arr(&doc, NULL, zpl_heap());
+        {
+            node = zpl_ast_inset_arr(&doc, NULL);
+            {
+                zpl_ast_node *n = zpl_ast_inset_str(node, NULL, "x \"test\" x");
+                n->name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
             }
         }
         zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);

@@ -129,7 +129,7 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
         obj->type = (c == '`') ? ZPL_AST_TYPE_MULTISTRING : ZPL_AST_TYPE_STRING;
         b = e = p + 1;
         obj->string = b;
-        e = zpl_str_skip_literal(e, c);
+        e = cast(char *)zpl_str_skip_literal(e, c);
         *e = '\0', p = e + 1;
     } else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*(p + 1)))) {
         if (zpl_str_has_prefix(p, "true")) {
@@ -250,7 +250,7 @@ char *zpl__json_parse_name(zpl_ast_node *node, char *base, zpl_u8 *err_code) {
             }
             char c = *p;
             b = ++p;
-            e = zpl_str_control_skip(b, c);
+            e = cast(char *)zpl_str_control_skip(b, c);
             node->name = b;
 
             /* we can safely null-terminate here, since "e" points to the quote pair end. */
