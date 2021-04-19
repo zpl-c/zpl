@@ -37,6 +37,7 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, 0);
+        EQUALS(r.type, ZPL_AST_TYPE_OBJECT);
 
         __CLEANUP();
     });
