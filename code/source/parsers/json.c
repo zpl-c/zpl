@@ -344,7 +344,7 @@ void zpl_json_write(zpl_file *f, zpl_ast_node *o, zpl_isize indent) {
     zpl___ind(indent);
 
     if (indent > 0) {
-        zpl_fprintf(f, "%c\n", o->type == ZPL_AST_TYPE_OBJECT ? '}' : ']');
+        zpl_fprintf(f, "%c", o->type == ZPL_AST_TYPE_OBJECT ? '}' : ']');
     } else {
         if (!o->cfg_mode) zpl_fprintf(f, "%c\n", o->type == ZPL_AST_TYPE_OBJECT ? '}' : ']');
     }

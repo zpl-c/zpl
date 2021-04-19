@@ -40,6 +40,7 @@ MODULE(json5_parser, {
         EQUALS(r.type, ZPL_AST_TYPE_OBJECT);
 
         __CLEANUP();
+        zpl_string_free(t);
     });
 
     IT("fails to parse broken JSON5 array", {

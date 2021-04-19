@@ -13,10 +13,6 @@
 
 ZPL_BEGIN_C_DECLS
 
-zpl_u8 zpl_csv_parse(zpl_csv_object *root, char *text, zpl_allocator allocator, zpl_b32 has_header) {
-    return zpl_csv_parse_delimiter(root, text, allocator, has_header, ',');
-}
-
 zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator allocator, zpl_b32 has_header, char delim) {
     zpl_csv_error err = ZPL_CSV_ERROR_NONE;
     ZPL_ASSERT_NOT_NULL(root);
@@ -58,11 +54,13 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             row_item.name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
             do {
                 e++;
-            } while (*e != delim && *e != '\n');
-            p = zpl_str_trim(e, true);
-            while (zpl_char_is_space(*(e-1))) { e--; }
-            d = *p;
-            *e = 0;
+            } while (*e != delim && *e != '\n' && *e);
+            if (*e) {
+                p = zpl_str_trim(e, true);
+                while (zpl_char_is_space(*(e-1))) { e--; }
+                d = *p;
+                *e = 0;
+            }
         }
 
         if (colc >= zpl_array_count(root->nodes)) {
@@ -76,7 +74,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             p++;
         }
         else if (d == '\n' || d == 0) {
-            if (!total_colc) total_colc = colc;
+            if (total_colc < colc) total_colc = colc;
             else if (total_colc != colc) {
                 ZPL_CSV_ASSERT("mismatched rows");
                 err = ZPL_CSV_ERROR_MISMATCHED_ROWS;
@@ -107,14 +105,6 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
 }
 void zpl_csv_free(zpl_csv_object *obj) {
     zpl_ast_destroy_branch(obj);
-}
-
-void zpl_csv_write(zpl_file *file, zpl_csv_object *obj) {
-    return zpl_csv_write_delimiter(file, obj, ',');
-}
-
-zpl_string zpl_csv_write_string(zpl_allocator a, zpl_csv_object *obj) {
-    return zpl_csv_write_string_delimiter(a, obj, ',');
 }
 
 void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) {
