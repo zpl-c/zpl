@@ -23,6 +23,7 @@ ZPL_BEGIN_C_DECLS
 char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
 char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
+char *zpl__json_parse_name(zpl_ast_node *obj, char *base, zpl_u8 *err_code);
 char *zpl__json_trim(char *base, zpl_b32 catch_newline);
 void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last);
 #define zpl___ind(x) if (x > 0) zpl_fprintf(f, "%*r", x, ' ');
@@ -67,6 +68,7 @@ static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_
 #define jx(x) !zpl_char_is_hex_digit(str[x])
 ZPL_ALWAYS_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err) {
     while (*str) {
+        /* todo: refactor name validation. */
         if ((str[0] == '\\' && !zpl_char_is_control(str[1])) &&
             (str[0] == '\\' && jx(1) && jx(2) && jx(3) && jx(4))) {
             if (err) *err = *str;
@@ -130,12 +132,7 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
         obj->type = (c == '`') ? ZPL_AST_TYPE_MULTISTRING : ZPL_AST_TYPE_STRING;
         b = e = p + 1;
         obj->string = b;
-
-        do {
-            ++e;
-            e = zpl_str_skip(e, c);
-        } while (*(e-1) == '\\');
-
+        e = zpl_str_skip_literal(e, c);
         *e = '\0', p = e + 1;
     } else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*(p + 1)))) {
         obj->type = ZPL_AST_TYPE_CONSTANT;
@@ -174,6 +171,7 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             return NULL;
         }
     } else if (zpl_char_is_digit(*p) || *p == '+' || *p == '-' || *p == '.') {
+        /* defer operation to our helper method. */
         p = zpl_ast_parse_number(obj, p);
     } else if (!!zpl_strchr("[{", *p)) {
         p = zpl__json_parse_object(obj, p, a, err_code);
@@ -185,14 +183,15 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
 
 char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code) {
     ZPL_ASSERT(obj && base);
-    char *p = base, *b = p, *e = p;
+    char *p = base;
 
     zpl_array_init(obj->nodes, a);
     obj->backing = a;
+    obj->type = ZPL_AST_TYPE_OBJECT;
 
     p = zpl__json_trim(p, false);
-    /**/ if (*p == '{') { ++p; obj->type = ZPL_AST_TYPE_OBJECT; }
-    else if (*p == '[') {
+    /**/ if (*p == '{') { ++p; }
+    else if (*p == '[') { /* special case for when we call this func on an array. */
         ++p;
         obj->type = ZPL_AST_TYPE_ARRAY;
         return zpl__json_parse_array(obj, p, a, err_code);
@@ -204,64 +203,13 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
         if (*p == '}' && obj->type == ZPL_AST_TYPE_OBJECT) return p;
         else if (*p == ']' && obj->type == ZPL_AST_TYPE_ARRAY) return p;
         else if (!!zpl_strchr("}]", *p)) {
+            ZPL_JSON_ASSERT;
             *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
             return NULL;
         }
 
-        if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
-            if (*p == '"' || *p == '\'') {
-                if (*p == '"') {
-                    node.name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
-                } else if (*p == '\'') {
-                    node.name_style = ZPL_AST_NAME_STYLE_SINGLE_QUOTE;
-                }
-
-                char c = *p;
-                b = ++p;
-                e = zpl_str_control_skip(b, c);
-                node.name = b;
-                *e = '\0';
-                ++e;
-            }
-            else {
-                b = e = p;
-
-                do {
-                    ++e;
-                } while (*e && (zpl_char_is_alphanumeric(*e) || *e == '_') && !zpl_char_is_space(*e) && !zpl__json_is_assign_char(*e));
-
-                node.name = b;
-                node.name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
-            }
-
-            char *assign_p = e;
-            p = zpl__json_trim(e, false);
-            node.assign_line_width = cast(zpl_u8)(p-assign_p);
-
-            if (*p && !zpl__json_is_assign_char(*p)) {
-                ZPL_JSON_ASSERT;
-                *err_code = ZPL_JSON_ERROR_INVALID_NAME;
-                return NULL;
-            }
-            else
-            {
-                if (*p == '=')
-                    node.assign_style = ZPL_AST_ASSIGN_STYLE_EQUALS;
-                else if (*p == '|')
-                    node.assign_style = ZPL_AST_ASSIGN_STYLE_LINE;
-                else node.assign_style = ZPL_AST_ASSIGN_STYLE_COLON;
-            }
-
-            if (node.name_style == ZPL_AST_NAME_STYLE_NO_QUOTES && *e)
-                *e = '\0';
-        }
-
-        if (node.name && !zpl__json_validate_name(node.name, NULL)) {
-            ZPL_JSON_ASSERT;
-            *err_code = ZPL_JSON_ERROR_INVALID_NAME;
-            return NULL;
-        }
-
+        /* First, we parse the key, then we proceed to the value itself. */
+        p = zpl__json_parse_name(&node, p, err_code);
         p = zpl__json_trim(p + 1, false);
         p = zpl__json_parse_value(&node, p, a, err_code);
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
@@ -271,6 +219,7 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
         char *end_p = p;
         p = zpl__json_trim(p, true);
 
+        /* this code analyses the keyvalue pair delimiter used in the packet. */
         if (zpl__json_is_delim_char(*p)) {
             zpl_ast_node *n = zpl_array_end(obj->nodes);
             n->delim_style = ZPL_AST_DELIM_STYLE_COMMA;
@@ -283,9 +232,65 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
             }
             ++p;
         }
-
         p = zpl__json_trim(p, false);
     } while (*p);
+    return p;
+}
+
+char *zpl__json_parse_name(zpl_ast_node *node, char *base, zpl_u8 *err_code) {
+    char *p = base, *b = p, *e = p;
+    if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
+        if (*p == '"' || *p == '\'') {
+            if (*p == '"') {
+                node->name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
+            } else if (*p == '\'') {
+                node->name_style = ZPL_AST_NAME_STYLE_SINGLE_QUOTE;
+            }
+            char c = *p;
+            b = ++p;
+            e = zpl_str_control_skip(b, c);
+            node->name = b;
+
+            /* we can safely null-terminate here, since "e" points to the quote pair end. */
+            *e++ = '\0';
+        }
+        else {
+            b = e = p;
+            zpl_str_advance_while(e, *e && (zpl_char_is_alphanumeric(*e) || *e == '_') && !zpl_char_is_space(*e) && !zpl__json_is_assign_char(*e));
+            node->name = b;
+            node->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            /* we defer null-termination as it can potentially wipe our assign char as well. */
+        }
+
+        char *assign_p = e;
+        p = zpl__json_trim(e, false);
+        node->assign_line_width = cast(zpl_u8)(p-assign_p);
+
+        if (*p && !zpl__json_is_assign_char(*p)) {
+            ZPL_JSON_ASSERT;
+            *err_code = ZPL_JSON_ERROR_INVALID_NAME;
+            return NULL;
+        }
+        else
+        {
+            if (*p == '=')
+                node->assign_style = ZPL_AST_ASSIGN_STYLE_EQUALS;
+            else if (*p == '|')
+                node->assign_style = ZPL_AST_ASSIGN_STYLE_LINE;
+            else node->assign_style = ZPL_AST_ASSIGN_STYLE_COLON;
+        }
+
+        /* since we already know the assign style, we can cut it here for unquoted names */
+        if (node->name_style == ZPL_AST_NAME_STYLE_NO_QUOTES && *e)
+            *e = '\0';
+    }
+
+    if (node->name && !zpl__json_validate_name(node->name, NULL)) {
+        ZPL_JSON_ASSERT;
+        *err_code = ZPL_JSON_ERROR_INVALID_NAME;
+        return NULL;
+    }
+
     return p;
 }
 

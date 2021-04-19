@@ -39,6 +39,7 @@ ZPL_DEF_INLINE void zpl_str_to_upper(char *str);
 
 ZPL_DEF_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline);
 ZPL_DEF_INLINE char *zpl_str_skip(char *str, char c);
+ZPL_DEF_INLINE char *zpl_str_skip_literal(char *str, char c);
 ZPL_DEF_INLINE char *zpl_str_control_skip(char *str, char c);
 
 ZPL_DEF_INLINE zpl_isize   zpl_strlen(const char *str);
@@ -56,6 +57,10 @@ ZPL_DEF_INLINE char   *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len)
 ZPL_DEF_INLINE char  **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace);
 
 #define zpl_str_expand(str) str, zpl_strlen(str)
+#define zpl_str_advance_while(str, cond) \
+    do { \
+        ++str; \
+    } while ((cond));
 
 ZPL_DEF_INLINE zpl_b32 zpl_str_has_prefix(const char *str, const char *prefix);
 ZPL_DEF_INLINE zpl_b32 zpl_str_has_suffix(const char *str, const char *suffix);
@@ -367,6 +372,11 @@ ZPL_IMPL_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline)
 
 ZPL_IMPL_INLINE char *zpl_str_skip(char *str, char c) {
     while (*str && *str != c) { ++str; }
+    return str;
+}
+
+ZPL_IMPL_INLINE char *zpl_str_skip_literal(char *str, char c) {
+    while (*str && *str != c && *(str-1) != '\\') { ++str; }
     return str;
 }
 
