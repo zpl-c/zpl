@@ -31,7 +31,7 @@ ZPL_IMPL_INLINE zpl_u8 zpl_csv_parse(zpl_csv_object *root, char *text, zpl_alloc
 }
 
 ZPL_IMPL_INLINE void zpl_csv_write(zpl_file *file, zpl_csv_object *obj) {
-    return zpl_csv_write_delimiter(file, obj, ',');
+    zpl_csv_write_delimiter(file, obj, ',');
 }
 
 ZPL_IMPL_INLINE zpl_string zpl_csv_write_string(zpl_allocator a, zpl_csv_object *obj) {
