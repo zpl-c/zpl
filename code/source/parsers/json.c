@@ -16,8 +16,6 @@
 #define ZPL_JSON_ASSERT
 #endif
 
-#include <math.h> /* needed for INFINITY and NAN */
-
 ZPL_BEGIN_C_DECLS
 
 char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_u8 *err_code);
@@ -152,22 +150,22 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             p += 4;
         } else if (zpl_str_has_prefix(p, "Infinity")) {
             obj->type = ZPL_AST_TYPE_REAL;
-            obj->real = INFINITY;
+            obj->real = ZPL_INFINITY;
             obj->props = ZPL_AST_PROPS_INFINITY;
             p += 8;
         } else if (zpl_str_has_prefix(p, "-Infinity")) {
             obj->type = ZPL_AST_TYPE_REAL;
-            obj->real = -INFINITY;
+            obj->real = -ZPL_INFINITY;
             obj->props = ZPL_AST_PROPS_INFINITY_NEG;
             p += 9;
         } else if (zpl_str_has_prefix(p, "NaN")) {
             obj->type = ZPL_AST_TYPE_REAL;
-            obj->real = NAN;
+            obj->real = ZPL_NAN;
             obj->props = ZPL_AST_PROPS_NAN;
             p += 3;
         } else if (zpl_str_has_prefix(p, "-NaN")) {
             obj->type = ZPL_AST_TYPE_REAL;
-            obj->real = -NAN;
+            obj->real = -ZPL_NAN;
             obj->props = ZPL_AST_PROPS_NAN_NEG;
             p += 4;
         } else {
