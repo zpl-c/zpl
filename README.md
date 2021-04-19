@@ -71,7 +71,6 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **Time** | Helper methods for retrieving the current time in many forms under different precisions. | ✅ | ✅ |
 | **Random** | Fast and simple RNG library. | 🔴 | ✅ |
 | **Sorting** | Various sorting and searching algorithms. | 🔴 | ✅ |
-| **Miscellaneous** | Other valuable methods that are part of the core distribution. | ✅ | ✅ |
 | **Threading** | Threading, and blocking models, thread merge operation based on stb_sync, as well as CPU affinity management. | 🔴 | ✅ |
 | **Regex** | Regular expressions library. | 🔴 | ✅ |
 | **DLL** | Cross-platform methods for loading dynamic libraries. | 🔴 | ✅ |
@@ -83,6 +82,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **Jobs System** | Asynchronous task-based scheduling system. | 🔴 | ✅ |
 | **Co-routines** | LUA-inspired module implementing co-routines feature for C11. | 🔴 | ✅ |
 | **Math** | Gamedev friendly library for math. | 🔴 | ✅ |
+| **Miscellaneous** | Other valuable methods that are part of the core distribution. | ✅ | ✅ |
 
 ## Distributions
 
