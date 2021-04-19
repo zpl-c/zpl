@@ -40,6 +40,50 @@ MODULE(csv_parser, {
         zpl_string_free(t);
     });
 
+    IT("parses single-column csv file", {
+        zpl_string t = zpl_string_make(zpl_heap(), "foo\n1\n2");
+        __PARSE(true);
+
+        EQUALS(err, 0);
+
+        __CLEANUP();
+        zpl_string_free(t);
+    });
+
+    IT("parses single-row csv file", {
+        zpl_string t = zpl_string_make(zpl_heap(), "foo,1,2");
+        __PARSE(false);
+
+        EQUALS(err, 0);
+
+        __CLEANUP();
+        zpl_string_free(t);
+    });
+
+    IT("parses single-value csv file", {
+        zpl_string t = zpl_string_make(zpl_heap(), "foo");
+        __PARSE(false);
+
+        EQUALS(err, 0);
+
+        __CLEANUP();
+        zpl_string_free(t);
+    });
+
+    IT("parses csv file with quoted strings and escaped quotes", {
+        zpl_string t = zpl_string_make(zpl_heap(), "\"\"foo\"\"");
+        __PARSE(false);
+
+        EQUALS(err, 0);
+
+        SKIP();
+        STREQUALS(r.nodes[0].nodes[0].string, "\"foo\"")
+
+        __CLEANUP();
+        zpl_string_free(t);
+    });
+
+
     IT("parses csv file with quoted strings", {
         zpl_string t = zpl_string_make(zpl_heap(), "\"foo\",\"bar\",\"baz\"\n1,2,3\n4,5,6\n");
         __PARSE(true);
