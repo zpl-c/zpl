@@ -11,9 +11,9 @@
 #endif
 
 #ifdef ZPL_JSON_DEBUG
-#define ZPL_JSON_ASSERT ZPL_ASSERT(0)
+#define ZPL_JSON_ASSERT(msg) ZPL_PANIC(msg)
 #else
-#define ZPL_JSON_ASSERT
+#define ZPL_JSON_ASSERT(msg)
 #endif
 
 ZPL_BEGIN_C_DECLS
@@ -110,14 +110,15 @@ char *zpl__json_parse_array(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             continue;
         } else {
             if (*p != ']') {
-                *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+                ZPL_JSON_ASSERT("end of array unfulfilled");
+                *err_code = ZPL_JSON_ERROR_ARRAY_LEFT_OPEN;
                 return NULL;
             }
             return p;
         }
     }
 
-    *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+    *err_code = ZPL_JSON_ERROR_INTERNAL;
     return NULL;
 }
 
@@ -169,7 +170,8 @@ char *zpl__json_parse_value(zpl_ast_node *obj, char *base, zpl_allocator a, zpl_
             obj->props = ZPL_AST_PROPS_NAN_NEG;
             p += 4;
         } else {
-            *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+            ZPL_JSON_ASSERT("unknown keyword");
+            *err_code = ZPL_JSON_ERROR_UNKNOWN_KEYWORD;
             return NULL;
         }
     } else if (zpl_char_is_digit(*p) || *p == '+' || *p == '-' || *p == '.') {
@@ -205,8 +207,8 @@ char *zpl__json_parse_object(zpl_ast_node *obj, char *base, zpl_allocator a, zpl
         if (*p == '}' && obj->type == ZPL_AST_TYPE_OBJECT) return p;
         else if (*p == ']' && obj->type == ZPL_AST_TYPE_ARRAY) return p;
         else if (!!zpl_strchr("}]", *p)) {
-            ZPL_JSON_ASSERT;
-            *err_code = ZPL_JSON_ERROR_INVALID_VALUE;
+            ZPL_JSON_ASSERT("mismatched end pair");
+            *err_code = ZPL_JSON_ERROR_OBJECT_END_PAIR_MISMATCHED;
             return NULL;
         }
 
@@ -269,8 +271,8 @@ char *zpl__json_parse_name(zpl_ast_node *node, char *base, zpl_u8 *err_code) {
         node->assign_line_width = cast(zpl_u8)(p-assign_p);
 
         if (*p && !zpl__json_is_assign_char(*p)) {
-            ZPL_JSON_ASSERT;
-            *err_code = ZPL_JSON_ERROR_INVALID_NAME;
+            ZPL_JSON_ASSERT("invalid assignment");
+            *err_code = ZPL_JSON_ERROR_INVALID_ASSIGNMENT;
             return NULL;
         }
         else
@@ -288,7 +290,7 @@ char *zpl__json_parse_name(zpl_ast_node *node, char *base, zpl_u8 *err_code) {
     }
 
     if (node->name && !zpl__json_validate_name(node->name, NULL)) {
-        ZPL_JSON_ASSERT;
+        ZPL_JSON_ASSERT("invalid name");
         *err_code = ZPL_JSON_ERROR_INVALID_NAME;
         return NULL;
     }
