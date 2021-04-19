@@ -77,8 +77,7 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **DLL** | Cross-platform methods for loading dynamic libraries. | 🔴 | ✅ |
 | **Timer** | Callback-based primitive timer library. | 🔴 | ✅ |
 | **Hashing** | Various hashing methods. Contains: `base64`, `adler32`, `crc32/64`, `fnv32/64/a` and `murmur32/64` | ✅ | ✅ |
-| **Text Parsers** | Various text parsers for different formats that offer cross-language transformations. Currently supported: `JSON5/SJON`. | ✅ | ✅ |
-| **JSON5 Parser** | SJSON/JSON5 parser that offers speedy performance and great stability. | ✅ | ✅ |
+| **Text Parsers** | Various text parsers for different formats that offer cross-language transformations. Currently supported: `JSON5/SJON`, `CSV`. | ✅ | ✅ |
 | **Options** | CLI options parser. Parsing flags, switches, and arguments from the command line. | 🔴 | ✅ |
 | **Process** | Primitives for low-level process management. | 🔴 | ✅ |
 | **Jobs System** | Asynchronous task-based scheduling system. | 🔴 | ✅ |
