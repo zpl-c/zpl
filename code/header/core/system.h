@@ -159,9 +159,8 @@ defined(__ppc64__) || defined(__aarch64__)
     #define ZPL_INFINITY (__builtin_inff())
     #define ZPL_NAN (__builtin_nanf(""))
 #elif defined(ZPL_COMPILER_MSVC)
-    extern float nanf( const char* input );
     #define ZPL_INFINITY (1e10000f)
-    #define ZPL_NAN (nanf(""))
+    #define ZPL_NAN (0)
 #else
     #define ZPL_INFINITY (1e10000f)
     #define ZPL_NAN (0.0f / 0.0f)
