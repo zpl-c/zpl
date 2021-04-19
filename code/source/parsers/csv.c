@@ -24,7 +24,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
 
     do {
         char d = 0;
-        p = zpl_str_trim(p, false);
+        p = cast(char *)zpl_str_trim(p, false);
         if (*p == 0) break;
         zpl_ast_node row_item = {0};
         row_item.type = ZPL_AST_TYPE_STRING;
@@ -35,7 +35,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             row_item.string = b;
             row_item.name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
             do {
-                e = zpl_str_skip(e, '"');
+                e = cast(char *)zpl_str_skip(e, '"');
                 if (*(e+1) == '"') {
                     e += 2;
                 }
@@ -47,8 +47,19 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
                 return err;
             }
             *e = 0;
-            p = zpl_str_trim(e+1, true);
+            p = cast(char *)zpl_str_trim(e+1, true);
             d = *p;
+
+            /* unescape escaped quotes (so that unescaped text escapes :) */
+            {
+                char *ep = b;
+                do {
+                    if (*ep == '"' && *(ep+1) == '"') {
+                        zpl_memmove(ep, ep+1, zpl_strlen(ep));
+                    }
+                    ep++;
+                } while (*ep);
+            }
         }
         else if (*p == delim) {
             d = *p;
@@ -61,7 +72,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
                 e++;
             } while (*e != delim && *e != '\n' && *e);
             if (*e) {
-                p = zpl_str_trim(e, true);
+                p = cast(char *)zpl_str_trim(e, true);
                 while (zpl_char_is_space(*(e-1))) { e--; }
                 d = *p;
                 *e = 0;
@@ -115,7 +126,19 @@ void zpl_csv_free(zpl_csv_object *obj) {
 void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) {
     switch (name_style) {
         case ZPL_AST_NAME_STYLE_DOUBLE_QUOTE: {
-            zpl_fprintf(file, "\"%s\"", text);
+            zpl_fprintf(file, "\"");
+            {
+                /* escape double quotes */
+                char const* p = text, *b = p;
+                do {
+                    p = zpl_str_skip(p, '"');
+                    zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
+                    if (*p == '"') zpl_fprintf(file, "\"");
+                    b = p;
+                    p++;
+                } while (*p);
+            }
+            zpl_fprintf(file, "\"");
         } break;
 
         case ZPL_AST_NAME_STYLE_NO_QUOTES: {

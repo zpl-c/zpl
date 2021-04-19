@@ -191,7 +191,7 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
         node->real = zpl_str_to_f64(buf, 0);
 
         char *q = buf, *base_str = q, *base_str2 = q;
-        base_str = zpl_str_skip(base_str, '.');
+        base_str = cast(char *)zpl_str_skip(base_str, '.');
         *base_str = '\0';
         base_str2 = base_str + 1;
         char *base_str_off = base_str2;
