@@ -5,7 +5,7 @@
 
 #define __PARSE() \
     zpl_json_object r={0}; \
-    zpl_u8 err = zpl_json_parse(&r, (char *const)t, zpl_heap());
+    zpl_u8 err = zpl_json_parse(&r, (char *)t, zpl_heap());
 
 #define __CLEANUP() \
     zpl_json_free(&r);

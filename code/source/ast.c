@@ -2,7 +2,6 @@
 
 zpl_u8 zpl_ast_make_branch(zpl_ast_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
     ZPL_ASSERT(type == ZPL_AST_TYPE_OBJECT || type == ZPL_AST_TYPE_ARRAY);
-    if (node->nodes) zpl_ast_destroy_branch(node);
     zpl_zero_item(node);
     node->type = type;
     node->name = name;

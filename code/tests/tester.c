@@ -16,13 +16,13 @@
 int main() {
     UNIT_CREATE("zpl");
 
-    UNIT_MODULE(alloc_pool);
-    UNIT_MODULE(hashing);
-    UNIT_MODULE(time);
-    UNIT_MODULE(stream);
-    UNIT_MODULE(print);
+    // UNIT_MODULE(alloc_pool);
+    // UNIT_MODULE(hashing);
+    // UNIT_MODULE(time);
+    // UNIT_MODULE(stream);
+    // UNIT_MODULE(print);
     UNIT_MODULE(json5_parser);
-    UNIT_MODULE(csv_parser);
+    // UNIT_MODULE(csv_parser);
 
     return UNIT_RUN();
 }
