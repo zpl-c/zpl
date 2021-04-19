@@ -13,7 +13,6 @@ typedef enum zpl_ast_type {
     ZPL_AST_TYPE_MULTISTRING,
     ZPL_AST_TYPE_INTEGER,
     ZPL_AST_TYPE_REAL,
-    ZPL_AST_TYPE_CONSTANT
 } zpl_ast_type;
 
 typedef enum zpl_ast_props {
@@ -22,18 +21,15 @@ typedef enum zpl_ast_props {
     ZPL_AST_PROPS_NAN_NEG,
     ZPL_AST_PROPS_INFINITY,
     ZPL_AST_PROPS_INFINITY_NEG,
+    ZPL_AST_PROPS_FALSE,
+    ZPL_AST_PROPS_TRUE,
+    ZPL_AST_PROPS_NULL,
     ZPL_AST_PROPS_IS_EXP,
     ZPL_AST_PROPS_IS_HEX,
 
     // Used internally so that people can fill in real numbers they plan to write.
     ZPL_AST_PROPS_IS_PARSED_REAL,
 } zpl_ast_props;
-
-typedef enum zpl_ast_const {
-    ZPL_AST_CONST_FALSE,
-    ZPL_AST_CONST_TRUE,
-    ZPL_AST_CONST_NULL,
-} zpl_ast_const;
 
 typedef enum zpl_ast_naming_style {
     ZPL_AST_NAME_STYLE_DOUBLE_QUOTE,
@@ -83,7 +79,6 @@ typedef struct zpl_ast_node {
             zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
         };
-        zpl_u8 constant;
     };
 } zpl_ast_node;
 
