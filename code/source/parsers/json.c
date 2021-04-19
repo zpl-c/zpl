@@ -27,19 +27,17 @@ void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_is
 #define zpl___ind(x) if (x > 0) zpl_fprintf(f, "%*r", x, ' ');
 
 zpl_u8 zpl_json_parse(zpl_ast_node *root, char *text, zpl_allocator a) {
-    zpl_ast_node root_ = { 0 };
     zpl_u8 err_code = ZPL_JSON_ERROR_NONE;
     ZPL_ASSERT(root);
     ZPL_ASSERT(text);
+    zpl_zero_item(root);
     text = zpl__json_trim(text, true);
 
     if (!zpl_strchr("{[", *text)) {
-        root_.cfg_mode = true;
+        root->cfg_mode = true;
     }
 
-    zpl__json_parse_object(&root_, text, a, &err_code);
-
-    *root = root_;
+    zpl__json_parse_object(root, text, a, &err_code);
     return err_code;
 }
 
@@ -326,9 +324,11 @@ void zpl_json_write(zpl_file *f, zpl_ast_node *o, zpl_isize indent) {
     if (!o)
         return;
 
+    ZPL_ASSERT(o->type == ZPL_AST_TYPE_OBJECT || o->type == ZPL_AST_TYPE_ARRAY);
+
     zpl___ind(indent - 4);
     if (!o->cfg_mode)
-        zpl_fprintf(f, "{\n");
+        zpl_fprintf(f, "%c\n", o->type == ZPL_AST_TYPE_OBJECT ? '{' : '[');
     else {
         indent -= 4;
     }
@@ -344,9 +344,9 @@ void zpl_json_write(zpl_file *f, zpl_ast_node *o, zpl_isize indent) {
     zpl___ind(indent);
 
     if (indent > 0) {
-        zpl_fprintf(f, "}");
+        zpl_fprintf(f, "%c\n", o->type == ZPL_AST_TYPE_OBJECT ? '}' : ']');
     } else {
-        if (!o->cfg_mode) zpl_fprintf(f, "}\n");
+        if (!o->cfg_mode) zpl_fprintf(f, "%c\n", o->type == ZPL_AST_TYPE_OBJECT ? '}' : ']');
     }
 }
 
@@ -356,32 +356,34 @@ void zpl__json_write_value(zpl_file *f, zpl_ast_node *o, zpl_ast_node *t, zpl_is
 
     if (!is_inline) {
         zpl___ind(indent);
-        switch (node->name_style) {
-            case ZPL_AST_NAME_STYLE_DOUBLE_QUOTE: {
-                zpl_fprintf(f, "\"%s\"", node->name);
-            } break;
 
-            case ZPL_AST_NAME_STYLE_SINGLE_QUOTE: {
-                zpl_fprintf(f, "\'%s\'", node->name);
-            } break;
+        if (t->type != ZPL_AST_TYPE_ARRAY) {
+            switch (node->name_style) {
+                case ZPL_AST_NAME_STYLE_DOUBLE_QUOTE: {
+                    zpl_fprintf(f, "\"%s\"", node->name);
+                } break;
 
-            case ZPL_AST_NAME_STYLE_NO_QUOTES: {
-                zpl_fprintf(f, "%s", node->name);
-            } break;
-        }
+                case ZPL_AST_NAME_STYLE_SINGLE_QUOTE: {
+                    zpl_fprintf(f, "\'%s\'", node->name);
+                } break;
 
-        if (o->assign_style == ZPL_AST_ASSIGN_STYLE_COLON)
-            zpl_fprintf(f, ": ");
-        else {
-            zpl___ind(zpl_max(o->assign_line_width, 1));
+                case ZPL_AST_NAME_STYLE_NO_QUOTES: {
+                    zpl_fprintf(f, "%s", node->name);
+                } break;
+            }
 
-            if (o->assign_style == ZPL_AST_ASSIGN_STYLE_EQUALS)
-                zpl_fprintf(f, "= ");
-            else if (o->assign_style == ZPL_AST_ASSIGN_STYLE_LINE) {
-                zpl_fprintf(f, "| ");
+            if (o->assign_style == ZPL_AST_ASSIGN_STYLE_COLON)
+                zpl_fprintf(f, ": ");
+            else {
+                zpl___ind(zpl_max(o->assign_line_width, 1));
+
+                if (o->assign_style == ZPL_AST_ASSIGN_STYLE_EQUALS)
+                    zpl_fprintf(f, "= ");
+                else if (o->assign_style == ZPL_AST_ASSIGN_STYLE_LINE) {
+                    zpl_fprintf(f, "| ");
+                }
             }
         }
-
     }
 
     switch (node->type) {

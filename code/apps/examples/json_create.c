@@ -1,6 +1,6 @@
 #define ZPL_IMPLEMENTATION
 #define ZPL_NANO
-#define ZPL_ENABLE_JSON
+#define ZPL_ENABLE_PARSER
 #include <zpl.h>
 
 int main(void) {

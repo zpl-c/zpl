@@ -109,7 +109,6 @@ License:
     #define ZPL_MODULE_OPTS
     #define ZPL_MODULE_PROCESS
     #define ZPL_MODULE_MATH
-    #define ZPL_MODULE_JSON
     #define ZPL_MODULE_THREADING
     #define ZPL_MODULE_JOBS
     #define ZPL_MODULE_COROUTINES
@@ -125,7 +124,6 @@ License:
         #undef ZPL_MODULE_OPTS
         #undef ZPL_MODULE_PROCESS
         #undef ZPL_MODULE_MATH
-        #undef ZPL_MODULE_JSON
         #undef ZPL_MODULE_THREADING
         #undef ZPL_MODULE_JOBS
         #undef ZPL_MODULE_COROUTINES
@@ -160,13 +158,6 @@ License:
     #endif
     #if defined(ZPL_ENABLE_MATH) && !defined(ZPL_MODULE_MATH)
         #define ZPL_MODULE_MATH
-    #endif
-    #if defined(ZPL_ENABLE_JSON) && !defined(ZPL_MODULE_JSON)
-        #define ZPL_MODULE_JSON
-
-        #ifndef ZPL_MODULE_PARSER
-        #define ZPL_MODULE_PARSER
-        #endif
     #endif
     #if defined(ZPL_ENABLE_THREADING) && !defined(ZPL_MODULE_THREADING)
         #define ZPL_MODULE_THREADING
@@ -217,9 +208,6 @@ License:
     #if defined(ZPL_DISABLE_MATH) && defined(ZPL_MODULE_MATH)
         #undef ZPL_MODULE_MATH
     #endif
-    #if defined(ZPL_DISABLE_JSON) && defined(ZPL_MODULE_JSON)
-        #undef ZPL_MODULE_JSON
-    #endif
     #if defined(ZPL_DISABLE_THREADING) && defined(ZPL_MODULE_THREADING)
         #ifdef ZPL_MODULE_JOBS
         #undef ZPL_MODULE_JOBS /* user */
@@ -243,10 +231,6 @@ License:
     #endif
     #if defined(ZPL_DISABLE_PARSER) && defined(ZPL_MODULE_PARSER)
         #undef ZPL_MODULE_PARSER
-
-        #ifdef ZPL_MODULE_JSON
-        #undef ZPL_MODULE_JSON
-        #endif
     #endif
 #endif
 
@@ -332,10 +316,10 @@ License:
 
 #if defined(ZPL_MODULE_PARSER)
     #include "header/ast.h"
-#endif
 
-#if defined(ZPL_MODULE_JSON)
+    /* parsers */
     #include "header/parsers/json.h"
+    #include "header/parsers/csv.h"
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
@@ -518,10 +502,6 @@ License:
     #include "source/math.c"
 #endif
 
-#if defined(ZPL_MODULE_JSON)
-    #include "source/parsers/json.c"
-#endif
-
 #if defined(ZPL_MODULE_THREADING)
     #include "source/threading/fence.c"
     #include "source/threading/atomic.c"
@@ -542,6 +522,10 @@ License:
 
 #if defined(ZPL_MODULE_PARSER)
     #include "source/ast.c"
+
+    /* parsers */
+    #include "source/parsers/json.c"
+    #include "source/parsers/csv.c"
 #endif
 
 #if defined(ZPL_COMPILER_MSVC)

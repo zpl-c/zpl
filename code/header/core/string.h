@@ -37,7 +37,7 @@ ZPL_DEF_INLINE zpl_b32 zpl_char_is_control(char c);
 ZPL_DEF_INLINE void zpl_str_to_lower(char *str);
 ZPL_DEF_INLINE void zpl_str_to_upper(char *str);
 
-ZPL_DEF_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline);
+ZPL_DEF_INLINE char *zpl_str_trim(char *str, zpl_b32 catch_newline);
 ZPL_DEF_INLINE char *zpl_str_skip(char *str, char c);
 ZPL_DEF_INLINE char *zpl_str_skip_literal(char *str, char c);
 ZPL_DEF_INLINE char *zpl_str_control_skip(char *str, char c);
@@ -364,9 +364,9 @@ ZPL_IMPL_INLINE const char *zpl_char_last_occurence(const char *s, char c) {
     return result;
 }
 
-ZPL_IMPL_INLINE char *zpl_str_trim(char *str, zpl_b32 skip_newline)
+ZPL_IMPL_INLINE char *zpl_str_trim(char *str, zpl_b32 catch_newline)
 {
-    while (*str && zpl_char_is_space(*str) && (!skip_newline || (skip_newline && *str != '\n'))) { ++str; }
+    while (*str && zpl_char_is_space(*str) && (!catch_newline || (catch_newline && *str != '\n'))) { ++str; }
     return str;
 }
 
