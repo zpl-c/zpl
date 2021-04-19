@@ -132,10 +132,12 @@ void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) 
                 char const* p = text, *b = p;
                 do {
                     p = zpl_str_skip(p, '"');
-                    zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
-                    if (*p == '"') zpl_fprintf(file, "\"");
+                    zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p)+1, b);
+                    if (*p == '"') {
+                        zpl_fprintf(file, "\"");
+                        p++;
+                    }
                     b = p;
-                    p++;
                 } while (*p);
             }
             zpl_fprintf(file, "\"");
