@@ -46,7 +46,7 @@ MODULE(json5_parser, {
         const char *t = "[   }";
         __PARSE();
 
-        EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
+        EQUALS(err, ZPL_JSON_ERROR_ARRAY_LEFT_OPEN);
 
         __CLEANUP();
     });
@@ -55,7 +55,7 @@ MODULE(json5_parser, {
         const char *t = "{ \t]";
         __PARSE();
 
-        EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
+        EQUALS(err, ZPL_JSON_ERROR_OBJECT_END_PAIR_MISMATCHED);
 
         __CLEANUP();
     });
@@ -64,7 +64,7 @@ MODULE(json5_parser, {
         const char *t = "{{jsdljsdksd{}}{]][{}";
         __PARSE();
 
-        EQUALS(err, ZPL_JSON_ERROR_INVALID_VALUE);
+        EQUALS(err, ZPL_JSON_ERROR_UNKNOWN_KEYWORD);
 
         __CLEANUP();
     });
