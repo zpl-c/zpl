@@ -593,6 +593,7 @@ License:
 // header/math.h
 // header/jobs.h
 // header/parsers/json.h
+// header/parsers/csv.h
 // header/dll.h
 // header/ast.h
 // header/timer.h
@@ -628,6 +629,7 @@ License:
 // source/threading/thread.c
 // source/threading/fence.c
 // source/threading/sem.c
+// source/parsers/csv.c
 // source/parsers/json.c
 // source/jobs.c
 // source/core/file_stream.c
