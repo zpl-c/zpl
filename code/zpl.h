@@ -315,7 +315,7 @@ License:
 #endif
 
 #if defined(ZPL_MODULE_PARSER)
-    #include "header/ast.h"
+    #include "header/adt.h"
 
     /* parsers */
     #include "header/parsers/json.h"
@@ -521,7 +521,7 @@ License:
 #endif
 
 #if defined(ZPL_MODULE_PARSER)
-    #include "source/ast.c"
+    #include "source/adt.c"
 
     /* parsers */
     #include "source/parsers/json.c"
@@ -595,7 +595,7 @@ License:
 // header/parsers/json.h
 // header/parsers/csv.h
 // header/dll.h
-// header/ast.h
+// header/adt.h
 // header/timer.h
 // header/core/file_tar.h
 // header/core/memory_virtual.h
@@ -613,7 +613,7 @@ License:
 // header/hashing.h
 // header/regex.h
 // source/hashing.c
-// source/ast.c
+// source/adt.c
 // source/coroutines.c
 // source/process.c
 // source/essentials/array.c

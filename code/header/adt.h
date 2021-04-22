@@ -1,4 +1,4 @@
-// file: header/ast.h
+// file: header/adt.h
 #ifdef ZPL_EDITOR
 #include <zpl.h>
 #endif
