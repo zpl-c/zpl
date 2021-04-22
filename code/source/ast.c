@@ -1,7 +1,7 @@
 // file: source/ast.c
 
-zpl_u8 zpl_ast_make_branch(zpl_ast_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
-    ZPL_ASSERT(type == ZPL_AST_TYPE_OBJECT || type == ZPL_AST_TYPE_ARRAY);
+zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
+    ZPL_ASSERT(type == ZPL_ADT_TYPE_OBJECT || type == ZPL_ADT_TYPE_ARRAY);
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
@@ -10,26 +10,26 @@ zpl_u8 zpl_ast_make_branch(zpl_ast_node *node, zpl_allocator backing, char const
     return 0;
 }
 
-zpl_u8 zpl_ast_destroy_branch(zpl_ast_node *node) {
+zpl_u8 zpl_adt_destroy_branch(zpl_adt_node *node) {
     ZPL_ASSERT_NOT_NULL(node);
-    if ((node->type == ZPL_AST_TYPE_OBJECT || node->type == ZPL_AST_TYPE_ARRAY) && node->nodes) {
-        for (zpl_isize i = 0; i < zpl_array_count(node->nodes); ++i) { zpl_ast_destroy_branch(node->nodes + i); }
+    if ((node->type == ZPL_ADT_TYPE_OBJECT || node->type == ZPL_ADT_TYPE_ARRAY) && node->nodes) {
+        for (zpl_isize i = 0; i < zpl_array_count(node->nodes); ++i) { zpl_adt_destroy_branch(node->nodes + i); }
 
         zpl_array_free(node->nodes);
     }
     return 0;
 }
 
-zpl_u8 zpl_ast_make_leaf(zpl_ast_node *node, char const *name, zpl_u8 type) {
-    ZPL_ASSERT(type != ZPL_AST_TYPE_OBJECT && type != ZPL_AST_TYPE_ARRAY);
+zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 type) {
+    ZPL_ASSERT(type != ZPL_ADT_TYPE_OBJECT && type != ZPL_ADT_TYPE_ARRAY);
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
     return 0;
 }
 
-zpl_ast_node *zpl_ast_find(zpl_ast_node *node, char const *name, zpl_b32 deep_search) {
-    if (node->type != ZPL_AST_TYPE_OBJECT) {
+zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32 deep_search) {
+    if (node->type != ZPL_ADT_TYPE_OBJECT) {
         return NULL;
     }
 
@@ -41,7 +41,7 @@ zpl_ast_node *zpl_ast_find(zpl_ast_node *node, char const *name, zpl_b32 deep_se
 
     if (deep_search) {
         for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
-            zpl_ast_node *res = zpl_ast_find(node->nodes + i, name, deep_search);
+            zpl_adt_node *res = zpl_adt_find(node->nodes + i, name, deep_search);
 
             if (res != NULL)
                 return res;
@@ -51,8 +51,8 @@ zpl_ast_node *zpl_ast_find(zpl_ast_node *node, char const *name, zpl_b32 deep_se
     return NULL;
 }
 
-zpl_ast_node *zpl_ast_alloc_at(zpl_ast_node *parent, zpl_isize index) {
-    if (!parent || (parent->type != ZPL_AST_TYPE_OBJECT && parent->type != ZPL_AST_TYPE_ARRAY)) {
+zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index) {
+    if (!parent || (parent->type != ZPL_ADT_TYPE_OBJECT && parent->type != ZPL_ADT_TYPE_ARRAY)) {
         return NULL;
     }
 
@@ -62,76 +62,76 @@ zpl_ast_node *zpl_ast_alloc_at(zpl_ast_node *parent, zpl_isize index) {
     if (index < 0 || index > zpl_array_count(parent->nodes))
         return NULL;
 
-    zpl_ast_node o = {0};
+    zpl_adt_node o = {0};
     zpl_array_append_at(parent->nodes, o, index);
 
     return parent->nodes + index;
 }
 
-zpl_ast_node *zpl_ast_alloc(zpl_ast_node *parent) {
-    if (!parent || (parent->type != ZPL_AST_TYPE_OBJECT && parent->type != ZPL_AST_TYPE_ARRAY)) {
+zpl_adt_node *zpl_adt_alloc(zpl_adt_node *parent) {
+    if (!parent || (parent->type != ZPL_ADT_TYPE_OBJECT && parent->type != ZPL_ADT_TYPE_ARRAY)) {
         return NULL;
     }
 
     if (!parent->nodes)
         return NULL;
 
-    return zpl_ast_alloc_at(parent, zpl_array_count(parent->nodes));
+    return zpl_adt_alloc_at(parent, zpl_array_count(parent->nodes));
 }
 
 
-void zpl_ast_set_obj(zpl_ast_node *obj, char const *name, zpl_allocator backing) {
-    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_OBJECT);
+void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
+    zpl_adt_make_branch(obj, backing, name, ZPL_ADT_TYPE_OBJECT);
 }
-void zpl_ast_set_arr(zpl_ast_node *obj, char const *name, zpl_allocator backing) {
-    zpl_ast_make_branch(obj, backing, name, ZPL_AST_TYPE_ARRAY);
+void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
+    zpl_adt_make_branch(obj, backing, name, ZPL_ADT_TYPE_ARRAY);
 }
-void zpl_ast_set_str(zpl_ast_node *obj, char const *name, char const *value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_STRING);
+void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value) {
+    zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_STRING);
     obj->string = value;
 }
-void zpl_ast_set_flt(zpl_ast_node *obj, char const *name, zpl_f64 value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_REAL);
+void zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value) {
+    zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_REAL);
     obj->real = value;
 }
-void zpl_ast_set_int(zpl_ast_node *obj, char const *name, zpl_i64 value) {
-    zpl_ast_make_leaf(obj, name, ZPL_AST_TYPE_INTEGER);
+void zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value) {
+    zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_INTEGER);
     obj->integer = value;
 }
 
-zpl_ast_node *zpl_ast_inset_obj(zpl_ast_node *parent, char const *name) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_ast_set_obj(o, name, parent->backing);
+zpl_adt_node *zpl_adt_inset_obj(zpl_adt_node *parent, char const *name) {
+    zpl_adt_node *o = zpl_adt_alloc(parent);
+    zpl_adt_set_obj(o, name, parent->backing);
     return o;
 }
-zpl_ast_node *zpl_ast_inset_arr(zpl_ast_node *parent, char const *name) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_ast_set_arr(o, name, parent->backing);
+zpl_adt_node *zpl_adt_inset_arr(zpl_adt_node *parent, char const *name) {
+    zpl_adt_node *o = zpl_adt_alloc(parent);
+    zpl_adt_set_arr(o, name, parent->backing);
     return o;
 }
-zpl_ast_node *zpl_ast_inset_str(zpl_ast_node *parent, char const *name, char const *value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_ast_set_str(o, name, value);
+zpl_adt_node *zpl_adt_inset_str(zpl_adt_node *parent, char const *name, char const *value) {
+    zpl_adt_node *o = zpl_adt_alloc(parent);
+    zpl_adt_set_str(o, name, value);
     return o;
 }
-zpl_ast_node *zpl_ast_inset_flt(zpl_ast_node *parent, char const *name, zpl_f64 value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_ast_set_flt(o, name, value);
+zpl_adt_node *zpl_adt_inset_flt(zpl_adt_node *parent, char const *name, zpl_f64 value) {
+    zpl_adt_node *o = zpl_adt_alloc(parent);
+    zpl_adt_set_flt(o, name, value);
     return o;
 }
-zpl_ast_node *zpl_ast_inset_int(zpl_ast_node *parent, char const *name, zpl_i64 value) {
-    zpl_ast_node *o = zpl_ast_alloc(parent);
-    zpl_ast_set_int(o, name, value);
+zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, zpl_i64 value) {
+    zpl_adt_node *o = zpl_adt_alloc(parent);
+    zpl_adt_set_int(o, name, value);
     return o;
 }
 
 /* parser helpers */
 
-char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
+char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     ZPL_ASSERT_NOT_NULL(node);
     ZPL_ASSERT_NOT_NULL(base);
     char *p = base, *e = p;
-    node->type = ZPL_AST_TYPE_INTEGER;
+    node->type = ZPL_ADT_TYPE_INTEGER;
 
     zpl_isize ib = 0;
     char buf[48] = { 0 };
@@ -143,19 +143,19 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
     }
 
     if (*e == '.') {
-        node->type = ZPL_AST_TYPE_REAL;
-        node->props = ZPL_AST_PROPS_IS_PARSED_REAL;
+        node->type = ZPL_ADT_TYPE_REAL;
+        node->props = ZPL_ADT_PROPS_IS_PARSED_REAL;
         node->lead_digit = false;
         buf[ib++] = '0';
         do {
             buf[ib++] = *e;
         } while (zpl_char_is_digit(*++e));
     } else {
-        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node->props = ZPL_AST_PROPS_IS_HEX; }
+        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node->props = ZPL_ADT_PROPS_IS_HEX; }
         while (zpl_char_is_hex_digit(*e) || zpl_char_to_lower(*e) == 'x') { buf[ib++] = *e++; }
 
         if (*e == '.') {
-            node->type = ZPL_AST_TYPE_REAL;
+            node->type = ZPL_ADT_TYPE_REAL;
             node->lead_digit = true;
             zpl_u32 step = 0;
 
@@ -184,7 +184,7 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
         exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
     }
 
-    if (node->type == ZPL_AST_TYPE_INTEGER) {
+    if (node->type == ZPL_ADT_TYPE_INTEGER) {
         node->integer = zpl_str_to_i64(buf, 0, 0);
         while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
     } else {
@@ -203,7 +203,7 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
         if (exp) {
             node->exp = exp;
             node->exp_neg = !(eb == 10.f);
-            node->props = ZPL_AST_PROPS_IS_EXP;
+            node->props = ZPL_ADT_PROPS_IS_EXP;
         }
 
         while (exp-- > 0) { node->real *= eb; }
@@ -211,10 +211,10 @@ char *zpl_ast_parse_number(zpl_ast_node *node, char* base) {
     return e;
 }
 
-void zpl_ast_str_to_flt(zpl_ast_node *node) {
+void zpl_adt_str_to_flt(zpl_adt_node *node) {
     ZPL_ASSERT(node);
 
-    if (node->type == ZPL_AST_TYPE_REAL) return; /* this is already converted/parsed */
-    ZPL_ASSERT(node->type == ZPL_AST_TYPE_STRING || node->type == ZPL_AST_TYPE_MULTISTRING);
-    zpl_ast_parse_number(node, (char *)node->string);
+    if (node->type == ZPL_ADT_TYPE_REAL) return; /* this is already converted/parsed */
+    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
+    zpl_adt_parse_number(node, (char *)node->string);
 }

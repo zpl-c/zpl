@@ -18,7 +18,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
     ZPL_ASSERT_NOT_NULL(root);
     ZPL_ASSERT_NOT_NULL(text);
     zpl_zero_item(root);
-    zpl_ast_make_branch(root, allocator, NULL, has_header ? ZPL_AST_TYPE_OBJECT : ZPL_AST_TYPE_ARRAY);
+    zpl_adt_make_branch(root, allocator, NULL, has_header ? ZPL_ADT_TYPE_OBJECT : ZPL_ADT_TYPE_ARRAY);
     char *p = text, *b = p, *e = p;
     zpl_isize colc = 0, total_colc = 0;
 
@@ -26,14 +26,14 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         char d = 0;
         p = cast(char *)zpl_str_trim(p, false);
         if (*p == 0) break;
-        zpl_ast_node row_item = {0};
-        row_item.type = ZPL_AST_TYPE_STRING;
-        row_item.name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+        zpl_adt_node row_item = {0};
+        row_item.type = ZPL_ADT_TYPE_STRING;
+        row_item.name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
 
         if (*p == '"') {
             p = b = e = p+1;
             row_item.string = b;
-            row_item.name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
+            row_item.name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
             do {
                 e = cast(char *)zpl_str_skip(e, '"');
                 if (*(e+1) == '"') {
@@ -80,7 +80,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         }
 
         if (colc >= zpl_array_count(root->nodes)) {
-            zpl_ast_inset_arr(root, NULL);
+            zpl_adt_inset_arr(root, NULL);
         }
 
         zpl_array_append(root->nodes[colc].nodes, row_item);
@@ -120,12 +120,12 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
     return err;
 }
 void zpl_csv_free(zpl_csv_object *obj) {
-    zpl_ast_destroy_branch(obj);
+    zpl_adt_destroy_branch(obj);
 }
 
 void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) {
     switch (name_style) {
-        case ZPL_AST_NAME_STYLE_DOUBLE_QUOTE: {
+        case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
             zpl_fprintf(file, "\"");
             {
                 /* escape double quotes */
@@ -143,7 +143,7 @@ void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) 
             zpl_fprintf(file, "\"");
         } break;
 
-        case ZPL_AST_NAME_STYLE_NO_QUOTES: {
+        case ZPL_ADT_NAME_STYLE_NO_QUOTES: {
             zpl_fprintf(file, "%s", text);
         } break;
     }

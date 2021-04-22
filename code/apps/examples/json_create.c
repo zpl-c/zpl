@@ -6,20 +6,20 @@
 int main(void) {
     zpl_json_object root = {0};
     root.cfg_mode = 1;
-    zpl_ast_make_branch(&root, zpl_heap(), "<root>" /* unused for root object */, ZPL_AST_TYPE_OBJECT);
+    zpl_adt_make_branch(&root, zpl_heap(), "<root>" /* unused for root object */, ZPL_ADT_TYPE_OBJECT);
 
     zpl_random rng={0};
     zpl_random_init(&rng);
 
     for (size_t i = 0; i < 16000000; i++)
     {
-        zpl_json_object *o = zpl_ast_alloc(&root);
+        zpl_json_object *o = zpl_adt_alloc(&root);
 
         if (o) {
-            zpl_ast_make_leaf(o, zpl_string_sprintf_buf(zpl_heap(), "field%lld\t", i), ZPL_AST_TYPE_INTEGER);
-            o->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
-            o->assign_style = ZPL_AST_ASSIGN_STYLE_LINE;
-            o->delim_style = ZPL_AST_DELIM_STYLE_NEWLINE;
+            zpl_adt_make_leaf(o, zpl_string_sprintf_buf(zpl_heap(), "field%lld\t", i), ZPL_ADT_TYPE_INTEGER);
+            o->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
+            o->assign_style = ZPL_ADT_ASSIGN_STYLE_LINE;
+            o->delim_style = ZPL_ADT_DELIM_STYLE_NEWLINE;
 
             o->integer = zpl_random_gen_u64(&rng) & i;
         }

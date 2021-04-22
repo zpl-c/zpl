@@ -148,25 +148,25 @@ MODULE(csv_parser, {
         zpl_string original = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,2,3\n");
 
         zpl_json_object doc, *foo, *bar, *baz;
-        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        zpl_adt_set_obj(&doc, NULL, zpl_heap());
         {
-            foo = zpl_ast_inset_arr(&doc, "foo");
-            foo->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            foo = zpl_adt_inset_arr(&doc, "foo");
+            foo->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(foo, NULL, "1");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(foo, NULL, "1");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
-            bar = zpl_ast_inset_arr(&doc, "bar");
-            bar->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            bar = zpl_adt_inset_arr(&doc, "bar");
+            bar->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "2");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(bar, NULL, "2");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
-            baz = zpl_ast_inset_arr(&doc, "baz");
-            baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            baz = zpl_adt_inset_arr(&doc, "baz");
+            baz->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(baz, NULL, "3");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
         }
         zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
@@ -179,25 +179,25 @@ MODULE(csv_parser, {
         zpl_string original = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,,3\n");
 
         zpl_json_object doc, *foo, *bar, *baz;
-        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        zpl_adt_set_obj(&doc, NULL, zpl_heap());
         {
-            foo = zpl_ast_inset_arr(&doc, "foo");
-            foo->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            foo = zpl_adt_inset_arr(&doc, "foo");
+            foo->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(foo, NULL, "1");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(foo, NULL, "1");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
-            bar = zpl_ast_inset_arr(&doc, "bar");
-            bar->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            bar = zpl_adt_inset_arr(&doc, "bar");
+            bar->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(bar, NULL, "");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
-            baz = zpl_ast_inset_arr(&doc, "baz");
-            baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            baz = zpl_adt_inset_arr(&doc, "baz");
+            baz->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(baz, NULL, "3");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
         }
         zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
@@ -210,25 +210,25 @@ MODULE(csv_parser, {
         zpl_string original = zpl_string_make(zpl_heap(), "foo,bar,baz\n1,\"\",3\n");
 
         zpl_json_object doc, *foo, *bar, *baz;
-        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        zpl_adt_set_obj(&doc, NULL, zpl_heap());
         {
-            foo = zpl_ast_inset_arr(&doc, "foo");
-            foo->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            foo = zpl_adt_inset_arr(&doc, "foo");
+            foo->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(foo, NULL, "1");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(foo, NULL, "1");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
-            bar = zpl_ast_inset_arr(&doc, "bar");
-            bar->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            bar = zpl_adt_inset_arr(&doc, "bar");
+            bar->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(bar, NULL, "");
-                n->name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
+                zpl_adt_node *n = zpl_adt_inset_str(bar, NULL, "");
+                n->name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
             }
-            baz = zpl_ast_inset_arr(&doc, "baz");
-            baz->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+            baz = zpl_adt_inset_arr(&doc, "baz");
+            baz->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             {
-                zpl_ast_node *n = zpl_ast_inset_str(baz, NULL, "3");
-                n->name_style = ZPL_AST_NAME_STYLE_NO_QUOTES;
+                zpl_adt_node *n = zpl_adt_inset_str(baz, NULL, "3");
+                n->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             }
         }
         zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);
@@ -241,12 +241,12 @@ MODULE(csv_parser, {
         zpl_string original = zpl_string_make(zpl_heap(), "\"x \"\"test\"\" x\"\n");
 
         zpl_json_object doc, *node;
-        zpl_ast_set_arr(&doc, NULL, zpl_heap());
+        zpl_adt_set_arr(&doc, NULL, zpl_heap());
         {
-            node = zpl_ast_inset_arr(&doc, NULL);
+            node = zpl_adt_inset_arr(&doc, NULL);
             {
-                zpl_ast_node *n = zpl_ast_inset_str(node, NULL, "x \"test\" x");
-                n->name_style = ZPL_AST_NAME_STYLE_DOUBLE_QUOTE;
+                zpl_adt_node *n = zpl_adt_inset_str(node, NULL, "x \"test\" x");
+                n->name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
             }
         }
         zpl_string a = zpl_csv_write_string(zpl_heap(), &doc);

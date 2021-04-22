@@ -17,7 +17,7 @@ typedef enum zpl_json_error {
     ZPL_JSON_ERROR_OBJECT_END_PAIR_MISMATCHED,
 } zpl_json_error;
 
-typedef zpl_ast_node zpl_json_object;
+typedef zpl_adt_node zpl_json_object;
 
 ZPL_DEF zpl_u8 zpl_json_parse(zpl_json_object *root, char *text, zpl_allocator allocator);
 ZPL_DEF void zpl_json_free(zpl_json_object *obj);

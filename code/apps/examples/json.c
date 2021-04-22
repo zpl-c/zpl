@@ -13,22 +13,22 @@ int main(void) {
     err = zpl_json_parse(&root, (char *)fc.data, zpl_heap_allocator());
 
     zpl_json_object *replace = NULL;
-    replace = zpl_ast_find(&root, "replace_me", false);
+    replace = zpl_adt_find(&root, "replace_me", false);
 
     if (replace != NULL)
     {
         zpl_printf("Field was found! Current value: %ld\nReplacing with an array!\n", (long)replace->integer);
-        zpl_ast_set_arr(replace, "i_am_replaced", root.backing);
+        zpl_adt_set_arr(replace, "i_am_replaced", root.backing);
 
         for (size_t i = 0; i < 5; i++)
-            zpl_ast_inset_int(replace, NULL, (zpl_i64)i+1);
+            zpl_adt_inset_int(replace, NULL, (zpl_i64)i+1);
     }
 
-    zpl_json_object *first = zpl_ast_alloc_at(&root, 0);
+    zpl_json_object *first = zpl_adt_alloc_at(&root, 0);
 
     if (first) {
-        zpl_ast_set_str(first, "first", "I am first!");
-        first->assign_style = ZPL_AST_ASSIGN_STYLE_EQUALS;
+        zpl_adt_set_str(first, "first", "I am first!");
+        first->assign_style = ZPL_ADT_ASSIGN_STYLE_EQUALS;
     }
 
     zpl_printf("Error code: %d\n", err);

@@ -13,7 +13,7 @@ typedef enum zpl_csv_error {
     ZPL_CSV_ERROR_MISMATCHED_ROWS,
 } zpl_csv_error;
 
-typedef zpl_ast_node zpl_csv_object;
+typedef zpl_adt_node zpl_csv_object;
 
 ZPL_DEF_INLINE zpl_u8 zpl_csv_parse(zpl_csv_object *root, char *text, zpl_allocator allocator, zpl_b32 has_header);
 ZPL_DEF zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator allocator, zpl_b32 has_header, char delim);

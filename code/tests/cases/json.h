@@ -17,7 +17,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, 0);
         EQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.type, ZPL_AST_TYPE_OBJECT);
+        EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
 
         __CLEANUP();
     });
@@ -27,7 +27,7 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, 0);
-        EQUALS(r.type, ZPL_AST_TYPE_ARRAY);
+        EQUALS(r.type, ZPL_ADT_TYPE_ARRAY);
 
         __CLEANUP();
     });
@@ -37,7 +37,7 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, 0);
-        EQUALS(r.type, ZPL_AST_TYPE_OBJECT);
+        EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
 
         __CLEANUP();
         zpl_string_free(t);
@@ -76,7 +76,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.nodes[0].type, ZPL_AST_TYPE_INTEGER);
+        EQUALS(r.nodes[0].type, ZPL_ADT_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
         __CLEANUP();
@@ -89,7 +89,7 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
-        EQUALS(r.nodes[0].type, ZPL_AST_TYPE_INTEGER);
+        EQUALS(r.nodes[0].type, ZPL_ADT_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
 
         __CLEANUP();
@@ -240,7 +240,7 @@ MODULE(json5_parser, {
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 1);
         EQUALS(zpl_array_count(r.nodes[0].nodes), 7);
-        EQUALS(r.nodes[0].nodes[3].type, ZPL_AST_TYPE_ARRAY);
+        EQUALS(r.nodes[0].nodes[3].type, ZPL_ADT_TYPE_ARRAY);
         EQUALS(zpl_array_count(r.nodes[0].nodes[3].nodes), 8);
 
         __CLEANUP();
@@ -276,26 +276,26 @@ MODULE(json5_parser, {
         );
 
         zpl_json_object doc, *o, *o2;
-        zpl_ast_set_obj(&doc, NULL, zpl_heap());
+        zpl_adt_set_obj(&doc, NULL, zpl_heap());
 
-        o = zpl_ast_inset_str(&doc, "$api", "opengl");
-        o = zpl_ast_inset_str(&doc, "name", "Diffuse shader");
-        o = zpl_ast_inset_int(&doc, "version", 150);
-        o = zpl_ast_inset_str(&doc, "type", "fragment");
-        o = zpl_ast_inset_arr(&doc, "uniforms");
+        o = zpl_adt_inset_str(&doc, "$api", "opengl");
+        o = zpl_adt_inset_str(&doc, "name", "Diffuse shader");
+        o = zpl_adt_inset_int(&doc, "version", 150);
+        o = zpl_adt_inset_str(&doc, "type", "fragment");
+        o = zpl_adt_inset_arr(&doc, "uniforms");
         {
-            o2 = zpl_ast_inset_obj(o, NULL);
+            o2 = zpl_adt_inset_obj(o, NULL);
             {
-                zpl_ast_inset_str(o2, "name", "l_pos");
-                zpl_ast_inset_str(o2, "type", "vec3");
+                zpl_adt_inset_str(o2, "name", "l_pos");
+                zpl_adt_inset_str(o2, "type", "vec3");
             }
-            o2 = zpl_ast_inset_obj(o, NULL);
+            o2 = zpl_adt_inset_obj(o, NULL);
             {
-                zpl_ast_inset_str(o2, "name", "l_mat");
-                zpl_ast_inset_str(o2, "type", "mat4");
+                zpl_adt_inset_str(o2, "name", "l_mat");
+                zpl_adt_inset_str(o2, "type", "mat4");
             }
         }
-        o = zpl_ast_inset_str(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
+        o = zpl_adt_inset_str(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
 
         zpl_string a = zpl_json_write_string(zpl_heap(), &doc, 0);
         STREQUALS(original, a);
