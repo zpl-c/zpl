@@ -1,7 +1,8 @@
 CC?=gcc
 CXX?=g++
 STDC=-std=gnu11
-LEVEL?=-g
+OPTS?=-g
+LEVEL?=$(OPTS)
 
 ifeq ($(OS),Windows_NT)
 	CFLAGS += -DWIN32

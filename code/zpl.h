@@ -92,7 +92,7 @@ License:
 #endif
 
 /* overrides */
-#if defined(__TINYC__)
+#if defined(__TINYC__) || defined(__EMSCRIPTEN__)
     #define ZPL_DISABLE_THREADING
 #endif
 
