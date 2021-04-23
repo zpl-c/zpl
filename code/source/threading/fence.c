@@ -29,6 +29,7 @@ ZPL_BEGIN_C_DECLS
 void zpl_yield_thread(void) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         _mm_pause();
+    #elif defined(ZPL_COMPILER_TINYC)
     #elif defined(ZPL_SYSTEM_OSX)
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)
@@ -39,6 +40,7 @@ void zpl_yield_thread(void) {
 void zpl_mfence(void) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         _ReadWriteBarrier();
+    #elif defined(ZPL_COMPILER_TINYC)
     #elif defined(ZPL_SYSTEM_OSX)
         __sync_synchronize();
     #elif defined(ZPL_CPU_X86)
@@ -49,6 +51,7 @@ void zpl_mfence(void) {
 void zpl_sfence(void) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         _WriteBarrier();
+    #elif defined(ZPL_COMPILER_TINYC)
     #elif defined(ZPL_SYSTEM_OSX)
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)
@@ -59,6 +62,7 @@ void zpl_sfence(void) {
 void zpl_lfence(void) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         _ReadBarrier();
+    #elif defined(ZPL_COMPILER_TINYC)
     #elif defined(ZPL_SYSTEM_OSX)
         __asm__ volatile ("" : : : "memory");
     #elif defined(ZPL_CPU_X86)

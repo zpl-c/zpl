@@ -91,9 +91,11 @@ License:
     #endif
 #endif
 
-/* overrides */
+/* builtin overrides */
 #if defined(__TINYC__) || defined(__EMSCRIPTEN__)
-    #define ZPL_DISABLE_THREADING
+    #if !defined(ZPL_ENFORCE_THREADING)
+        #define ZPL_DISABLE_THREADING
+    #endif
 #endif
 
 /* Distributions */
@@ -356,6 +358,8 @@ License:
             #define zpl_thread_local __declspec(thread)
         #elif defined(__GNUC__)
             #define zpl_thread_local __thread
+        #elif defined(__TINYC__)
+            #define zpl_thread_local
         #else
             #define zpl_thread_local thread_local
         #endif

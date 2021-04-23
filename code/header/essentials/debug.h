@@ -15,8 +15,7 @@ ZPL_BEGIN_C_DECLS
             #define ZPL_DEBUG_TRAP( ) __debugbreak( )
         #endif
     #elif defined(ZPL_COMPILER_TINYC)
-        void zpl_exit(zpl_u32);
-        #define ZPL_DEBUG_TRAP( ) zpl_exit(1);
+        #define ZPL_DEBUG_TRAP( )
     #else
         #define ZPL_DEBUG_TRAP( ) __builtin_trap( )
     #endif

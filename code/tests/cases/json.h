@@ -111,29 +111,27 @@ MODULE(json5_parser, {
     });
 
     IT("parses commented JSON5 document", {
-        zpl_string t = zpl_string_make(zpl_heap(), ZPL_MULTILINE(\
-                {
-                    $api: "opengl",
-                    name: "Diffuse shader",
-                    version: "150",
-                    type: "fragment",
-                    // These are shader uniforms
-                    uniforms: [
-                        { name: 'l_pos', type: 'vec3'},
-                        { name: 'l_mat', type: 'mat4'},
-                    ],
-                    _meta: "0 0 -34 2.34 123 2.34e-4",
-
-                    /* GLSL shader code */
-                    code: `
-                        uniform vec3 l_pos;
-                        uniform mat4 l_mat;
-
-                        void main() {
-                            // ...
-                        }
-                    `,
-                }));
+        zpl_string t = zpl_string_make(zpl_heap(), ""
+                "{\n"
+                    "$api: \"opengl\",\n"
+                    "name: \"Diffuse shader\",\n"
+                    "version: \"150\",\n"
+                    "type: \"fragment\",\n"
+                    "// These are shader uniforms\n"
+                    "uniforms: [\n"
+                        "{ name: 'l_pos', type: 'vec3'},\n"
+                        "{ name: 'l_mat', type: 'mat4'},\n"
+                    "],\n"
+                    "_meta: \"0 0 -34 2.34 123 2.34e-4\",\n"
+                    "/* GLSL shader code */\n"
+                    "code: `\n"
+                        "uniform vec3 l_pos;\n"
+                        "uniform mat4 l_mat;\n"
+                        "void main() {\n"
+                            "// ...\n"
+                        "}\n"
+                    "`,\n"
+                "}\n");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);

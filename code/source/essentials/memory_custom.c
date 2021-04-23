@@ -51,7 +51,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
         case ZPL_ALLOCATION_RESIZE: ptr = _aligned_realloc(old_memory, size, alignment); break;
 
-#elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM)
+#elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
         case ZPL_ALLOCATION_ALLOC: {
             ptr = aligned_alloc(alignment, size);
 

@@ -20,7 +20,7 @@ ZPL_BEGIN_C_DECLS
 #endif
 
 #ifndef zpl_offset_of
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(ZPL_COMPILER_TINYC)
     #define zpl_offset_of(Type, element) ((zpl_isize) & (((Type *)0)->element))
 #else
     #define zpl_offset_of(Type, element) __builtin_offsetof(Type, element)
