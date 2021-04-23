@@ -135,7 +135,7 @@ defined(__ppc64__) || defined(__aarch64__)
 #endif
 
 // TODO(ZaKlaus): Find a better way to get this flag in MinGW.
-#if !defined(WC_ERR_INVALID_CHARS)
+#if (defined(ZPL_COMPILER_GCC) && !defined(WC_ERR_INVALID_CHARS)) || defined(ZPL_COMPILER_TINYC)
     #define WC_ERR_INVALID_CHARS 0x0080
 #endif
 
