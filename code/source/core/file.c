@@ -404,7 +404,7 @@ zpl_file_error zpl_file_temp(zpl_file *file) {
     zpl_zero_item(file);
     FILE *fd = NULL;
 
-#if defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_COMPILER_GCC)
+#if (defined(ZPL_SYSTEM_WINDOWS) && !defined(ZPL_SYSTEM_TINYC)) && !defined(ZPL_COMPILER_GCC)
     errno_t errcode = tmpfile_s(&fd);
 
     if (errcode != 0) {

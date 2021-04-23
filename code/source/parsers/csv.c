@@ -37,7 +37,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             row_item.name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
             do {
                 e = cast(char *)zpl_str_skip(e, '"');
-                if (*(e+1) == '"') {
+                if (*e && *(e+1) == '"') {
                     e += 2;
                 }
                 else break;

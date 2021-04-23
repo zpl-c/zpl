@@ -14,6 +14,11 @@
     #include <malloc.h>
 #endif
 
+// include errno.h for MinGW
+#if defined(ZPL_COMPILER_GCC) || (defined(ZPL_COMPILER_TINYC) && defined(ZPL_SYSTEM_WINDOWS))
+    #include <errno.h>
+#endif
+
 #if defined(ZPL_COMPILER_MINGW)
     #ifdef __MINGW32__
     #define _aligned_malloc __mingw_aligned_malloc
@@ -43,7 +48,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
     zpl_unused(old_size);
     // TODO: Throughly test!
     switch (type) {
-#if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS))
+#if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)) || (defined(ZPL_COMPILER_TINYC) && defined(ZPL_SYSTEM_WINDOWS))
         case ZPL_ALLOCATION_ALLOC:
         ptr = _aligned_malloc(size, alignment);
         if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);

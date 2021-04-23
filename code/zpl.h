@@ -346,11 +346,6 @@ License:
             /* prevent it from including later */
             #define ZPL_NO_WINDOWS_H
         #endif
-
-        // include errno.h for MinGW
-        #if defined(ZPL_COMPILER_GCC)
-            #include <errno.h>
-        #endif
     #endif
 
     #if !defined(zpl_thread_local)
