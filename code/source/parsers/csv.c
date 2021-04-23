@@ -30,6 +30,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         row_item.type = ZPL_ADT_TYPE_STRING;
         row_item.name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
 
+        /* handle string literals */
         if (*p == '"') {
             p = b = e = p+1;
             row_item.string = b;
@@ -66,6 +67,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             row_item.string = "";
         }
         else {
+            /* regular data */
             b = e = p;
             row_item.string = b;
             do {
@@ -90,6 +92,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             p++;
         }
         else if (d == '\n' || d == 0) {
+            /* check if number of rows is not mismatched */
             if (total_colc < colc) total_colc = colc;
             else if (total_colc != colc) {
                 ZPL_CSV_ASSERT("mismatched rows");
