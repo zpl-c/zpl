@@ -6,16 +6,6 @@
 
 ZPL_BEGIN_C_DECLS
 
-#if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-    #include <sched.h>
-#endif
-
-#if defined(ZPL_SYSTEM_WINDOWS)
-    void zpl_exit(zpl_u32 code) { ExitProcess(code); }
-#else
-    void zpl_exit(zpl_u32 code) { exit(code); }
-#endif
-
 void zpl_yield(void) {
     #if defined(ZPL_SYSTEM_WINDOWS)
         Sleep(0);

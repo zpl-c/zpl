@@ -93,7 +93,9 @@ License:
 
 /* builtin overrides */
 #if defined(__TINYC__) || defined(__EMSCRIPTEN__)
-    #if !defined(ZPL_ENFORCE_THREADING)
+    #if defined(ZPL_ENFORCE_THREADING)
+        #define ZPL_ENABLE_THREADING
+    #else
         #define ZPL_DISABLE_THREADING
     #endif
 #endif

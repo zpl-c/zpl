@@ -14,7 +14,6 @@
 
 ZPL_BEGIN_C_DECLS
 
-ZPL_DEF void zpl_exit(zpl_u32 code);
 ZPL_DEF void zpl_yield(void);
 
 //! Returns allocated buffer

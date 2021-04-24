@@ -15,7 +15,7 @@ ZPL_BEGIN_C_DECLS
             #define ZPL_DEBUG_TRAP( ) __debugbreak( )
         #endif
     #elif defined(ZPL_COMPILER_TINYC)
-        #define ZPL_DEBUG_TRAP( )
+        #define ZPL_DEBUG_TRAP( ) zpl_exit(1)
     #else
         #define ZPL_DEBUG_TRAP( ) __builtin_trap( )
     #endif
@@ -52,5 +52,6 @@ ZPL_BEGIN_C_DECLS
 
 ZPL_DEF void    zpl_assert_handler(char const *condition, char const *file, zpl_i32 line, char const *msg, ...);
 ZPL_DEF zpl_i32 zpl_assert_crash(char const *condition);
+ZPL_DEF void zpl_exit(zpl_u32 code);
 
 ZPL_END_C_DECLS
