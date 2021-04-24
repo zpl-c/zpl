@@ -33,7 +33,7 @@ zpl_i32 zpl_assert_crash(char const *condition) {
 #if defined(ZPL_SYSTEM_WINDOWS)
     void zpl_exit(zpl_u32 code) { ExitProcess(code); }
 #else
-    extern void exit (int __status) __THROW __attribute__ ((__noreturn__));
+    #include <stdlib.h>
     void zpl_exit(zpl_u32 code) { exit(code); }
 #endif
 
