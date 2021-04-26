@@ -41,8 +41,8 @@ License:
 #define ZPL_H
 
 #define ZPL_VERSION_MAJOR 13
-#define ZPL_VERSION_MINOR 1
-#define ZPL_VERSION_PATCH 6
+#define ZPL_VERSION_MINOR 2
+#define ZPL_VERSION_PATCH 0
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"
