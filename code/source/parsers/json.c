@@ -396,11 +396,8 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
             zpl_fprintf(f, "[");
             zpl_isize elemn = zpl_array_count(node->nodes);
             for (int j = 0; j < elemn; ++j) {
-                if ((node->nodes + j)->type == ZPL_ADT_TYPE_OBJECT || (node->nodes + j)->type == ZPL_ADT_TYPE_ARRAY) {
-                    zpl__json_write_value(f, node->nodes + j, o, 0, true, true);
-                } else {
-                    zpl__json_write_value(f, node->nodes + j, o, -4, true, true);
-                }
+                zpl_isize ind = ((node->nodes + j)->type == ZPL_ADT_TYPE_OBJECT || (node->nodes + j)->type == ZPL_ADT_TYPE_ARRAY) ? 0 : -4;
+                zpl__json_write_value(f, node->nodes + j, o, ind, true, true);
 
                 if (j < elemn - 1) { zpl_fprintf(f, ", "); }
             }
