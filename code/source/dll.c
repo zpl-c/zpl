@@ -1,8 +1,5 @@
 // file: source/dll.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
     #include <dlfcn.h>

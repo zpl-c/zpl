@@ -13,9 +13,6 @@ Use zpl_tar_pack_dir to pack an entire directory recursively. Empty folders are 
 @{
 */
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

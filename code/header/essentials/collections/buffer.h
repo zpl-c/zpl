@@ -16,9 +16,6 @@
 // zpl_buffer_pop
 // zpl_buffer_clear
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

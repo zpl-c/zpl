@@ -1,8 +1,5 @@
 // file: source/core/file_stream.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ////////////////////////////////////////////////////////////////
 //

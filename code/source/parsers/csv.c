@@ -1,8 +1,5 @@
 // file: source/parsers/csv.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 #ifdef ZPL_CSV_DEBUG
 #define ZPL_CSV_ASSERT(msg) ZPL_PANIC(msg)

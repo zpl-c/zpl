@@ -1,8 +1,5 @@
 // file: source/essentials/memory_custom.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 #ifndef _IOSC11_SOURCE
 #define _IOSC11_SOURCE

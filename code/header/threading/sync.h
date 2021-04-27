@@ -2,9 +2,6 @@
 
 // NOTE: Thread Merge Operation
 // Based on Sean Barrett's stb_sync
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

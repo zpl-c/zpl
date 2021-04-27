@@ -8,9 +8,6 @@ File I/O operations as well as path and folder structure manipulation methods. W
 
 @{
 */
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

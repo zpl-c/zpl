@@ -1,8 +1,5 @@
 // file: source/threading/mutex.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

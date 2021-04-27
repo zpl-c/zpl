@@ -8,9 +8,6 @@ Methods for sorting arrays using either Quick/Merge-sort combo or Radix sort. It
 
 @{
 */
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

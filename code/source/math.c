@@ -1,8 +1,5 @@
 // file: source/math.c
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 #if defined(ZPL_COMPILER_TINYC) && defined(ZPL_NO_MATH_H)
 #undef ZPL_NO_MATH_H

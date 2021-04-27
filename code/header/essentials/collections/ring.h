@@ -5,9 +5,6 @@
 // Instantiated Circular buffer
 //
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 ZPL_BEGIN_C_DECLS
 

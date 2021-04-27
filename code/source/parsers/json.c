@@ -6,9 +6,6 @@
 //
 //
 
-#ifdef ZPL_EDITOR
-#include <zpl.h>
-#endif
 
 #ifdef ZPL_JSON_DEBUG
 #define ZPL_JSON_ASSERT(msg) ZPL_PANIC(msg)
