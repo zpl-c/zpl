@@ -407,40 +407,9 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
             zpl_fprintf(f, "]");
         } break;
 
+        case ZPL_ADT_TYPE_REAL:
         case ZPL_ADT_TYPE_INTEGER: {
-            if (node->props == ZPL_ADT_PROPS_IS_HEX) {
-                zpl_fprintf(f, "0x%llx", (long long)node->integer);
-            } else {
-                zpl_fprintf(f, "%lld", (long long)node->integer);
-            }
-        } break;
-
-        case ZPL_ADT_TYPE_REAL: {
-            if (node->props == ZPL_ADT_PROPS_NAN) {
-                zpl_fprintf(f, "NaN");
-            } else if (node->props == ZPL_ADT_PROPS_NAN_NEG) {
-                zpl_fprintf(f, "-NaN");
-            } else if (node->props == ZPL_ADT_PROPS_INFINITY) {
-                zpl_fprintf(f, "Infinity");
-            } else if (node->props == ZPL_ADT_PROPS_INFINITY_NEG) {
-                zpl_fprintf(f, "-Infinity");
-            } else if (node->props == ZPL_ADT_PROPS_TRUE) {
-                zpl_fprintf(f, "true");
-            } else if (node->props == ZPL_ADT_PROPS_FALSE) {
-                zpl_fprintf(f, "false");
-            } else if (node->props == ZPL_ADT_PROPS_NULL) {
-                zpl_fprintf(f, "null");
-            } else if (node->props == ZPL_ADT_PROPS_IS_EXP) {
-                zpl_fprintf(f, "%lld.%0*d%llde%c%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, node->exp_neg ? '-' : '+',
-                            (long long)node->exp);
-            } else if (node->props == ZPL_ADT_PROPS_IS_PARSED_REAL) {
-                if (!node->lead_digit)
-                    zpl_fprintf(f, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
-                else
-                    zpl_fprintf(f, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
-            } else {
-                zpl_fprintf(f, "%f", node->real);
-            }
+            zpl_adt_print_number(f, node);
         } break;
 
         case ZPL_ADT_TYPE_OBJECT: {

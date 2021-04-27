@@ -131,7 +131,14 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     ZPL_ASSERT_NOT_NULL(node);
     ZPL_ASSERT_NOT_NULL(base);
     char *p = base, *e = p;
+
+    /* skip false positives and special cases */
+    if (!!zpl_strchr("eE", *p) || (!!zpl_strchr(".+-", *p) && !zpl_char_is_hex_digit(*(p+1)) && *(p+1) != '.')) {
+        return ++base;
+    }
+
     node->type = ZPL_ADT_TYPE_INTEGER;
+    node->neg_zero = false;
 
     zpl_isize ib = 0;
     char buf[48] = { 0 };
@@ -173,7 +180,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     char expbuf[6] = { 0 };
     zpl_isize expi = 0;
 
-    if (zpl_char_to_lower(*e) == 'e') {
+    if (!!zpl_strchr("eE", *e)) {
         ++e;
         if (*e == '+' || *e == '-' || zpl_char_is_digit(*e)) {
             if (*e == '-') { eb = 0.1f; }
@@ -186,6 +193,10 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
 
     if (node->type == ZPL_ADT_TYPE_INTEGER) {
         node->integer = zpl_str_to_i64(buf, 0, 0);
+        /* special case: negative zero */
+        if (node->integer == 0 && buf[0] == '-') {
+            node->neg_zero = true;
+        }
         while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
     } else {
         node->real = zpl_str_to_f64(buf, 0);
@@ -206,9 +217,62 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
             node->props = ZPL_ADT_PROPS_IS_EXP;
         }
 
+        /* special case: negative zero */
+        if (node->base == 0 && buf[0] == '-') {
+            node->neg_zero = true;
+        }
+
         while (exp-- > 0) { node->real *= eb; }
     }
     return e;
+}
+
+void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
+    ZPL_ASSERT_NOT_NULL(file);
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_INTEGER || node->type == ZPL_ADT_TYPE_REAL);
+
+    if (node->neg_zero) {
+        zpl_fprintf(file, "-");
+    }
+
+    switch (node->type) {
+        case ZPL_ADT_TYPE_INTEGER: {
+            if (node->props == ZPL_ADT_PROPS_IS_HEX) {
+                zpl_fprintf(file, "0x%llx", (long long)node->integer);
+            } else {
+                zpl_fprintf(file, "%lld", (long long)node->integer);
+            }
+        } break;
+
+        case ZPL_ADT_TYPE_REAL: {
+            if (node->props == ZPL_ADT_PROPS_NAN) {
+                zpl_fprintf(file, "NaN");
+            } else if (node->props == ZPL_ADT_PROPS_NAN_NEG) {
+                zpl_fprintf(file, "-NaN");
+            } else if (node->props == ZPL_ADT_PROPS_INFINITY) {
+                zpl_fprintf(file, "Infinity");
+            } else if (node->props == ZPL_ADT_PROPS_INFINITY_NEG) {
+                zpl_fprintf(file, "-Infinity");
+            } else if (node->props == ZPL_ADT_PROPS_TRUE) {
+                zpl_fprintf(file, "true");
+            } else if (node->props == ZPL_ADT_PROPS_FALSE) {
+                zpl_fprintf(file, "false");
+            } else if (node->props == ZPL_ADT_PROPS_NULL) {
+                zpl_fprintf(file, "null");
+            } else if (node->props == ZPL_ADT_PROPS_IS_EXP) {
+                zpl_fprintf(file, "%lld.%0*d%llde%c%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, node->exp_neg ? '-' : '+',
+                            (long long)node->exp);
+            } else if (node->props == ZPL_ADT_PROPS_IS_PARSED_REAL) {
+                if (!node->lead_digit)
+                    zpl_fprintf(file, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
+                else
+                    zpl_fprintf(file, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
+            } else {
+                zpl_fprintf(file, "%f", node->real);
+            }
+        } break;
+    }
 }
 
 void zpl_adt_str_to_number(zpl_adt_node *node) {

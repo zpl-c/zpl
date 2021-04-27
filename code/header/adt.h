@@ -64,15 +64,19 @@ typedef struct zpl_adt_node {
             zpl_allocator backing;
             struct zpl_adt_node *nodes;  ///< zpl_array
         };
-        zpl_i64 integer;
         char const *string;
-
         struct {
-            zpl_f64 real;
+            union {
+                zpl_f64 real;
+                zpl_i64 integer;
+            };
+
+            /* number analysis */
             zpl_i32 base;
             zpl_i32 base2;
             zpl_i32 base2_offset;
             zpl_i32 exp;
+            zpl_u8 neg_zero  :1;
             zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
         };
@@ -118,6 +122,7 @@ ZPL_DEF zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, 
 
 ZPL_DEF char *zpl_adt_parse_number(zpl_adt_node *node, char* base);
 ZPL_DEF void zpl_adt_str_to_number(zpl_adt_node *node);
+ZPL_DEF void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node);
 
 /* deprecated */
 
