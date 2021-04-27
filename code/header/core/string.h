@@ -374,7 +374,7 @@ ZPL_IMPL_INLINE char const *zpl_str_skip(char const *str, char c) {
 }
 
 ZPL_IMPL_INLINE char const *zpl_str_skip_any(char const *str, char const*char_list) {
-    char const *closest_ptr = zpl_ptr_add((void*)str, zpl_strlen(str));
+    char const *closest_ptr = cast(char const *) zpl_ptr_add((void*)str, zpl_strlen(str));
     zpl_isize char_list_count = zpl_strlen(char_list);
     for (zpl_isize i = 0; i < char_list_count; i++) {
         char const *p = zpl_str_skip(str, char_list[i]);
