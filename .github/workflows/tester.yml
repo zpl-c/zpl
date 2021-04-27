@@ -52,7 +52,7 @@ jobs:
       - name: Run build on Linux
         run: make
       - name: Run optimized build on Linux
-        if: ${{ !contains(github.event.head_commit.message, 'Release') }}
+        if: ${{ contains(github.event.head_commit.message, 'Release') }}
         run: LEVEL=-O3 make
 
   build-arm:
@@ -79,7 +79,7 @@ jobs:
       - name: Run build on macOS
         run: make
       - name: Run optimized build on macOS
-        if: ${{ !contains(github.event.head_commit.message, 'Release') }}
+        if: ${{ contains(github.event.head_commit.message, 'Release') }}
         run: LEVEL=-O3 make
 
   done:
