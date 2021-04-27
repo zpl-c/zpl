@@ -143,19 +143,7 @@ void zpl__csv_write_record(zpl_file *file, zpl_csv_object *node) {
             switch (node->name_style) {
                 case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
                     zpl_fprintf(file, "\"");
-                    {
-                        /* escape double quotes */
-                        char const* p = node->string, *b = p;
-                        do {
-                            p = zpl_str_skip(p, '"');
-                            zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p)+1, b);
-                            if (*p == '"') {
-                                zpl_fprintf(file, "\"");
-                                p++;
-                            }
-                            b = p;
-                        } while (*p);
-                    }
+                    zpl_adt_print_string(file, node, "\"", '"');
                     zpl_fprintf(file, "\"");
                 } break;
 

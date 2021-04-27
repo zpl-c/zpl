@@ -385,7 +385,9 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
 
     switch (node->type) {
         case ZPL_ADT_TYPE_STRING: {
-            zpl_fprintf(f, "\"%s\"", node->string);
+            zpl_fprintf(f, "\"");
+            zpl_adt_print_string(f, node, "\"`", '\\');
+            zpl_fprintf(f, "\"");
         } break;
 
         case ZPL_ADT_TYPE_MULTISTRING: {

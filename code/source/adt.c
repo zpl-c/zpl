@@ -275,6 +275,25 @@ void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
     }
 }
 
+void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escaped_chars, char escape_symbol) {
+    ZPL_ASSERT_NOT_NULL(file);
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(escaped_chars);
+    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
+
+    /* escape string */
+    char const* p = node->string, *b = p;
+    do {
+        p = zpl_str_skip_any(p, escaped_chars);
+        zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
+        if (*p && !!zpl_strchr(escaped_chars, *p)) {
+            zpl_fprintf(file, "%c%c", escape_symbol, *p);
+            p++;
+        }
+        b = p;
+    } while (*p);
+}
+
 void zpl_adt_str_to_number(zpl_adt_node *node) {
     ZPL_ASSERT(node);
 

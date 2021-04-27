@@ -123,6 +123,7 @@ ZPL_DEF zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, 
 ZPL_DEF char *zpl_adt_parse_number(zpl_adt_node *node, char* base);
 ZPL_DEF void zpl_adt_str_to_number(zpl_adt_node *node);
 ZPL_DEF void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node);
+ZPL_DEF void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escaped_chars, char escape_symbol);
 
 /* deprecated */
 
