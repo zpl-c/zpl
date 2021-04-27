@@ -209,6 +209,7 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
 
         /* First, we parse the key, then we proceed to the value itself. */
         p = zpl__json_parse_name(&node, p, err_code);
+        if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
         p = zpl__json_trim(p + 1, false);
         p = zpl__json_parse_value(&node, p, a, err_code);
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
@@ -294,6 +295,7 @@ char *zpl__json_parse_name(zpl_adt_node *node, char *base, zpl_u8 *err_code) {
 }
 
 char *zpl__json_trim(char *base, zpl_b32 catch_newline) {
+    ZPL_ASSERT_NOT_NULL(base);
     char *p = base;
     do {
         if (zpl_str_has_prefix(p, "//")) {

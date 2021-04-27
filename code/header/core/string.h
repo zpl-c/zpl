@@ -384,7 +384,7 @@ ZPL_IMPL_INLINE char const *zpl_str_skip_any(char const *str, char const*char_li
 }
 
 ZPL_IMPL_INLINE char const *zpl_str_skip_literal(char const *str, char c) {
-    while (*str && *str != c && *(str-1) != '\\') { ++str; }
+    while ((*str && *str != c) || (*str == c && *(str-1) == '\\')) { ++str; }
     return str;
 }
 
