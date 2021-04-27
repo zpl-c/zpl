@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: inlife/actiord-action@v1
-        if: "!contains(github.event.head_commit.message, 'Release')"
+        if: "always()"
         with:
           url: ${{ secrets.ACTIORD_URL }}
           icon: "https://cdn.zakto.pw/office/test.jpg"
@@ -52,6 +52,7 @@ jobs:
       - name: Run build on Linux
         run: make
       - name: Run optimized build on Linux
+        if: ${{ !contains(github.event.head_commit.message, 'Release') }}
         run: LEVEL=-O3 make
 
   build-arm:
@@ -78,13 +79,14 @@ jobs:
       - name: Run build on macOS
         run: make
       - name: Run optimized build on macOS
+        if: ${{ !contains(github.event.head_commit.message, 'Release') }}
         run: LEVEL=-O3 make
 
   done:
     name: Notify about status
     runs-on: ubuntu-latest
     needs: [build-mac, build-lin, build-win]
-    if: "!contains(github.event.head_commit.message, 'Release')"
+    if: "always()"
     steps:
       - uses: inlife/actiord-action@v1
         if: ${{ contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success') }}
