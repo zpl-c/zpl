@@ -69,7 +69,8 @@ jobs:
         run: CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ LEVEL="-g -march=armv7" make clean examples
       - name: Run build on ARMv8a
         run: CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ LEVEL="-g -march=armv8-a" make clean examples
-
+      - name: Run tester on ARMv8a
+        run: CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ LEVEL="-g -march=armv8-a" make clean test
   build-mac:
     name: Test macOS
     runs-on: macOS-latest
