@@ -73,9 +73,8 @@ typedef struct zpl_adt_node {
             zpl_i32 base;
             zpl_i32 base2;
             zpl_u8 base2_offset:4;
-            zpl_u8 exp         :4;
+            zpl_i8 exp         :4;
             zpl_u8 neg_zero  :1;
-            zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
         };
     };
@@ -84,7 +83,7 @@ typedef struct zpl_adt_node {
 /* ADT NODE LIMITS
     * delimiter and assignment segment width is limited to 128 whitespace symbols each.
     * real number limits decimal position to 128 places.
-    * real number exponent is limited to 128 digits.
+    * real number exponent is limited to 64 digits.
  */
 
 ZPL_DEF zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_u8 type);

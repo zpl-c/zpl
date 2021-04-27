@@ -204,14 +204,14 @@ MODULE(json5_parser, {
                 {
                     "foo": 1.e-2,
                     "bar": 42.23e4,
-                    "baz": .032
+                    "baz": .032,
+                    "bag": -232412.00349792
                 }));
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(r.nodes[0].base, 1);
-        EQUALS(r.nodes[0].exp, 2);
-        EQUALS(r.nodes[0].exp_neg, true);
+        EQUALS(r.nodes[0].exp, -2);
 
         EQUALS(r.nodes[1].base, 42);
         EQUALS(r.nodes[1].base2, 23);
@@ -221,6 +221,10 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[2].base2, 32);
         EQUALS(r.nodes[2].base2_offset, 1);
         EQUALS(r.nodes[2].lead_digit, false);
+
+        EQUALS(r.nodes[3].base, -232412);
+        EQUALS(r.nodes[3].base2, 349792);
+        EQUALS(r.nodes[3].base2_offset, 2);
 
         zpl_string_free(t);
         __CLEANUP();
