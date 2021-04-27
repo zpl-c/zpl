@@ -56,12 +56,12 @@ jobs:
         run: LEVEL=-O3 make
 
   build-arm:
-    name: Test ARM family
+    name: Test arm family
     runs-on: ubuntu-latest
     needs: [prep]
     steps:
       - uses: actions/checkout@v1
-      - name: Install ARM cross-compiler
+      - name: Install arm cross-compiler
         run: sudo apt install -y gcc-arm-linux-gnueabi g++-arm-linux-gnueabi
       - name: Run build on ARMv6
         run: CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ LEVEL="-g -march=armv6" make clean examples
@@ -85,16 +85,16 @@ jobs:
   done:
     name: Notify about status
     runs-on: ubuntu-latest
-    needs: [build-mac, build-lin, build-win]
+    needs: [build-mac, build-lin, build-win, build-arm]
     if: "always()"
     steps:
       - uses: inlife/actiord-action@v1
-        if: ${{ contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success') }}
+        if: ${{ contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success') && contains(needs.build-arm.result, 'success') }}
         with:
           url: ${{ secrets.ACTIORD_URL }}
           state: succeeded
       - uses: inlife/actiord-action@v1
-        if: ${{ !(contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success')) }}
+        if: ${{ !(contains(needs.build-mac.result, 'success') && contains(needs.build-lin.result, 'success') && contains(needs.build-win.result, 'success') && contains(needs.build-arm.result, 'success')) }}
         with:
           url: ${{ secrets.ACTIORD_URL }}
           icon: "https://cdn.zakto.pw/office/fail.jpg"

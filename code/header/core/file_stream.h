@@ -20,7 +20,6 @@ typedef enum {
     ZPL_FILE_STREAM_CLONE_WRITABLE = ZPL_BIT(1),
 } zpl_file_stream_flags;
 
-
 /**
  * Opens a new memory stream
  * @param file
