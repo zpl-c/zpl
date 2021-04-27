@@ -1,3 +1,4 @@
+13.4.1  - adt optimizations
 13.4.0  - new adt manipulation methods
 13.3.3  - fix zpl_str_skip_literal bug
 13.3.2  - escape strings in parser output

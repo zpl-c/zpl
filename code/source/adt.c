@@ -5,7 +5,6 @@ zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
-    node->backing = backing;
     zpl_array_init(node->nodes, backing);
     return 0;
 }
@@ -149,12 +148,12 @@ void zpl_adt_remove_node(zpl_adt_node *node, zpl_adt_node *parent) {
 
 zpl_adt_node *zpl_adt_inset_obj(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
-    zpl_adt_set_obj(o, name, parent->backing);
+    zpl_adt_set_obj(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
     return o;
 }
 zpl_adt_node *zpl_adt_inset_arr(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
-    zpl_adt_set_arr(o, name, parent->backing);
+    zpl_adt_set_arr(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
     return o;
 }
 zpl_adt_node *zpl_adt_inset_str(zpl_adt_node *parent, char const *name, char const *value) {
@@ -223,7 +222,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
         }
     }
 
-    zpl_i32 exp = 0;
+    zpl_u8 exp = 0;
     zpl_f32 eb = 10;
     char expbuf[6] = { 0 };
     zpl_isize expi = 0;
@@ -236,7 +235,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
             while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
         }
 
-        exp = (zpl_i32)zpl_str_to_i64(expbuf, NULL, 10);
+        exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
     }
 
     if (node->type == ZPL_ADT_TYPE_INTEGER) {

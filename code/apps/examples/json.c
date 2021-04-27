@@ -18,7 +18,7 @@ int main(void) {
     if (replace != NULL)
     {
         zpl_printf("Field was found! Current value: %ld\nReplacing with an array!\n", (long)replace->integer);
-        zpl_adt_set_arr(replace, "i_am_replaced", root.backing);
+        zpl_adt_set_arr(replace, "i_am_replaced", zpl_heap());
 
         for (size_t i = 0; i < 5; i++)
             zpl_adt_inset_int(replace, NULL, (zpl_i64)i+1);

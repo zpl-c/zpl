@@ -48,23 +48,21 @@ typedef enum zpl_adt_delim_style {
 
 typedef struct zpl_adt_node {
     char const *name;
-    zpl_u8 type        :6;
-    zpl_u8 name_style  :2;
-    zpl_u8 props       :7;
-    zpl_u8 cfg_mode    :1;
-    zpl_u8 assign_style:4;
-    zpl_u8 delim_style :4;
-    zpl_u8 delim_line_width;
-    zpl_u8 assign_line_width;
-    void *user_data;
-    zpl_i64 user_index;
 
+    /* properties */
+    zpl_u8 type        :4;
+    zpl_u8 props       :4;
+    zpl_u8 cfg_mode    :1;
+    zpl_u8 name_style  :2;
+    zpl_u8 assign_style:2;
+    zpl_u8 delim_style :2;
+    zpl_u8 delim_line_width :4;
+    zpl_u8 assign_line_width:4;
+
+    /* adt data */
     union {
-        struct {
-            zpl_allocator backing;
-            struct zpl_adt_node *nodes;  ///< zpl_array
-        };
         char const *string;
+        struct zpl_adt_node *nodes;  ///< zpl_array
         struct {
             union {
                 zpl_f64 real;
@@ -74,14 +72,20 @@ typedef struct zpl_adt_node {
             /* number analysis */
             zpl_i32 base;
             zpl_i32 base2;
-            zpl_i32 base2_offset;
-            zpl_i32 exp;
+            zpl_u8 base2_offset:4;
+            zpl_u8 exp         :4;
             zpl_u8 neg_zero  :1;
             zpl_u8 exp_neg   :1;
             zpl_u8 lead_digit:1;
         };
     };
 } zpl_adt_node;
+
+/* ADT NODE LIMITS
+    * delimiter and assignment segment width is limited to 128 whitespace symbols each.
+    * real number limits decimal position to 128 places.
+    * real number exponent is limited to 128 digits.
+ */
 
 ZPL_DEF zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_u8 type);
 ZPL_DEF zpl_u8 zpl_adt_destroy_branch(zpl_adt_node *node);
