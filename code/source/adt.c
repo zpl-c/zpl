@@ -99,6 +99,54 @@ void zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value) {
     obj->integer = value;
 }
 
+zpl_adt_node *zpl_adt_move_node_at(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent, zpl_isize index) {
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(old_parent);
+    ZPL_ASSERT_NOT_NULL(new_parent);
+    ZPL_ASSERT(new_parent->type == ZPL_ADT_TYPE_ARRAY || new_parent->type == ZPL_ADT_TYPE_OBJECT);
+    ZPL_ASSERT(node >= old_parent->nodes);
+    ZPL_ASSERT(node <= zpl_array_end(old_parent->nodes));
+    ZPL_ASSERT(index >= 0 && index <= zpl_array_count(new_parent->nodes));
+    zpl_adt_node *new_node = zpl_adt_alloc_at(new_parent, index);
+    *new_node = *node;
+    zpl_adt_remove_node(node, old_parent);
+    return new_node;
+}
+
+zpl_adt_node *zpl_adt_move_node(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent) {
+    ZPL_ASSERT_NOT_NULL(new_parent);
+    ZPL_ASSERT(new_parent->type == ZPL_ADT_TYPE_ARRAY || new_parent->type == ZPL_ADT_TYPE_OBJECT);
+    return zpl_adt_move_node_at(node, old_parent, new_parent, zpl_array_count(new_parent->nodes));
+}
+
+void zpl_adt_swap_nodes(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent) {
+    zpl_adt_swap_nodes_between_parents(node, other_node, parent, parent);
+}
+
+void zpl_adt_swap_nodes_between_parents(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent, zpl_adt_node *other_parent) {
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(other_node);
+    ZPL_ASSERT_NOT_NULL(parent);
+    ZPL_ASSERT_NOT_NULL(other_parent);
+    ZPL_ASSERT(node >= parent->nodes && node <= zpl_array_end(parent->nodes));
+    ZPL_ASSERT(other_node >= other_parent->nodes && other_node <= zpl_array_end(other_parent->nodes));
+    zpl_isize index = (zpl_pointer_diff(parent->nodes, node) / zpl_size_of(zpl_adt_node));
+    zpl_isize index2 = (zpl_pointer_diff(other_parent->nodes, other_node) / zpl_size_of(zpl_adt_node));
+    zpl_adt_node temp = parent->nodes[index];
+    parent->nodes[index] = other_parent->nodes[index2];
+    other_parent->nodes[index2] = temp;
+}
+
+void zpl_adt_remove_node(zpl_adt_node *node, zpl_adt_node *parent) {
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(parent);
+    ZPL_ASSERT(node >= parent->nodes);
+    ZPL_ASSERT(node <= zpl_array_end(parent->nodes));
+    zpl_isize index = (zpl_pointer_diff(parent->nodes, node) / zpl_size_of(zpl_adt_node));
+    zpl_array_remove_at(parent->nodes, index);
+}
+
+
 zpl_adt_node *zpl_adt_inset_obj(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_obj(o, name, parent->backing);

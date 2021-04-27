@@ -1,8 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
-
 MODULE(hashing, {
     const char test[] = "Hello World!";
     zpl_isize len = zpl_strlen(test);

@@ -1,8 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
-
 #define __PARSE(has_header) \
     zpl_csv_object r={0}; \
     zpl_u8 err = zpl_csv_parse(&r, (char *const)t, zpl_heap(), has_header);

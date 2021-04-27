@@ -12,6 +12,7 @@
 #include "cases/time.h"
 #include "cases/stream.h"
 #include "cases/print.h"
+#include "cases/adt.h"
 
 int main() {
     UNIT_CREATE("zpl");
@@ -23,6 +24,7 @@ int main() {
     UNIT_MODULE(print);
     UNIT_MODULE(json5_parser);
     UNIT_MODULE(csv_parser);
+    UNIT_MODULE(adt);
 
     return UNIT_RUN();
 }

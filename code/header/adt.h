@@ -93,6 +93,12 @@ ZPL_DEF zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32
 ZPL_DEF zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index);
 ZPL_DEF zpl_adt_node *zpl_adt_alloc(zpl_adt_node *parent);
 
+ZPL_DEF zpl_adt_node *zpl_adt_move_node_at(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent, zpl_isize index);
+ZPL_DEF zpl_adt_node *zpl_adt_move_node(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent);
+ZPL_DEF void zpl_adt_swap_nodes(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent);
+ZPL_DEF void zpl_adt_swap_nodes_between_parents(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent, zpl_adt_node *other_parent);
+ZPL_DEF void zpl_adt_remove_node(zpl_adt_node *node, zpl_adt_node *parent);
+
 ZPL_DEF void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing);
 ZPL_DEF void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing);
 ZPL_DEF void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value);

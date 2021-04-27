@@ -1,8 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
-
 #define __PARSE() \
     zpl_json_object r={0}; \
     zpl_u8 err = zpl_json_parse(&r, (char *)t, zpl_heap());

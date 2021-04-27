@@ -1,8 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
-
 #define RUN(desc, exp, fmt, ...) \
     IT(desc, { \
         const char *txt = zpl_bprintf(fmt, __VA_ARGS__); \

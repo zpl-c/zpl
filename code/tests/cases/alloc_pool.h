@@ -1,7 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
 #define __CLEANUP() \
     do { \
         zpl_pool_free(&pool); \
@@ -22,7 +18,7 @@ MODULE(alloc_pool, {
 
     IT("can push 4 blocks into pool", {
         zpl_pool_init(&pool, zpl_heap(), 8, 1);
-        
+
         zpl_alloc(__A, 1);
         EQUALS(pool.total_size, 1);
 
@@ -40,7 +36,7 @@ MODULE(alloc_pool, {
 
     IT("creates 3 blocks and removes the middle", {
         zpl_pool_init(&pool, zpl_heap(), 8, 1);
-        
+
         zpl_alloc(__A, 1);
         EQUALS(pool.total_size, 1);
 
@@ -58,7 +54,7 @@ MODULE(alloc_pool, {
 
     IT("creates 2 blocks, removes all of them and adds 1 block", {
         zpl_pool_init(&pool, zpl_heap(), 2, 1);
-        
+
         zpl_alloc(__A, 1);
         zpl_alloc(__A, 1);
         EQUALS(pool.total_size, 2);

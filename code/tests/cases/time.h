@@ -1,8 +1,3 @@
-#ifdef ZPL_EDITOR
-    #include <zpl.h>
-    #include "unit.h"
-#endif
-
 #define __WIN32_TIMESTAMP_REFERENCE 13253813593098ull
 #define __UNIX_TIMESTAMP_REFERENCE 1609339993098ull
 
