@@ -76,6 +76,20 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
                 d = *p;
                 *e = 0;
             }
+
+            /* check if number and process if so */
+            zpl_b32 skip_number = false;
+            char *num_p = b;
+            do {
+                if (!zpl_char_is_hex_digit(*num_p) && (!zpl_strchr("+-.eExX", *num_p))) {
+                    skip_number = true;
+                    break;
+                }
+            } while (*num_p++);
+
+            if (!skip_number) {
+                zpl_adt_str_to_number(&row_item);
+            }
         }
 
         if (colc >= zpl_array_count(root->nodes)) {
@@ -123,30 +137,77 @@ void zpl_csv_free(zpl_csv_object *obj) {
     zpl_adt_destroy_branch(obj);
 }
 
-void zpl__csv_write_record(zpl_file *file, char const* text, zpl_u8 name_style) {
-    switch (name_style) {
-        case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
-            zpl_fprintf(file, "\"");
-            {
-                /* escape double quotes */
-                char const* p = text, *b = p;
-                do {
-                    p = zpl_str_skip(p, '"');
-                    zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p)+1, b);
-                    if (*p == '"') {
-                        zpl_fprintf(file, "\"");
-                        p++;
+void zpl__csv_write_record(zpl_file *file, zpl_csv_object *node) {
+    switch (node->type) {
+        case ZPL_ADT_TYPE_STRING: {
+            switch (node->name_style) {
+                case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
+                    zpl_fprintf(file, "\"");
+                    {
+                        /* escape double quotes */
+                        char const* p = node->string, *b = p;
+                        do {
+                            p = zpl_str_skip(p, '"');
+                            zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p)+1, b);
+                            if (*p == '"') {
+                                zpl_fprintf(file, "\"");
+                                p++;
+                            }
+                            b = p;
+                        } while (*p);
                     }
-                    b = p;
-                } while (*p);
+                    zpl_fprintf(file, "\"");
+                } break;
+
+                case ZPL_ADT_NAME_STYLE_NO_QUOTES: {
+                    zpl_fprintf(file, "%s", node->string);
+                } break;
             }
-            zpl_fprintf(file, "\"");
         } break;
 
-        case ZPL_ADT_NAME_STYLE_NO_QUOTES: {
-            zpl_fprintf(file, "%s", text);
+        case ZPL_ADT_TYPE_INTEGER: {
+            if (node->props == ZPL_ADT_PROPS_IS_HEX) {
+                zpl_fprintf(file, "0x%llx", (long long)node->integer);
+            } else {
+                zpl_fprintf(file, "%lld", (long long)node->integer);
+            }
+        } break;
+
+        case ZPL_ADT_TYPE_REAL: {
+            if (node->props == ZPL_ADT_PROPS_NAN) {
+                zpl_fprintf(file, "NaN");
+            } else if (node->props == ZPL_ADT_PROPS_NAN_NEG) {
+                zpl_fprintf(file, "-NaN");
+            } else if (node->props == ZPL_ADT_PROPS_INFINITY) {
+                zpl_fprintf(file, "Infinity");
+            } else if (node->props == ZPL_ADT_PROPS_INFINITY_NEG) {
+                zpl_fprintf(file, "-Infinity");
+            } else if (node->props == ZPL_ADT_PROPS_TRUE) {
+                zpl_fprintf(file, "true");
+            } else if (node->props == ZPL_ADT_PROPS_FALSE) {
+                zpl_fprintf(file, "false");
+            } else if (node->props == ZPL_ADT_PROPS_NULL) {
+                zpl_fprintf(file, "null");
+            } else if (node->props == ZPL_ADT_PROPS_IS_EXP) {
+                zpl_fprintf(file, "%lld.%0*d%llde%c%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, node->exp_neg ? '-' : '+',
+                            (long long)node->exp);
+            } else if (node->props == ZPL_ADT_PROPS_IS_PARSED_REAL) {
+                if (!node->lead_digit)
+                    zpl_fprintf(file, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
+                else
+                    zpl_fprintf(file, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
+            } else {
+                zpl_fprintf(file, "%f", node->real);
+            }
         } break;
     }
+}
+
+void zpl__csv_write_header(zpl_file *file, zpl_csv_object *header) {
+    zpl_csv_object temp = *header;
+    temp.string = temp.name;
+    temp.type = ZPL_ADT_TYPE_STRING;
+    zpl__csv_write_record(file, &temp);
 }
 
 void zpl_csv_write_delimiter(zpl_file *file, zpl_csv_object *obj, char delimiter) {
@@ -163,7 +224,7 @@ void zpl_csv_write_delimiter(zpl_file *file, zpl_csv_object *obj, char delimiter
 
     if (has_headers) {
         for (zpl_isize i = 0; i < cols; i++) {
-            zpl__csv_write_record(file, obj->nodes[i].name, obj->nodes[i].name_style);
+            zpl__csv_write_header(file, &obj->nodes[i]);
             if (i+1 != cols) {
                 zpl_fprintf(file, ",");
             }
@@ -173,7 +234,7 @@ void zpl_csv_write_delimiter(zpl_file *file, zpl_csv_object *obj, char delimiter
 
     for (zpl_isize r = 0; r < rows; r++) {
         for (zpl_isize i = 0; i < cols; i++) {
-            zpl__csv_write_record(file, obj->nodes[i].nodes[r].string, obj->nodes[i].nodes[r].name_style);
+            zpl__csv_write_record(file, &obj->nodes[i].nodes[r]);
             if (i+1 != cols) {
                 zpl_fprintf(file, ",");
             }

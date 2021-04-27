@@ -211,10 +211,10 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     return e;
 }
 
-void zpl_adt_str_to_flt(zpl_adt_node *node) {
+void zpl_adt_str_to_number(zpl_adt_node *node) {
     ZPL_ASSERT(node);
 
-    if (node->type == ZPL_ADT_TYPE_REAL) return; /* this is already converted/parsed */
+    if (node->type == ZPL_ADT_TYPE_REAL || node->type == ZPL_ADT_TYPE_INTEGER) return; /* this is already converted/parsed */
     ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
     zpl_adt_parse_number(node, (char *)node->string);
 }

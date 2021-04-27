@@ -117,6 +117,13 @@ ZPL_DEF zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, 
 /* parser helpers */
 
 ZPL_DEF char *zpl_adt_parse_number(zpl_adt_node *node, char* base);
-ZPL_DEF void zpl_adt_str_to_flt(zpl_adt_node *node);
+ZPL_DEF void zpl_adt_str_to_number(zpl_adt_node *node);
+
+/* deprecated */
+
+ZPL_DEPRECATED_FOR(13.3.0, zpl_adt_str_to_number)
+ZPL_IMPL_INLINE void zpl_adt_str_to_flt(zpl_adt_node *node) {
+    zpl_adt_str_to_number(node);
+}
 
 ZPL_END_C_DECLS
