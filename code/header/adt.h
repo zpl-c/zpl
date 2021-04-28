@@ -114,6 +114,15 @@ ZPL_DEF zpl_adt_node *zpl_adt_inset_str(zpl_adt_node *parent, char const *name, 
 ZPL_DEF zpl_adt_node *zpl_adt_inset_flt(zpl_adt_node *parent, char const *name, zpl_f64 value);
 ZPL_DEF zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, zpl_i64 value);
 
+/* parser helpers */
+
+ZPL_DEF char *zpl_adt_parse_number(zpl_adt_node *node, char* base);
+ZPL_DEF void zpl_adt_str_to_number(zpl_adt_node *node);
+ZPL_DEF void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node);
+ZPL_DEF void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escaped_chars, char escape_symbol);
+
+/* extensions */
+
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 #define zpl_adt_inset(parent, name, value) _Generic((value), \
                                                               char*: zpl_adt_inset_str, \
@@ -126,13 +135,6 @@ ZPL_DEF zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, 
                                                               zpl_f64: zpl_adt_set_flt, \
                                                               default: zpl_adt_set_int)(obj, name, value)
 #endif
-
-/* parser helpers */
-
-ZPL_DEF char *zpl_adt_parse_number(zpl_adt_node *node, char* base);
-ZPL_DEF void zpl_adt_str_to_number(zpl_adt_node *node);
-ZPL_DEF void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node);
-ZPL_DEF void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escaped_chars, char escape_symbol);
 
 /* deprecated */
 
