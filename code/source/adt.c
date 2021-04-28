@@ -1,5 +1,7 @@
 // file: source/adt.c
 
+ZPL_BEGIN_C_DECLS
+
 zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
     ZPL_ASSERT(type == ZPL_ADT_TYPE_OBJECT || type == ZPL_ADT_TYPE_ARRAY);
     zpl_zero_item(node);
@@ -346,3 +348,5 @@ void zpl_adt_str_to_number(zpl_adt_node *node) {
     ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
     zpl_adt_parse_number(node, (char *)node->string);
 }
+
+ZPL_END_C_DECLS
