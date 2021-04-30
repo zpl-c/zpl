@@ -63,18 +63,22 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
             d = *p;
             row_item.string = "";
         }
-        else {
+        else if (*p) {
             /* regular data */
             b = e = p;
             row_item.string = b;
             do {
                 e++;
-            } while (*e != delim && *e != '\n' && *e);
+            } while (*e && *e != delim && *e != '\n');
             if (*e) {
                 p = cast(char *)zpl_str_trim(e, true);
                 while (zpl_char_is_space(*(e-1))) { e--; }
                 d = *p;
                 *e = 0;
+            }
+            else {
+                d = 0;
+                p = e;
             }
 
             /* check if number and process if so */
@@ -111,7 +115,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
                 return err;
             }
             colc = 0;
-            p++;
+            if (d != 0) p++;
         }
     } while(*p);
 

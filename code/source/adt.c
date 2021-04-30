@@ -229,7 +229,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     char expbuf[6] = { 0 };
     zpl_isize expi = 0;
 
-    if (!!zpl_strchr("eE", *e)) {
+    if (*e && !!zpl_strchr("eE", *e)) {
         ++e;
         if (*e == '+' || *e == '-' || zpl_char_is_digit(*e)) {
             if (*e == '-') { eb = 0.1f; }

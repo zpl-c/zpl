@@ -60,6 +60,9 @@ MODULE(csv_parser, {
         __PARSE(false);
 
         EQUALS(err, 0);
+        EQUALS(zpl_array_count(r.nodes[0].nodes), 1);
+        EQUALS(zpl_array_count(r.nodes[1].nodes), 1);
+        EQUALS(zpl_array_count(r.nodes[2].nodes), 1);
 
         __CLEANUP();
         zpl_string_free(t);
@@ -70,6 +73,7 @@ MODULE(csv_parser, {
         __PARSE(false);
 
         EQUALS(err, 0);
+        EQUALS(zpl_array_count(r.nodes[0].nodes), 1);
 
         __CLEANUP();
         zpl_string_free(t);
