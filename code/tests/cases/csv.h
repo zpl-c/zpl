@@ -206,4 +206,4 @@ MODULE(csv_parser, {
     });
 });
 
-#undef __PARS
+#undef __PARSE

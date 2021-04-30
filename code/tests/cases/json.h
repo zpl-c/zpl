@@ -253,4 +253,3 @@ MODULE(json5_parser, {
 });
 
 #undef __PARSE
-#undef __CLEANUP
