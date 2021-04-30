@@ -280,7 +280,8 @@ ZPL_IMPL_INLINE void *zpl_alloc_copy_align(zpl_allocator a, void const *src, zpl
 
 ZPL_IMPL_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isize len) {
     char *result;
-    result = cast(char *) zpl_alloc_copy(a, str, len + 1);
+    result = cast(char *) zpl_alloc(a, len + 1);
+    zpl_memmove(result, str, len);
     result[len] = '\0';
     return result;
 }
