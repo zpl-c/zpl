@@ -14,6 +14,7 @@ GitHub:
   https://github.com/zpl-c/tester
 
 Version History:
+  1.1.0 - introduce memory arena for per-module allocations
   1.0.1 - Small tweaks
   1.0.0 - Where it all started... (not really)
 
