@@ -85,7 +85,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         switch (type) {
             case ZPL_ALLOCATION_FREE: {
                 if (!old_memory) break;
-                zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(old_memory - alloc_info_size);
+                zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)old_memory - 1;
                 zpl__heap_stats_info.used_memory -= alloc_info->size;
                 zpl__heap_stats_info.alloc_count--;
                 old_memory = alloc_info->physical_start;
@@ -148,7 +148,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         switch (type) {
             case ZPL_ALLOCATION_ALLOC: {
                 zpl__heap_alloc_info alloc_info_ = {0};
-                zpl__heap_alloc_info *alloc_info = (ptr + alloc_info_remainder);
+                zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(cast(char *)ptr + alloc_info_remainder);
                 *alloc_info = alloc_info_;
                 alloc_info->size = size - track_size;
                 alloc_info->physical_start = ptr;
