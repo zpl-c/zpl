@@ -1,9 +1,6 @@
 #define __PARSE() \
     zpl_json_object r={0}; \
-    zpl_u8 err = zpl_json_parse(&r, (char *)t, zpl_heap());
-
-#define __CLEANUP() \
-    zpl_json_free(&r);
+    zpl_u8 err = zpl_json_parse(&r, (char *)t, mem_alloc);
 
 MODULE(json5_parser, {
     IT("parses empty JSON5 object", {
@@ -13,8 +10,6 @@ MODULE(json5_parser, {
         EQUALS(err, 0);
         EQUALS(zpl_array_count(r.nodes), 0);
         EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
-
-        __CLEANUP();
     });
 
     IT("parses empty JSON5 array", {
@@ -23,19 +18,14 @@ MODULE(json5_parser, {
 
         EQUALS(err, 0);
         EQUALS(r.type, ZPL_ADT_TYPE_ARRAY);
-
-        __CLEANUP();
     });
 
     IT("parses cfg mode document", {
-        zpl_string t = zpl_string_make(zpl_heap(), "\n\nfoo = \"bar\"\nbaz = 123\n\n");
+        zpl_string t = zpl_string_make(mem_alloc, "\n\nfoo = \"bar\"\nbaz = 123\n\n");
         __PARSE();
 
         EQUALS(err, 0);
         EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
-
-        __CLEANUP();
-        zpl_string_free(t);
     });
 
     IT("fails to parse broken JSON5 array", {
@@ -43,8 +33,6 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_ARRAY_LEFT_OPEN);
-
-        __CLEANUP();
     });
 
     IT("fails to parse broken JSON5 object", {
@@ -52,8 +40,6 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_OBJECT_END_PAIR_MISMATCHED);
-
-        __CLEANUP();
     });
 
     IT("fails to parse invalid data", {
@@ -61,38 +47,30 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_UNKNOWN_KEYWORD);
-
-        __CLEANUP();
     });
 
     IT("parses commented JSON5 object", {
-        zpl_string t = zpl_string_make(zpl_heap(), "{/* TEST CODE */ \"a\": 123 }");
+        zpl_string t = zpl_string_make(mem_alloc, "{/* TEST CODE */ \"a\": 123 }");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
         EQUALS(r.nodes[0].type, ZPL_ADT_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
-
-        __CLEANUP();
-        zpl_string_free(t);
     });
 
     IT("parses commented JSON5 array", {
-        zpl_string t = zpl_string_make(zpl_heap(), "[/* TEST CODE */ 123 ]");
+        zpl_string t = zpl_string_make(mem_alloc, "[/* TEST CODE */ 123 ]");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
         EQUALS(r.nodes[0].type, ZPL_ADT_TYPE_INTEGER);
         EQUALS(r.nodes[0].integer, 123);
-
-        __CLEANUP();
-        zpl_string_free(t);
     });
 
     IT("parses JSON array of multiple values", {
-        zpl_string t = zpl_string_make(zpl_heap(), "[ 123, 456, `hello` ]");
+        zpl_string t = zpl_string_make(mem_alloc, "[ 123, 456, `hello` ]");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
@@ -100,13 +78,10 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[0].integer, 123);
         EQUALS(r.nodes[1].integer, 456);
         STREQUALS(r.nodes[2].string, "hello");
-
-        __CLEANUP();
-        zpl_string_free(t);
     });
 
     IT("parses commented JSON5 document", {
-        zpl_string t = zpl_string_make(zpl_heap(), ""
+        zpl_string t = zpl_string_make(mem_alloc, ""
                 "{\n"
                     "$api: \"opengl\",\n"
                     "name: \"Diffuse shader\",\n"
@@ -131,9 +106,6 @@ MODULE(json5_parser, {
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         EQUALS(zpl_array_count(r.nodes), 7);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("parses nested array", {
@@ -147,12 +119,10 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
-
-        __CLEANUP();
     });
 
     IT("parses nested array inside of an object", {
-        zpl_string t = zpl_string_make(zpl_heap(), ZPL_MULTILINE(\
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
                 { "foo": [
                     [
                         [
@@ -162,13 +132,10 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("parses keywords", {
-        zpl_string t = zpl_string_make(zpl_heap(), ZPL_MULTILINE(\
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
                 [
                     true,
                     false,
@@ -181,26 +148,20 @@ MODULE(json5_parser, {
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("parses empty object as a field", {
-        zpl_string t = zpl_string_make(zpl_heap(), ZPL_MULTILINE(\
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
                 {
                     "foo": {}
                 }));
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("parses numbers with scientific notation", {
-        zpl_string t = zpl_string_make(zpl_heap(), ZPL_MULTILINE(\
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
                 {
                     "foo": 1.e-2,
                     "bar": 42.23e4,
@@ -225,13 +186,10 @@ MODULE(json5_parser, {
         EQUALS(r.nodes[3].base, -232412);
         EQUALS(r.nodes[3].base2, 349792);
         EQUALS(r.nodes[3].base2_offset, 2);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("parses minified JSON array", {
-        zpl_string t = zpl_string_make(zpl_heap(), "[{\"Name\":\"ATLAS0.png\",\"Width\":256,\"Height\":128,\"Images\":[{\"Name\":\"4\",\"X\":0,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"0\",\"X\":41,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"6\",\"X\":82,\"Y\":0,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"2\",\"X\":0,\"Y\":28,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"7\",\"X\":36,\"Y\":28,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"3\",\"X\":118,\"Y\":0,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"5\",\"X\":157,\"Y\":0,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34},{\"Name\":\"1\",\"X\":118,\"Y\":32,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34}],\"IsRotated\":true,\"IsTrimmed\":false,\"IsPremultiplied\":false}]");
+        zpl_string t = zpl_string_make(mem_alloc, "[{\"Name\":\"ATLAS0.png\",\"Width\":256,\"Height\":128,\"Images\":[{\"Name\":\"4\",\"X\":0,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"0\",\"X\":41,\"Y\":0,\"Width\":40,\"Height\":27,\"FrameX\":0,\"FrameY\":0,\"FrameW\":40,\"FrameH\":27},{\"Name\":\"6\",\"X\":82,\"Y\":0,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"2\",\"X\":0,\"Y\":28,\"Width\":33,\"Height\":35,\"FrameX\":0,\"FrameY\":0,\"FrameW\":33,\"FrameH\":35},{\"Name\":\"7\",\"X\":36,\"Y\":28,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"3\",\"X\":118,\"Y\":0,\"Width\":31,\"Height\":38,\"FrameX\":0,\"FrameY\":0,\"FrameW\":31,\"FrameH\":38},{\"Name\":\"5\",\"X\":157,\"Y\":0,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34},{\"Name\":\"1\",\"X\":118,\"Y\":32,\"Width\":37,\"Height\":34,\"FrameX\":0,\"FrameY\":0,\"FrameW\":37,\"FrameH\":34}],\"IsRotated\":true,\"IsTrimmed\":false,\"IsPremultiplied\":false}]");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
@@ -239,23 +197,18 @@ MODULE(json5_parser, {
         EQUALS(zpl_array_count(r.nodes[0].nodes), 7);
         EQUALS(r.nodes[0].nodes[3].type, ZPL_ADT_TYPE_ARRAY);
         EQUALS(zpl_array_count(r.nodes[0].nodes[3].nodes), 8);
-
-        __CLEANUP();
     });
 
     IT("parses geojson.io data", {
-        zpl_string t = zpl_string_make(zpl_heap(), "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[19.09149169921875,48.55786390423251],[19.172515869140625,48.55786390423251],[19.172515869140625,48.60101970261553],[19.09149169921875,48.60101970261553],[19.09149169921875,48.55786390423251]]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[19.149169921875,48.56024979174329],[16.63330078125,49.160154652338015],[18.28125,49.82380908513249],[18.720703125,49.210420445650286],[19.62158203125,48.929717630629554],[19.13818359375,48.58205840283824]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[17.962646484375,48.17341248658084]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[18.4130859375,47.68388118858139],[19.951171875,47.00647991252098],[20.819091796874996,47.83159592699297],[19.237060546875,48.19904897935913],[18.380126953125,48.06706753191901],[17.633056640625,47.67648444221321],[17.764892578124996,47.21583707523794],[18.4130859375,47.68388118858139]]]}}]}");
+        zpl_string t = zpl_string_make(mem_alloc, "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[19.09149169921875,48.55786390423251],[19.172515869140625,48.55786390423251],[19.172515869140625,48.60101970261553],[19.09149169921875,48.60101970261553],[19.09149169921875,48.55786390423251]]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[19.149169921875,48.56024979174329],[16.63330078125,49.160154652338015],[18.28125,49.82380908513249],[18.720703125,49.210420445650286],[19.62158203125,48.929717630629554],[19.13818359375,48.58205840283824]]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[17.962646484375,48.17341248658084]}},{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[18.4130859375,47.68388118858139],[19.951171875,47.00647991252098],[20.819091796874996,47.83159592699297],[19.237060546875,48.19904897935913],[18.380126953125,48.06706753191901],[17.633056640625,47.67648444221321],[17.764892578124996,47.21583707523794],[18.4130859375,47.68388118858139]]]}}]}");
         __PARSE();
 
         EQUALS(err, ZPL_JSON_ERROR_NONE);
         NEQUALS(zpl_array_count(r.nodes), 0);
-
-        zpl_string_free(t);
-        __CLEANUP();
     });
 
     IT("writes a complex JSON5 document", {
-        zpl_string original = zpl_string_make(zpl_heap(), ""
+        zpl_string original = zpl_string_make(mem_alloc, ""
                 "{\n"
                 "    \"$api\": \"opengl\",\n"
                 "    \"name\": \"Diffuse shader\",\n"
@@ -273,7 +226,7 @@ MODULE(json5_parser, {
         );
 
         zpl_json_object doc, *o, *o2;
-        zpl_adt_set_obj(&doc, NULL, zpl_heap());
+        zpl_adt_set_obj(&doc, NULL, mem_alloc);
 
         o = zpl_adt_inset_str(&doc, "$api", "opengl");
         o = zpl_adt_inset_str(&doc, "name", "Diffuse shader");
@@ -294,10 +247,8 @@ MODULE(json5_parser, {
         }
         o = zpl_adt_inset_str(&doc, "_meta", "0 0 -34 2.34 123 2.34e-4");
 
-        zpl_string a = zpl_json_write_string(zpl_heap(), &doc, 0);
+        zpl_string a = zpl_json_write_string(mem_alloc, &doc, 0);
         STREQUALS(original, a);
-        zpl_string_free(a);
-        zpl_string_free(original);
     });
 });
 
