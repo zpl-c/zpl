@@ -55,7 +55,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
 
 #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
         case ZPL_ALLOCATION_ALLOC: {
-            ptr = aligned_alloc(alignment, size);
+            ptr = aligned_alloc(alignment, (size + alignment - 1) & ~(alignment - 1));
 
             if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) { zpl_zero_size(ptr, size); }
         } break;
