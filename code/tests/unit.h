@@ -14,6 +14,7 @@ GitHub:
   https://github.com/zpl-c/tester
 
 Version History:
+  1.1.1 - ensure memory arena only works with zpl present
   1.1.0 - introduce memory arena for per-module allocations
   1.0.1 - Small tweaks
   1.0.0 - Where it all started... (not really)
@@ -88,11 +89,6 @@ License:
 #define UNIT_JOIN2(a,b) a##b
 #endif
 
-/* specifies memory limit for per-module memory allocator */
-#ifndef UNIT_ARENA_MEM
-#define UNIT_ARENA_MEM (512*1024)
-#endif
-
 /* Isolates test results within compilation units, this allows for running
     multiple test suites per single binary. */
 #ifdef UNIT_STATIC
@@ -106,6 +102,33 @@ License:
 #include <stdio.h>
 #include <stdint.h>
 
+/* zpl specific */
+
+/* verify if zpl is present */
+#if defined(ZPL_H) && !defined(UNIT_ZPL_DISABLE_ARENA)
+    /* specifies memory limit for per-module memory allocator */
+    #ifndef UNIT_ARENA_MEM
+        #define UNIT_ARENA_MEM (512*1024)
+    #endif
+
+    #define UNIT_ZPL_INITIALIZE_MEM_ARENA() \
+        zpl_arena hunk_mem={0}; \
+        zpl_arena_init_from_allocator(&hunk_mem, zpl_heap(), UNIT_ARENA_MEM); \
+        zpl_allocator mem_alloc = zpl_arena_allocator(&hunk_mem); \
+        zpl_unused(mem_alloc);
+    #define UNIT_ZPL_DESTROY_MEM_ARENA() \
+        zpl_arena_free(&hunk_mem);
+    #define UNIT_ZPL_CAPTURE_MEMORY() \
+        zpl_temp_arena_memory mem_snapshot = zpl_temp_arena_memory_begin(&hunk_mem);
+    #define UNIT_ZPL_RESTORE_MEMORY() \
+        zpl_temp_arena_memory_end(mem_snapshot);
+#else
+    #define UNIT_ZPL_INITIALIZE_MEM_ARENA()
+    #define UNIT_ZPL_DESTROY_MEM_ARENA()
+    #define UNIT_ZPL_CAPTURE_MEMORY()
+    #define UNIT_ZPL_RESTORE_MEMORY()
+#endif
+
 #define MODULE(name, ...) \
     int32_t UNIT_JOIN2(module__,name)() { \
         printf("--------------------------------------\n"); \
@@ -117,12 +140,9 @@ License:
         int32_t _errors = 0; \
         int32_t _lasterr = 0; \
         char *_errstr = 0; \
-        zpl_arena hunk_mem={0}; \
-        zpl_arena_init_from_allocator(&hunk_mem, zpl_heap(), UNIT_ARENA_MEM); \
-        zpl_allocator mem_alloc = zpl_arena_allocator(&hunk_mem); \
-        zpl_unused(mem_alloc); \
+        UNIT_ZPL_INITIALIZE_MEM_ARENA(); \
         {__VA_ARGS__}; \
-        zpl_arena_free(&hunk_mem); \
+        UNIT_ZPL_DESTROY_MEM_ARENA(); \
         fflush(stdout); \
         printf("\n results: %d total, %s%d failed\x1B[0m, %s%d passed\x1B[0m\n", _total, _errors>0?"\x1B[31m":"", _errors, _errors==0?"\x1B[32m":"", _total - _errors); \
         _g_total += _total; \
@@ -136,9 +156,9 @@ License:
     _errstr = ""; \
     _total += 1; \
     { \
-        zpl_temp_arena_memory mem_snapshot = zpl_temp_arena_memory_begin(&hunk_mem); \
+        UNIT_ZPL_CAPTURE_MEMORY(); \
         do {__VA_ARGS__} while(0); \
-        zpl_temp_arena_memory_end(mem_snapshot); \
+        UNIT_ZPL_RESTORE_MEMORY(); \
     } \
     if (_lasterr != UNIT_SKIP_MAGIC) _errors += _lasterr; \
     printf(" * [%s]: It %s %s\n", (_lasterr == UNIT_SKIP_MAGIC) ? "\x1B[33mSKIP\x1B[0m" : (_lasterr) ? "\x1B[31mFAIL\x1B[0m" : "\x1B[32mPASS\x1B[0m", desc, _errstr);
