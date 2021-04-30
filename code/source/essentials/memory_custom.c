@@ -104,7 +104,10 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
         break;
         case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
-        case ZPL_ALLOCATION_RESIZE: ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment); break;
+        case ZPL_ALLOCATION_RESIZE: {
+            zpl_allocator a = zpl_heap_allocator();
+            ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
+        } break;
 
 #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
         case ZPL_ALLOCATION_ALLOC: {
