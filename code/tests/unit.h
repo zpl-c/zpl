@@ -104,11 +104,15 @@ License:
 
 /* zpl specific */
 
+#ifndef ZPL_VERSION_CHECK
+#define ZPL_VERSION_CHECK(major,minor,patch) 0
+#endif
+
 /* verify if zpl is present */
-#if defined(ZPL_H) && !defined(UNIT_ZPL_DISABLE_ARENA)
+#if !defined(UNIT_ZPL_DISABLE_ARENA) && ZPL_VERSION_CHECK(14,0,0)
     /* specifies memory limit for per-module memory allocator */
     #ifndef UNIT_ARENA_MEM
-        #define UNIT_ARENA_MEM (512*1024)
+        #define UNIT_ARENA_MEM (32768)
     #endif
 
     #define UNIT_ZPL_INITIALIZE_MEM_ARENA() \
@@ -119,9 +123,9 @@ License:
     #define UNIT_ZPL_DESTROY_MEM_ARENA() \
         zpl_arena_free(&hunk_mem);
     #define UNIT_ZPL_CAPTURE_MEMORY() \
-        zpl_temp_arena_memory mem_snapshot = zpl_temp_arena_memory_begin(&hunk_mem);
+        zpl_arena_snapshot mem_snapshot = zpl_arena_snapshot_begin(&hunk_mem);
     #define UNIT_ZPL_RESTORE_MEMORY() \
-        zpl_temp_arena_memory_end(mem_snapshot);
+        zpl_arena_snapshot_end(mem_snapshot);
 #else
     #define UNIT_ZPL_INITIALIZE_MEM_ARENA()
     #define UNIT_ZPL_DESTROY_MEM_ARENA()

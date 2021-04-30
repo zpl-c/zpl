@@ -58,6 +58,11 @@
 #endif
 #define ZPL_VERSION_DECODE_PATCH(version) ((version) % 1000)
 
+#if defined(ZPL_VERSION_CHECK)
+    #undef ZPL_VERSION_CHECK
+#endif
+#define ZPL_VERSION_CHECK(major,minor,patch) (ZPL_VERSION_ENCODE(major,minor,patch) <= ZPL_VERSION)
+
 #if defined(ZPL_GNUC_VERSION)
 #  undef ZPL_GNUC_VERSION
 #endif

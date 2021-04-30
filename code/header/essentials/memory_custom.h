@@ -8,16 +8,16 @@
 
 ZPL_BEGIN_C_DECLS
 
-typedef enum zplAllocationType {
+typedef enum zpl_alloc_type {
     ZPL_ALLOCATION_ALLOC,
     ZPL_ALLOCATION_FREE,
     ZPL_ALLOCATION_FREE_ALL,
     ZPL_ALLOCATION_RESIZE,
-} zplAllocationType;
+} zpl_alloc_type;
 
 // NOTE: This is useful so you can define an allocator of the same type and parameters
 #define ZPL_ALLOCATOR_PROC(name)                                                                                       \
-void *name(void *allocator_data, zplAllocationType type, zpl_isize size, zpl_isize alignment, void *old_memory,            \
+void *name(void *allocator_data, zpl_alloc_type type, zpl_isize size, zpl_isize alignment, void *old_memory,            \
 zpl_isize old_size, zpl_u64 flags)
 typedef ZPL_ALLOCATOR_PROC(zpl_allocator_proc);
 
@@ -27,9 +27,9 @@ typedef struct zpl_allocator {
     void *data;
 } zpl_allocator;
 
-typedef enum zplAllocatorFlag {
+typedef enum zpl_alloc_flag {
     ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO = ZPL_BIT(0),
-} zplAllocatorFlag;
+} zpl_alloc_flag;
 
 #ifndef ZPL_DEFAULT_MEMORY_ALIGNMENT
 #define ZPL_DEFAULT_MEMORY_ALIGNMENT (2 * zpl_size_of(void *))
@@ -77,6 +77,15 @@ ZPL_DEF_INLINE char *zpl_alloc_str_len(zpl_allocator a, char const *str, zpl_isi
 //! Allocate memory for an array of items.
 #define zpl_alloc_array(allocator_, Type, count) (Type *)zpl_alloc(allocator_, zpl_size_of(Type) * (count))
 #endif
+
+/* heap memory analysis tools */
+/* define ZPL_HEAP_ANALYSIS to enable this feature */
+/* call zpl_heap_stats_init at the beginning of the entry point */
+/* you can call zpl_heap_stats_check near the end of the execution to validate any possible leaks */
+ZPL_DEF void zpl_heap_stats_init(void);
+ZPL_DEF zpl_isize zpl_heap_stats_used_memory(void);
+ZPL_DEF zpl_isize zpl_heap_stats_alloc_count(void);
+ZPL_DEF void zpl_heap_stats_check(void);
 
 //! Allocate/Resize memory using default options.
 
@@ -138,16 +147,16 @@ ZPL_DEF_INLINE zpl_allocator zpl_arena_allocator(zpl_arena *arena);
 ZPL_DEF ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc);
 
 
-typedef struct zpl_temp_arena_memory {
+typedef struct zpl_arena_snapshot {
     zpl_arena *arena;
     zpl_isize original_count;
-} zpl_temp_arena_memory;
+} zpl_arena_snapshot;
 
 //! Capture a snapshot of used memory in a memory arena.
-ZPL_DEF_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena);
+ZPL_DEF_INLINE zpl_arena_snapshot zpl_arena_snapshot_begin(zpl_arena *arena);
 
 //! Reset memory arena's usage by a captured snapshot.
-ZPL_DEF_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp_mem);
+ZPL_DEF_INLINE void zpl_arena_snapshot_end(zpl_arena_snapshot tmp_mem);
 
 //
 // Pool Allocator
@@ -378,15 +387,15 @@ ZPL_IMPL_INLINE zpl_allocator zpl_arena_allocator(zpl_arena *arena) {
     return allocator;
 }
 
-ZPL_IMPL_INLINE zpl_temp_arena_memory zpl_temp_arena_memory_begin(zpl_arena *arena) {
-    zpl_temp_arena_memory tmp;
+ZPL_IMPL_INLINE zpl_arena_snapshot zpl_arena_snapshot_begin(zpl_arena *arena) {
+    zpl_arena_snapshot tmp;
     tmp.arena = arena;
     tmp.original_count = arena->total_allocated;
     arena->temp_count++;
     return tmp;
 }
 
-ZPL_IMPL_INLINE void zpl_temp_arena_memory_end(zpl_temp_arena_memory tmp) {
+ZPL_IMPL_INLINE void zpl_arena_snapshot_end(zpl_arena_snapshot tmp) {
     ZPL_ASSERT(tmp.arena->total_allocated >= tmp.original_count);
     ZPL_ASSERT(tmp.arena->temp_count > 0);
     tmp.arena->total_allocated = tmp.original_count;

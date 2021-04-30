@@ -39,11 +39,64 @@ char *zpl_alloc_str(zpl_allocator a, char const *str) {
 // Heap Allocator
 //
 
+#define ZPL_HEAP_STATS_MAGIC 0xDEADC0DE
+
+typedef struct zpl__heap_stats {
+    zpl_u32 magic;
+    zpl_isize used_memory;
+    zpl_isize alloc_count;
+} zpl__heap_stats;
+
+zpl_global zpl__heap_stats zpl__heap_stats_info;
+
+void zpl_heap_stats_init(void) {
+    zpl_zero_item(&zpl__heap_stats_info);
+    zpl__heap_stats_info.magic = ZPL_HEAP_STATS_MAGIC;
+}
+zpl_isize zpl_heap_stats_used_memory(void) {
+    ZPL_ASSERT_MSG(zpl__heap_stats_info.magic == ZPL_HEAP_STATS_MAGIC, "zpl_heap_stats is not initialised yet, call zpl_heap_stats_init first!");
+    return zpl__heap_stats_info.used_memory;
+}
+zpl_isize zpl_heap_stats_alloc_count(void) {
+    ZPL_ASSERT_MSG(zpl__heap_stats_info.magic == ZPL_HEAP_STATS_MAGIC, "zpl_heap_stats is not initialised yet, call zpl_heap_stats_init first!");
+    return zpl__heap_stats_info.alloc_count;
+}
+void zpl_heap_stats_check(void) {
+    ZPL_ASSERT_MSG(zpl__heap_stats_info.magic == ZPL_HEAP_STATS_MAGIC, "zpl_heap_stats is not initialised yet, call zpl_heap_stats_init first!");
+    ZPL_ASSERT(zpl__heap_stats_info.used_memory == 0);
+    ZPL_ASSERT(zpl__heap_stats_info.alloc_count == 0);
+}
+
+typedef struct zpl__heap_alloc_info {
+    zpl_isize size;
+    void *physical_start;
+} zpl__heap_alloc_info;
+
 ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
     void *ptr = NULL;
     zpl_unused(allocator_data);
     zpl_unused(old_size);
-    // TODO: Throughly test!
+    if (!alignment) alignment = ZPL_DEFAULT_MEMORY_ALIGNMENT;
+
+    #ifdef ZPL_HEAP_ANALYSIS
+        zpl_isize alloc_info_size = zpl_size_of(zpl__heap_alloc_info);
+        zpl_isize alloc_info_remainder = (alloc_info_size % alignment);
+        zpl_isize track_size = zpl_max(alloc_info_size, alignment) + alloc_info_remainder;
+        switch (type) {
+            case ZPL_ALLOCATION_FREE: {
+                if (!old_memory) break;
+                zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(old_memory - alloc_info_size);
+                zpl__heap_stats_info.used_memory -= alloc_info->size;
+                zpl__heap_stats_info.alloc_count--;
+                old_memory = alloc_info->physical_start;
+            } break;
+            case ZPL_ALLOCATION_ALLOC: {
+                size += track_size;
+            } break;
+            default: break;
+        }
+    #endif
+
     switch (type) {
 #if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)) || (defined(ZPL_COMPILER_TINYC) && defined(ZPL_SYSTEM_WINDOWS))
         case ZPL_ALLOCATION_ALLOC:
@@ -51,7 +104,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         if (flags & ZPL_ALLOCATOR_FLAG_CLEAR_TO_ZERO) zpl_zero_size(ptr, size);
         break;
         case ZPL_ALLOCATION_FREE: _aligned_free(old_memory); break;
-        case ZPL_ALLOCATION_RESIZE: ptr = _aligned_realloc(old_memory, size, alignment); break;
+        case ZPL_ALLOCATION_RESIZE: ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment); break;
 
 #elif defined(ZPL_SYSTEM_LINUX) && !defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
         case ZPL_ALLOCATION_ALLOC: {
@@ -65,7 +118,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         } break;
 
         case ZPL_ALLOCATION_RESIZE: {
-            zpl_allocator a = zpl_heap_allocator( );
+            zpl_allocator a = zpl_heap_allocator();
             ptr = zpl_default_resize_align(a, old_memory, old_size, size, alignment);
         } break;
 #else
@@ -87,6 +140,22 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
 
         case ZPL_ALLOCATION_FREE_ALL: break;
     }
+
+    #ifdef ZPL_HEAP_ANALYSIS
+        switch (type) {
+            case ZPL_ALLOCATION_ALLOC: {
+                zpl__heap_alloc_info alloc_info_ = {0};
+                zpl__heap_alloc_info *alloc_info = (ptr + alloc_info_remainder);
+                *alloc_info = alloc_info_;
+                alloc_info->size = size - track_size;
+                alloc_info->physical_start = ptr;
+                ptr = cast(void*)(alloc_info + 1);
+                zpl__heap_stats_info.used_memory += alloc_info->size;
+                zpl__heap_stats_info.alloc_count++;
+            } break;
+            default: break;
+        }
+    #endif
 
     return ptr;
 }

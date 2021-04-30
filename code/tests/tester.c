@@ -1,4 +1,5 @@
 #define ZPL_IMPL
+#define ZPL_HEAP_ANALYSIS
 #include "zpl.h"
 
 #define UNIT_MAX_MODULES 16
@@ -15,6 +16,7 @@
 #include "cases/adt.h"
 
 int main() {
+    zpl_heap_stats_init();
     UNIT_CREATE("zpl");
 
     UNIT_MODULE(alloc_pool);
@@ -26,5 +28,7 @@ int main() {
     UNIT_MODULE(csv_parser);
     UNIT_MODULE(adt);
 
-    return UNIT_RUN();
+    int32_t ret_code = UNIT_RUN();
+    zpl_heap_stats_check();
+    return ret_code;
 }

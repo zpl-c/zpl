@@ -25,6 +25,7 @@ Options:
   ZPL_EXPOSE_TYPES - exposes all zpl defined types to the global namespace. This means type such as `zpl_u32` is now available as `u32` globally.
   ZPL_DEFINE_NULL_MACRO - to let zpl define what NULL stands for in case it is undefined.
   ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
+  ZPL_HEAP_ANALYSIS - enables heap allocator analysis tools
 
 GitHub:
   https://github.com/zpl-c/zpl
