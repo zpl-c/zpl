@@ -145,18 +145,15 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
     }
 
     #ifdef ZPL_HEAP_ANALYSIS
-        switch (type) {
-            case ZPL_ALLOCATION_ALLOC: {
-                zpl__heap_alloc_info alloc_info_ = {0};
-                zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(cast(char *)ptr + alloc_info_remainder);
-                *alloc_info = alloc_info_;
-                alloc_info->size = size - track_size;
-                alloc_info->physical_start = ptr;
-                ptr = cast(void*)(alloc_info + 1);
-                zpl__heap_stats_info.used_memory += alloc_info->size;
-                zpl__heap_stats_info.alloc_count++;
-            } break;
-            default: break;
+        if (type == ZPL_ALLOCATION_ALLOC) {
+            zpl__heap_alloc_info alloc_info_ = {0};
+            zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(cast(char *)ptr + alloc_info_remainder);
+            *alloc_info = alloc_info_;
+            alloc_info->size = size - track_size;
+            alloc_info->physical_start = ptr;
+            ptr = cast(void*)(alloc_info + 1);
+            zpl__heap_stats_info.used_memory += alloc_info->size;
+            zpl__heap_stats_info.alloc_count++;
         }
     #endif
 
