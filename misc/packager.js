@@ -58,22 +58,23 @@ const embedIncludes = (print) => {
 
     lines = lines.map((line, i) => {
         if (i < hedleyIndex) return line
-        if (line.indexOf('#include') === -1) return line
         if (line.indexOf('<') !== -1) return line
+        if (line.startsWith('#') && line.indexOf('include') !== -1) {
+            const includePos = line.indexOf('include')
+            const parts = line.split('include')
+            const spaces = ' '.repeat(includePos)
+            const filename = parts[1].trim().replace(/"/g, '')
 
-        const parts = line.split('#include')
-        const spaces = parts[0]
-        const filename = parts[1].trim().replace(/"/g, '')
+            const content = fs
+                .readFileSync(path.join(__dirname, '..', 'code', filename), 'utf8')
+                .split('\n')
+                .map(l => spaces + l)
+                .map(l => l === spaces ? '' : l)
+                .join('\n')
+                .replace(/\s+$/g, '')
 
-        const content = fs
-            .readFileSync(path.join(__dirname, '..', 'code', filename), 'utf8')
-            .split('\n')
-            .map(l => spaces + l)
-            .map(l => l === spaces ? '' : l)
-            .join('\n')
-            .replace(/\s+$/g, '')
-
-        return content
+            return content
+        } else return line
     })
 
     const code = lines.join('\n')
