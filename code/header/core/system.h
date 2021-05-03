@@ -152,14 +152,20 @@ defined(__ppc64__) || defined(__aarch64__)
 #    endif
 #endif
 
+#ifndef INFINITY
+union MSVC_EVIL_FLOAT_HACK {
+    unsigned __int8 Bytes[4];   
+    float Value;
+};
+static union MSVC_EVIL_FLOAT_HACK INFINITY_HACK = {{0x00, 0x00, 0x80, 0x7F}};
+#define INFINITY (INFINITY_HACK.Value)
+#endif
+
 #if ZPL_GNUC_VERSION_CHECK(3, 3, 0)
 #    define ZPL_INFINITY (__builtin_inff())
 #    define ZPL_NAN (__builtin_nanf(""))
-#elif defined(ZPL_COMPILER_MSVC) && defined(INFINITY)
-#    define ZPL_INFINITY (INFINITY)
-#    define ZPL_NAN (0)
 #elif defined(ZPL_COMPILER_MSVC)
-#    define ZPL_INFINITY (1e10000)
+#    define ZPL_INFINITY (INFINITY)
 #    define ZPL_NAN (0)
 #else
 #    define ZPL_INFINITY (1e10000f)
