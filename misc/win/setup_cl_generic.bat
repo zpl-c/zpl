@@ -1,5 +1,8 @@
 @echo off
 
+where /q cl
+IF %ERRORLEVEL% == 0 (EXIT /b)
+
 SET "LIB="
 
 SET VC_PATH=C:\Program Files (x86)\Microsoft Visual Studio 12.0

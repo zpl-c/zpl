@@ -413,6 +413,10 @@ License:
     #pragma warning(disable : 4201)
     #pragma warning(disable : 4996) // Disable deprecated POSIX functions warning
     #pragma warning(disable : 4127) // Conditional expression is constant
+#   pragma warning(disable : 4204) // non-constant field initializer
+#   pragma warning(disable : 4756) // -INFINITY
+#   pragma warning(disable : 4056) // -INFINITY
+#   pragma warning(disable : 4702) // unreachable code
 #endif
 
 /* general purpose includes */
@@ -432,9 +436,10 @@ License:
     #endif
 #endif
 
+#include <errno.h>
+
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
     #include <unistd.h>
-    #include <errno.h>
 #elif defined(ZPL_SYSTEM_WINDOWS)
     #if !defined(ZPL_NO_WINDOWS_H)
         #ifndef WIN32_LEAN_AND_MEAN

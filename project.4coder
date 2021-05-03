@@ -1,0 +1,76 @@
+version(1);
+
+project_name = "zpl";
+
+patterns =
+{
+    "*.c",
+    "*.cpp",
+    "*.jai",
+    "*.odin",
+    "*.zig",
+    "*.h",
+    "*.inc",
+    "*.bat",
+    "*.sh",
+    "*.4coder",
+    "*.txt",
+};
+
+blacklist_patterns =
+{
+    ".*",
+};
+
+load_paths =
+{
+    {
+        { {"."}, .recursive = true, .relative = true }, .os = "win"
+    },
+};
+
+command_list =
+{
+    {
+        .name = "build",
+        .out = "*compilation*",
+        .footer_panel = true,
+        .save_dirty_files = true,
+        .cursor_at_end = false,
+        .cmd =
+        {
+            { "misc\build_single.bat ", .os = "win" },
+            { "echo Linux build command not implemented for 4coder project.", .os = "linux" },
+        },
+    },
+    
+    {
+        .name = "run",
+        .out = "*compilation*",
+        .footer_panel = true,
+        .save_dirty_files = true,
+        .cursor_at_end = false,
+        .cmd =
+        {
+            { "echo Windows run command not implemented for 4coder project.", .os = "win" },
+            { "echo Linux run command not implemented for 4coder project.", .os = "linux" },
+        },
+    },
+    
+    {
+        .name = "test",
+        .out = "*compilation*",
+        .footer_panel = true,
+        .save_dirty_files = true,
+        .cursor_at_end = true,
+        .cmd =
+        {
+            { "call misc/win/run_tester.bat", .os = "win" },
+        }
+    },
+    
+};
+
+fkey_command[1] = "build";
+fkey_command[2] = "run";
+fkey_command[3] = "test";
