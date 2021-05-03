@@ -157,16 +157,16 @@ defined(__ppc64__) || defined(__aarch64__)
 #    define ZPL_NAN (__builtin_nanf(""))
 #elif defined(ZPL_COMPILER_MSVC)
 
-#    ifndef INFINITY
+#    if !defined(ZPL__HACK_INFINITY)
     typedef union zpl__msvc_inf_hack {
         unsigned __int8 bytes[4];   
         float value;
     } zpl__msvc_inf_hack;
     static union zpl__msvc_inf_hack ZPL__INFINITY_HACK = {{0x00, 0x00, 0x80, 0x7F}};
-#    define INFINITY (ZPL__INFINITY_HACK.value)
+#    define ZPL__HACK_INFINITY (ZPL__INFINITY_HACK.value)
 #    endif
 
-#    define ZPL_INFINITY (INFINITY)
+#    define ZPL_INFINITY (ZPL__HACK_INFINITY)
 #    define ZPL_NAN (0)
 #else
 #    define ZPL_INFINITY (1e10000f)
