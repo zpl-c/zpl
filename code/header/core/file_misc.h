@@ -4,21 +4,21 @@
 ZPL_BEGIN_C_DECLS
 
 #ifndef ZPL_PATH_SEPARATOR
-    #if defined(ZPL_SYSTEM_WINDOWS)
-        #define ZPL_PATH_SEPARATOR '\\'
-    #else
-        #define ZPL_PATH_SEPARATOR '/'
-    #endif
+#    if defined(ZPL_SYSTEM_WINDOWS)
+#        define ZPL_PATH_SEPARATOR '\\'
+#    else
+#        define ZPL_PATH_SEPARATOR '/'
+#    endif
 #endif
 
 #ifndef ZPL_MAX_PATH
-    #if defined(ZPL_SYSTEM_WINDOWS)
-        #define ZPL_MAX_PATH MAX_PATH
-    #elif defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
-        #define ZPL_MAX_PATH PATH_MAX
-    #else
-        #define ZPL_MAX_PATH 4096
-    #endif
+#    if defined(ZPL_SYSTEM_WINDOWS)
+#        define ZPL_MAX_PATH MAX_PATH
+#    elif defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
+#        define ZPL_MAX_PATH PATH_MAX
+#    else
+#        define ZPL_MAX_PATH 4096
+#    endif
 #endif
 
 /**

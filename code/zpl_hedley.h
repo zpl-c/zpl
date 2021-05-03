@@ -59,7 +59,7 @@
 #define ZPL_VERSION_DECODE_PATCH(version) ((version) % 1000)
 
 #if defined(ZPL_VERSION_CHECK)
-    #undef ZPL_VERSION_CHECK
+#    undef ZPL_VERSION_CHECK
 #endif
 #define ZPL_VERSION_CHECK(major,minor,patch) (ZPL_VERSION_ENCODE(major,minor,patch) <= ZPL_VERSION)
 
@@ -1737,10 +1737,10 @@ ZPL_DIAGNOSTIC_POP
   ZPL_MSVC_VERSION_CHECK(16,0,0)
 #  define ZPL_STATIC_ASSERT(expr, message) ZPL_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_(static_assert(expr, message))
 #else
-  #define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond)) * 2 - 1]
-  #define ZPL_STATIC_ASSERT2(cond, line) ZPL_STATIC_ASSERT3(cond, static_assertion_at_line_##line)
-  #define ZPL_STATIC_ASSERT1(cond, line) ZPL_STATIC_ASSERT2(cond, line)
-  #define ZPL_STATIC_ASSERT(cond, unused) ZPL_STATIC_ASSERT1(cond, __LINE__)
+#  define ZPL_STATIC_ASSERT3(cond, msg) typedef char static_assertion_##msg[(!!(cond)) * 2 - 1]
+#  define ZPL_STATIC_ASSERT2(cond, line) ZPL_STATIC_ASSERT3(cond, static_assertion_at_line_##line)
+#  define ZPL_STATIC_ASSERT1(cond, line) ZPL_STATIC_ASSERT2(cond, line)
+#  define ZPL_STATIC_ASSERT(cond, unused) ZPL_STATIC_ASSERT1(cond, __LINE__)
 #endif
 
 #if defined(ZPL_NULL)

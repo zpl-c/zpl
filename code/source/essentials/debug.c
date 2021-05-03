@@ -24,13 +24,13 @@ zpl_i32 zpl_assert_crash(char const *condition) {
 }
 
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-    #include <sched.h>
+#    include <sched.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
     void zpl_exit(zpl_u32 code) { ExitProcess(code); }
 #else
-    #include <stdlib.h>
+#    include <stdlib.h>
     void zpl_exit(zpl_u32 code) { exit(code); }
 #endif
 

@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 #ifdef ZPL_SYSTEM_MACOS
-    #include <copyfile.h>
+#    include <copyfile.h>
 #endif
 
 #ifdef ZPL_SYSTEM_CYGWIN
@@ -157,14 +157,14 @@ ZPL_BEGIN_C_DECLS
     }
 
 #else // POSIX
-    #include <fcntl.h>
+#    include <fcntl.h>
 
     zpl_internal ZPL_FILE_SEEK_PROC(zpl__posix_file_seek) {
-    #if defined(ZPL_SYSTEM_OSX)
+#    if defined(ZPL_SYSTEM_OSX)
         zpl_i64 res = lseek(fd.i, offset, whence);
-    #else // TODO(ZaKlaus): @fixme lseek64
+#    else // TODO(ZaKlaus): @fixme lseek64
         zpl_i64 res = lseek(fd.i, offset, whence);
-    #endif
+#    endif
         if (res < 0) return false;
         if (new_offset) *new_offset = res;
         return true;

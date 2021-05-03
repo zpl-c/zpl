@@ -10,7 +10,7 @@ ZPL_BEGIN_C_DECLS
         zpl_isize core_count;
         zpl_isize thread_count;
 
-    #define ZPL_WIN32_MAX_THREADS (8 * zpl_size_of(zpl_usize))
+#    define ZPL_WIN32_MAX_THREADS (8 * zpl_size_of(zpl_usize))
         zpl_usize core_masks[ZPL_WIN32_MAX_THREADS];
     } zpl_affinity;
 
@@ -33,7 +33,7 @@ ZPL_BEGIN_C_DECLS
     } zpl_affinity;
 
 #else
-    #error TODO: Unknown system
+#    error TODO: Unknown system
 #endif
 
 ZPL_DEF void      zpl_affinity_init   (zpl_affinity *a);

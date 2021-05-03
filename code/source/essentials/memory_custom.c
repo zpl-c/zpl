@@ -8,19 +8,19 @@
 #include <stdlib.h>
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-    #include <malloc.h>
+#    include <malloc.h>
 #endif
 
 // include errno.h for MinGW
 #if defined(ZPL_COMPILER_GCC) || (defined(ZPL_COMPILER_TINYC) && defined(ZPL_SYSTEM_WINDOWS))
-    #include <errno.h>
+#    include <errno.h>
 #endif
 
 #if defined(ZPL_COMPILER_MINGW)
-    #ifdef __MINGW32__
-    #define _aligned_malloc __mingw_aligned_malloc
-    #define _aligned_free  __mingw_aligned_free
-    #endif //MINGW
+#    ifdef __MINGW32__
+#    define _aligned_malloc __mingw_aligned_malloc
+#    define _aligned_free  __mingw_aligned_free
+#    endif //MINGW
 #endif
 
 ZPL_BEGIN_C_DECLS
@@ -78,7 +78,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
     zpl_unused(old_size);
     if (!alignment) alignment = ZPL_DEFAULT_MEMORY_ALIGNMENT;
 
-    #ifdef ZPL_HEAP_ANALYSIS
+#    ifdef ZPL_HEAP_ANALYSIS
         zpl_isize alloc_info_size = zpl_size_of(zpl__heap_alloc_info);
         zpl_isize alloc_info_remainder = (alloc_info_size % alignment);
         zpl_isize track_size = zpl_max(alloc_info_size, alignment) + alloc_info_remainder;
@@ -95,7 +95,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
             } break;
             default: break;
         }
-    #endif
+#    endif
 
     switch (type) {
 #if defined(ZPL_COMPILER_MSVC) || (defined(ZPL_COMPILER_GCC) && defined(ZPL_SYSTEM_WINDOWS)) || (defined(ZPL_COMPILER_TINYC) && defined(ZPL_SYSTEM_WINDOWS))
@@ -144,7 +144,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
         case ZPL_ALLOCATION_FREE_ALL: break;
     }
 
-    #ifdef ZPL_HEAP_ANALYSIS
+#    ifdef ZPL_HEAP_ANALYSIS
         if (type == ZPL_ALLOCATION_ALLOC) {
             zpl__heap_alloc_info *alloc_info = cast(zpl__heap_alloc_info *)(cast(char *)ptr + alloc_info_remainder);
             zpl_zero_item(alloc_info);
@@ -154,7 +154,7 @@ ZPL_ALLOCATOR_PROC(zpl_heap_allocator_proc) {
             zpl__heap_stats_info.used_memory += alloc_info->size;
             zpl__heap_stats_info.alloc_count++;
         }
-    #endif
+#    endif
 
     return ptr;
 }

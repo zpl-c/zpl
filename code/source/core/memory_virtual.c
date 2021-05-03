@@ -67,11 +67,11 @@ zpl_virtual_memory zpl_vm(void *data, zpl_isize size) {
     }
 
 #else
-    #include <sys/mman.h>
+#    include <sys/mman.h>
 
-    #ifndef MAP_ANONYMOUS
-        #define MAP_ANONYMOUS MAP_ANON
-    #endif
+#    ifndef MAP_ANONYMOUS
+#        define MAP_ANONYMOUS MAP_ANON
+#    endif
 
     zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size) {
         zpl_virtual_memory vm;

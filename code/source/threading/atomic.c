@@ -31,9 +31,9 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_i64 zpl_atomic64_load(zpl_atomic64 const *a) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return a->value;
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             // NOTE: The most compatible way to get an atomic 64-bit load on x86 is with cmpxchg8b
             zpl_atomicarg(zpl_i64) result;
             __asm {
@@ -45,15 +45,15 @@ ZPL_BEGIN_C_DECLS
                 mov dword ptr result[4], edx;
             }
             return result;
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
     void zpl_atomic64_store(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) value) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             a->value = value;
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             // NOTE: The most compatible way to get an atomic 64-bit store on x86 is with cmpxchg8b
             __asm {
                 mov esi, a;
@@ -63,9 +63,9 @@ ZPL_BEGIN_C_DECLS
                 cmpxchg8b [esi];
                 jne retry;
             }
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
     zpl_i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) expected, zpl_atomicarg(zpl_i64) desired) {
@@ -73,9 +73,9 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_i64 zpl_atomic64_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) desired) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return _InterlockedExchange64(cast(zpl_atomicarg(zpl_i64) *)a, desired);
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             zpl_atomicarg(zpl_i64) expected = a->value;
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = _InterlockedCompareExchange64(cast(zpl_atomicarg(zpl_i64) *)a, desired, expected);
@@ -83,15 +83,15 @@ ZPL_BEGIN_C_DECLS
                     return original;
                 expected = original;
             }
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return _InterlockedExchangeAdd64(cast(zpl_atomicarg(zpl_i64) *)a, operand);
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             zpl_atomicarg(zpl_i64) expected = a->value;
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = _InterlockedCompareExchange64(cast(zpl_atomicarg(zpl_i64) *)a, expected + operand, expected);
@@ -99,15 +99,15 @@ ZPL_BEGIN_C_DECLS
                     return original;
                 expected = original;
             }
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return _InterlockedAnd64(cast(zpl_atomicarg(zpl_i64) *)a, operand);
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             zpl_atomicarg(zpl_i64) expected = a->value;
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = _InterlockedCompareExchange64(cast(zpl_atomicarg(zpl_i64) *)a, expected & operand, expected);
@@ -115,15 +115,15 @@ ZPL_BEGIN_C_DECLS
                     return original;
                 expected = original;
             }
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return _InterlockedOr64(cast(zpl_atomicarg(zpl_i64) *)a, operand);
-        #elif ZPL_CPU_X86
+#        elif ZPL_CPU_X86
             zpl_atomicarg(zpl_i64) expected = a->value;
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = _InterlockedCompareExchange64(cast(zpl_atomicarg(zpl_i64) *)a, expected | operand, expected);
@@ -131,9 +131,9 @@ ZPL_BEGIN_C_DECLS
                     return original;
                 expected = original;
             }
-        #else
-            #error TODO: atomics for this CPU
-        #endif
+#        else
+#            error TODO: atomics for this CPU
+#        endif
     }
 
 #elif defined(ZPL_CPU_X86)
@@ -204,9 +204,9 @@ ZPL_BEGIN_C_DECLS
 
 
     zpl_i64 zpl_atomic64_load(zpl_atomic64 const *a) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             return a->value;
-        #else
+#        else
             zpl_atomicarg(zpl_i64) original;
             __asm__(
                 "movl %%ebx, %%eax\n"
@@ -216,13 +216,13 @@ ZPL_BEGIN_C_DECLS
                 : "m"(a->value)
                 );
             return original;
-        #endif
+#        endif
     }
 
     void zpl_atomic64_store(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) value) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             a->value = value;
-        #else
+#        else
             zpl_atomicarg(zpl_i64) expected = a->value;
             __asm__(
                 "1:    cmpxchg8b %0\n"
@@ -230,11 +230,11 @@ ZPL_BEGIN_C_DECLS
                 : "=m"(a->value)
                 : "b"((zpl_atomicarg(zpl_i32))value), "c"((zpl_atomicarg(zpl_i32))(value >> 32)), "A"(expected)
                 );
-        #endif
+#        endif
     }
 
     zpl_i64 zpl_atomic64_compare_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) expected, zpl_atomicarg(zpl_i64) desired) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             zpl_atomicarg(zpl_i64) original;
             __asm__(
                 "lock; cmpxchgq %2, %1"
@@ -242,7 +242,7 @@ ZPL_BEGIN_C_DECLS
                 : "q"(desired), "0"(expected)
                 );
             return original;
-        #else
+#        else
             zpl_atomicarg(zpl_i64) original;
             __asm__(
                 "lock; cmpxchg8b %1"
@@ -250,11 +250,11 @@ ZPL_BEGIN_C_DECLS
                 : "b"((zpl_atomicarg(zpl_i32))desired), "c"((zpl_atomicarg(zpl_i32))(desired >> 32)), "0"(expected)
                 );
             return original;
-        #endif
+#        endif
     }
 
     zpl_i64 zpl_atomic64_exchange(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) desired) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             zpl_atomicarg(zpl_i64) original;
             __asm__(
                 "xchgq %0, %1"
@@ -262,7 +262,7 @@ ZPL_BEGIN_C_DECLS
                 : "0"(desired)
                 );
             return original;
-        #else
+#        else
             zpl_atomicarg(zpl_i64) original = a->value;
             for (;;) {
                 zpl_atomicarg(zpl_i64) previous = zpl_atomic64_compare_exchange(a, original, desired);
@@ -270,11 +270,11 @@ ZPL_BEGIN_C_DECLS
                     return original;
                 original = previous;
             }
-        #endif
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_add(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             zpl_atomicarg(zpl_i64) original;
             __asm__(
                 "lock; xaddq %0, %1"
@@ -282,17 +282,17 @@ ZPL_BEGIN_C_DECLS
                 : "0"(operand)
                 );
             return original;
-        #else
+#        else
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = a->value;
                 if (zpl_atomic64_compare_exchange(a, original, original + operand) == original)
                     return original;
             }
-        #endif
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_and(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             zpl_atomicarg(zpl_i64) original;
             zpl_atomicarg(zpl_i64) tmp;
             __asm__(
@@ -305,17 +305,17 @@ ZPL_BEGIN_C_DECLS
                 : "r"(operand)
                 );
             return original;
-        #else
+#        else
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = a->value;
                 if (zpl_atomic64_compare_exchange(a, original, original & operand) == original)
                     return original;
             }
-        #endif
+#        endif
     }
 
     zpl_i64 zpl_atomic64_fetch_or(zpl_atomic64 *a, zpl_atomicarg(zpl_i64) operand) {
-        #if defined(ZPL_ARCH_64_BIT)
+#        if defined(ZPL_ARCH_64_BIT)
             zpl_atomicarg(zpl_i64) original;
             zpl_atomicarg(zpl_i64) temp;
             __asm__(
@@ -328,13 +328,13 @@ ZPL_BEGIN_C_DECLS
                 : "r"(operand)
                 );
             return original;
-        #else
+#        else
             for (;;) {
                 zpl_atomicarg(zpl_i64) original = a->value;
                 if (zpl_atomic64_compare_exchange(a, original, original | operand) == original)
                     return original;
             }
-        #endif
+#        endif
     }
 
 #elif !defined(ZPL_COMPILER_MSVC)
@@ -394,7 +394,7 @@ ZPL_BEGIN_C_DECLS
     }
 
 #else
-    #error TODO: Implement Atomics for this CPU
+#    error TODO: Implement Atomics for this CPU
 #endif
 
 

@@ -2,7 +2,7 @@
 
 
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-    #include <dlfcn.h>
+#    include <dlfcn.h>
 #endif
 
 ZPL_BEGIN_C_DECLS

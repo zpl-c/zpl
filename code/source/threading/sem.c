@@ -27,7 +27,7 @@ void zpl_semaphore_release(zpl_semaphore *s) { zpl_semaphore_post(s, 1); }
     void zpl_semaphore_wait   (zpl_semaphore *s)            { int i; do { i = sem_wait(&s->unix_handle); } while (i == -1 && errno == EINTR); }
 
 #else
-    #error Semaphores for this OS are not implemented
+#    error Semaphores for this OS are not implemented
 #endif
 
 ZPL_END_C_DECLS

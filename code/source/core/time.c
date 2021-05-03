@@ -2,22 +2,22 @@
 
 
 #if defined(ZPL_SYSTEM_MACOS) || ZPL_SYSTEM_UNIX
-    #include <time.h>
-    #include <sys/time.h>
+#    include <time.h>
+#    include <sys/time.h>
 #endif
 
 #if defined(ZPL_SYSTEM_MACOS)
-    #include <mach/mach.h>
-    #include <mach/mach_time.h>
-    #include <mach/clock.h>
+#    include <mach/mach.h>
+#    include <mach/mach_time.h>
+#    include <mach/clock.h>
 #endif
 
 #if defined(ZPL_SYSTEM_EMSCRIPTEN)
-    #include <emscripten.h>
+#    include <emscripten.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-    #include <timezoneapi.h>
+#    include <timezoneapi.h>
 #endif
 
 ZPL_BEGIN_C_DECLS
@@ -67,10 +67,10 @@ ZPL_BEGIN_C_DECLS
     }
 #elif defined(ZPL_CPU_ARM) && !defined(ZPL_COMPILER_TINYC)
     zpl_u64 zpl_rdtsc(void) {
-        #if defined(__aarch64__)
+#        if defined(__aarch64__)
             int64_t r = 0;
             asm volatile("mrs %0, cntvct_el0" : "=r"(r));
-        #elif (__ARM_ARCH >= 6)
+#        elif (__ARM_ARCH >= 6)
             uint32_t r = 0;
             uint32_t pmccntr;
             uint32_t pmuseren;
@@ -86,9 +86,9 @@ ZPL_BEGIN_C_DECLS
                     return ((int64_t)pmccntr) * 64; // Should optimize to << 6
                 }
             }
-        #else
-            #error "No suitable method for zpl_rdtsc for this cpu type"
-        #endif
+#        else
+#            error "No suitable method for zpl_rdtsc for this cpu type"
+#        endif
 
         return r;
     }
@@ -147,7 +147,7 @@ ZPL_BEGIN_C_DECLS
 
 #else
 
-    #if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#    if defined(ZPL_SYSTEM_LINUX) || defined(ZPL_SYSTEM_FREEBSD) || defined(ZPL_SYSTEM_OPENBSD) || defined(ZPL_SYSTEM_EMSCRIPTEN)
         zpl_u64 zpl__unix_gettime(void) {
             struct timespec t;
             zpl_u64 result;
@@ -156,10 +156,10 @@ ZPL_BEGIN_C_DECLS
             result = 1000 * t.tv_sec + 1.0e-6 * t.tv_nsec;
             return result;
         }
-    #endif
+#    endif
 
     zpl_u64 zpl_time_rel_ms(void) {
-    #if defined(ZPL_SYSTEM_OSX)
+#    if defined(ZPL_SYSTEM_OSX)
         zpl_u64 result;
 
         zpl_local_persist zpl_u64 timebase = 0;
@@ -176,7 +176,7 @@ ZPL_BEGIN_C_DECLS
         // NOTE: mach_absolute_time() returns things in nanoseconds
         result = 1.0e-6 * (mach_absolute_time() - timestart) * timebase;
         return result;
-    #else
+#    else
         zpl_local_persist zpl_u64 unix_timestart = 0.0;
 
         if (!unix_timestart) { unix_timestart = zpl__unix_gettime( ); }
@@ -184,12 +184,12 @@ ZPL_BEGIN_C_DECLS
         zpl_u64 now = zpl__unix_gettime( );
 
         return (now - unix_timestart);
-    #endif
+#    endif
     }
 
     zpl_u64 zpl_time_utc_ms(void) {
         struct timespec t;
-    #if defined(ZPL_SYSTEM_OSX)
+#    if defined(ZPL_SYSTEM_OSX)
         clock_serv_t cclock;
         mach_timespec_t mts;
         host_get_clock_service(mach_host_self( ), CALENDAR_CLOCK, &cclock);
@@ -197,9 +197,9 @@ ZPL_BEGIN_C_DECLS
         mach_port_deallocate(mach_task_self( ), cclock);
         t.tv_sec = mts.tv_sec;
         t.tv_nsec = mts.tv_nsec;
-    #else
+#    else
         clock_gettime(0 /*CLOCK_REALTIME*/, &t);
-    #endif
+#    endif
         return ((zpl_u64)t.tv_sec * 1000 + t.tv_nsec * 1e-6 + ZPL__UNIX_TO_WIN32_EPOCH);
     }
 

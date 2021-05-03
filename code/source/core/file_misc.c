@@ -2,11 +2,11 @@
 
 
 #if defined(ZPL_SYSTEM_UNIX) || defined(ZPL_SYSTEM_MACOS)
-    #include <dirent.h>
+#    include <dirent.h>
 #endif
 
 #if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_OPENBSD) && !defined(ZPL_SYSTEM_CYGWIN)
-    #include <sys/sendfile.h>
+#    include <sys/sendfile.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -95,21 +95,21 @@ ZPL_BEGIN_C_DECLS
         return cast(zpl_file_time) result;
     }
 
-    #if defined(ZPL_SYSTEM_FREEBSD)
-        #include <sys/types.h>
-        #include <sys/socket.h>
-        #include <sys/uio.h>
-    #endif
+#    if defined(ZPL_SYSTEM_FREEBSD)
+#        include <sys/types.h>
+#        include <sys/socket.h>
+#        include <sys/uio.h>
+#    endif
 
 
     zpl_b32 zpl_fs_copy(char const *existing_filename, char const *new_filename, zpl_b32 fail_if_exists) {
         zpl_unused(fail_if_exists);
-    #if defined(ZPL_SYSTEM_OSX)
+#    if defined(ZPL_SYSTEM_OSX)
         return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
-    #elif defined(ZPL_SYSTEM_OPENBSD)
+#    elif defined(ZPL_SYSTEM_OPENBSD)
         ZPL_NOT_IMPLEMENTED;
         return 0;
-    #else
+#    else
         int existing_fd = open(existing_filename, O_RDONLY, 0);
         struct stat stat_existing;
         fstat(existing_fd, &stat_existing);
@@ -117,17 +117,17 @@ ZPL_BEGIN_C_DECLS
         zpl_isize size;
         int new_fd = open(new_filename, O_WRONLY | O_CREAT, stat_existing.st_mode);
 
-    #if defined(ZPL_SYSTEM_FREEBSD)
+#    if defined(ZPL_SYSTEM_FREEBSD)
         size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size, NULL, 0, 0);
-    #else
+#    else
         size = sendfile(new_fd, existing_fd, 0, stat_existing.st_size);
-    #endif
+#    endif
 
         close(new_fd);
         close(existing_fd);
 
         return size == stat_existing.st_size;
-    #endif
+#    endif
     }
 
     zpl_b32 zpl_fs_move(char const *existing_filename, char const *new_filename) {
@@ -136,11 +136,11 @@ ZPL_BEGIN_C_DECLS
     }
 
     zpl_b32 zpl_fs_remove(char const *filename) {
-    #if defined(ZPL_SYSTEM_OSX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
+#    if defined(ZPL_SYSTEM_OSX) || defined(ZPL_SYSTEM_EMSCRIPTEN)
         return (unlink(filename) != -1);
-    #else
+#    else
         return (remove(filename) == 0);
-    #endif
+#    endif
     }
 
 #endif

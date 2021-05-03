@@ -4,9 +4,9 @@
 ZPL_BEGIN_C_DECLS
 
 #if defined(ZPL_SYSTEM_MACOS)
-    #include <mach/thread_act.h>
+#    include <mach/thread_act.h>
 #elif defined(ZPL_SYSTEM_UNIX)
-    #include <semaphore.h>
+#    include <semaphore.h>
 #endif
 
 #if defined(ZPL_SYSTEM_WINDOWS)
@@ -16,7 +16,7 @@ ZPL_BEGIN_C_DECLS
 #elif defined(ZPL_SYSTEM_UNIX)
     typedef struct zpl_semaphore { sem_t unix_handle; }      zpl_semaphore;
 #else
-    #error
+#    error
 #endif
 
 ZPL_DEF void zpl_semaphore_init   (zpl_semaphore *s);

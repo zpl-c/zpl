@@ -2,7 +2,7 @@
   zpl - Unit testing framework
 
 Usage:
-  #include "unit.h" in EXACTLY one source file, usually the one containing your testing app's entry point.
+#  include "unit.h" in EXACTLY one source file, usually the one containing your testing app's entry point.
 
   There really is no need to include this file multiple times within a project, unless you wish to run
   multiple tests within a single executable or split test cases to multiple compilation units, in such case
@@ -111,26 +111,26 @@ License:
 /* verify if zpl is present */
 #if !defined(UNIT_ZPL_DISABLE_ARENA) && ZPL_VERSION_CHECK(14,0,0)
     /* specifies memory limit for per-module memory allocator */
-    #ifndef UNIT_ARENA_MEM
-        #define UNIT_ARENA_MEM (32768)
-    #endif
+#    ifndef UNIT_ARENA_MEM
+#        define UNIT_ARENA_MEM (32768)
+#    endif
 
-    #define UNIT_ZPL_INITIALIZE_MEM_ARENA() \
+#    define UNIT_ZPL_INITIALIZE_MEM_ARENA() \
         zpl_arena hunk_mem={0}; \
         zpl_arena_init_from_allocator(&hunk_mem, zpl_heap(), UNIT_ARENA_MEM); \
         zpl_allocator mem_alloc = zpl_arena_allocator(&hunk_mem); \
         zpl_unused(mem_alloc);
-    #define UNIT_ZPL_DESTROY_MEM_ARENA() \
+#    define UNIT_ZPL_DESTROY_MEM_ARENA() \
         zpl_arena_free(&hunk_mem);
-    #define UNIT_ZPL_CAPTURE_MEMORY() \
+#    define UNIT_ZPL_CAPTURE_MEMORY() \
         zpl_arena_snapshot mem_snapshot = zpl_arena_snapshot_begin(&hunk_mem);
-    #define UNIT_ZPL_RESTORE_MEMORY() \
+#    define UNIT_ZPL_RESTORE_MEMORY() \
         zpl_arena_snapshot_end(mem_snapshot);
 #else
-    #define UNIT_ZPL_INITIALIZE_MEM_ARENA()
-    #define UNIT_ZPL_DESTROY_MEM_ARENA()
-    #define UNIT_ZPL_CAPTURE_MEMORY()
-    #define UNIT_ZPL_RESTORE_MEMORY()
+#    define UNIT_ZPL_INITIALIZE_MEM_ARENA()
+#    define UNIT_ZPL_DESTROY_MEM_ARENA()
+#    define UNIT_ZPL_CAPTURE_MEMORY()
+#    define UNIT_ZPL_RESTORE_MEMORY()
 #endif
 
 #define MODULE(name, ...) \
@@ -185,24 +185,24 @@ License:
 #define SKIP()                                 { _lasterr = UNIT_SKIP_MAGIC; break; }
 
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wattributes"
-    #pragma GCC diagnostic ignored "-Wunused-value"
-    #pragma GCC diagnostic ignored "-Wignored-qualifiers"
-    #pragma GCC diagnostic ignored "-Wunused-variable"
-    #pragma GCC diagnostic ignored "-Wunused-function"
-    #pragma GCC diagnostic ignored "-Wwrite-strings"
-    #pragma GCC diagnostic ignored "-Wunused-parameter"
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #pragma GCC diagnostic ignored "-Wmissing-braces"
-    #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-    #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wattributes"
+#    pragma GCC diagnostic ignored "-Wunused-value"
+#    pragma GCC diagnostic ignored "-Wignored-qualifiers"
+#    pragma GCC diagnostic ignored "-Wunused-variable"
+#    pragma GCC diagnostic ignored "-Wunused-function"
+#    pragma GCC diagnostic ignored "-Wwrite-strings"
+#    pragma GCC diagnostic ignored "-Wunused-parameter"
+#    pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#    pragma GCC diagnostic ignored "-Wmissing-braces"
+#    pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#    pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
 #endif
 
 #if defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable : 4201)
-    #pragma warning(disable : 4127) // Conditional expression is constant
+#    pragma warning(push)
+#    pragma warning(disable : 4201)
+#    pragma warning(disable : 4127) // Conditional expression is constant
 #endif
 
 typedef int32_t (*unit_case)();
@@ -258,9 +258,9 @@ static char* unit__bprintf(const char* fmt, ...)
 }
 
 #if defined(ZPL_COMPILER_MSVC)
-    #pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
 #if defined(__GCC__) || defined(__GNUC__) || defined(__clang__)
-    #pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif

@@ -2,7 +2,7 @@
 
 
 #if defined(ZPL_SYSTEM_MACOS)
-    #include <sys/sysctl.h>
+#    include <sys/sysctl.h>
 #endif
 
 ZPL_BEGIN_C_DECLS
@@ -166,7 +166,7 @@ ZPL_BEGIN_C_DECLS
                 // so that we can check against EOF at the end of this loop.
                 int c;
 
-    #define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
+#    define AF__CHECK(letter) ((c = getc(cpu_info)) == letter)
                 if (AF__CHECK('c') && AF__CHECK('p') && AF__CHECK('u') && AF__CHECK(' ') &&
                     AF__CHECK('c') && AF__CHECK('o') && AF__CHECK('r') && AF__CHECK('e') && AF__CHECK('s')) {
                     // We're on a CPU info line.
@@ -189,7 +189,7 @@ ZPL_BEGIN_C_DECLS
                 if (c == EOF) {
                     break;
                 }
-    #undef AF__CHECK
+#    undef AF__CHECK
             }
 
             fclose(cpu_info);
@@ -223,9 +223,9 @@ ZPL_BEGIN_C_DECLS
     }
 
 #elif defined(ZPL_SYSTEM_EMSCRIPTEN)
-    #error No affinity implementation for Emscripten
+#    error No affinity implementation for Emscripten
 #else
-    #error TODO: Unknown system
+#    error TODO: Unknown system
 #endif
 
 ZPL_END_C_DECLS

@@ -6,7 +6,7 @@
 #endif
 
 #if !defined(ZPL_NO_MATH_H)
-    #include <math.h>
+#    include <math.h>
 #endif
 
 ZPL_BEGIN_C_DECLS
@@ -93,7 +93,7 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
 }
 
 #if defined(ZPL_NO_MATH_H)
-    #if defined(_MSC_VER)
+#    if defined(_MSC_VER)
 
         zpl_f32 zpl_rsqrt(zpl_f32 a) { return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(a))); }
         zpl_f32 zpl_sqrt(zpl_f32 a)  { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(a))); };
@@ -208,7 +208,7 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
             return flipped ? 1.0f / r : r;
         }
 
-    #else
+#    else
 
         zpl_f32 zpl_rsqrt(zpl_f32 a)              { return 1.0f / __builtin_sqrt(a); }
         zpl_f32 zpl_sqrt(zpl_f32 a)               { return __builtin_sqrt(a); }
@@ -226,7 +226,7 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
         // TODO: Should this be zpl_exp(y * zpl_log(x)) ???
         zpl_f32 zpl_pow(zpl_f32 x, zpl_f32 y) { return __builtin_powf(x, y); }
 
-    #endif
+#    endif
 #else
     zpl_f32 zpl_rsqrt(zpl_f32 a)                { return 1.0f / sqrtf(a); }
     zpl_f32 zpl_sqrt(zpl_f32 a)                 { return sqrtf(a); };

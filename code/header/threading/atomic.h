@@ -26,13 +26,13 @@ ZPL_BEGIN_C_DECLS
     typedef struct zpl_atomic64  { zpl_atomic(zpl_i64) value; } zpl_atomic64;
     typedef struct zpl_atomic_ptr { zpl_atomic(void*) value; } zpl_atomic_ptr;
 #else
-    #if defined(ZPL_ARCH_32_BIT)
-        #define ZPL_ATOMIC_PTR_ALIGNMENT 4
-    #elif defined(ZPL_ARCH_64_BIT)
-        #define ZPL_ATOMIC_PTR_ALIGNMENT 8
-    #else
-        #error Unknown architecture
-    #endif
+#    if defined(ZPL_ARCH_32_BIT)
+#        define ZPL_ATOMIC_PTR_ALIGNMENT 4
+#    elif defined(ZPL_ARCH_64_BIT)
+#        define ZPL_ATOMIC_PTR_ALIGNMENT 8
+#    else
+#        error Unknown architecture
+#    endif
 
     typedef struct zpl_atomic32   { zpl_atomic(zpl_i32) value; } __attribute__ ((aligned(4))) zpl_atomic32;
     typedef struct zpl_atomic64   { zpl_atomic(zpl_i64) value; } __attribute__ ((aligned(8))) zpl_atomic64;

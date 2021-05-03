@@ -4,11 +4,11 @@
 ZPL_BEGIN_C_DECLS
 
 void zpl_yield(void) {
-    #if defined(ZPL_SYSTEM_WINDOWS)
+#    if defined(ZPL_SYSTEM_WINDOWS)
         Sleep(0);
-    #else
+#    else
         sched_yield();
-    #endif
+#    endif
 }
 
 const char *zpl_get_env(const char *name) {
@@ -26,7 +26,7 @@ const char *zpl_get_env(const char *name) {
 }
 
 const char *zpl_get_env_buf(const char *name) {
-    #ifdef ZPL_SYSTEM_WINDOWS
+#    ifdef ZPL_SYSTEM_WINDOWS
         zpl_local_persist wchar_t wbuffer[32767] = {0};
         zpl_local_persist char buffer[32767] = {0};
 
@@ -39,9 +39,9 @@ const char *zpl_get_env_buf(const char *name) {
         zpl_ucs2_to_utf8(cast(zpl_u8*)buffer, 32767, cast(const zpl_u16*)wbuffer);
 
         return (const char *)buffer;
-    #else
+#    else
         return (const char *)getenv(name);
-    #endif
+#    endif
 }
 
 zpl_string zpl_get_env_str(const char *name) {
@@ -56,19 +56,19 @@ zpl_string zpl_get_env_str(const char *name) {
 }
 
 void zpl_set_env(const char *name, const char *value) {
-    #if defined(ZPL_SYSTEM_WINDOWS)
+#    if defined(ZPL_SYSTEM_WINDOWS)
         SetEnvironmentVariableA(name, value);
-    #else
+#    else
         setenv(name, value, 1);
-    #endif
+#    endif
 }
 
 void zpl_unset_env(const char *name) {
-    #if defined(ZPL_SYSTEM_WINDOWS)
+#    if defined(ZPL_SYSTEM_WINDOWS)
         SetEnvironmentVariableA(name, NULL);
-    #else
+#    else
         unsetenv(name);
-    #endif
+#    endif
 }
 
 #if !defined(ZPL_SYSTEM_WINDOWS)
@@ -76,15 +76,15 @@ void zpl_unset_env(const char *name) {
 #endif
 
 zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len, char *buffer) {
-    #if defined(ZPL_SYSTEM_EMSCRIPTEN)
+#    if defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_PANIC("zpl_system_command not supported");
-    #else
+#    else
 
-        #if defined(ZPL_SYSTEM_WINDOWS)
+#        if defined(ZPL_SYSTEM_WINDOWS)
             FILE *handle = _popen(command, "r");
-        #else
+#        else
             FILE *handle =  popen(command, "r");
-        #endif
+#        endif
 
         if(!handle) return 0;
 
@@ -94,27 +94,27 @@ zpl_u32 zpl_system_command(const char *command, zpl_usize buffer_len, char *buff
             *buffer++ = c;
         }
 
-        #if defined(ZPL_SYSTEM_WINDOWS)
+#        if defined(ZPL_SYSTEM_WINDOWS)
             _pclose(handle);
-        #else
+#        else
             pclose(handle);
-        #endif
+#        endif
 
-    #endif
+#    endif
 
     return 1;
 }
 
 zpl_string zpl_system_command_str(const char *command, zpl_allocator backing) {
-    #if defined(ZPL_SYSTEM_EMSCRIPTEN)
+#    if defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_PANIC("zpl_system_command not supported");
-    #else
+#    else
 
-        #if defined(ZPL_SYSTEM_WINDOWS)
+#        if defined(ZPL_SYSTEM_WINDOWS)
             FILE *handle = _popen(command, "r");
-        #else
+#        else
             FILE *handle =  popen(command, "r");
-        #endif
+#        endif
 
         if(!handle) return NULL;
 
@@ -126,13 +126,13 @@ zpl_string zpl_system_command_str(const char *command, zpl_allocator backing) {
             output = zpl_string_appendc(output, ins);
         }
 
-        #if defined(ZPL_SYSTEM_WINDOWS)
+#        if defined(ZPL_SYSTEM_WINDOWS)
             _pclose(handle);
-        #else
+#        else
             pclose(handle);
-        #endif
+#        endif
         return output;
-    #endif
+#    endif
     return NULL;
 }
 
