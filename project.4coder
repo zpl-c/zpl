@@ -39,7 +39,7 @@ command_list =
         .cursor_at_end = false,
         .cmd =
         {
-            { "misc\build_single.bat ", .os = "win" },
+            { "call misc/win/build_quick.bat", .os = "win" },
             { "echo Linux build command not implemented for 4coder project.", .os = "linux" },
         },
     },
@@ -52,7 +52,7 @@ command_list =
         .cursor_at_end = false,
         .cmd =
         {
-            { "echo Windows run command not implemented for 4coder project.", .os = "win" },
+            { "call misc/win/run_quick.bat", .os = "win" },
             { "echo Linux run command not implemented for 4coder project.", .os = "linux" },
         },
     },
