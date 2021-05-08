@@ -173,7 +173,7 @@ do {                                                                            
 do {                                                                                                               \
     zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
     ZPL_ASSERT(index < zpl__ah->count);                                                                            \
-    zpl_memmove(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index));                           \
+    zpl_memmove(x + index, x + index + 1, zpl_size_of(x[0]) * (zpl__ah->count - index - 1));                           \
     --zpl__ah->count;                                                                                              \
 } while (0)
 

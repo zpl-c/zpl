@@ -1,3 +1,4 @@
+14.0.1  - fix zpl_array_remove_at boundary bug
 14.0.0  - heap memory allocator analysis
 
 13.4.1  - adt optimizations
