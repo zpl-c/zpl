@@ -59,6 +59,7 @@ PREFIX void ZPL_JOIN2(FUNC, set)(NAME * h, zpl_u64 key, VALUE value);           
 PREFIX void ZPL_JOIN2(FUNC, grow)(NAME * h);                                                                       \
 PREFIX void ZPL_JOIN2(FUNC, rehash)(NAME * h, zpl_isize new_count);                                                    \
 PREFIX void ZPL_JOIN2(FUNC, map)(NAME * h, void (*map_proc)(zpl_u64 key, VALUE value));                                                    \
+PREFIX void ZPL_JOIN2(FUNC, map_mut)(NAME * h, void (*map_proc)(zpl_u64 key, VALUE * value));                                                    \
 PREFIX void ZPL_JOIN2(FUNC, remove)(NAME * h, zpl_u64 key);
 
 #define ZPL_TABLE_DEFINE(NAME, FUNC, VALUE)                                                                            \
@@ -155,6 +156,13 @@ void ZPL_JOIN2(FUNC, map)(NAME * h, void (*map_proc)(zpl_u64 key, VALUE value)) 
     ZPL_ASSERT_NOT_NULL(map_proc); \
     for (zpl_isize i = 0; i < zpl_array_count(h->entries); ++i) { \
         map_proc(h->entries[i].key, h->entries[i].value); \
+    } \
+} \
+void ZPL_JOIN2(FUNC, map_proc)(NAME * h, void (*map_proc)(zpl_u64 key, VALUE * value)) {                                                    \
+    ZPL_ASSERT_NOT_NULL(h); \
+    ZPL_ASSERT_NOT_NULL(map_proc); \
+    for (zpl_isize i = 0; i < zpl_array_count(h->entries); ++i) { \
+        map_proc(h->entries[i].key, &h->entries[i].value); \
     } \
 } \
 \

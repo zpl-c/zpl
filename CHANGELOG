@@ -1,3 +1,4 @@
+14.1.0  - add hashtable map_mut method
 14.0.1  - fix zpl_array_remove_at boundary bug
 14.0.0  - heap memory allocator analysis
 
