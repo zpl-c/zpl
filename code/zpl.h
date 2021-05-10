@@ -86,8 +86,8 @@ License:
 #        define ZPL_DEF_INLINE
 #        define ZPL_IMPL_INLINE
 #    else
-#        define ZPL_DEF_INLINE ZPL_ALWAYS_INLINE
-#        define ZPL_IMPL_INLINE extern inline
+#        define ZPL_DEF_INLINE static
+#        define ZPL_IMPL_INLINE static inline
 #    endif
 #endif
 
