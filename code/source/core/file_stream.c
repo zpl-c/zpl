@@ -21,13 +21,16 @@ typedef struct {
 
 #define ZPL__FILE_STREAM_FD_MAGIC 37
 
-ZPL_ALWAYS_INLINE zpl_file_descriptor zpl__file_stream_fd_make(zpl__memory_fd* d) {
+ZPL_DEF_INLINE zpl_file_descriptor zpl__file_stream_fd_make(zpl__memory_fd* d);
+ZPL_DEF_INLINE zpl__memory_fd *zpl__file_stream_from_fd(zpl_file_descriptor fd);
+
+ZPL_IMPL_INLINE zpl_file_descriptor zpl__file_stream_fd_make(zpl__memory_fd* d) {
     zpl_file_descriptor fd = {0};
     fd.p = (void*)d;
     return fd;
 }
 
-ZPL_ALWAYS_INLINE zpl__memory_fd *zpl__file_stream_from_fd(zpl_file_descriptor fd) {
+ZPL_IMPL_INLINE zpl__memory_fd *zpl__file_stream_from_fd(zpl_file_descriptor fd) {
     zpl__memory_fd *d = (zpl__memory_fd*)fd.p;
     ZPL_ASSERT(d->magic == ZPL__FILE_STREAM_FD_MAGIC);
     return d;

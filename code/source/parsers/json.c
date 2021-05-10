@@ -57,9 +57,10 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_adt_node *obj, zpl_isize i
 
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+ZPL_DEF_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err);
 
 #define jx(x) !zpl_char_is_hex_digit(str[x])
-ZPL_ALWAYS_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err) {
+ZPL_IMPL_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err) {
     while (*str) {
         /* todo: refactor name validation. */
         if ((str[0] == '\\' && !zpl_char_is_control(str[1])) &&
