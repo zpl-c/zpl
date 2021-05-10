@@ -5,7 +5,7 @@ ZPL_BEGIN_C_DECLS
 
 typedef struct zpl_mutex {
 #if defined(ZPL_SYSTEM_WINDOWS)
-    CRITICAL_SECTION win32_critical_section;
+    zpl_u64 win32_critical_section[sizeof(zpl_usize) / 2 + 1];
 #else
     pthread_mutex_t pthread_mutex;
 #endif
