@@ -133,38 +133,34 @@ do {                                                                            
 
 #define zpl_array_append_at(x, item, ind)                                                                              \
 do {                                                                                                               \
-    zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
-    if (ind >= zpl__ah->count) { zpl_array_append(x, item); break; }                                               \
+    if (ind >= zpl_array_count(x)) { zpl_array_append(x, item); break; }                                               \
     if (zpl_array_capacity(x) < zpl_array_count(x) + 1) zpl_array_grow(x, 0);                                      \
-    zpl_memmove(&(x)[ind + 1], (x + ind), zpl_size_of(x[0]) * (zpl__ah->count - ind));                             \
+    zpl_memmove(&(x)[ind + 1], (x + ind), zpl_size_of(x[0]) * (zpl_array_count(x) - ind));                             \
     x[ind] = item;                                                                                                 \
-    zpl__ah->count++;                                                                                              \
+    zpl_array_count(x)++;                                                                                              \
 } while (0)
 
 #define zpl_array_appendv(x, items, item_count)                                                                        \
 do {                                                                                                               \
-    zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
     ZPL_ASSERT(zpl_size_of((items)[0]) == zpl_size_of((x)[0]));                                                    \
-    if (zpl__ah->capacity < zpl__ah->count + (item_count)) zpl_array_grow(x, zpl__ah->count + (item_count));       \
-    zpl_memcopy(&(x)[zpl__ah->count], (items), zpl_size_of((x)[0]) * (item_count));                                \
-    zpl__ah->count += (item_count);                                                                                \
+    if (zpl_array_capacity(x) < zpl_array_count(x) + (item_count)) zpl_array_grow(x, zpl_array_count(x) + (item_count));       \
+    zpl_memcopy(&(x)[zpl_array_count(x)], (items), zpl_size_of((x)[0]) * (item_count));                                \
+    zpl_array_count(x) += (item_count);                                                                                \
 } while (0)
 
 #define zpl_array_appendv_at(x, items, item_count, ind)                                                                        \
 do {                                                                                                               \
-    zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
-    if (ind >= zpl__ah->count) { zpl_array_appendv(x, items, item_count); break; }                                               \
+    if (ind >= zpl_array_count(x)) { zpl_array_appendv(x, items, item_count); break; }                                               \
     ZPL_ASSERT(zpl_size_of((items)[0]) == zpl_size_of((x)[0]));                                                    \
-    if (zpl__ah->capacity < zpl__ah->count + (item_count)) zpl_array_grow(x, zpl__ah->count + (item_count));       \
-    zpl_memmove(x + ind + (item_count), x + ind, zpl_size_of((x)[0]) * zpl__ah->count);                                \
+    if (zpl_array_capacity(x) < zpl_array_count(x) + (item_count)) zpl_array_grow(x, zpl_array_count(x) + (item_count));       \
+    zpl_memmove(x + ind + (item_count), x + ind, zpl_size_of((x)[0]) * zpl_array_count(x));                                \
     zpl_memcopy(&(x)[ind], (items), zpl_size_of((x)[0]) * (item_count));                                \
-    zpl__ah->count += (item_count);                                                                                \
+    zpl_array_count(x) += (item_count);                                                                                \
 } while (0)
 
 #define zpl_array_fill(x, begin, end, value)                                                                        \
 do {                                                                                                               \
-    zpl_array_header *zpl__ah = ZPL_ARRAY_HEADER(x);                                                               \
-    ZPL_ASSERT((begin) >= 0 && (end) < zpl__ah->count);                                               \
+    ZPL_ASSERT((begin) >= 0 && (end) < zpl_array_count(x));                                               \
     ZPL_ASSERT(zpl_size_of(value) == zpl_size_of((x)[0]));                                                    \
     for (zpl_isize i = (begin); i < (end); i++) { x[i] = value; }                                                  \
 } while (0)
