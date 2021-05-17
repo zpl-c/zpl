@@ -41,8 +41,8 @@ License:
 #define ZPL_H
 
 #define ZPL_VERSION_MAJOR 14
-#define ZPL_VERSION_MINOR 0
-#define ZPL_VERSION_PATCH 3
+#define ZPL_VERSION_MINOR 1
+#define ZPL_VERSION_PATCH 4
 #define ZPL_VERSION_PRE ""
 
 #include "zpl_hedley.h"
@@ -86,8 +86,8 @@ License:
 #        define ZPL_DEF_INLINE
 #        define ZPL_IMPL_INLINE
 #    else
-#        define ZPL_DEF_INLINE ZPL_ALWAYS_INLINE
-#        define ZPL_IMPL_INLINE ZPL_INLINE
+#        define ZPL_DEF_INLINE static
+#        define ZPL_IMPL_INLINE static inline
 #    endif
 #endif
 
