@@ -9,6 +9,7 @@ misc/deploy/
 .vscode
 .vs
 package-lock.json
+build.bat
 
 # workdir
 work/
