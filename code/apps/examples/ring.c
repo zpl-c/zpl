@@ -3,7 +3,7 @@
 #define ZPL_EXPOSE_TYPES
 #include <zpl.h>
 
-ZPL_RING_DECLARE(zpl_ring_,u32);
+ZPL_RING_DECLARE(static, zpl_ring_,u32);
 ZPL_RING_DEFINE(zpl_ring_,u32);
 
 int main()

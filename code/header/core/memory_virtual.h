@@ -20,7 +20,7 @@ ZPL_DEF zpl_virtual_memory zpl_vm(void *data, zpl_isize size);
 //! Allocate virtual memory at address with size.
 
 //! @param addr The starting address of the region to reserve. If NULL, it lets operating system to decide where to allocate it.
-//! @param size The size to server.
+//! @param size The size to serve.
 ZPL_DEF zpl_virtual_memory zpl_vm_alloc(void *addr, zpl_isize size);
 
 //! Release the virtual memory.

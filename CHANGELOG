@@ -1,3 +1,9 @@
+15.0.0  - Rework zpl ring buffer
+		- various code improvements
+
+14.1.7  - fix zpl_random_range_i64
+		- set thread's is_running before we start a thread
+14.1.6  - remove windows.h dependency for header part
 14.1.5  - fix array append_at
 14.1.4  - Fix win32 missing CRITICAL_SECTION definition if
 		- ZPL_NO_WINDOWS_H is defined

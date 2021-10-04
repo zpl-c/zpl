@@ -29,34 +29,34 @@ ZPL_BEGIN_C_DECLS
 #        if __cplusplus >= 201103L
 #            define zpl_align_of(Type) (zpl_isize)alignof(Type)
 #        else
-            extern "C++" {
-                template <typename T> struct zpl_alignment_trick {
-                    char c;
-                    T member;
-                };
-            }
+extern "C++" {
+    template <typename T> struct zpl_alignment_trick {
+        char c;
+        T member;
+    };
+}
 #            define zpl_align_of(Type) zpl_offset_of(zpl_alignment_trick<Type>, member)
 #        endif
 #    endif
 #else
 #    ifndef zpl_align_of
 #        define zpl_align_of(Type) \
-        zpl_offset_of(             \
-        struct {                   \
-            char c;                \
-            Type member;           \
-        },                         \
-        member)
+zpl_offset_of(             \
+struct {                   \
+char c;                \
+Type member;           \
+},                         \
+member)
 #    endif
 #endif
 
 #ifndef zpl_swap
 #    define zpl_swap(Type, a, b) \
-    do {                         \
-        Type tmp = (a);          \
-        (a) = (b);               \
-        (b) = tmp;               \
-    } while (0)
+do {                         \
+Type tmp = (a);          \
+(a) = (b);               \
+(b) = tmp;               \
+} while (0)
 #endif
 
 
@@ -136,30 +136,14 @@ ZPL_BEGIN_C_DECLS
 #    define zpl_abs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
-#ifndef hard_cast
-#    define hard_cast(type) *cast(type) &
-#endif
-
-// WARN(ZaKlaus): Supported only on GCC via GNU extensions!!!
-#ifndef zpl_lambda
-#    define zpl_lambda(b_) ({ b_ _; })
-#endif
-
-#ifndef zpl_when
-#    define zpl_when(init, type, name) \
-    type name = init;                  \
-    if (name)
-#endif
-
-/* NOTE: Very useful bit setting */
 #ifndef ZPL_MASK_SET
 #    define ZPL_MASK_SET(var, set, mask) \
-    do {                                 \
-        if (set)                         \
-        (var) |= (mask);                 \
-        else                             \
-        (var) &= ~(mask);                \
-    } while (0)
+do {                                 \
+if (set)                         \
+(var) |= (mask);                 \
+else                             \
+(var) &= ~(mask);                \
+} while (0)
 #endif
 
 // Multiline string literals in C99!

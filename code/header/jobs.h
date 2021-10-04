@@ -45,7 +45,7 @@ typedef struct {
     void *data;
 } zpl_thread_job;
 
-ZPL_RING_DECLARE(zpl__jobs_ring_, zpl_thread_job);
+ZPL_RING_DECLARE(extern, zpl__jobs_ring_, zpl_thread_job);
 
 typedef struct {
     zpl_thread thread;
