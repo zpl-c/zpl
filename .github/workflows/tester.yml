@@ -11,6 +11,7 @@ on:
       - 'code/**'
       - 'Makefile'
       - 'misc/CMakeLists.txt'
+  workflow_dispatch:
   # pull_request:
   #   branches:
   #     - master
