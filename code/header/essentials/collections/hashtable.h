@@ -169,7 +169,6 @@ return NULL;                                                                    
 }                                                                                                                  \
 \
 void ZPL_JOIN2(FUNC, remove)(NAME * h, zpl_u64 key) {                                                                  \
-zpl_isize i; \
 zpl_hash_table_find_result fr = ZPL_JOIN2(FUNC, _find)(h, key);                                                \
 if (fr.entry_index >= 0) {                                                                                     \
 zpl_array_remove_at(h->entries, fr.entry_index);                                                           \

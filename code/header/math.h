@@ -163,7 +163,11 @@ typedef short zpl_half;
 #endif
 
 #ifndef zpl_sign
-#define zpl_sign(x) (x == 0.0f) ? 0.0f : ((x) >= 0.0f ? 1.0f : -1.0f)
+#define zpl_sign(x) ((x) >= 0.0f ? 1.0f : -1.0f)
+#endif
+
+#ifndef zpl_sign0
+#define zpl_sign0(x) ((x == 0.0f) ? 0.0f : ((x) >= 0.0f ? 1.0f : -1.0f))
 #endif
 
 ZPL_DEF zpl_f32 zpl_to_radians(zpl_f32 degrees);

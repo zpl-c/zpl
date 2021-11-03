@@ -1,3 +1,4 @@
+15.0.2  - zpl_sign0 was introduced
 15.0.1  - hashtable performance improvements
 		- zpl_sign(0) returns 0
 15.0.0  - Rework zpl ring buffer
