@@ -31,7 +31,7 @@ typedef union zpl_vec3 {
     struct {
         zpl_f32 s, t, p;
     };
-
+    
     zpl_vec2 xy;
     zpl_vec2 st;
     zpl_f32 e[3];
@@ -163,7 +163,7 @@ typedef short zpl_half;
 #endif
 
 #ifndef zpl_sign
-#define zpl_sign(x) ((x) >= 0 ? 1 : -1)
+#define zpl_sign(x) (x == 0.0f) ? 0.0f : ((x) >= 0.0f ? 1.0f : -1.0f)
 #endif
 
 ZPL_DEF zpl_f32 zpl_to_radians(zpl_f32 degrees);
@@ -482,212 +482,212 @@ ZPL_DEF zpl_aabb2 zpl_aabb2_expand(const zpl_aabb2 *a, zpl_f32 b);
 //! @}
 ZPL_END_C_DECLS
 #if defined(__cplusplus)
-    ZPL_INLINE bool operator==(zpl_vec2 a, zpl_vec2 b) { return (a.x == b.x) && (a.y == b.y); }
-    ZPL_INLINE bool operator!=(zpl_vec2 a, zpl_vec2 b) { return !operator==(a, b); }
+ZPL_INLINE bool operator==(zpl_vec2 a, zpl_vec2 b) { return (a.x == b.x) && (a.y == b.y); }
+ZPL_INLINE bool operator!=(zpl_vec2 a, zpl_vec2 b) { return !operator==(a, b); }
 
-    ZPL_INLINE zpl_vec2 operator+(zpl_vec2 a) { return a; }
-    ZPL_INLINE zpl_vec2 operator-(zpl_vec2 a) { zpl_vec2 r = {-a.x, -a.y}; return r; }
+ZPL_INLINE zpl_vec2 operator+(zpl_vec2 a) { return a; }
+ZPL_INLINE zpl_vec2 operator-(zpl_vec2 a) { zpl_vec2 r = {-a.x, -a.y}; return r; }
 
-    ZPL_INLINE zpl_vec2 operator+(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r; zpl_vec2_add(&r, a, b); return r; }
-    ZPL_INLINE zpl_vec2 operator-(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r; zpl_vec2_sub(&r, a, b); return r; }
+ZPL_INLINE zpl_vec2 operator+(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r; zpl_vec2_add(&r, a, b); return r; }
+ZPL_INLINE zpl_vec2 operator-(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r; zpl_vec2_sub(&r, a, b); return r; }
 
-    ZPL_INLINE zpl_vec2 operator*(zpl_vec2 a, float scalar) { zpl_vec2 r; zpl_vec2_mul(&r, a, scalar); return r; }
-    ZPL_INLINE zpl_vec2 operator*(float scalar, zpl_vec2 a) { return operator*(a, scalar); }
+ZPL_INLINE zpl_vec2 operator*(zpl_vec2 a, float scalar) { zpl_vec2 r; zpl_vec2_mul(&r, a, scalar); return r; }
+ZPL_INLINE zpl_vec2 operator*(float scalar, zpl_vec2 a) { return operator*(a, scalar); }
 
-    ZPL_INLINE zpl_vec2 operator/(zpl_vec2 a, float scalar) { return operator*(a, 1.0f/scalar); }
+ZPL_INLINE zpl_vec2 operator/(zpl_vec2 a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-    /* Hadamard Product */
-    ZPL_INLINE zpl_vec2 operator*(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r = {a.x*b.x, a.y*b.y}; return r; }
-    ZPL_INLINE zpl_vec2 operator/(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r = {a.x/b.x, a.y/b.y}; return r; }
+/* Hadamard Product */
+ZPL_INLINE zpl_vec2 operator*(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r = {a.x*b.x, a.y*b.y}; return r; }
+ZPL_INLINE zpl_vec2 operator/(zpl_vec2 a, zpl_vec2 b) { zpl_vec2 r = {a.x/b.x, a.y/b.y}; return r; }
 
-    ZPL_INLINE zpl_vec2 &operator+=(zpl_vec2 &a, zpl_vec2 b)       { return (a = a + b); }
-    ZPL_INLINE zpl_vec2 &operator-=(zpl_vec2 &a, zpl_vec2 b)       { return (a = a - b); }
-    ZPL_INLINE zpl_vec2 &operator*=(zpl_vec2 &a, float scalar) { return (a = a * scalar); }
-    ZPL_INLINE zpl_vec2 &operator/=(zpl_vec2 &a, float scalar) { return (a = a / scalar); }
-
-
-    ZPL_INLINE bool operator==(zpl_vec3 a, zpl_vec3 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z); }
-    ZPL_INLINE bool operator!=(zpl_vec3 a, zpl_vec3 b) { return !operator==(a, b); }
-
-    ZPL_INLINE zpl_vec3 operator+(zpl_vec3 a) { return a; }
-    ZPL_INLINE zpl_vec3 operator-(zpl_vec3 a) { zpl_vec3 r = {-a.x, -a.y, -a.z}; return r; }
-
-    ZPL_INLINE zpl_vec3 operator+(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r; zpl_vec3_add(&r, a, b); return r; }
-    ZPL_INLINE zpl_vec3 operator-(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r; zpl_vec3_sub(&r, a, b); return r; }
-
-    ZPL_INLINE zpl_vec3 operator*(zpl_vec3 a, float scalar) { zpl_vec3 r; zpl_vec3_mul(&r, a, scalar); return r; }
-    ZPL_INLINE zpl_vec3 operator*(float scalar, zpl_vec3 a) { return operator*(a, scalar); }
-
-    ZPL_INLINE zpl_vec3 operator/(zpl_vec3 a, float scalar) { return operator*(a, 1.0f/scalar); }
-
-    /* Hadamard Product */
-    ZPL_INLINE zpl_vec3 operator*(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r = {a.x*b.x, a.y*b.y, a.z*b.z}; return r; }
-    ZPL_INLINE zpl_vec3 operator/(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r = {a.x/b.x, a.y/b.y, a.z/b.z}; return r; }
-
-    ZPL_INLINE zpl_vec3 &operator+=(zpl_vec3 &a, zpl_vec3 b)       { return (a = a + b); }
-    ZPL_INLINE zpl_vec3 &operator-=(zpl_vec3 &a, zpl_vec3 b)       { return (a = a - b); }
-    ZPL_INLINE zpl_vec3 &operator*=(zpl_vec3 &a, float scalar) { return (a = a * scalar); }
-    ZPL_INLINE zpl_vec3 &operator/=(zpl_vec3 &a, float scalar) { return (a = a / scalar); }
+ZPL_INLINE zpl_vec2 &operator+=(zpl_vec2 &a, zpl_vec2 b)       { return (a = a + b); }
+ZPL_INLINE zpl_vec2 &operator-=(zpl_vec2 &a, zpl_vec2 b)       { return (a = a - b); }
+ZPL_INLINE zpl_vec2 &operator*=(zpl_vec2 &a, float scalar) { return (a = a * scalar); }
+ZPL_INLINE zpl_vec2 &operator/=(zpl_vec2 &a, float scalar) { return (a = a / scalar); }
 
 
-    ZPL_INLINE bool operator==(zpl_vec4 a, zpl_vec4 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w); }
-    ZPL_INLINE bool operator!=(zpl_vec4 a, zpl_vec4 b) { return !operator==(a, b); }
+ZPL_INLINE bool operator==(zpl_vec3 a, zpl_vec3 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z); }
+ZPL_INLINE bool operator!=(zpl_vec3 a, zpl_vec3 b) { return !operator==(a, b); }
 
-    ZPL_INLINE zpl_vec4 operator+(zpl_vec4 a) { return a; }
-    ZPL_INLINE zpl_vec4 operator-(zpl_vec4 a) { zpl_vec4 r = {-a.x, -a.y, -a.z, -a.w}; return r; }
+ZPL_INLINE zpl_vec3 operator+(zpl_vec3 a) { return a; }
+ZPL_INLINE zpl_vec3 operator-(zpl_vec3 a) { zpl_vec3 r = {-a.x, -a.y, -a.z}; return r; }
 
-    ZPL_INLINE zpl_vec4 operator+(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r; zpl_vec4_add(&r, a, b); return r; }
-    ZPL_INLINE zpl_vec4 operator-(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r; zpl_vec4_sub(&r, a, b); return r; }
+ZPL_INLINE zpl_vec3 operator+(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r; zpl_vec3_add(&r, a, b); return r; }
+ZPL_INLINE zpl_vec3 operator-(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r; zpl_vec3_sub(&r, a, b); return r; }
 
-    ZPL_INLINE zpl_vec4 operator*(zpl_vec4 a, float scalar) { zpl_vec4 r; zpl_vec4_mul(&r, a, scalar); return r; }
-    ZPL_INLINE zpl_vec4 operator*(float scalar, zpl_vec4 a) { return operator*(a, scalar); }
+ZPL_INLINE zpl_vec3 operator*(zpl_vec3 a, float scalar) { zpl_vec3 r; zpl_vec3_mul(&r, a, scalar); return r; }
+ZPL_INLINE zpl_vec3 operator*(float scalar, zpl_vec3 a) { return operator*(a, scalar); }
 
-    ZPL_INLINE zpl_vec4 operator/(zpl_vec4 a, float scalar) { return operator*(a, 1.0f/scalar); }
+ZPL_INLINE zpl_vec3 operator/(zpl_vec3 a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-    /* Hadamard Product */
-    ZPL_INLINE zpl_vec4 operator*(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w}; return r; }
-    ZPL_INLINE zpl_vec4 operator/(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r = {a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w}; return r; }
+/* Hadamard Product */
+ZPL_INLINE zpl_vec3 operator*(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r = {a.x*b.x, a.y*b.y, a.z*b.z}; return r; }
+ZPL_INLINE zpl_vec3 operator/(zpl_vec3 a, zpl_vec3 b) { zpl_vec3 r = {a.x/b.x, a.y/b.y, a.z/b.z}; return r; }
 
-    ZPL_INLINE zpl_vec4 &operator+=(zpl_vec4 &a, zpl_vec4 b)       { return (a = a + b); }
-    ZPL_INLINE zpl_vec4 &operator-=(zpl_vec4 &a, zpl_vec4 b)       { return (a = a - b); }
-    ZPL_INLINE zpl_vec4 &operator*=(zpl_vec4 &a, float scalar) { return (a = a * scalar); }
-    ZPL_INLINE zpl_vec4 &operator/=(zpl_vec4 &a, float scalar) { return (a = a / scalar); }
+ZPL_INLINE zpl_vec3 &operator+=(zpl_vec3 &a, zpl_vec3 b)       { return (a = a + b); }
+ZPL_INLINE zpl_vec3 &operator-=(zpl_vec3 &a, zpl_vec3 b)       { return (a = a - b); }
+ZPL_INLINE zpl_vec3 &operator*=(zpl_vec3 &a, float scalar) { return (a = a * scalar); }
+ZPL_INLINE zpl_vec3 &operator/=(zpl_vec3 &a, float scalar) { return (a = a / scalar); }
 
 
-    ZPL_INLINE zpl_mat2 operator+(zpl_mat2 const &a, zpl_mat2 const &b) {
-        int i, j;
-        zpl_mat2 r = {0};
-        for (j = 0; j < 2; j++) {
-            for (i = 0; i < 2; i++)
-                r.e[2*j+i] = a.e[2*j+i] + b.e[2*j+i];
-        }
-        return r;
+ZPL_INLINE bool operator==(zpl_vec4 a, zpl_vec4 b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w); }
+ZPL_INLINE bool operator!=(zpl_vec4 a, zpl_vec4 b) { return !operator==(a, b); }
+
+ZPL_INLINE zpl_vec4 operator+(zpl_vec4 a) { return a; }
+ZPL_INLINE zpl_vec4 operator-(zpl_vec4 a) { zpl_vec4 r = {-a.x, -a.y, -a.z, -a.w}; return r; }
+
+ZPL_INLINE zpl_vec4 operator+(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r; zpl_vec4_add(&r, a, b); return r; }
+ZPL_INLINE zpl_vec4 operator-(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r; zpl_vec4_sub(&r, a, b); return r; }
+
+ZPL_INLINE zpl_vec4 operator*(zpl_vec4 a, float scalar) { zpl_vec4 r; zpl_vec4_mul(&r, a, scalar); return r; }
+ZPL_INLINE zpl_vec4 operator*(float scalar, zpl_vec4 a) { return operator*(a, scalar); }
+
+ZPL_INLINE zpl_vec4 operator/(zpl_vec4 a, float scalar) { return operator*(a, 1.0f/scalar); }
+
+/* Hadamard Product */
+ZPL_INLINE zpl_vec4 operator*(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w}; return r; }
+ZPL_INLINE zpl_vec4 operator/(zpl_vec4 a, zpl_vec4 b) { zpl_vec4 r = {a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w}; return r; }
+
+ZPL_INLINE zpl_vec4 &operator+=(zpl_vec4 &a, zpl_vec4 b)       { return (a = a + b); }
+ZPL_INLINE zpl_vec4 &operator-=(zpl_vec4 &a, zpl_vec4 b)       { return (a = a - b); }
+ZPL_INLINE zpl_vec4 &operator*=(zpl_vec4 &a, float scalar) { return (a = a * scalar); }
+ZPL_INLINE zpl_vec4 &operator/=(zpl_vec4 &a, float scalar) { return (a = a / scalar); }
+
+
+ZPL_INLINE zpl_mat2 operator+(zpl_mat2 const &a, zpl_mat2 const &b) {
+    int i, j;
+    zpl_mat2 r = {0};
+    for (j = 0; j < 2; j++) {
+        for (i = 0; i < 2; i++)
+            r.e[2*j+i] = a.e[2*j+i] + b.e[2*j+i];
     }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat2 operator-(zpl_mat2 const &a, zpl_mat2 const &b) {
-        int i, j;
-        zpl_mat2 r = {0};
-        for (j = 0; j < 2; j++) {
-            for (i = 0; i < 2; i++)
-                r.e[2*j+i] = a.e[2*j+i] - b.e[2*j+i];
-        }
-        return r;
+ZPL_INLINE zpl_mat2 operator-(zpl_mat2 const &a, zpl_mat2 const &b) {
+    int i, j;
+    zpl_mat2 r = {0};
+    for (j = 0; j < 2; j++) {
+        for (i = 0; i < 2; i++)
+            r.e[2*j+i] = a.e[2*j+i] - b.e[2*j+i];
     }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat2 operator*(zpl_mat2 const &a, zpl_mat2 const &b) { zpl_mat2 r; zpl_mat2_mul(&r, (zpl_mat2 *)&a, (zpl_mat2 *)&b); return r; }
-    ZPL_INLINE zpl_vec2 operator*(zpl_mat2 const &a, zpl_vec2 v) { zpl_vec2 r; zpl_mat2_mul_vec2(&r, (zpl_mat2 *)&a, v); return r; }
-    ZPL_INLINE zpl_mat2 operator*(zpl_mat2 const &a, float scalar) {
-        zpl_mat2 r = {0};
-        int i;
-        for (i = 0; i < 2*2; i++) r.e[i] = a.e[i] * scalar;
-        return r;
+ZPL_INLINE zpl_mat2 operator*(zpl_mat2 const &a, zpl_mat2 const &b) { zpl_mat2 r; zpl_mat2_mul(&r, (zpl_mat2 *)&a, (zpl_mat2 *)&b); return r; }
+ZPL_INLINE zpl_vec2 operator*(zpl_mat2 const &a, zpl_vec2 v) { zpl_vec2 r; zpl_mat2_mul_vec2(&r, (zpl_mat2 *)&a, v); return r; }
+ZPL_INLINE zpl_mat2 operator*(zpl_mat2 const &a, float scalar) {
+    zpl_mat2 r = {0};
+    int i;
+    for (i = 0; i < 2*2; i++) r.e[i] = a.e[i] * scalar;
+    return r;
+}
+ZPL_INLINE zpl_mat2 operator*(float scalar, zpl_mat2 const &a) { return operator*(a, scalar); }
+ZPL_INLINE zpl_mat2 operator/(zpl_mat2 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+
+ZPL_INLINE zpl_mat2& operator+=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a + b); }
+ZPL_INLINE zpl_mat2& operator-=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a - b); }
+ZPL_INLINE zpl_mat2& operator*=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a * b); }
+
+
+
+ZPL_INLINE zpl_mat3 operator+(zpl_mat3 const &a, zpl_mat3 const &b) {
+    int i, j;
+    zpl_mat3 r = {0};
+    for (j = 0; j < 3; j++) {
+        for (i = 0; i < 3; i++)
+            r.e[3*j+i] = a.e[3*j+i] + b.e[3*j+i];
     }
-    ZPL_INLINE zpl_mat2 operator*(float scalar, zpl_mat2 const &a) { return operator*(a, scalar); }
-    ZPL_INLINE zpl_mat2 operator/(zpl_mat2 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat2& operator+=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a + b); }
-    ZPL_INLINE zpl_mat2& operator-=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a - b); }
-    ZPL_INLINE zpl_mat2& operator*=(zpl_mat2& a, zpl_mat2 const &b) { return (a = a * b); }
-
-
-
-    ZPL_INLINE zpl_mat3 operator+(zpl_mat3 const &a, zpl_mat3 const &b) {
-        int i, j;
-        zpl_mat3 r = {0};
-        for (j = 0; j < 3; j++) {
-            for (i = 0; i < 3; i++)
-                r.e[3*j+i] = a.e[3*j+i] + b.e[3*j+i];
-        }
-        return r;
+ZPL_INLINE zpl_mat3 operator-(zpl_mat3 const &a, zpl_mat3 const &b) {
+    int i, j;
+    zpl_mat3 r = {0};
+    for (j = 0; j < 3; j++) {
+        for (i = 0; i < 3; i++)
+            r.e[3*j+i] = a.e[3*j+i] - b.e[3*j+i];
     }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat3 operator-(zpl_mat3 const &a, zpl_mat3 const &b) {
-        int i, j;
-        zpl_mat3 r = {0};
-        for (j = 0; j < 3; j++) {
-            for (i = 0; i < 3; i++)
-                r.e[3*j+i] = a.e[3*j+i] - b.e[3*j+i];
-        }
-        return r;
+ZPL_INLINE zpl_mat3 operator*(zpl_mat3 const &a, zpl_mat3 const &b) { zpl_mat3 r; zpl_mat3_mul(&r, (zpl_mat3 *)&a, (zpl_mat3 *)&b); return r; }
+ZPL_INLINE zpl_vec3 operator*(zpl_mat3 const &a, zpl_vec3 v) { zpl_vec3 r; zpl_mat3_mul_vec3(&r, (zpl_mat3 *)&a, v); return r; }
+ZPL_INLINE zpl_mat3 operator*(zpl_mat3 const &a, float scalar) {
+    zpl_mat3 r = {0};
+    int i;
+    for (i = 0; i < 3*3; i++) r.e[i] = a.e[i] * scalar;
+    return r;
+}
+ZPL_INLINE zpl_mat3 operator*(float scalar, zpl_mat3 const &a) { return operator*(a, scalar); }
+ZPL_INLINE zpl_mat3 operator/(zpl_mat3 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+
+ZPL_INLINE zpl_mat3& operator+=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a + b); }
+ZPL_INLINE zpl_mat3& operator-=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a - b); }
+ZPL_INLINE zpl_mat3& operator*=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a * b); }
+
+
+
+ZPL_INLINE zpl_mat4 operator+(zpl_mat4 const &a, zpl_mat4 const &b) {
+    int i, j;
+    zpl_mat4 r = {0};
+    for (j = 0; j < 4; j++) {
+        for (i = 0; i < 4; i++)
+            r.e[4*j+i] = a.e[4*j+i] + b.e[4*j+i];
     }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat3 operator*(zpl_mat3 const &a, zpl_mat3 const &b) { zpl_mat3 r; zpl_mat3_mul(&r, (zpl_mat3 *)&a, (zpl_mat3 *)&b); return r; }
-    ZPL_INLINE zpl_vec3 operator*(zpl_mat3 const &a, zpl_vec3 v) { zpl_vec3 r; zpl_mat3_mul_vec3(&r, (zpl_mat3 *)&a, v); return r; }
-    ZPL_INLINE zpl_mat3 operator*(zpl_mat3 const &a, float scalar) {
-        zpl_mat3 r = {0};
-        int i;
-        for (i = 0; i < 3*3; i++) r.e[i] = a.e[i] * scalar;
-        return r;
+ZPL_INLINE zpl_mat4 operator-(zpl_mat4 const &a, zpl_mat4 const &b) {
+    int i, j;
+    zpl_mat4 r = {0};
+    for (j = 0; j < 4; j++) {
+        for (i = 0; i < 4; i++)
+            r.e[4*j+i] = a.e[4*j+i] - b.e[4*j+i];
     }
-    ZPL_INLINE zpl_mat3 operator*(float scalar, zpl_mat3 const &a) { return operator*(a, scalar); }
-    ZPL_INLINE zpl_mat3 operator/(zpl_mat3 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
+    return r;
+}
 
-    ZPL_INLINE zpl_mat3& operator+=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a + b); }
-    ZPL_INLINE zpl_mat3& operator-=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a - b); }
-    ZPL_INLINE zpl_mat3& operator*=(zpl_mat3& a, zpl_mat3 const &b) { return (a = a * b); }
+ZPL_INLINE zpl_mat4 operator*(zpl_mat4 const &a, zpl_mat4 const &b) { zpl_mat4 r; zpl_mat4_mul(&r, (zpl_mat4 *)&a, (zpl_mat4 *)&b); return r; }
+ZPL_INLINE zpl_vec4 operator*(zpl_mat4 const &a, zpl_vec4 v) { zpl_vec4 r; zpl_mat4_mul_vec4(&r, (zpl_mat4 *)&a, v); return r; }
+ZPL_INLINE zpl_mat4 operator*(zpl_mat4 const &a, float scalar) {
+    zpl_mat4 r = {0};
+    int i;
+    for (i = 0; i < 4*4; i++) r.e[i] = a.e[i] * scalar;
+    return r;
+}
+ZPL_INLINE zpl_mat4 operator*(float scalar, zpl_mat4 const &a) { return operator*(a, scalar); }
+ZPL_INLINE zpl_mat4 operator/(zpl_mat4 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
 
-
-
-    ZPL_INLINE zpl_mat4 operator+(zpl_mat4 const &a, zpl_mat4 const &b) {
-        int i, j;
-        zpl_mat4 r = {0};
-        for (j = 0; j < 4; j++) {
-            for (i = 0; i < 4; i++)
-                r.e[4*j+i] = a.e[4*j+i] + b.e[4*j+i];
-        }
-        return r;
-    }
-
-    ZPL_INLINE zpl_mat4 operator-(zpl_mat4 const &a, zpl_mat4 const &b) {
-        int i, j;
-        zpl_mat4 r = {0};
-        for (j = 0; j < 4; j++) {
-            for (i = 0; i < 4; i++)
-                r.e[4*j+i] = a.e[4*j+i] - b.e[4*j+i];
-        }
-        return r;
-    }
-
-    ZPL_INLINE zpl_mat4 operator*(zpl_mat4 const &a, zpl_mat4 const &b) { zpl_mat4 r; zpl_mat4_mul(&r, (zpl_mat4 *)&a, (zpl_mat4 *)&b); return r; }
-    ZPL_INLINE zpl_vec4 operator*(zpl_mat4 const &a, zpl_vec4 v) { zpl_vec4 r; zpl_mat4_mul_vec4(&r, (zpl_mat4 *)&a, v); return r; }
-    ZPL_INLINE zpl_mat4 operator*(zpl_mat4 const &a, float scalar) {
-        zpl_mat4 r = {0};
-        int i;
-        for (i = 0; i < 4*4; i++) r.e[i] = a.e[i] * scalar;
-        return r;
-    }
-    ZPL_INLINE zpl_mat4 operator*(float scalar, zpl_mat4 const &a) { return operator*(a, scalar); }
-    ZPL_INLINE zpl_mat4 operator/(zpl_mat4 const &a, float scalar) { return operator*(a, 1.0f/scalar); }
-
-    ZPL_INLINE zpl_mat4& operator+=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a + b); }
-    ZPL_INLINE zpl_mat4& operator-=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a - b); }
-    ZPL_INLINE zpl_mat4& operator*=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a * b); }
+ZPL_INLINE zpl_mat4& operator+=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a + b); }
+ZPL_INLINE zpl_mat4& operator-=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a - b); }
+ZPL_INLINE zpl_mat4& operator*=(zpl_mat4 &a, zpl_mat4 const &b) { return (a = a * b); }
 
 
 
-    ZPL_INLINE bool operator==(zpl_quat a, zpl_quat b) { return a.xyzw == b.xyzw; }
-    ZPL_INLINE bool operator!=(zpl_quat a, zpl_quat b) { return !operator==(a, b); }
+ZPL_INLINE bool operator==(zpl_quat a, zpl_quat b) { return a.xyzw == b.xyzw; }
+ZPL_INLINE bool operator!=(zpl_quat a, zpl_quat b) { return !operator==(a, b); }
 
-    ZPL_INLINE zpl_quat operator+(zpl_quat q) { return q; }
-    ZPL_INLINE zpl_quat operator-(zpl_quat q) { return zpl_quatf(-q.x, -q.y, -q.z, -q.w); }
+ZPL_INLINE zpl_quat operator+(zpl_quat q) { return q; }
+ZPL_INLINE zpl_quat operator-(zpl_quat q) { return zpl_quatf(-q.x, -q.y, -q.z, -q.w); }
 
-    ZPL_INLINE zpl_quat operator+(zpl_quat a, zpl_quat b) { zpl_quat r; zpl_quat_add(&r, a, b); return r; }
-    ZPL_INLINE zpl_quat operator-(zpl_quat a, zpl_quat b) { zpl_quat r; zpl_quat_sub(&r, a, b); return r; }
+ZPL_INLINE zpl_quat operator+(zpl_quat a, zpl_quat b) { zpl_quat r; zpl_quat_add(&r, a, b); return r; }
+ZPL_INLINE zpl_quat operator-(zpl_quat a, zpl_quat b) { zpl_quat r; zpl_quat_sub(&r, a, b); return r; }
 
-    ZPL_INLINE zpl_quat operator*(zpl_quat a, zpl_quat b)  { zpl_quat r; zpl_quat_mul(&r, a, b); return r; }
-    ZPL_INLINE zpl_quat operator*(zpl_quat q, float s) { zpl_quat r; zpl_quat_mulf(&r, q, s); return r; }
-    ZPL_INLINE zpl_quat operator*(float s, zpl_quat q) { return operator*(q, s); }
-    ZPL_INLINE zpl_quat operator/(zpl_quat q, float s) { zpl_quat r; zpl_quat_divf(&r, q, s); return r; }
+ZPL_INLINE zpl_quat operator*(zpl_quat a, zpl_quat b)  { zpl_quat r; zpl_quat_mul(&r, a, b); return r; }
+ZPL_INLINE zpl_quat operator*(zpl_quat q, float s) { zpl_quat r; zpl_quat_mulf(&r, q, s); return r; }
+ZPL_INLINE zpl_quat operator*(float s, zpl_quat q) { return operator*(q, s); }
+ZPL_INLINE zpl_quat operator/(zpl_quat q, float s) { zpl_quat r; zpl_quat_divf(&r, q, s); return r; }
 
-    ZPL_INLINE zpl_quat &operator+=(zpl_quat &a, zpl_quat b) { zpl_quat_addeq(&a, b); return a; }
-    ZPL_INLINE zpl_quat &operator-=(zpl_quat &a, zpl_quat b) { zpl_quat_subeq(&a, b); return a; }
-    ZPL_INLINE zpl_quat &operator*=(zpl_quat &a, zpl_quat b) { zpl_quat_muleq(&a, b); return a; }
-    ZPL_INLINE zpl_quat &operator/=(zpl_quat &a, zpl_quat b) { zpl_quat_diveq(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator+=(zpl_quat &a, zpl_quat b) { zpl_quat_addeq(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator-=(zpl_quat &a, zpl_quat b) { zpl_quat_subeq(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator*=(zpl_quat &a, zpl_quat b) { zpl_quat_muleq(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator/=(zpl_quat &a, zpl_quat b) { zpl_quat_diveq(&a, b); return a; }
 
-    ZPL_INLINE zpl_quat &operator*=(zpl_quat &a, float b) { zpl_quat_muleqf(&a, b); return a; }
-    ZPL_INLINE zpl_quat &operator/=(zpl_quat &a, float b) { zpl_quat_diveqf(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator*=(zpl_quat &a, float b) { zpl_quat_muleqf(&a, b); return a; }
+ZPL_INLINE zpl_quat &operator/=(zpl_quat &a, float b) { zpl_quat_diveqf(&a, b); return a; }
 
-    /* Rotate v by a */
-    ZPL_INLINE zpl_vec3 operator*(zpl_quat q, zpl_vec3 v) { zpl_vec3 r; zpl_quat_rotate_vec3(&r, q, v); return r; }
+/* Rotate v by a */
+ZPL_INLINE zpl_vec3 operator*(zpl_quat q, zpl_vec3 v) { zpl_vec3 r; zpl_quat_rotate_vec3(&r, q, v); return r; }
 #endif
 
