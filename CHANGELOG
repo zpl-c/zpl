@@ -1,3 +1,5 @@
+15.0.3  - fix zpl_sign call in math failing to compile
+            on macos devices
 15.0.2  - zpl_sign0 was introduced
 15.0.1  - hashtable performance improvements
 		- zpl_sign(0) returns 0
