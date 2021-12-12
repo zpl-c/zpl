@@ -44,7 +44,7 @@ zpl_f32 zpl_mod(zpl_f32 x, zpl_f32 y) {
     zpl_f32 result;
     y = zpl_abs(y);
     result = zpl_remainder(zpl_abs(x), y);
-    if (zpl_sign(result)) result += y;
+    if (zpl_sign(result) > 0.0f) result += y;
     return zpl_copy_sign(result, x);
 }
 
