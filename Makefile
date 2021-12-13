@@ -41,7 +41,7 @@ BUILD_FILES = $(wildcard build/*)
 
 .PHONY: all clean examples test app embed
 
-all: clean examples test
+all: examples test
 
 test: code/tests/tester
 	@echo '> Building unit tests'
