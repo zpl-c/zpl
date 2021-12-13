@@ -27,3 +27,7 @@ zpl.files
 GPATH
 GRTAGS
 GTAGS
+
+# misc
+compile_commands.json
+
