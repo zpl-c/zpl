@@ -10,10 +10,10 @@ const workdir = path.join(__dirname, 'deploy')
 const versionGet = () => {
     const data = fs.readFileSync(basefile, 'utf8')
 
-    const major = data.match(/ZPL_VERSION_MAJOR\s+([0-9]+)\n/)[1]
-    const minor = data.match(/ZPL_VERSION_MINOR\s+([0-9]+)\n/)[1]
-    const patch = data.match(/ZPL_VERSION_PATCH\s+([0-9]+)\n/)[1]
-    const pre   = data.match(/ZPL_VERSION_PRE\s+\"([\.a-z0-9]+)\"\n/)
+    const major = data.match(/ZPL_VERSION_MAJOR\s+([0-9]+)/)[1]
+    const minor = data.match(/ZPL_VERSION_MINOR\s+([0-9]+)/)[1]
+    const patch = data.match(/ZPL_VERSION_PATCH\s+([0-9]+)/)[1]
+    const pre   = data.match(/ZPL_VERSION_PRE\s+\"([\.a-z0-9]+)\"/)
 
     return `${major}.${minor}.${patch}${pre ? '-' + pre[1] : ''}`
 }
@@ -105,4 +105,5 @@ class Bumper extends Plugin {
 }
 
 module.exports = Bumper
+module.exports.versionGet = versionGet
 module.exports.embedIncludes = embedIncludes
