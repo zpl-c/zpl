@@ -50,6 +50,7 @@ ZPL_DEF_INLINE char       *zpl_strncpy(char *dest, const char *source, zpl_isize
 ZPL_DEF_INLINE zpl_isize   zpl_strlcpy(char *dest, const char *source, zpl_isize len);
 ZPL_DEF_INLINE char       *zpl_strrev(char *str); // NOTE: ASCII only
 ZPL_DEF_INLINE const char *zpl_strtok(char *output, const char *src, const char *delimit);
+ZPL_DEF_INLINE const char *zpl_strntok(char *output, zpl_isize len, const char *src, const char *delimit);
 
 ZPL_DEF_INLINE char   *zpl_strdup(zpl_allocator a, char *src, zpl_isize max_len);
 ZPL_DEF_INLINE char  **zpl_str_split_lines(zpl_allocator alloc, char *source, zpl_b32 strip_whitespace);
@@ -312,6 +313,19 @@ ZPL_IMPL_INLINE const char *zpl_strtok(char *output, const char *src, const char
     while (*src && zpl_char_first_occurence(delimit, *src) == NULL) *output++ = *src++;
 
     *output = 0;
+    return *src ? src + 1 : src;
+}
+
+ZPL_IMPL_INLINE const char *zpl_strntok(char *output, zpl_isize len, const char *src, const char *delimit) {
+    ZPL_ASSERT(len > 0);
+    *(output+len-1) = 0;
+    while (*src && zpl_char_first_occurence(delimit, *src) == NULL && len > 0) {
+        *output++ = *src++;
+        len --;
+    }
+
+    if (len > 0)
+        *output = 0;
     return *src ? src + 1 : src;
 }
 
