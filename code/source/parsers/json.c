@@ -183,9 +183,6 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
     ZPL_ASSERT(obj && base);
     char *p = base;
 
-    zpl_array_init(obj->nodes, a);
-    obj->type = ZPL_ADT_TYPE_OBJECT;
-
     p = zpl__json_trim(p, false);
     /**/ if (*p == '{') { ++p; }
     else if (*p == '[') { /* special case for when we call this func on an array. */
@@ -193,6 +190,9 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
         obj->type = ZPL_ADT_TYPE_ARRAY;
         return zpl__json_parse_array(obj, p, a, err_code);
     }
+
+    zpl_array_init(obj->nodes, a);
+    obj->type = ZPL_ADT_TYPE_OBJECT;
 
     do {
         zpl_adt_node node = { 0 };
