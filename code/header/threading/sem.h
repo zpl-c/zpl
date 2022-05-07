@@ -24,5 +24,6 @@ ZPL_DEF void zpl_semaphore_destroy(zpl_semaphore *s);
 ZPL_DEF void zpl_semaphore_post   (zpl_semaphore *s, zpl_i32 count);
 ZPL_DEF void zpl_semaphore_release(zpl_semaphore *s); // NOTE: zpl_semaphore_post(s, 1)
 ZPL_DEF void zpl_semaphore_wait   (zpl_semaphore *s);
+ZPL_DEF zpl_i32 zpl_semaphore_trywait(zpl_semaphore *s);
 
 ZPL_END_C_DECLS
