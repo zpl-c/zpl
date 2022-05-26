@@ -1,3 +1,4 @@
+16.1.1  - fix scientific notation parsing
 16.1.0  - introduce ZPL_PARSER_DISABLE_ANALYSIS that disables extra parsing capabilities to offer better raw performance
             at a cost of lack of node metadata.
 16.0.0  - introduce a new zpl_adt_get method for flexible data retrieval

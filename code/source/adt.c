@@ -335,7 +335,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
     zpl_i32 base=0;
     zpl_i32 base2=0;
     zpl_u8 base2_offset=0;
-    zpl_i8 exp=0;
+    zpl_i8 exp=0,orig_exp=0;
     zpl_u8 neg_zero=0;
     zpl_u8 lead_digit=0;
 
@@ -394,7 +394,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
             while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
         }
 
-        exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
+        orig_exp = exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
     }
 
     if (node->type == ZPL_ADT_TYPE_INTEGER) {
@@ -405,7 +405,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
             neg_zero = true;
         }
 #endif
-        while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
+        while (orig_exp-- > 0) { node->integer *= (zpl_i64)eb; }
     } else {
         node->real = zpl_str_to_f64(buf, 0);
 
@@ -429,7 +429,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
             neg_zero = true;
         }
 #endif
-        while (exp-- > 0) { node->real *= eb; }
+        while (orig_exp-- > 0) { node->real *= eb; }
     }
 
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
