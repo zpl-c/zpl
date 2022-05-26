@@ -25,13 +25,17 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         if (*p == 0) break;
         zpl_adt_node row_item = {0};
         row_item.type = ZPL_ADT_TYPE_STRING;
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
         row_item.name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
+#endif
 
         /* handle string literals */
         if (*p == '"') {
             p = b = e = p+1;
             row_item.string = b;
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             row_item.name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
+#endif
             do {
                 e = cast(char *)zpl_str_skip(e, '"');
                 if (*e && *(e+1) == '"') {
@@ -144,6 +148,7 @@ void zpl_csv_free(zpl_csv_object *obj) {
 void zpl__csv_write_record(zpl_file *file, zpl_csv_object *node) {
     switch (node->type) {
         case ZPL_ADT_TYPE_STRING: {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             switch (node->name_style) {
                 case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
                     zpl_fprintf(file, "\"");
@@ -152,9 +157,12 @@ void zpl__csv_write_record(zpl_file *file, zpl_csv_object *node) {
                 } break;
 
                 case ZPL_ADT_NAME_STYLE_NO_QUOTES: {
+#endif
                     zpl_fprintf(file, "%s", node->string);
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
                 } break;
             }
+#endif
         } break;
 
         case ZPL_ADT_TYPE_REAL:

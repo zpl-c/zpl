@@ -52,12 +52,14 @@ typedef struct zpl_adt_node {
     /* properties */
     zpl_u8 type        :4;
     zpl_u8 props       :4;
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
     zpl_u8 cfg_mode    :1;
     zpl_u8 name_style  :2;
     zpl_u8 assign_style:2;
     zpl_u8 delim_style :2;
     zpl_u8 delim_line_width :4;
     zpl_u8 assign_line_width:4;
+#endif
 
     /* adt data */
     union {
@@ -69,6 +71,7 @@ typedef struct zpl_adt_node {
                 zpl_i64 integer;
             };
 
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             /* number analysis */
             zpl_i32 base;
             zpl_i32 base2;
@@ -76,6 +79,7 @@ typedef struct zpl_adt_node {
             zpl_i8 exp         :4;
             zpl_u8 neg_zero  :1;
             zpl_u8 lead_digit:1;
+#endif
         };
     };
 } zpl_adt_node;

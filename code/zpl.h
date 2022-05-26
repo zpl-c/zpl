@@ -26,6 +26,9 @@ Options:
   ZPL_DEFINE_NULL_MACRO - to let zpl define what NULL stands for in case it is undefined.
   ZPL_NO_MATH_H - disables the use of math.h library and replaces it with custom routines or SIMD.
   ZPL_HEAP_ANALYSIS - enables heap allocator analysis tools
+  ZPL_PARSER_DISABLE_ANALYSIS - disables the extra parsing logic that would collect more information about node's formatting and structure.
+                                this is useful in scenarios where a raw parsing performance is preferred over a more complex analysis.
+                                It is not recommended to serialise data back since we lack the extra information about the original source document.
 
 GitHub:
   https://github.com/zpl-c/zpl
