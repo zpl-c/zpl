@@ -44,7 +44,7 @@ License:
 #define ZPL_H
 
 #define ZPL_VERSION_MAJOR 15
-#define ZPL_VERSION_MINOR 0
+#define ZPL_VERSION_MINOR 1
 #define ZPL_VERSION_PATCH 0
 #define ZPL_VERSION_PRE ""
 
