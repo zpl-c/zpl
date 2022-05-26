@@ -91,7 +91,25 @@ ZPL_DEF zpl_u8 zpl_adt_destroy_branch(zpl_adt_node *node);
 
 ZPL_DEF zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 type);
 
+
+/**
+ * @brief Fetch a node using provided URI string.
+ *
+ * This method uses a basic syntax to fetch a node from the ADT. The following features are available
+ * to retrieve the data:
+ * 1) "a/b/c" navigates through objects "a" and "b" to get to "c"
+ * 2) "arr/[foo=123]/bar" iterates over "arr" to find any object whose param "foo" matches the value "123", then gets its field called "bar"
+ * 3) "arr/3" retrieves the 4th element in "arr"
+ * 4) "arr/[apple]" retrieves the first element of value "apple" in "arr"
+ *
+ * @param node ADT node
+ * @param uri Locator string as described above
+ * @return zpl_adt_node*
+ *
+ * @see code/apps/examples/json_get.c
+ */
 ZPL_DEF zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri);
+
 ZPL_DEF zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32 deep_search);
 
 ZPL_DEF zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index);

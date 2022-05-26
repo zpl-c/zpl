@@ -64,6 +64,8 @@ zpl_internal zpl_adt_node *zpl__adt_get_value(zpl_adt_node *node, char const *va
         case ZPL_ADT_TYPE_REAL: {
             char back[4096]={0};
             zpl_file tmp;
+
+            /* allocate a file descriptor for a memory-mapped number to string conversion, input source buffer is not cloned, however. */
             zpl_file_stream_open(&tmp, zpl_heap(), (zpl_u8*)back, zpl_size_of(back), ZPL_FILE_STREAM_WRITABLE);
             zpl_adt_print_number(&tmp, node);
 
@@ -98,14 +100,17 @@ zpl_internal zpl_adt_node *zpl__adt_get_field(zpl_adt_node *node, char *name, ch
 
 zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
     ZPL_ASSERT_NOT_NULL(uri);
-    if (!node || (node->type != ZPL_ADT_TYPE_OBJECT && node->type != ZPL_ADT_TYPE_ARRAY)) {
-        return NULL;
+
+    if (*uri == '/') {
+        uri++;
     }
+
     if (*uri == 0) {
         return node;
     }
-    else if (*uri == '/') {
-        uri++;
+
+    if (!node || (node->type != ZPL_ADT_TYPE_OBJECT && node->type != ZPL_ADT_TYPE_ARRAY)) {
+        return NULL;
     }
 
 #if defined ZPL_ADT_URI_DEBUG || 0
@@ -125,46 +130,73 @@ zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
         l_e = (char*)zpl_str_skip(l_p, '=');
         l_e2 = (char*)zpl_str_skip(l_p, ']');
 
-        if (!*l_e || !*l_e2) {
+        if ((!*l_e && node->type != ZPL_ADT_TYPE_ARRAY) || !*l_e2) {
             ZPL_ASSERT_MSG(0, "Invalid field value lookup");
             return NULL;
         }
 
-        *l_e = 0;
-        l_b2 = l_e+1;
         *l_e2 = 0;
 
-        if (node->type == ZPL_ADT_TYPE_OBJECT) {
-            found_node = zpl__adt_get_field(node, l_b, l_b2);
+        /* [field=value] */
+        if (*l_e) {
+            *l_e = 0;
+            l_b2 = l_e+1;
+
+            /* run a value comparison against our own fields */
+            if (node->type == ZPL_ADT_TYPE_OBJECT) {
+                found_node = zpl__adt_get_field(node, l_b, l_b2);
+            }
+
+            /* run a value comparison against any child that is an object node */
+            else if (node->type == ZPL_ADT_TYPE_ARRAY) {
+                for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+                    zpl_adt_node *child = &node->nodes[i];
+                    if (child->type != ZPL_ADT_TYPE_OBJECT) {
+                        continue;
+                    }
+
+                    found_node = zpl__adt_get_field(child, l_b, l_b2);
+
+                    if (found_node)
+                        break;
+                }
+            }
         }
-        else if (node->type == ZPL_ADT_TYPE_ARRAY) {
+        /* [value] */
+        else {
             for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
                 zpl_adt_node *child = &node->nodes[i];
-                if (child->type != ZPL_ADT_TYPE_OBJECT) {
-                    continue;
+                if (zpl__adt_get_value(child, l_b2)) {
+                    found_node = child;
+                    break; /* we found a matching value in array, ignore the rest of it */
                 }
-
-                found_node = zpl__adt_get_field(child, l_b, l_b2);
-
-                if (found_node)
-                    break;
             }
         }
 
-        ZPL_ASSERT_NOT_NULL(found_node);
-
         /* go deeper if uri continues */
-        if (*p) {
-            return zpl_adt_get(found_node, p+1);
+        if (*e) {
+            return zpl_adt_get(found_node, e+1);
         }
     }
     /* handle field name lookup */
-    else {
+    else if (node->type == ZPL_ADT_TYPE_OBJECT) {
         found_node = zpl_adt_find(node, buf, false);
 
         /* go deeper if uri continues */
         if (*e) {
             return zpl_adt_get(found_node, e+1);
+        }
+    }
+    /* handle array index lookup */
+    else {
+        zpl_isize idx = (zpl_isize)zpl_str_to_i64(buf, NULL, 10);
+        if (idx >= 0 && idx < zpl_array_count(node->nodes)) {
+            found_node = &node->nodes[idx];
+
+            /* go deeper if uri continues */
+            if (*e) {
+                return zpl_adt_get(found_node, e+1);
+            }
         }
     }
 
