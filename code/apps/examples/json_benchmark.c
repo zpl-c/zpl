@@ -5,6 +5,7 @@
 #define ZPL_NANO
 #define ZPL_ENABLE_PARSER
 #define ZPL_ENABLE_OPTS
+#define ZPL_PARSER_DISABLE_ANALYSIS
 #include <zpl.h>
 
 void exit_with_help(zpl_opts *opts) {
