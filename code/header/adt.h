@@ -91,6 +91,7 @@ ZPL_DEF zpl_u8 zpl_adt_destroy_branch(zpl_adt_node *node);
 
 ZPL_DEF zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 type);
 
+ZPL_DEF zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri);
 ZPL_DEF zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32 deep_search);
 
 ZPL_DEF zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index);

@@ -187,7 +187,7 @@ void zpl_csv_write_delimiter(zpl_file *file, zpl_csv_object *obj, char delimiter
         for (zpl_isize i = 0; i < cols; i++) {
             zpl__csv_write_header(file, &obj->nodes[i]);
             if (i+1 != cols) {
-                zpl_fprintf(file, ",");
+                zpl_fprintf(file, "%c", delimiter);
             }
         }
         zpl_fprintf(file, "\n");
@@ -197,7 +197,7 @@ void zpl_csv_write_delimiter(zpl_file *file, zpl_csv_object *obj, char delimiter
         for (zpl_isize i = 0; i < cols; i++) {
             zpl__csv_write_record(file, &obj->nodes[i].nodes[r]);
             if (i+1 != cols) {
-                zpl_fprintf(file, ",");
+                zpl_fprintf(file, "%c", delimiter);
             }
         }
         zpl_fprintf(file, "\n");

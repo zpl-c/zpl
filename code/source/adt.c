@@ -52,6 +52,125 @@ zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32 deep_se
     return NULL;
 }
 
+zpl_internal zpl_adt_node *zpl__adt_get_value(zpl_adt_node *node, char const *value) {
+    switch (node->type) {
+        case ZPL_ADT_TYPE_MULTISTRING:
+        case ZPL_ADT_TYPE_STRING: {
+            if (node->string && !zpl_strcmp(node->string, value)) {
+                return node;
+            }
+        } break;
+        case ZPL_ADT_TYPE_INTEGER:
+        case ZPL_ADT_TYPE_REAL: {
+            char back[4096]={0};
+            zpl_file tmp;
+            zpl_file_stream_open(&tmp, zpl_heap(), (zpl_u8*)back, zpl_size_of(back), ZPL_FILE_STREAM_WRITABLE);
+            zpl_adt_print_number(&tmp, node);
+
+            zpl_isize fsize=0;
+            zpl_u8* buf = zpl_file_stream_buf(&tmp, &fsize);
+
+            if (!zpl_strcmp((char const *)buf, value)) {
+                zpl_file_close(&tmp);
+                return node;
+            }
+
+            zpl_file_close(&tmp);
+        } break;
+        default: break; /* node doesn't support value based lookup */
+    }
+
+    return NULL;
+}
+
+zpl_internal zpl_adt_node *zpl__adt_get_field(zpl_adt_node *node, char *name, char *value) {
+    for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+        if (!zpl_strcmp(node->nodes[i].name, name)) {
+            zpl_adt_node *child = &node->nodes[i];
+            if (zpl__adt_get_value(child, value)) {
+                return node; /* this object does contain a field of a specified value! */
+            }
+        }
+    }
+
+    return NULL;
+}
+
+zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
+    ZPL_ASSERT_NOT_NULL(uri);
+    if (!node || (node->type != ZPL_ADT_TYPE_OBJECT && node->type != ZPL_ADT_TYPE_ARRAY)) {
+        return NULL;
+    }
+    if (*uri == 0) {
+        return node;
+    }
+    else if (*uri == '/') {
+        uri++;
+    }
+
+#if defined ZPL_ADT_URI_DEBUG || 0
+    zpl_printf("uri: %s\n", uri);
+#endif
+
+    char *p=(char*)uri, *b=p, *e=p;
+    zpl_adt_node *found_node=NULL;
+
+    b = p;
+    p = e = (char*)zpl_str_skip(p, '/');
+    char *buf = zpl_bprintf("%.*s", (int)(e - b), b);
+
+    /* handle field value lookup */
+    if (*b == '[') {
+        char *l_p=buf+1,*l_b=l_p,*l_e=l_p,*l_b2=l_p,*l_e2=l_p;
+        l_e = (char*)zpl_str_skip(l_p, '=');
+        l_e2 = (char*)zpl_str_skip(l_p, ']');
+
+        if (!*l_e || !*l_e2) {
+            ZPL_ASSERT_MSG(0, "Invalid field value lookup");
+            return NULL;
+        }
+
+        *l_e = 0;
+        l_b2 = l_e+1;
+        *l_e2 = 0;
+
+        if (node->type == ZPL_ADT_TYPE_OBJECT) {
+            found_node = zpl__adt_get_field(node, l_b, l_b2);
+        }
+        else if (node->type == ZPL_ADT_TYPE_ARRAY) {
+            for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+                zpl_adt_node *child = &node->nodes[i];
+                if (child->type != ZPL_ADT_TYPE_OBJECT) {
+                    continue;
+                }
+
+                found_node = zpl__adt_get_field(child, l_b, l_b2);
+
+                if (found_node)
+                    break;
+            }
+        }
+
+        ZPL_ASSERT_NOT_NULL(found_node);
+
+        /* go deeper if uri continues */
+        if (*p) {
+            return zpl_adt_get(found_node, p+1);
+        }
+    }
+    /* handle field name lookup */
+    else {
+        found_node = zpl_adt_find(node, buf, false);
+
+        /* go deeper if uri continues */
+        if (*e) {
+            return zpl_adt_get(found_node, e+1);
+        }
+    }
+
+    return found_node;
+}
+
 zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index) {
     if (!parent || (parent->type != ZPL_ADT_TYPE_OBJECT && parent->type != ZPL_ADT_TYPE_ARRAY)) {
         return NULL;
