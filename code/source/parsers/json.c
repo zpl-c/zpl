@@ -30,9 +30,11 @@ zpl_u8 zpl_json_parse(zpl_adt_node *root, char *text, zpl_allocator a) {
     zpl_zero_item(root);
     text = zpl__json_trim(text, true);
 
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
     if (!zpl_strchr("{[", *text)) {
         root->cfg_mode = true;
     }
+#endif
 
     zpl__json_parse_object(root, text, a, &err_code);
     return err_code;
@@ -214,11 +216,12 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
 
         zpl_array_append(obj->nodes, node);
 
-        char *end_p = p;
+        char *end_p = p; zpl_unused(end_p);
         p = zpl__json_trim(p, true);
 
         /* this code analyses the keyvalue pair delimiter used in the packet. */
         if (zpl__json_is_delim_char(*p)) {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             zpl_adt_node *n = zpl_array_end(obj->nodes);
             n->delim_style = ZPL_ADT_DELIM_STYLE_COMMA;
 
@@ -228,6 +231,7 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
                 n->delim_style = ZPL_ADT_DELIM_STYLE_LINE;
                 n->delim_line_width = cast(zpl_u8)(p-end_p);
             }
+#endif
             ++p;
         }
         p = zpl__json_trim(p, false);
@@ -237,13 +241,17 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
 
 char *zpl__json_parse_name(zpl_adt_node *node, char *base, zpl_u8 *err_code) {
     char *p = base, *b = p, *e = p;
+    zpl_u8 name_style=0;
+
     if (*p == '"' || *p == '\'' || zpl_char_is_alpha(*p) || *p == '_' || *p == '$') {
         if (*p == '"' || *p == '\'') {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             if (*p == '"') {
                 node->name_style = ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE;
             } else if (*p == '\'') {
                 node->name_style = ZPL_ADT_NAME_STYLE_SINGLE_QUOTE;
             }
+#endif
             char c = *p;
             b = ++p;
             e = cast(char *)zpl_str_control_skip(b, c);
@@ -256,13 +264,15 @@ char *zpl__json_parse_name(zpl_adt_node *node, char *base, zpl_u8 *err_code) {
             b = e = p;
             zpl_str_advance_while(e, *e && (zpl_char_is_alphanumeric(*e) || *e == '_') && !zpl_char_is_space(*e) && !zpl__json_is_assign_char(*e));
             node->name = b;
-            node->name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
+            name_style = ZPL_ADT_NAME_STYLE_NO_QUOTES;
             /* we defer null-termination as it can potentially wipe our assign char as well. */
         }
 
-        char *assign_p = e;
+        char *assign_p = e; zpl_unused(assign_p);
         p = zpl__json_trim(e, false);
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
         node->assign_line_width = cast(zpl_u8)(p-assign_p);
+#endif
 
         if (*p && !zpl__json_is_assign_char(*p)) {
             ZPL_JSON_ASSERT("invalid assignment");
@@ -271,16 +281,22 @@ char *zpl__json_parse_name(zpl_adt_node *node, char *base, zpl_u8 *err_code) {
         }
         else
         {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             if (*p == '=')
                 node->assign_style = ZPL_ADT_ASSIGN_STYLE_EQUALS;
             else if (*p == '|')
                 node->assign_style = ZPL_ADT_ASSIGN_STYLE_LINE;
             else node->assign_style = ZPL_ADT_ASSIGN_STYLE_COLON;
+#endif
         }
 
         /* since we already know the assign style, we can cut it here for unquoted names */
-        if (node->name_style == ZPL_ADT_NAME_STYLE_NO_QUOTES && *e)
+        if (name_style == ZPL_ADT_NAME_STYLE_NO_QUOTES && *e) {
             *e = '\0';
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
+            node->name_style = name_style;
+#endif
+        }
     }
 
     if (node->name && !zpl__json_validate_name(node->name, NULL)) {
@@ -324,9 +340,14 @@ void zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
     ZPL_ASSERT(o->type == ZPL_ADT_TYPE_OBJECT || o->type == ZPL_ADT_TYPE_ARRAY);
 
     zpl___ind(indent - 4);
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
     if (!o->cfg_mode)
+#else
+    if (1)
+#endif
         zpl_fprintf(f, "%c\n", o->type == ZPL_ADT_TYPE_OBJECT ? '{' : '[');
-    else {
+    else
+    {
         indent -= 4;
     }
 
@@ -343,7 +364,10 @@ void zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
     if (indent > 0) {
         zpl_fprintf(f, "%c", o->type == ZPL_ADT_TYPE_OBJECT ? '}' : ']');
     } else {
-        if (!o->cfg_mode) zpl_fprintf(f, "%c\n", o->type == ZPL_ADT_TYPE_OBJECT ? '}' : ']');
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
+        if (!o->cfg_mode)
+#endif
+            zpl_fprintf(f, "%c\n", o->type == ZPL_ADT_TYPE_OBJECT ? '}' : ']');
     }
 }
 
@@ -355,6 +379,7 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
         zpl___ind(indent);
 
         if (t->type != ZPL_ADT_TYPE_ARRAY) {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             switch (node->name_style) {
                 case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
                     zpl_fprintf(f, "\"%s\"", node->name);
@@ -380,6 +405,9 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
                     zpl_fprintf(f, "| ");
                 }
             }
+#else
+            zpl_fprintf(f, "\"%s\": ", node->name);
+#endif
         }
     }
 
@@ -419,6 +447,7 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
     }
 
     if (!is_inline) {
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
         if (o->delim_style != ZPL_ADT_DELIM_STYLE_COMMA) {
             if (o->delim_style == ZPL_ADT_DELIM_STYLE_NEWLINE)
                 zpl_fprintf(f, "\n");
@@ -434,6 +463,13 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
                 zpl_fprintf(f, "\n");
             }
         }
+#else
+        if (!is_last) {
+            zpl_fprintf(f, ",\n");
+        } else {
+            zpl_fprintf(f, "\n");
+        }
+#endif
     }
 }
 
