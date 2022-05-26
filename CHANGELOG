@@ -1,3 +1,12 @@
+16.0.0  - introduce a new zpl_adt_get method for flexible data retrieval
+            "a/b/c" navigates through objects "a" and "b" to get to "c"
+            "arr/[foo=123]/bar" iterates over "arr" to find any object with param "foo" that matches the value "123", then gets its field called "bar"
+            "arr/3" retrieves the 4th element in "arr"
+            "arr/[apple]" retrieves the first element of value "apple" in "arr"
+        - fix memory leak when parsing a json array (gaopeng)
+        - add zpl_strntok (gaopeng)
+        - add zpl_semaphore_trywait (gaopeng)
+
 15.0.3  - fix zpl_sign call in math failing to compile
             on macos devices
 15.0.2  - zpl_sign0 was introduced

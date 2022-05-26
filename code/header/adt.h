@@ -98,7 +98,7 @@ ZPL_DEF zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 ty
  * This method uses a basic syntax to fetch a node from the ADT. The following features are available
  * to retrieve the data:
  * 1) "a/b/c" navigates through objects "a" and "b" to get to "c"
- * 2) "arr/[foo=123]/bar" iterates over "arr" to find any object whose param "foo" matches the value "123", then gets its field called "bar"
+ * 2) "arr/[foo=123]/bar" iterates over "arr" to find any object with param "foo" that matches the value "123", then gets its field called "bar"
  * 3) "arr/3" retrieves the 4th element in "arr"
  * 4) "arr/[apple]" retrieves the first element of value "apple" in "arr"
  *
