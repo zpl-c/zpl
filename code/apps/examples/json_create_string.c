@@ -5,7 +5,7 @@
 
 int main(void) {
     zpl_json_object root = {0};
-    zpl_adt_make_branch(&root, zpl_heap(), "<root>" /* unused for root object */, ZPL_ADT_TYPE_OBJECT);
+    zpl_adt_make_branch(&root, zpl_heap(), "<root>" /* unused for root object */, 0);
 
     zpl_random rng={0};
     zpl_random_init(&rng);

@@ -1,3 +1,8 @@
+17.0.0  - ADT API changes
+            zpl_adt_inset_* -> zpl_adt_append_*
+            zpl_adt_node now holds a parent field, methods no longer require a pointer to the parent
+            methods are now documented
+
 16.1.1  - fix scientific notation parsing
 16.1.0  - introduce ZPL_PARSER_DISABLE_ANALYSIS that disables extra parsing capabilities to offer better raw performance
             at a cost of lack of node metadata.

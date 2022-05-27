@@ -15,7 +15,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
     ZPL_ASSERT_NOT_NULL(root);
     ZPL_ASSERT_NOT_NULL(text);
     zpl_zero_item(root);
-    zpl_adt_make_branch(root, allocator, NULL, has_header ? ZPL_ADT_TYPE_OBJECT : ZPL_ADT_TYPE_ARRAY);
+    zpl_adt_make_branch(root, allocator, NULL, has_header ? false : true);
     char *p = text, *b = p, *e = p;
     zpl_isize colc = 0, total_colc = 0;
 
@@ -101,7 +101,7 @@ zpl_u8 zpl_csv_parse_delimiter(zpl_csv_object *root, char *text, zpl_allocator a
         }
 
         if (colc >= zpl_array_count(root->nodes)) {
-            zpl_adt_inset_arr(root, NULL);
+            zpl_adt_append_arr(root, NULL);
         }
 
         zpl_array_append(root->nodes[colc].nodes, row_item);
@@ -152,7 +152,7 @@ void zpl__csv_write_record(zpl_file *file, zpl_csv_object *node) {
             switch (node->name_style) {
                 case ZPL_ADT_NAME_STYLE_DOUBLE_QUOTE: {
                     zpl_fprintf(file, "\"");
-                    zpl_adt_print_string(file, node, "\"", '"');
+                    zpl_adt_print_string(file, node, "\"", "\"");
                     zpl_fprintf(file, "\"");
                 } break;
 
