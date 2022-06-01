@@ -5,38 +5,53 @@ ZPL_BEGIN_C_DECLS
 
 zpl_b32 zpl_thread_is_running(zpl_thread const *t) { return t->is_running != 0; }
 
-void zpl_thread_init(zpl_thread *t) {
+void zpl_thread_init_nowait(zpl_thread *t) {
     zpl_zero_item(t);
     
 #    if defined(ZPL_SYSTEM_WINDOWS)
     t->win32_handle = INVALID_HANDLE_VALUE;
-#    else
-    t->posix_handle = 0;
 #    endif
+
+    t->nowait = true;
+}
+
+void zpl_thread_init(zpl_thread *t) {
+    zpl_thread_init_nowait(t);
     
+    t->nowait = false;
     zpl_semaphore_init(&t->semaphore);
 }
 
 void zpl_thread_destroy(zpl_thread *t) {
-    if (t->is_running) zpl_thread_join(t);
-    zpl_semaphore_destroy(&t->semaphore);
+#    if defined(ZPL_SYSTEM_WINDOWS)
+    if (t->win32_handle != INVALID_HANDLE_VALUE)
+        zpl_thread_join(t);
+#    else
+    if (t->posix_handle)
+        zpl_thread_join(t);
+#    endif
+    if (!t->nowait)
+        zpl_semaphore_destroy(&t->semaphore);
 }
 
-void zpl__thread_run(zpl_thread *t) {
-    zpl_semaphore_release(&t->semaphore);
+static void zpl__thread_run(zpl_thread *t) {
+    if (!t->nowait)
+        zpl_semaphore_release(&t->semaphore);
     t->return_value = t->proc(t);
 }
 
 #if defined(ZPL_SYSTEM_WINDOWS)
-DWORD __stdcall zpl__thread_proc(void *arg) {
+static DWORD __stdcall zpl__thread_proc(void *arg) {
     zpl_thread *t = cast(zpl_thread *)arg;
+    t->is_running = true;
     zpl__thread_run(t);
     t->is_running = false;
     return 0;
 }
 #else
-void *zpl__thread_proc(void *arg) {
+static void *zpl__thread_proc(void *arg) {
     zpl_thread *t = cast(zpl_thread *)arg;
+    t->is_running = true;
     zpl__thread_run(t);
     t->is_running = false;
     return NULL;
@@ -53,7 +68,6 @@ void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user
     t->proc = proc;
     t->user_data = user_data;
     t->stack_size = stack_size;
-    t->is_running = true;
     
 #    if defined(ZPL_SYSTEM_WINDOWS)
     t->win32_handle = CreateThread(NULL, stack_size, zpl__thread_proc, t, 0, NULL);
@@ -69,12 +83,11 @@ void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user
         pthread_attr_destroy(&attr);
     }
 #    endif
-    zpl_semaphore_wait(&t->semaphore);
+    if (!t->nowait)
+        zpl_semaphore_wait(&t->semaphore);
 }
 
 void zpl_thread_join(zpl_thread *t) {
-    if (!t->is_running) return;
-    
 #    if defined(ZPL_SYSTEM_WINDOWS)
     WaitForSingleObject(t->win32_handle, INFINITE);
     CloseHandle(t->win32_handle);
@@ -83,7 +96,6 @@ void zpl_thread_join(zpl_thread *t) {
     pthread_join(t->posix_handle, NULL);
     t->posix_handle = 0;
 #    endif
-    t->is_running = false;
 }
 
 zpl_u32 zpl_thread_current_id(void) {
