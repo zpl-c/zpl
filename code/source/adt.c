@@ -2,11 +2,16 @@
 
 ZPL_BEGIN_C_DECLS
 
-zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_u8 type) {
-    ZPL_ASSERT(type == ZPL_ADT_TYPE_OBJECT || type == ZPL_ADT_TYPE_ARRAY);
+zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_b32 is_array) {
+    zpl_u8 type = ZPL_ADT_TYPE_OBJECT;
+    if (is_array) {
+        type = ZPL_ADT_TYPE_ARRAY;
+    }
+    zpl_adt_node *parent = node->parent;
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
+    node->parent = parent;
     zpl_array_init(node->nodes, backing);
     return 0;
 }
@@ -23,9 +28,11 @@ zpl_u8 zpl_adt_destroy_branch(zpl_adt_node *node) {
 
 zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 type) {
     ZPL_ASSERT(type != ZPL_ADT_TYPE_OBJECT && type != ZPL_ADT_TYPE_ARRAY);
+    zpl_adt_node *parent = node->parent;
     zpl_zero_item(node);
     node->type = type;
     node->name = name;
+    node->parent = parent;
     return 0;
 }
 
@@ -52,6 +59,157 @@ zpl_adt_node *zpl_adt_find(zpl_adt_node *node, char const *name, zpl_b32 deep_se
     return NULL;
 }
 
+zpl_internal zpl_adt_node *zpl__adt_get_value(zpl_adt_node *node, char const *value) {
+    switch (node->type) {
+        case ZPL_ADT_TYPE_MULTISTRING:
+        case ZPL_ADT_TYPE_STRING: {
+            if (node->string && !zpl_strcmp(node->string, value)) {
+                return node;
+            }
+        } break;
+        case ZPL_ADT_TYPE_INTEGER:
+        case ZPL_ADT_TYPE_REAL: {
+            char back[4096]={0};
+            zpl_file tmp;
+
+            /* allocate a file descriptor for a memory-mapped number to string conversion, input source buffer is not cloned, however. */
+            zpl_file_stream_open(&tmp, zpl_heap(), (zpl_u8*)back, zpl_size_of(back), ZPL_FILE_STREAM_WRITABLE);
+            zpl_adt_print_number(&tmp, node);
+
+            zpl_isize fsize=0;
+            zpl_u8* buf = zpl_file_stream_buf(&tmp, &fsize);
+
+            if (!zpl_strcmp((char const *)buf, value)) {
+                zpl_file_close(&tmp);
+                return node;
+            }
+
+            zpl_file_close(&tmp);
+        } break;
+        default: break; /* node doesn't support value based lookup */
+    }
+
+    return NULL;
+}
+
+zpl_internal zpl_adt_node *zpl__adt_get_field(zpl_adt_node *node, char *name, char *value) {
+    for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+        if (!zpl_strcmp(node->nodes[i].name, name)) {
+            zpl_adt_node *child = &node->nodes[i];
+            if (zpl__adt_get_value(child, value)) {
+                return node; /* this object does contain a field of a specified value! */
+            }
+        }
+    }
+
+    return NULL;
+}
+
+zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
+    ZPL_ASSERT_NOT_NULL(uri);
+
+    if (*uri == '/') {
+        uri++;
+    }
+
+    if (*uri == 0) {
+        return node;
+    }
+
+    if (!node || (node->type != ZPL_ADT_TYPE_OBJECT && node->type != ZPL_ADT_TYPE_ARRAY)) {
+        return NULL;
+    }
+
+#if defined ZPL_ADT_URI_DEBUG || 0
+    zpl_printf("uri: %s\n", uri);
+#endif
+
+    char *p=(char*)uri, *b=p, *e=p;
+    zpl_adt_node *found_node=NULL;
+
+    b = p;
+    p = e = (char*)zpl_str_skip(p, '/');
+    char *buf = zpl_bprintf("%.*s", (int)(e - b), b);
+
+    /* handle field value lookup */
+    if (*b == '[') {
+        char *l_p=buf+1,*l_b=l_p,*l_e=l_p,*l_b2=l_p,*l_e2=l_p;
+        l_e = (char*)zpl_str_skip(l_p, '=');
+        l_e2 = (char*)zpl_str_skip(l_p, ']');
+
+        if ((!*l_e && node->type != ZPL_ADT_TYPE_ARRAY) || !*l_e2) {
+            ZPL_ASSERT_MSG(0, "Invalid field value lookup");
+            return NULL;
+        }
+
+        *l_e2 = 0;
+
+        /* [field=value] */
+        if (*l_e) {
+            *l_e = 0;
+            l_b2 = l_e+1;
+
+            /* run a value comparison against our own fields */
+            if (node->type == ZPL_ADT_TYPE_OBJECT) {
+                found_node = zpl__adt_get_field(node, l_b, l_b2);
+            }
+
+            /* run a value comparison against any child that is an object node */
+            else if (node->type == ZPL_ADT_TYPE_ARRAY) {
+                for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+                    zpl_adt_node *child = &node->nodes[i];
+                    if (child->type != ZPL_ADT_TYPE_OBJECT) {
+                        continue;
+                    }
+
+                    found_node = zpl__adt_get_field(child, l_b, l_b2);
+
+                    if (found_node)
+                        break;
+                }
+            }
+        }
+        /* [value] */
+        else {
+            for (zpl_isize i = 0; i < zpl_array_count(node->nodes); i++) {
+                zpl_adt_node *child = &node->nodes[i];
+                if (zpl__adt_get_value(child, l_b2)) {
+                    found_node = child;
+                    break; /* we found a matching value in array, ignore the rest of it */
+                }
+            }
+        }
+
+        /* go deeper if uri continues */
+        if (*e) {
+            return zpl_adt_get(found_node, e+1);
+        }
+    }
+    /* handle field name lookup */
+    else if (node->type == ZPL_ADT_TYPE_OBJECT) {
+        found_node = zpl_adt_find(node, buf, false);
+
+        /* go deeper if uri continues */
+        if (*e) {
+            return zpl_adt_get(found_node, e+1);
+        }
+    }
+    /* handle array index lookup */
+    else {
+        zpl_isize idx = (zpl_isize)zpl_str_to_i64(buf, NULL, 10);
+        if (idx >= 0 && idx < zpl_array_count(node->nodes)) {
+            found_node = &node->nodes[idx];
+
+            /* go deeper if uri continues */
+            if (*e) {
+                return zpl_adt_get(found_node, e+1);
+            }
+        }
+    }
+
+    return found_node;
+}
+
 zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index) {
     if (!parent || (parent->type != ZPL_ADT_TYPE_OBJECT && parent->type != ZPL_ADT_TYPE_ARRAY)) {
         return NULL;
@@ -64,6 +222,7 @@ zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index) {
         return NULL;
 
     zpl_adt_node o = {0};
+    o.parent = parent;
     zpl_array_append_at(parent->nodes, o, index);
 
     return parent->nodes + index;
@@ -82,10 +241,10 @@ zpl_adt_node *zpl_adt_alloc(zpl_adt_node *parent) {
 
 
 void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
-    zpl_adt_make_branch(obj, backing, name, ZPL_ADT_TYPE_OBJECT);
+    zpl_adt_make_branch(obj, backing, name, 0);
 }
 void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
-    zpl_adt_make_branch(obj, backing, name, ZPL_ADT_TYPE_ARRAY);
+    zpl_adt_make_branch(obj, backing, name, 1);
 }
 void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value) {
     zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_STRING);
@@ -100,75 +259,70 @@ void zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value) {
     obj->integer = value;
 }
 
-zpl_adt_node *zpl_adt_move_node_at(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent, zpl_isize index) {
+zpl_adt_node *zpl_adt_move_node_at(zpl_adt_node *node, zpl_adt_node *new_parent, zpl_isize index) {
     ZPL_ASSERT_NOT_NULL(node);
-    ZPL_ASSERT_NOT_NULL(old_parent);
     ZPL_ASSERT_NOT_NULL(new_parent);
-    ZPL_ASSERT(new_parent->type == ZPL_ADT_TYPE_ARRAY || new_parent->type == ZPL_ADT_TYPE_OBJECT);
-    ZPL_ASSERT(node >= old_parent->nodes);
-    ZPL_ASSERT(node <= zpl_array_end(old_parent->nodes));
-    ZPL_ASSERT(index >= 0 && index <= zpl_array_count(new_parent->nodes));
+    zpl_adt_node *old_parent = node->parent;
     zpl_adt_node *new_node = zpl_adt_alloc_at(new_parent, index);
     *new_node = *node;
-    zpl_adt_remove_node(node, old_parent);
+    new_node->parent = new_parent;
+    if (old_parent) {
+        zpl_adt_remove_node(node);
+    }
     return new_node;
 }
 
-zpl_adt_node *zpl_adt_move_node(zpl_adt_node *node, zpl_adt_node *old_parent, zpl_adt_node *new_parent) {
+zpl_adt_node *zpl_adt_move_node(zpl_adt_node *node, zpl_adt_node *new_parent) {
+    ZPL_ASSERT_NOT_NULL(node);
     ZPL_ASSERT_NOT_NULL(new_parent);
     ZPL_ASSERT(new_parent->type == ZPL_ADT_TYPE_ARRAY || new_parent->type == ZPL_ADT_TYPE_OBJECT);
-    return zpl_adt_move_node_at(node, old_parent, new_parent, zpl_array_count(new_parent->nodes));
+    return zpl_adt_move_node_at(node, new_parent, zpl_array_count(new_parent->nodes));
 }
 
-void zpl_adt_swap_nodes(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent) {
-    zpl_adt_swap_nodes_between_parents(node, other_node, parent, parent);
-}
-
-void zpl_adt_swap_nodes_between_parents(zpl_adt_node *node, zpl_adt_node *other_node, zpl_adt_node *parent, zpl_adt_node *other_parent) {
+void zpl_adt_swap_nodes(zpl_adt_node *node, zpl_adt_node *other_node) {
     ZPL_ASSERT_NOT_NULL(node);
     ZPL_ASSERT_NOT_NULL(other_node);
-    ZPL_ASSERT_NOT_NULL(parent);
-    ZPL_ASSERT_NOT_NULL(other_parent);
-    ZPL_ASSERT(node >= parent->nodes && node <= zpl_array_end(parent->nodes));
-    ZPL_ASSERT(other_node >= other_parent->nodes && other_node <= zpl_array_end(other_parent->nodes));
+    zpl_adt_node *parent = node->parent;
+    zpl_adt_node *other_parent = other_node->parent;
     zpl_isize index = (zpl_pointer_diff(parent->nodes, node) / zpl_size_of(zpl_adt_node));
     zpl_isize index2 = (zpl_pointer_diff(other_parent->nodes, other_node) / zpl_size_of(zpl_adt_node));
     zpl_adt_node temp = parent->nodes[index];
+    temp.parent = other_parent;
+    other_parent->nodes[index2].parent = parent;
     parent->nodes[index] = other_parent->nodes[index2];
     other_parent->nodes[index2] = temp;
 }
 
-void zpl_adt_remove_node(zpl_adt_node *node, zpl_adt_node *parent) {
+void zpl_adt_remove_node(zpl_adt_node *node) {
     ZPL_ASSERT_NOT_NULL(node);
-    ZPL_ASSERT_NOT_NULL(parent);
-    ZPL_ASSERT(node >= parent->nodes);
-    ZPL_ASSERT(node <= zpl_array_end(parent->nodes));
+    ZPL_ASSERT_NOT_NULL(node->parent);
+    zpl_adt_node *parent = node->parent;
     zpl_isize index = (zpl_pointer_diff(parent->nodes, node) / zpl_size_of(zpl_adt_node));
     zpl_array_remove_at(parent->nodes, index);
 }
 
 
-zpl_adt_node *zpl_adt_inset_obj(zpl_adt_node *parent, char const *name) {
+zpl_adt_node *zpl_adt_append_obj(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_obj(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
     return o;
 }
-zpl_adt_node *zpl_adt_inset_arr(zpl_adt_node *parent, char const *name) {
+zpl_adt_node *zpl_adt_append_arr(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_arr(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
     return o;
 }
-zpl_adt_node *zpl_adt_inset_str(zpl_adt_node *parent, char const *name, char const *value) {
+zpl_adt_node *zpl_adt_append_str(zpl_adt_node *parent, char const *name, char const *value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_str(o, name, value);
     return o;
 }
-zpl_adt_node *zpl_adt_inset_flt(zpl_adt_node *parent, char const *name, zpl_f64 value) {
+zpl_adt_node *zpl_adt_append_flt(zpl_adt_node *parent, char const *name, zpl_f64 value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_flt(o, name, value);
     return o;
 }
-zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, zpl_i64 value) {
+zpl_adt_node *zpl_adt_append_int(zpl_adt_node *parent, char const *name, zpl_i64 value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
     zpl_adt_set_int(o, name, value);
     return o;
@@ -176,18 +330,25 @@ zpl_adt_node *zpl_adt_inset_int(zpl_adt_node *parent, char const *name, zpl_i64 
 
 /* parser helpers */
 
-char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
+char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
     ZPL_ASSERT_NOT_NULL(node);
-    ZPL_ASSERT_NOT_NULL(base);
-    char *p = base, *e = p;
+    ZPL_ASSERT_NOT_NULL(base_str);
+    char *p = base_str, *e = p;
+
+    zpl_i32 base=0;
+    zpl_i32 base2=0;
+    zpl_u8 base2_offset=0;
+    zpl_i8 exp=0,orig_exp=0;
+    zpl_u8 neg_zero=0;
+    zpl_u8 lead_digit=0;
 
     /* skip false positives and special cases */
     if (!!zpl_strchr("eE", *p) || (!!zpl_strchr(".+-", *p) && !zpl_char_is_hex_digit(*(p+1)) && *(p+1) != '.')) {
-        return ++base;
+        return ++base_str;
     }
 
     node->type = ZPL_ADT_TYPE_INTEGER;
-    node->neg_zero = false;
+    neg_zero = false;
 
     zpl_isize ib = 0;
     char buf[48] = { 0 };
@@ -201,7 +362,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
     if (*e == '.') {
         node->type = ZPL_ADT_TYPE_REAL;
         node->props = ZPL_ADT_PROPS_IS_PARSED_REAL;
-        node->lead_digit = false;
+        lead_digit = false;
         buf[ib++] = '0';
         do {
             buf[ib++] = *e;
@@ -212,7 +373,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
 
         if (*e == '.') {
             node->type = ZPL_ADT_TYPE_REAL;
-            node->lead_digit = true;
+            lead_digit = true;
             zpl_u32 step = 0;
 
             do {
@@ -224,7 +385,6 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
         }
     }
 
-    zpl_u8 exp = 0;
     zpl_f32 eb = 10;
     char expbuf[6] = { 0 };
     zpl_isize expi = 0;
@@ -237,52 +397,74 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base) {
             while (zpl_char_is_digit(*e)) { expbuf[expi++] = *e++; }
         }
 
-        exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
+        orig_exp = exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
     }
 
     if (node->type == ZPL_ADT_TYPE_INTEGER) {
         node->integer = zpl_str_to_i64(buf, 0, 0);
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
         /* special case: negative zero */
         if (node->integer == 0 && buf[0] == '-') {
-            node->neg_zero = true;
+            neg_zero = true;
         }
-        while (exp-- > 0) { node->integer *= (zpl_i64)eb; }
+#endif
+        while (orig_exp-- > 0) { node->integer *= (zpl_i64)eb; }
     } else {
         node->real = zpl_str_to_f64(buf, 0);
 
-        char *q = buf, *base_str = q, *base_str2 = q;
-        base_str = cast(char *)zpl_str_skip(base_str, '.');
-        *base_str = '\0';
-        base_str2 = base_str + 1;
-        char *base_str_off = base_str2;
-        while (*base_str_off++ == '0') node->base2_offset++;
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
+        char *q = buf, *base_string = q, *base_string2 = q;
+        base_string = cast(char *)zpl_str_skip(base_string, '.');
+        *base_string = '\0';
+        base_string2 = base_string + 1;
+        char *base_string_off = base_string2;
+        while (*base_string_off++ == '0') base2_offset++;
 
-        node->base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
-        node->base2 = (zpl_i32)zpl_str_to_i64(base_str2, 0, 0);
-
+        base = (zpl_i32)zpl_str_to_i64(q, 0, 0);
+        base2 = (zpl_i32)zpl_str_to_i64(base_string2, 0, 0);
         if (exp) {
-            node->exp = exp * (!(eb == 10.0f) ? -1 : 1);
+            exp = exp * (!(eb == 10.0f) ? -1 : 1);
             node->props = ZPL_ADT_PROPS_IS_EXP;
         }
 
         /* special case: negative zero */
-        if (node->base == 0 && buf[0] == '-') {
-            node->neg_zero = true;
+        if (base == 0 && buf[0] == '-') {
+            neg_zero = true;
         }
-
-        while (exp-- > 0) { node->real *= eb; }
+#endif
+        while (orig_exp-- > 0) { node->real *= eb; }
     }
+
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
+    node->base = base;
+    node->base2 = base2;
+    node->base2_offset = base2_offset;
+    node->exp = exp;
+    node->neg_zero = neg_zero;
+    node->lead_digit = lead_digit;
+#else
+    zpl_unused(base);
+    zpl_unused(base2);
+    zpl_unused(base2_offset);
+    zpl_unused(exp);
+    zpl_unused(neg_zero);
+    zpl_unused(lead_digit);
+#endif
     return e;
 }
 
-void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
+zpl_adt_error zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
     ZPL_ASSERT_NOT_NULL(file);
     ZPL_ASSERT_NOT_NULL(node);
-    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_INTEGER || node->type == ZPL_ADT_TYPE_REAL);
+    if (node->type != ZPL_ADT_TYPE_INTEGER && node->type != ZPL_ADT_TYPE_REAL) {
+        return ZPL_ADT_ERROR_INVALID_TYPE;
+    }
 
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
     if (node->neg_zero) {
         zpl_fprintf(file, "-");
     }
+#endif
 
     switch (node->type) {
         case ZPL_ADT_TYPE_INTEGER: {
@@ -308,6 +490,7 @@ void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
                 zpl_fprintf(file, "false");
             } else if (node->props == ZPL_ADT_PROPS_NULL) {
                 zpl_fprintf(file, "null");
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
             } else if (node->props == ZPL_ADT_PROPS_IS_EXP) {
                 zpl_fprintf(file, "%lld.%0*d%llde%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, (long long)node->exp);
             } else if (node->props == ZPL_ADT_PROPS_IS_PARSED_REAL) {
@@ -315,18 +498,23 @@ void zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
                     zpl_fprintf(file, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
                 else
                     zpl_fprintf(file, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
+#endif
             } else {
                 zpl_fprintf(file, "%f", node->real);
             }
         } break;
     }
+
+    return ZPL_ADT_ERROR_NONE;
 }
 
-void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escaped_chars, char escape_symbol) {
+zpl_adt_error zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const *escaped_chars, char const *escape_symbol) {
     ZPL_ASSERT_NOT_NULL(file);
     ZPL_ASSERT_NOT_NULL(node);
     ZPL_ASSERT_NOT_NULL(escaped_chars);
-    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
+    if (node->type != ZPL_ADT_TYPE_STRING && node->type != ZPL_ADT_TYPE_MULTISTRING) {
+        return ZPL_ADT_ERROR_INVALID_TYPE;
+    }
 
     /* escape string */
     char const* p = node->string, *b = p;
@@ -334,19 +522,25 @@ void zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char const* escape
         p = zpl_str_skip_any(p, escaped_chars);
         zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
         if (*p && !!zpl_strchr(escaped_chars, *p)) {
-            zpl_fprintf(file, "%c%c", escape_symbol, *p);
+            zpl_fprintf(file, "%s%c", escape_symbol, *p);
             p++;
         }
         b = p;
     } while (*p);
+
+    return ZPL_ADT_ERROR_NONE;
 }
 
-void zpl_adt_str_to_number(zpl_adt_node *node) {
+zpl_adt_error zpl_adt_str_to_number(zpl_adt_node *node) {
     ZPL_ASSERT(node);
 
-    if (node->type == ZPL_ADT_TYPE_REAL || node->type == ZPL_ADT_TYPE_INTEGER) return; /* this is already converted/parsed */
-    ZPL_ASSERT(node->type == ZPL_ADT_TYPE_STRING || node->type == ZPL_ADT_TYPE_MULTISTRING);
+    if (node->type == ZPL_ADT_TYPE_REAL || node->type == ZPL_ADT_TYPE_INTEGER) return ZPL_ADT_ERROR_ALREADY_CONVERTED; /* this is already converted/parsed */
+    if (node->type != ZPL_ADT_TYPE_STRING && node->type != ZPL_ADT_TYPE_MULTISTRING) {
+        return ZPL_ADT_ERROR_INVALID_TYPE;
+    }
     zpl_adt_parse_number(node, (char *)node->string);
+
+    return ZPL_ADT_ERROR_NONE;
 }
 
 ZPL_END_C_DECLS

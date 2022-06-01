@@ -23,6 +23,9 @@ int main(void) {
     zpl_printf("\ncsv output:\n");
     zpl_csv_write(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), &root);
 
+    zpl_printf("\ncsv output (custom delimiter):\n");
+    zpl_csv_write_delimiter(zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT), &root, '|');
+
     zpl_csv_free(&root);
     zpl_file_free_contents(&fc);
     return 0;

@@ -5,10 +5,33 @@
 	type: "fragment",
 	// These are shader uniforms
 	uniforms: [
-		{ name: 'l_pos', type: 'vec3'}, 
+		{ name: 'l_pos', type: 'vec3'},
 		{ name: 'l_mat', type: 'mat4'},
+        { name: 'distort', type: 'struct', layout: [
+            { pos: 'x', type: 'float'},
+            { pos: 'y', type: 'float', default_value: 42},
+            { pos: 'z', type: 'float'},
+            { pos: 'w', type: 'float'}
+        ]}
 	],
 	_meta: "0 0 -34 2.34 123 2.34e-4",
+
+    layer1: {
+        layer2: {
+            layer3: 42
+        }
+    },
+
+    numbers: [
+        { value: 13 },
+        { value: 31 },
+        { value: 42 },
+        { value: 68 }
+    ],
+
+    array: [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    ],
 
 	/* GLSL shader code */
 	code: `
