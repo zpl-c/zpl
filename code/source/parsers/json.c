@@ -122,6 +122,7 @@ char *zpl__json_parse_value(zpl_adt_node *obj, char *base, zpl_allocator a, zpl_
     ZPL_ASSERT(obj && base);
     char *p = base, *b = p, *e = p;
 
+    /* handle quoted strings */
     if (!!zpl_strchr("`\"'", *p)) {
         char c = *p;
         obj->type = (c == '`') ? ZPL_ADT_TYPE_MULTISTRING : ZPL_ADT_TYPE_STRING;
@@ -130,6 +131,7 @@ char *zpl__json_parse_value(zpl_adt_node *obj, char *base, zpl_allocator a, zpl_
         e = cast(char *)zpl_str_skip_literal(e, c);
         *e = '\0', p = e + 1;
     } else if (zpl_char_is_alpha(*p) || (*p == '-' && !zpl_char_is_digit(*(p + 1)))) {
+        /* handle constants */
         if (zpl_str_has_prefix(p, "true")) {
             obj->type = ZPL_ADT_TYPE_REAL;
             obj->props = ZPL_ADT_PROPS_TRUE;
@@ -171,9 +173,11 @@ char *zpl__json_parse_value(zpl_adt_node *obj, char *base, zpl_allocator a, zpl_
             return NULL;
         }
     } else if (zpl_char_is_digit(*p) || *p == '+' || *p == '-' || *p == '.') {
+        /* handle numbers */
         /* defer operation to our helper method. */
         p = zpl_adt_parse_number(obj, p);
     } else if (!!zpl_strchr("[{", *p)) {
+        /* handle compound objects */
         p = zpl__json_parse_object(obj, p, a, err_code);
         ++p;
     }
