@@ -95,7 +95,7 @@ MODULE(adt, {
         zpl_adt_node *b = zpl_adt_append_obj(a, "b");
         zpl_adt_node *c = zpl_adt_append_obj(b, "c");
 
-        zpl_adt_node *node = zpl_adt_get(&root, "a/b/c");
+        zpl_adt_node *node = zpl_adt_query(&root, "a/b/c");
 
         EQUALS(c, node);
     });
@@ -110,7 +110,7 @@ MODULE(adt, {
             zpl_adt_append_int(a2, "foo", 123);
         zpl_adt_node *a3 = zpl_adt_append_obj(arr, 0);
             zpl_adt_append_int(a3, "foo", 789);
-        zpl_adt_node *node = zpl_adt_get(&root, "arr/[foo=123]");
+        zpl_adt_node *node = zpl_adt_query(&root, "arr/[foo=123]");
 
         EQUALS(a2, node);
     });
@@ -122,7 +122,7 @@ MODULE(adt, {
         zpl_adt_append_int(arr, 0, 1);
         zpl_adt_append_int(arr, 0, 2);
         zpl_adt_append_int(arr, 0, 3);
-        zpl_adt_node *node = zpl_adt_get(&root, "arr/1");
+        zpl_adt_node *node = zpl_adt_query(&root, "arr/1");
 
         EQUALS(2, node->integer);
     });
@@ -134,7 +134,7 @@ MODULE(adt, {
         zpl_adt_append_int(arr, "1", 1);
         zpl_adt_append_int(arr, "2", 2);
         zpl_adt_append_int(arr, "3", 3);
-        zpl_adt_node *node = zpl_adt_get(&root, "arr/[2]");
+        zpl_adt_node *node = zpl_adt_query(&root, "arr/[2]");
 
         EQUALS(2, node->integer);
     });

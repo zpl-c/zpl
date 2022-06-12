@@ -105,7 +105,7 @@ zpl_internal zpl_adt_node *zpl__adt_get_field(zpl_adt_node *node, char *name, ch
     return NULL;
 }
 
-zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
+zpl_adt_node *zpl_adt_query(zpl_adt_node *node, char const *uri) {
     ZPL_ASSERT_NOT_NULL(uri);
 
     if (*uri == '/') {
@@ -182,7 +182,7 @@ zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
 
         /* go deeper if uri continues */
         if (*e) {
-            return zpl_adt_get(found_node, e+1);
+            return zpl_adt_query(found_node, e+1);
         }
     }
     /* handle field name lookup */
@@ -191,7 +191,7 @@ zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
 
         /* go deeper if uri continues */
         if (*e) {
-            return zpl_adt_get(found_node, e+1);
+            return zpl_adt_query(found_node, e+1);
         }
     }
     /* handle array index lookup */
@@ -202,7 +202,7 @@ zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
 
             /* go deeper if uri continues */
             if (*e) {
-                return zpl_adt_get(found_node, e+1);
+                return zpl_adt_query(found_node, e+1);
             }
         }
     }

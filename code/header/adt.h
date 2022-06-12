@@ -145,7 +145,7 @@ ZPL_DEF zpl_u8 zpl_adt_make_leaf(zpl_adt_node *node, char const *name, zpl_u8 ty
  *
  * @see code/apps/examples/json_get.c
  */
-ZPL_DEF zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri);
+ZPL_DEF zpl_adt_node *zpl_adt_query(zpl_adt_node *node, char const *uri);
 
 /**
  * @brief Find a field node within an object by the given name.
@@ -369,6 +369,11 @@ ZPL_DEF zpl_adt_error zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, c
 #endif
 
 /* deprecated */
+
+ZPL_DEPRECATED_FOR(18.0.0, zpl_adt_query)
+ZPL_IMPL_INLINE zpl_adt_node *zpl_adt_get(zpl_adt_node *node, char const *uri) {
+    return zpl_adt_query(node, uri);
+}
 
 ZPL_DEPRECATED_FOR(13.3.0, zpl_adt_str_to_number)
 ZPL_IMPL_INLINE void zpl_adt_str_to_flt(zpl_adt_node *node) {
