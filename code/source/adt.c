@@ -538,6 +538,7 @@ zpl_adt_error zpl_adt_str_to_number(zpl_adt_node *node) {
     if (node->type != ZPL_ADT_TYPE_STRING && node->type != ZPL_ADT_TYPE_MULTISTRING) {
         return ZPL_ADT_ERROR_INVALID_TYPE;
     }
+
     zpl_adt_parse_number(node, (char *)node->string);
 
     return ZPL_ADT_ERROR_NONE;

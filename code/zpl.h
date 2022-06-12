@@ -118,7 +118,6 @@ License:
 #    define ZPL_MODULE_MATH
 #    define ZPL_MODULE_THREADING
 #    define ZPL_MODULE_JOBS
-#    define ZPL_MODULE_COROUTINES
 #    define ZPL_MODULE_PARSER
 
     /* zpl nano distribution */
@@ -133,7 +132,6 @@ License:
 #        undef ZPL_MODULE_MATH
 #        undef ZPL_MODULE_THREADING
 #        undef ZPL_MODULE_JOBS
-#        undef ZPL_MODULE_COROUTINES
 #        undef ZPL_MODULE_PARSER
 #    endif
 
@@ -175,17 +173,6 @@ License:
 #        endif
 #        define ZPL_MODULE_JOBS
 #    endif
-#    if defined(ZPL_ENABLE_COROUTINES) && !defined(ZPL_MODULE_COROUTINES)
-#        ifndef ZPL_MODULE_THREADING
-#        define ZPL_MODULE_THREADING /* dependency */
-#        endif
-
-#        ifndef ZPL_MODULE_JOBS
-#        define ZPL_MODULE_JOBS /* dependency */
-#        endif
-
-#        define ZPL_MODULE_COROUTINES
-#    endif
 #    if defined(ZPL_ENABLE_PARSER) && !defined(ZPL_MODULE_PARSER)
 #        define ZPL_MODULE_PARSER
 #    endif
@@ -220,21 +207,10 @@ License:
 #        undef ZPL_MODULE_JOBS /* user */
 #        endif
 
-#        ifdef ZPL_MODULE_COROUTINES
-#        undef ZPL_MODULE_COROUTINES /* user */
-#        endif
-
 #        undef ZPL_MODULE_THREADING
 #    endif
 #    if defined(ZPL_DISABLE_JOBS) && defined(ZPL_MODULE_JOBS)
-#        ifdef ZPL_MODULE_COROUTINES
-#        undef ZPL_MODULE_COROUTINES /* user */
-#        endif
-
 #        undef ZPL_MODULE_JOBS
-#    endif
-#    if defined(ZPL_DISABLE_COROUTINES) && defined(ZPL_MODULE_COROUTINES)
-#        undef ZPL_MODULE_COROUTINES
 #    endif
 #    if defined(ZPL_DISABLE_PARSER) && defined(ZPL_MODULE_PARSER)
 #        undef ZPL_MODULE_PARSER
@@ -356,10 +332,6 @@ License:
 
 #    if defined(ZPL_MODULE_JOBS)
 #        include "header/jobs.h"
-#    endif
-
-#    if defined(ZPL_MODULE_COROUTINES)
-#        include "header/coroutines.h"
 #    endif
 #else
 #    if !defined(zpl_thread_local)
@@ -504,10 +476,6 @@ License:
 #    if defined(ZPL_MODULE_JOBS)
 #        include "source/jobs.c"
 #    endif
-
-#    if defined(ZPL_MODULE_COROUTINES)
-#        include "source/coroutines.c"
-#    endif
 #endif
 
 #if defined(ZPL_MODULE_PARSER)
@@ -560,7 +528,6 @@ License:
 // TOC:
 // zpl.h
 // zpl_hedley.h
-// header/coroutines.h
 // header/opts.h
 // header/essentials/helpers.h
 // header/essentials/memory.h
@@ -604,7 +571,6 @@ License:
 // header/regex.h
 // source/hashing.c
 // source/adt.c
-// source/coroutines.c
 // source/process.c
 // source/essentials/array.c
 // source/essentials/debug.c

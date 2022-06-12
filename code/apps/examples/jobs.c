@@ -7,9 +7,8 @@
 
 int rand(void);
 
-#define N (10 * 1000)
+#define N (60 * 1000)
 #define NL 10000
-#define CORES 4
 #define RAND_RANGE(min,max) (min + rand() % (max-min))
 
 #if defined(ZPL_MODULE_THREADING)
@@ -32,10 +31,13 @@ const char *levels[] = {
 };
 
 int main(int argc, char **argv) {
-    zpl_u32 num_cores = CORES;
+    zpl_affinity af;
+    zpl_affinity_init(&af);
+    zpl_u32 num_cores = af.thread_count;
     if (argc > 1) {
         num_cores = zpl_str_to_u64(argv[1], NULL, 10);
     }
+    zpl_affinity_destroy(&af);
     zpl_jobs_system p={0};
     zpl_jobs_init_with_limit(&p, zpl_heap(), num_cores, NL);
     zpl_u64 process_time = 0;
@@ -78,7 +80,7 @@ int main(int argc, char **argv) {
     zpl_printf("\nPer thread worker stats:\n");
     for (zpl_usize i = 0; i < p.max_threads; ++i) {
         zpl_thread_worker *tw = p.workers + i;
-        zpl_printf("* worker %-2u hits: %-8d idle: %d cy.\n", (unsigned int)i, tw->hits, tw->idle);
+        zpl_printf("* worker %-2u hits: %-8d idle: %lld cy.\n", (unsigned int)i, tw->hits, tw->idle);
     }
     zpl_jobs_free(&p);
     return 0;

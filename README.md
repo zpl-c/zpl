@@ -80,7 +80,6 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **Options** | CLI options parser. Parsing flags, switches, and arguments from the command line. | 🔴 | ✅ |
 | **Process** | Primitives for low-level process management. | 🔴 | ✅ |
 | **Jobs System** | Asynchronous task-based scheduling system. | 🔴 | ✅ |
-| **Co-routines** | LUA-inspired module implementing co-routines feature for C11. | 🔴 | ✅ |
 | **Math** | Gamedev friendly library for math. | 🔴 | ✅ |
 | **Miscellaneous** | Other valuable methods that are part of the core distribution. | ✅ | ✅ |
 

@@ -199,7 +199,7 @@ zpl_internal zpl_isize zpl__print_u64(char *text, zpl_isize max_len, zpl__format
     return zpl__print_string(text, max_len, info, num);
 }
 
-zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_f64 arg) {
+zpl_internal zpl_isize zpl__print_f64(char *text, zpl_isize max_len, zpl__format_info *info, zpl_b32 is_hexadecimal, zpl_f64 arg) {
     // TODO: Handle exponent notation
     zpl_isize width, len, remaining = max_len;
     char *text_begin = text;
@@ -384,12 +384,11 @@ ZPL_NEVER_INLINE zpl_isize zpl_snprintf_va(char *text, zpl_isize max_len, char c
             case 'f':
             case 'F':
             case 'g':
-            case 'G': len = zpl__print_f64(text, remaining, &info, va_arg(va, zpl_f64)); break;
+            case 'G': len = zpl__print_f64(text, remaining, &info, 0, va_arg(va, zpl_f64)); break;
 
             case 'a':
             case 'A':
-                // TODO:
-                break;
+                len = zpl__print_f64(text, remaining, &info, 1, va_arg(va, zpl_f64)); break;
 
             case 'c': len = zpl__print_char(text, remaining, &info, cast(char) va_arg(va, int)); break;
 
