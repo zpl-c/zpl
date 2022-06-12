@@ -143,9 +143,6 @@ License:
 #    if defined(ZPL_ENABLE_CORE) && !defined(ZPL_MODULE_CORE)
 #        define ZPL_MODULE_CORE
 #    endif
-#    if defined(ZPL_ENABLE_TIMER) && !defined(ZPL_MODULE_TIMER)
-#        define ZPL_MODULE_TIMER
-#    endif
 #    if defined(ZPL_ENABLE_HASHING) && !defined(ZPL_MODULE_HASHING)
 #        define ZPL_MODULE_HASHING
 #    endif
@@ -180,9 +177,6 @@ License:
     /* module disabling overrides */
 #    if defined(ZPL_DISABLE_CORE) && defined(ZPL_MODULE_CORE)
 #        undef ZPL_MODULE_CORE
-#    endif
-#    if defined(ZPL_DISABLE_TIMER) && defined(ZPL_MODULE_TIMER)
-#        undef ZPL_MODULE_TIMER
 #    endif
 #    if defined(ZPL_DISABLE_HASHING) && defined(ZPL_MODULE_HASHING)
 #        undef ZPL_MODULE_HASHING
@@ -267,10 +261,6 @@ License:
 #        include "header/core/misc.h"
 #        include "header/core/sort.h"
 #    endif
-#endif
-
-#if defined(ZPL_MODULE_TIMER)
-#    include "header/timer.h"
 #endif
 
 #if defined(ZPL_MODULE_HASHING)
@@ -436,10 +426,6 @@ License:
 #    endif
 #endif
 
-#if defined(ZPL_MODULE_TIMER)
-#    include "source/timer.c"
-#endif
-
 #if defined(ZPL_MODULE_HASHING)
 #    include "source/hashing.c"
 #endif
@@ -553,7 +539,6 @@ License:
 // header/parsers/csv.h
 // header/dll.h
 // header/adt.h
-// header/timer.h
 // header/core/file_tar.h
 // header/core/memory_virtual.h
 // header/core/random.h
@@ -601,5 +586,4 @@ License:
 // source/core/sort.c
 // source/core/file_tar.c
 // source/opts.c
-// source/timer.c
 // source/math.c

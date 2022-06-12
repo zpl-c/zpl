@@ -74,7 +74,6 @@ Please follow the [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide to learn how 
 | **Threading** | Threading, and blocking models, thread merge operation based on stb_sync, as well as CPU affinity management. | 🔴 | ✅ |
 | **Regex** | Regular expressions library. | 🔴 | ✅ |
 | **DLL** | Cross-platform methods for loading dynamic libraries. | 🔴 | ✅ |
-| **Timer** | Callback-based primitive timer library. | 🔴 | ✅ |
 | **Hashing** | Various hashing methods. Contains: `base64`, `adler32`, `crc32/64`, `fnv32/64/a` and `murmur32/64` | ✅ | ✅ |
 | **Text Parsers** | Various text parsers for different formats that offer cross-language transformations. Currently supported: `JSON5/SJSON`, `CSV`. | ✅ | ✅ |
 | **Options** | CLI options parser. Parsing flags, switches, and arguments from the command line. | 🔴 | ✅ |
