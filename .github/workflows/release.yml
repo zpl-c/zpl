@@ -1,0 +1,35 @@
+name: Release build
+on:
+  workflow_dispatch:
+    inputs:
+      releaseLevel:
+        description: 'release level'
+        required: true
+        default: 'patch' 
+        type: choice
+        options:
+        - patch
+        - minor
+        - major 
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup environment
+        run: npm install
+      - name: Set up git identity
+        run: |
+              git config --global user.email "noreply@example.net" &&
+              git config --global user.name "zpl-bot"
+      - name: Release patch
+        if: ${{ inputs.releaseLevel == 'patch' }}
+        run: npm run release-patch
+      - name: Release minor
+        if: ${{ inputs.releaseLevel == 'minor' }}
+        run: npm run release-minor
+      - name: Release major
+        if: ${{ inputs.releaseLevel == 'major' }}
+        run: npm run release-major
+      
