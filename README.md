@@ -34,9 +34,9 @@ There are several options in getting hands-on zpl:
 
 ## 1. Via CLI (the simplest option)
 ```sh
-curl -L zpl.pw/fetch > zpl.h
+curl -L https://github.com/zpl-c/zpl/releases/latest/download/zpl.h > zpl.h
 # OR
-wget zpl.pw/fetch -O zpl.h
+wget https://github.com/zpl-c/zpl/releases/latest/download/zpl.h -O zpl.h
 ```
 
 This approach will download the latest release of zpl with everything prepared for you.
