@@ -16,7 +16,7 @@
 
 <div align="center">
   <sub>
-    Brought to you by <a href="https://github.com/zaklaus">@zaklaus</a>,
+    Brought to you by <a href="https://github.com/zpl-zak">@zpl-zak</a>,
      <a href="https://github.com/inlife">@inlife</a>,
     and <strong>contributors</strong>
   </sub>
