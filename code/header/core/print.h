@@ -11,7 +11,7 @@ Various printing methods.
 ZPL_BEGIN_C_DECLS
 
 #ifndef ZPL_PRINTF_MAXLEN
-#define ZPL_PRINTF_MAXLEN 4096
+#define ZPL_PRINTF_MAXLEN 65536
 #endif
 
 ZPL_DEF zpl_isize zpl_printf(char const *fmt, ...);

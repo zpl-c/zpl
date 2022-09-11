@@ -1,4 +1,5 @@
 18.0.2  - fix global-buffer-overflow in print module
+        - raise ZPL_PRINTF_MAXLEN to 64kb
 18.0.1  - fix ADT parser wrongly assuming that an IP address is a real number
 18.0.0  - removed coroutines module
         - removed timer module
