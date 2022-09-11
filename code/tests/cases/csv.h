@@ -204,6 +204,15 @@ MODULE(csv_parser, {
         zpl_string a = zpl_csv_write_string(mem_alloc, &doc);
         STREQUALS(original, a);
     });
+
+    IT("parses csv file with unquoted IP addresses", {
+        zpl_string t = zpl_string_make(mem_alloc, "\"foo\",123.45.67.89\n");
+        __PARSE(true);
+
+        EQUALS(err, 0);
+        EQUALS(r.nodes[1].nodes[0].type, ZPL_ADT_TYPE_STRING);
+        STREQUALS(r.nodes[1].nodes[0].string, "123.45.67.89");
+    });
 });
 
 #undef __PARSE

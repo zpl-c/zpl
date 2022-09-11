@@ -1,3 +1,4 @@
+18.0.1  - Fix ADT parser wrongly assuming that an IP address is a real number.
 18.0.0  - removed coroutines module
         - removed timer module
         - rename zpl_adt_get -> zpl_adt_query

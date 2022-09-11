@@ -341,13 +341,15 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
     zpl_i8 exp=0,orig_exp=0;
     zpl_u8 neg_zero=0;
     zpl_u8 lead_digit=0;
+    zpl_u8 node_type=0;
+    zpl_u8 node_props=0;
 
     /* skip false positives and special cases */
     if (!!zpl_strchr("eE", *p) || (!!zpl_strchr(".+-", *p) && !zpl_char_is_hex_digit(*(p+1)) && *(p+1) != '.')) {
         return ++base_str;
     }
 
-    node->type = ZPL_ADT_TYPE_INTEGER;
+    node_type = ZPL_ADT_TYPE_INTEGER;
     neg_zero = false;
 
     zpl_isize ib = 0;
@@ -360,19 +362,19 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
     }
 
     if (*e == '.') {
-        node->type = ZPL_ADT_TYPE_REAL;
-        node->props = ZPL_ADT_PROPS_IS_PARSED_REAL;
+        node_type = ZPL_ADT_TYPE_REAL;
+        node_props = ZPL_ADT_PROPS_IS_PARSED_REAL;
         lead_digit = false;
         buf[ib++] = '0';
         do {
             buf[ib++] = *e;
         } while (zpl_char_is_digit(*++e));
     } else {
-        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node->props = ZPL_ADT_PROPS_IS_HEX; }
+        if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node_props = ZPL_ADT_PROPS_IS_HEX; }
         while (zpl_char_is_hex_digit(*e) || zpl_char_to_lower(*e) == 'x') { buf[ib++] = *e++; }
 
         if (*e == '.') {
-            node->type = ZPL_ADT_TYPE_REAL;
+            node_type = ZPL_ADT_TYPE_REAL;
             lead_digit = true;
             zpl_u32 step = 0;
 
@@ -383,6 +385,11 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
 
             if (step < 2) { buf[ib++] = '0'; }
         }
+    }
+
+    /* check if we have a dot here, this is a false positive (IP address, ...) */
+    if (*e == '.') {
+        return ++base_str;
     }
 
     zpl_f32 eb = 10;
@@ -400,7 +407,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
         orig_exp = exp = (zpl_u8)zpl_str_to_i64(expbuf, NULL, 10);
     }
 
-    if (node->type == ZPL_ADT_TYPE_INTEGER) {
+    if (node_type == ZPL_ADT_TYPE_INTEGER) {
         node->integer = zpl_str_to_i64(buf, 0, 0);
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
         /* special case: negative zero */
@@ -424,7 +431,7 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
         base2 = (zpl_i32)zpl_str_to_i64(base_string2, 0, 0);
         if (exp) {
             exp = exp * (!(eb == 10.0f) ? -1 : 1);
-            node->props = ZPL_ADT_PROPS_IS_EXP;
+            node_props = ZPL_ADT_PROPS_IS_EXP;
         }
 
         /* special case: negative zero */
@@ -434,6 +441,9 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
 #endif
         while (orig_exp-- > 0) { node->real *= eb; }
     }
+
+    node->type = node_type;
+    node->props = node_props;
 
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
     node->base = base;
