@@ -200,7 +200,6 @@ License:
 #        ifdef ZPL_MODULE_JOBS
 #        undef ZPL_MODULE_JOBS /* user */
 #        endif
-
 #        undef ZPL_MODULE_THREADING
 #    endif
 #    if defined(ZPL_DISABLE_JOBS) && defined(ZPL_MODULE_JOBS)

@@ -2,7 +2,7 @@
 #define ZPL_NANO
 #define ZPL_ENABLE_JOBS
 #define ZPL_JOBS_ENABLE_DEBUG
-#define ZPL_ENFORCE_THREADING
+// #define ZPL_ENFORCE_THREADING
 #include <zpl.h>
 
 int rand(void);

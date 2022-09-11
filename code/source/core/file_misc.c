@@ -5,7 +5,7 @@
 #    include <dirent.h>
 #endif
 
-#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_OPENBSD) && !defined(ZPL_SYSTEM_CYGWIN)
+#if defined(ZPL_SYSTEM_UNIX) && !defined(ZPL_SYSTEM_FREEBSD) && !defined(ZPL_SYSTEM_OPENBSD) && !defined(ZPL_SYSTEM_CYGWIN) && !defined(ZPL_SYSTEM_EMSCRIPTEN)
 #    include <sys/sendfile.h>
 #endif
 
@@ -107,6 +107,9 @@ ZPL_BEGIN_C_DECLS
 #    if defined(ZPL_SYSTEM_OSX)
         return copyfile(existing_filename, new_filename, NULL, COPYFILE_DATA) == 0;
 #    elif defined(ZPL_SYSTEM_OPENBSD)
+        ZPL_NOT_IMPLEMENTED;
+        return 0;
+#    elif defined(ZPL_SYSTEM_EMSCRIPTEN)
         ZPL_NOT_IMPLEMENTED;
         return 0;
 #    else
