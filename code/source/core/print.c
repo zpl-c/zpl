@@ -143,6 +143,7 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
 
     if (info && (info->width == 0 || info->flags & ZPL_FMT_MINUS)) {
         if (info->precision > 0) len = info->precision < len ? info->precision : len;
+        if (res+len > max_len) return res;
         res += zpl_strlcpy(text, str, len);
         text += res;
 
@@ -159,6 +160,7 @@ zpl_internal zpl_isize zpl__print_string(char *text, zpl_isize max_len, zpl__for
             while (padding-- > 0 && remaining-- > 0) *text++ = pad, res++;
         }
 
+        if (res+len > max_len) return res;
         res += zpl_strlcpy(text, str, len);
     }
 
