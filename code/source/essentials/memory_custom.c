@@ -172,12 +172,16 @@ ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
     switch (type) {
         case ZPL_ALLOCATION_ALLOC: {
             void *end = zpl_pointer_add(arena->physical_start, arena->total_allocated);
-            zpl_isize total_size = size + alignment;
+            zpl_isize total_size = zpl_align_forward_i64(size, alignment);
 
             // NOTE: Out of memory
             if (arena->total_allocated + total_size > cast(zpl_isize) arena->total_size) {
-                zpl__printf_err("%s", "Arena out of memory\n");
-                return NULL;
+                if (arena->auto_growth == 0) {
+                    // zpl__printf_err("%s", "Arena out of memory\n");
+                    return NULL;
+                }
+
+
             }
 
             ptr = zpl_align_forward(end, alignment);

@@ -10,6 +10,7 @@
 #include "cases/csv.h"
 #include "cases/alloc_pool.h"
 #include "cases/hashing.h"
+#include "cases/memory.h"
 #include "cases/time.h"
 #include "cases/stream.h"
 #include "cases/print.h"
@@ -21,6 +22,7 @@ int main() {
 
     UNIT_MODULE(alloc_pool);
     UNIT_MODULE(hashing);
+    UNIT_MODULE(memory);
     UNIT_MODULE(time);
     UNIT_MODULE(stream);
     UNIT_MODULE(print);

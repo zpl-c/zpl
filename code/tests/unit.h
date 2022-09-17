@@ -249,7 +249,7 @@ UNIT_DEF int32_t unit_main(const char *name, unit_case *cases, int32_t count) {
 // Locally persisting buffer
 static char* unit__bprintf(const char* fmt, ...)
 {
-    static char buf[128];
+    static char buf[1024] = {0};
     va_list args;
     va_start(args, fmt);
     vsprintf(buf, fmt, args);
