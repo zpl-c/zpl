@@ -176,12 +176,8 @@ ZPL_ALLOCATOR_PROC(zpl_arena_allocator_proc) {
 
             // NOTE: Out of memory
             if (arena->total_allocated + total_size > cast(zpl_isize) arena->total_size) {
-                if (arena->auto_growth == 0) {
-                    // zpl__printf_err("%s", "Arena out of memory\n");
-                    return NULL;
-                }
-
-
+                // zpl__printf_err("%s", "Arena out of memory\n");
+                return NULL;
             }
 
             ptr = zpl_align_forward(end, alignment);
