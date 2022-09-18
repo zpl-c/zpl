@@ -11,6 +11,7 @@
 #include "cases/alloc_pool.h"
 #include "cases/hashing.h"
 #include "cases/memory.h"
+#include "cases/table.h"
 #include "cases/time.h"
 #include "cases/stream.h"
 #include "cases/print.h"
@@ -22,9 +23,10 @@ int main() {
 
     UNIT_MODULE(alloc_pool);
     UNIT_MODULE(hashing);
-    UNIT_MODULE(memory);
     UNIT_MODULE(time);
     UNIT_MODULE(stream);
+    UNIT_MODULE(memory);
+    UNIT_MODULE(table);
     UNIT_MODULE(print);
     UNIT_MODULE(json5_parser);
     UNIT_MODULE(csv_parser);

@@ -62,18 +62,19 @@ typedef struct zpl_hash_table_find_result {
         zpl_array(ZPL_JOIN2(NAME, Entry)) entries;                                                                  \
     } NAME;                                                                                                         \
                                                                                                                     \
-    PREFIX void      ZPL_JOIN2(FUNC, init)          (NAME * h, zpl_allocator a);                                    \
-    PREFIX void      ZPL_JOIN2(FUNC, destroy)       (NAME * h);                                                     \
-    PREFIX VALUE    *ZPL_JOIN2(FUNC, get)           (NAME * h, zpl_u64 key);                                        \
-    PREFIX zpl_isize ZPL_JOIN2(FUNC, slot)          (NAME * h, zpl_u64 key);                                        \
-    PREFIX void      ZPL_JOIN2(FUNC, set)           (NAME * h, zpl_u64 key, VALUE value);                           \
-    PREFIX void      ZPL_JOIN2(FUNC, grow)          (NAME * h);                                                     \
-    PREFIX void      ZPL_JOIN2(FUNC, rehash)        (NAME * h, zpl_isize new_count);                                \
-    PREFIX void      ZPL_JOIN2(FUNC, rehash_fast)   (NAME * h);                                                     \
-    PREFIX void      ZPL_JOIN2(FUNC, map)           (NAME * h, void (*map_proc) (zpl_u64 key, VALUE value));        \
-    PREFIX void      ZPL_JOIN2(FUNC, map_mut)       (NAME * h, void (*map_proc) (zpl_u64 key, VALUE * value));      \
-    PREFIX void      ZPL_JOIN2(FUNC, remove)        (NAME * h, zpl_u64 key);                                        \
-    PREFIX void      ZPL_JOIN2(FUNC, remove_entry)  (NAME * h, zpl_isize idx);
+    PREFIX void      ZPL_JOIN2(FUNC, init)          (NAME *h, zpl_allocator a);                                     \
+    PREFIX void      ZPL_JOIN2(FUNC, destroy)       (NAME *h);                                                      \
+    PREFIX void      ZPL_JOIN2(FUNC, clear)         (NAME *h);                                                      \
+    PREFIX VALUE    *ZPL_JOIN2(FUNC, get)           (NAME *h, zpl_u64 key);                                         \
+    PREFIX zpl_isize ZPL_JOIN2(FUNC, slot)          (NAME *h, zpl_u64 key);                                         \
+    PREFIX void      ZPL_JOIN2(FUNC, set)           (NAME *h, zpl_u64 key, VALUE value);                            \
+    PREFIX void      ZPL_JOIN2(FUNC, grow)          (NAME *h);                                                      \
+    PREFIX void      ZPL_JOIN2(FUNC, rehash)        (NAME *h, zpl_isize new_count);                                 \
+    PREFIX void      ZPL_JOIN2(FUNC, rehash_fast)   (NAME *h);                                                      \
+    PREFIX void      ZPL_JOIN2(FUNC, map)           (NAME *h, void (*map_proc) (zpl_u64 key, VALUE value));         \
+    PREFIX void      ZPL_JOIN2(FUNC, map_mut)       (NAME *h, void (*map_proc) (zpl_u64 key, VALUE * value));       \
+    PREFIX void      ZPL_JOIN2(FUNC, remove)        (NAME *h, zpl_u64 key);                                         \
+    PREFIX void      ZPL_JOIN2(FUNC, remove_entry)  (NAME *h, zpl_isize idx);
 
 /**
  * Table definition interfaces that generates the implementation
@@ -88,6 +89,11 @@ typedef struct zpl_hash_table_find_result {
     void ZPL_JOIN2(FUNC, destroy)(NAME * h) {                                                                       \
         if (h->entries) zpl_array_free(h->entries);                                                                 \
         if (h->hashes) zpl_array_free(h->hashes);                                                                   \
+    }                                                                                                               \
+                                                                                                                    \
+    void ZPL_JOIN2(FUNC, clear)(NAME * h) {                                                                         \
+        zpl_array_clear(h->hashes);                                                                                 \
+        zpl_array_clear(h->entries);                                                                                \
     }                                                                                                               \
                                                                                                                     \
     zpl_isize ZPL_JOIN2(FUNC, slot)(NAME * h, zpl_u64 key) {                                                        \
@@ -212,7 +218,7 @@ typedef struct zpl_hash_table_find_result {
         zpl_isize index;                                                                                            \
         zpl_hash_table_find_result fr;                                                                              \
         if (zpl_array_count(h->hashes) == 0) ZPL_JOIN2(FUNC, grow)(h);                                              \
-            fr = ZPL_JOIN2(FUNC, _find)(h, key);                                                                    \
+        fr = ZPL_JOIN2(FUNC, _find)(h, key);                                                                        \
         if (fr.entry_index >= 0) {                                                                                  \
             index = fr.entry_index;                                                                                 \
         } else {                                                                                                    \
@@ -220,7 +226,7 @@ typedef struct zpl_hash_table_find_result {
             if (fr.entry_prev >= 0) {                                                                               \
                 h->entries[fr.entry_prev].next = index;                                                             \
             } else {                                                                                                \
-            h->hashes[fr.hash_index] = index;                                                                       \
+                h->hashes[fr.hash_index] = index;                                                                   \
             }                                                                                                       \
         }                                                                                                           \
         h->entries[index].value = value;                                                                            \
