@@ -92,7 +92,7 @@ typedef struct zpl_hash_table_find_result {
     }                                                                                                               \
                                                                                                                     \
     void ZPL_JOIN2(FUNC, clear)(NAME * h) {                                                                         \
-        zpl_array_clear(h->hashes);                                                                                 \
+        for (int i = 0; i < zpl_array_count(h->hashes); i++) h->hashes[i] = -1;                                     \
         zpl_array_clear(h->entries);                                                                                \
     }                                                                                                               \
                                                                                                                     \
