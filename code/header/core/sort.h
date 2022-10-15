@@ -21,14 +21,14 @@ typedef ZPL_COMPARE_PROC(zpl_compare_proc);
 // e.g. zpl_i32_cmp(zpl_offset_of(Thing, value))
 // Use 0 if it's just the type instead.
 
-ZPL_DEF ZPL_COMPARE_PROC_PTR(i16_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(u8_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(i32_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(i64_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(isize_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(str_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(f32_cmp(zpl_isize offset));
-ZPL_DEF ZPL_COMPARE_PROC_PTR(f64_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i16_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_u8_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_i64_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_isize_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_str_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f32_cmp(zpl_isize offset));
+ZPL_DEF ZPL_COMPARE_PROC_PTR(zpl_f64_cmp(zpl_isize offset));
 
 // TODO: Better sorting algorithms
 
