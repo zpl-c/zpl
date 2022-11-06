@@ -1,4 +1,6 @@
-18.1.1  - fix zpl sort procs
+18.1.3  - set parent to parsed JSON nodes
+18.1.2  - fix zpl sort procs
+18.1.1  - updated table _clear method
 18.1.0  - added table _clear method
 18.0.4  - fix memory arena alignment & added tests
 18.0.3  - fix emscripten support
