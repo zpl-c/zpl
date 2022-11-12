@@ -50,12 +50,21 @@ zpl_string zpl_json_write_string(zpl_allocator a, zpl_adt_node *obj, zpl_isize i
     zpl_json_write(&tmp, obj, indent);
     zpl_isize fsize;
     zpl_u8* buf = zpl_file_stream_buf(&tmp, &fsize);
-    zpl_string output = zpl_string_make_length(a, (char *)buf, fsize+1);
+    zpl_string output = zpl_string_make_length(a, (char *)buf, fsize);
     zpl_file_close(&tmp);
     return output;
 }
 
 /* private */
+
+#define zpl__json_append_node(x, item)\
+do {\
+zpl_array_append(x, item);\
+if (item.type == ZPL_ADT_TYPE_OBJECT || item.type == ZPL_ADT_TYPE_ARRAY) {\
+for (zpl_isize i = 0; i < zpl_array_count(item.nodes); i++)\
+item.nodes[i].parent = zpl_array_end(x);\
+}\
+} while (0);
 
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
@@ -97,8 +106,7 @@ char *zpl__json_parse_array(zpl_adt_node *obj, char *base, zpl_allocator a, zpl_
         
         if (*err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
         
-        zpl_array_append(obj->nodes, elem);
-        zpl_array_end(obj->nodes)->parent = obj;
+        zpl__json_append_node(obj->nodes, elem);
         
         p = zpl__json_trim(p, false);
         
@@ -219,8 +227,7 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
         p = zpl__json_parse_value(&node, p, a, err_code);
         if (err_code && *err_code != ZPL_JSON_ERROR_NONE) { return NULL; }
         
-        zpl_array_append(obj->nodes, node);
-        zpl_array_end(obj->nodes)->parent = obj;
+        zpl__json_append_node(obj->nodes, node);
         
         char *end_p = p; zpl_unused(end_p);
         p = zpl__json_trim(p, true);
@@ -480,5 +487,6 @@ void zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_is
 }
 
 #undef zpl___ind
+#undef zpl__json_append_node
 
 ZPL_END_C_DECLS
