@@ -408,7 +408,6 @@ License:
 #    include "source/essentials/debug.c"
 #    include "source/essentials/memory.c"
 #    include "source/essentials/memory_custom.c"
-#    include "source/essentials/array.c"
 #    if defined(ZPL_MODULE_CORE)
 #        include "source/core/memory_virtual.c"
 #        include "source/core/string.c"
@@ -556,7 +555,6 @@ License:
 // source/hashing.c
 // source/adt.c
 // source/process.c
-// source/essentials/array.c
 // source/essentials/debug.c
 // source/essentials/memory_custom.c
 // source/essentials/memory.c
