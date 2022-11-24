@@ -12,7 +12,8 @@ zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const
     node->type = type;
     node->name = name;
     node->parent = parent;
-    zpl_array_init(node->nodes, backing);
+    if (!zpl_array_init(node->nodes, backing))
+        return ZPL_ADT_ERROR_OUT_OF_MEMORY;
     return 0;
 }
 
@@ -240,23 +241,26 @@ zpl_adt_node *zpl_adt_alloc(zpl_adt_node *parent) {
 }
 
 
-void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
-    zpl_adt_make_branch(obj, backing, name, 0);
+zpl_b8 zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
+    return zpl_adt_make_branch(obj, backing, name, 0);
 }
-void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
-    zpl_adt_make_branch(obj, backing, name, 1);
+zpl_b8 zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing) {
+    return zpl_adt_make_branch(obj, backing, name, 1);
 }
-void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value) {
+zpl_b8 zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value) {
     zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_STRING);
     obj->string = value;
+    return true;
 }
-void zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value) {
+zpl_b8 zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value) {
     zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_REAL);
     obj->real = value;
+    return true;
 }
-void zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value) {
+zpl_b8 zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value) {
     zpl_adt_make_leaf(obj, name, ZPL_ADT_TYPE_INTEGER);
     obj->integer = value;
+    return true;
 }
 
 zpl_adt_node *zpl_adt_move_node_at(zpl_adt_node *node, zpl_adt_node *new_parent, zpl_isize index) {
@@ -304,26 +308,37 @@ void zpl_adt_remove_node(zpl_adt_node *node) {
 
 zpl_adt_node *zpl_adt_append_obj(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
-    zpl_adt_set_obj(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
+    if (!o) return NULL;
+    if (zpl_adt_set_obj(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator)) {
+        zpl_adt_remove_node(o);
+        return NULL;
+    }
     return o;
 }
 zpl_adt_node *zpl_adt_append_arr(zpl_adt_node *parent, char const *name) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
-    zpl_adt_set_arr(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator);
+    if (!o) return NULL;
+    if (zpl_adt_set_arr(o, name, ZPL_ARRAY_HEADER(parent->nodes)->allocator)) {
+        zpl_adt_remove_node(o);
+        return NULL;
+    }
     return o;
 }
 zpl_adt_node *zpl_adt_append_str(zpl_adt_node *parent, char const *name, char const *value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
+    if (!o) return NULL;
     zpl_adt_set_str(o, name, value);
     return o;
 }
 zpl_adt_node *zpl_adt_append_flt(zpl_adt_node *parent, char const *name, zpl_f64 value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
+    if (!o) return NULL;
     zpl_adt_set_flt(o, name, value);
     return o;
 }
 zpl_adt_node *zpl_adt_append_int(zpl_adt_node *parent, char const *name, zpl_i64 value) {
     zpl_adt_node *o = zpl_adt_alloc(parent);
+    if (!o) return NULL;
     zpl_adt_set_int(o, name, value);
     return o;
 }

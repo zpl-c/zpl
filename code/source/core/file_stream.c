@@ -36,31 +36,34 @@ ZPL_IMPL_INLINE zpl__memory_fd *zpl__file_stream_from_fd(zpl_file_descriptor fd)
     return d;
 }
 
-void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator) {
+zpl_b8 zpl_file_stream_new(zpl_file* file, zpl_allocator allocator) {
     ZPL_ASSERT_NOT_NULL(file);
     zpl__memory_fd *d = (zpl__memory_fd*)zpl_alloc(allocator, zpl_size_of(zpl__memory_fd));
+    if (!d) return false;
     zpl_zero_item(file);
     d->magic = ZPL__FILE_STREAM_FD_MAGIC;
     d->alloc = allocator;
     d->flags = ZPL_FILE_STREAM_CLONE_WRITABLE;
     d->cap = 0;
-    zpl_array_init(d->buf, allocator);
+    if (!zpl_array_init(d->buf, allocator)) return false;
     file->ops = zpl_memory_file_operations;
     file->fd = zpl__file_stream_fd_make(d);
     file->dir = NULL;
     file->last_write_time = 0;
     file->filename = NULL;
     file->is_temp = true;
+    return true;
 }
-void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags) {
+zpl_b8 zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags) {
     ZPL_ASSERT_NOT_NULL(file);
     zpl__memory_fd *d = (zpl__memory_fd*)zpl_alloc(allocator, zpl_size_of(zpl__memory_fd));
+    if (!d) return false;
     zpl_zero_item(file);
     d->magic = ZPL__FILE_STREAM_FD_MAGIC;
     d->alloc = allocator;
     d->flags = flags;
     if (d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE) {
-        zpl_array_init_reserve(d->buf, allocator, size);
+        if (!zpl_array_init_reserve(d->buf, allocator, size)) return false;
         zpl_memcopy(d->buf, buffer, size);
         d->cap = zpl_array_count(d->buf) = size;
     } else {
@@ -73,6 +76,7 @@ void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffe
     file->last_write_time = 0;
     file->filename = NULL;
     file->is_temp = true;
+    return true;
 }
 
 zpl_u8 *zpl_file_stream_buf(zpl_file* file, zpl_isize *size) {
@@ -114,7 +118,7 @@ zpl_internal ZPL_FILE_WRITE_AT_PROC(zpl__memory_file_write) {
     zpl_isize new_cap = buflen+extralen;
     if (d->flags & ZPL_FILE_STREAM_CLONE_WRITABLE) {
         if(zpl_array_capacity(d->buf) < new_cap) {
-            zpl_array_grow(d->buf, (zpl_i64)(new_cap));
+            if (!zpl_array_grow(d->buf, (zpl_i64)(new_cap))) return false;
         }
     }
     zpl_memcopy(d->buf + offset, buffer, rwlen);

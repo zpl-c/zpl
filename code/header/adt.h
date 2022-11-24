@@ -51,6 +51,7 @@ typedef enum zpl_adt_error {
     ZPL_ADT_ERROR_INTERNAL,
     ZPL_ADT_ERROR_ALREADY_CONVERTED,
     ZPL_ADT_ERROR_INVALID_TYPE,
+    ZPL_ADT_ERROR_OUT_OF_MEMORY,
 } zpl_adt_error;
 
 typedef struct zpl_adt_node {
@@ -218,7 +219,7 @@ ZPL_DEF void zpl_adt_remove_node(zpl_adt_node *node);
  * @param backing
  * @return
  */
-ZPL_DEF void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing);
+ZPL_DEF zpl_b8 zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator backing);
 
 /**
  * @brief Initialise a node as an array
@@ -228,7 +229,7 @@ ZPL_DEF void zpl_adt_set_obj(zpl_adt_node *obj, char const *name, zpl_allocator 
  * @param backing
  * @return
  */
-ZPL_DEF void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing);
+ZPL_DEF zpl_b8 zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator backing);
 
 /**
  * @brief Initialise a node as a string
@@ -238,7 +239,7 @@ ZPL_DEF void zpl_adt_set_arr(zpl_adt_node *obj, char const *name, zpl_allocator 
  * @param value
  * @return
  */
-ZPL_DEF void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value);
+ZPL_DEF zpl_b8 zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *value);
 
 /**
  * @brief Initialise a node as a float
@@ -248,7 +249,7 @@ ZPL_DEF void zpl_adt_set_str(zpl_adt_node *obj, char const *name, char const *va
  * @param value
  * @return
  */
-ZPL_DEF void zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value);
+ZPL_DEF zpl_b8 zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value);
 
 /**
  * @brief Initialise a node as a signed integer
@@ -258,7 +259,7 @@ ZPL_DEF void zpl_adt_set_flt(zpl_adt_node *obj, char const *name, zpl_f64 value)
  * @param value
  * @return
  */
-ZPL_DEF void zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value);
+ZPL_DEF zpl_b8 zpl_adt_set_int(zpl_adt_node *obj, char const *name, zpl_i64 value);
 
 /**
  * @brief Append a new node to a container as an object

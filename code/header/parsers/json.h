@@ -12,6 +12,7 @@ typedef enum zpl_json_error {
     ZPL_JSON_ERROR_UNKNOWN_KEYWORD,
     ZPL_JSON_ERROR_ARRAY_LEFT_OPEN,
     ZPL_JSON_ERROR_OBJECT_END_PAIR_MISMATCHED,
+    ZPL_JSON_ERROR_OUT_OF_MEMORY,
 } zpl_json_error;
 
 typedef zpl_adt_node zpl_json_object;

@@ -25,7 +25,7 @@ typedef enum {
  * @param file
  * @param allocator
  */
-ZPL_DEF void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
+ZPL_DEF zpl_b8 zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
 
 /**
  * Opens a memory stream over an existing buffer
@@ -35,7 +35,7 @@ ZPL_DEF void zpl_file_stream_new(zpl_file* file, zpl_allocator allocator);
  * @param  size     Buffer's size
  * @param  flags
  */
-ZPL_DEF void zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags);
+ZPL_DEF zpl_b8 zpl_file_stream_open(zpl_file* file, zpl_allocator allocator, zpl_u8 *buffer, zpl_isize size, zpl_file_stream_flags flags);
 
 /**
  * Retrieves the stream's underlying buffer and buffer size.

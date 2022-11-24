@@ -250,6 +250,81 @@ MODULE(json5_parser, {
         zpl_string a = zpl_json_write_string(mem_alloc, &doc, 0);
         STREQUALS(original, a);
     });
+
+    IT("handles out of memory during parse", {
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
+                {
+                    "test1": "test",
+                    "test2": 123,
+                    "test3": {
+                        "test3.1": 456
+                    },
+                    "test4": [ 789 ],
+                    "test5": true,
+                    "test6": false,
+                    "test7": Infinity,
+                    "test8": -Infinity,
+                    "test9": NaN,
+                    "test10": -NaN
+                }));
+        for (int i = 1; true; i++) {
+            char buffer[i];
+            zpl_arena arena;
+            zpl_arena_init_from_memory(&arena, buffer, sizeof(buffer));
+            zpl_allocator allocator = zpl_arena_allocator(&arena);
+
+            zpl_json_object r={0};
+            zpl_u8 err = zpl_json_parse(&r, (char *)t, allocator);
+            if (err == ZPL_JSON_ERROR_OUT_OF_MEMORY)
+                continue;
+            EQUALS(err, ZPL_JSON_ERROR_NONE);
+            EQUALS(zpl_array_count(r.nodes), 10);
+            break;
+        }
+    });
+
+    IT("handles out of memory during construction", {
+        for (int i = 1; true; i++) {
+            char buffer[i];
+            zpl_arena arena;
+            zpl_arena_init_from_memory(&arena, buffer, sizeof(buffer));
+            zpl_allocator allocator = zpl_arena_allocator(&arena);
+
+            zpl_json_object doc, *o, *o2;
+            if (zpl_adt_set_obj(&doc, NULL, allocator) == ZPL_ADT_ERROR_OUT_OF_MEMORY) continue;
+
+            o = zpl_adt_append_str(&doc, "test1", "test");
+            if (!o) continue;
+            o = zpl_adt_append_int(&doc, "test2", 123);
+            if (!o) continue;
+            o = zpl_adt_append_obj(&doc, "test3");
+            if (!o) continue;
+            {
+                o2 = zpl_adt_append_int(o, "test3.1", 456);
+                if (!o2) continue;
+            }
+            o = zpl_adt_append_arr(&doc, "test4");
+            if (!o) continue;
+            {
+                o2 = zpl_adt_append_int(o, NULL, 789);
+                if (!o2) continue;
+            }
+            o = zpl_adt_append_flt(&doc, "test5", 1);
+            if (!o) continue;
+            o = zpl_adt_append_flt(&doc, "test6", 0);
+            if (!o) continue;
+            o = zpl_adt_append_str(&doc, "test7", "foo");
+            if (!o) continue;
+            o = zpl_adt_append_str(&doc, "test8", "bar");
+            if (!o) continue;
+            o = zpl_adt_append_str(&doc, "test9", "test");
+            if (!o) continue;
+
+            zpl_string a = zpl_json_write_string(allocator, &doc, 0);
+            if (!a) continue;
+            break;
+        }
+    });
 });
 
 #undef __PARSE
