@@ -322,6 +322,7 @@ MODULE(json5_parser, {
 
             zpl_string a = zpl_json_write_string(allocator, &doc, 0);
             if (!a) continue;
+            fprintf(stderr, "%s", a);
             break;
         }
     });
