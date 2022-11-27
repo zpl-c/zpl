@@ -2,6 +2,11 @@
 
 ZPL_BEGIN_C_DECLS
 
+#define zpl__adt_fprintf(s_, fmt_, ...)                                                                                \
+do {                                                                                                               \
+    if (zpl_fprintf(s_, fmt_, ##__VA_ARGS__) < 0) return ZPL_ADT_ERROR_OUT_OF_MEMORY;                              \
+} while (0)
+
 zpl_u8 zpl_adt_make_branch(zpl_adt_node *node, zpl_allocator backing, char const *name, zpl_b32 is_array) {
     zpl_u8 type = ZPL_ADT_TYPE_OBJECT;
     if (is_array) {
@@ -487,45 +492,45 @@ zpl_adt_error zpl_adt_print_number(zpl_file *file, zpl_adt_node *node) {
 
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
     if (node->neg_zero) {
-        zpl_fprintf(file, "-");
+        zpl__adt_fprintf(file, "-");
     }
 #endif
 
     switch (node->type) {
         case ZPL_ADT_TYPE_INTEGER: {
             if (node->props == ZPL_ADT_PROPS_IS_HEX) {
-                zpl_fprintf(file, "0x%llx", (long long)node->integer);
+                zpl__adt_fprintf(file, "0x%llx", (long long)node->integer);
             } else {
-                zpl_fprintf(file, "%lld", (long long)node->integer);
+                zpl__adt_fprintf(file, "%lld", (long long)node->integer);
             }
         } break;
 
         case ZPL_ADT_TYPE_REAL: {
             if (node->props == ZPL_ADT_PROPS_NAN) {
-                zpl_fprintf(file, "NaN");
+                zpl__adt_fprintf(file, "NaN");
             } else if (node->props == ZPL_ADT_PROPS_NAN_NEG) {
-                zpl_fprintf(file, "-NaN");
+                zpl__adt_fprintf(file, "-NaN");
             } else if (node->props == ZPL_ADT_PROPS_INFINITY) {
-                zpl_fprintf(file, "Infinity");
+                zpl__adt_fprintf(file, "Infinity");
             } else if (node->props == ZPL_ADT_PROPS_INFINITY_NEG) {
-                zpl_fprintf(file, "-Infinity");
+                zpl__adt_fprintf(file, "-Infinity");
             } else if (node->props == ZPL_ADT_PROPS_TRUE) {
-                zpl_fprintf(file, "true");
+                zpl__adt_fprintf(file, "true");
             } else if (node->props == ZPL_ADT_PROPS_FALSE) {
-                zpl_fprintf(file, "false");
+                zpl__adt_fprintf(file, "false");
             } else if (node->props == ZPL_ADT_PROPS_NULL) {
-                zpl_fprintf(file, "null");
+                zpl__adt_fprintf(file, "null");
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
             } else if (node->props == ZPL_ADT_PROPS_IS_EXP) {
-                zpl_fprintf(file, "%lld.%0*d%llde%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, (long long)node->exp);
+                zpl__adt_fprintf(file, "%lld.%0*d%llde%lld", (long long)node->base, node->base2_offset, 0, (long long)node->base2, (long long)node->exp);
             } else if (node->props == ZPL_ADT_PROPS_IS_PARSED_REAL) {
                 if (!node->lead_digit)
-                    zpl_fprintf(file, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
+                    zpl__adt_fprintf(file, ".%0*d%lld", node->base2_offset, 0, (long long)node->base2);
                 else
-                    zpl_fprintf(file, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
+                    zpl__adt_fprintf(file, "%lld.%0*d%lld", (long long int)node->base2_offset, 0, (int)node->base, (long long)node->base2);
 #endif
             } else {
-                zpl_fprintf(file, "%f", node->real);
+                zpl__adt_fprintf(file, "%f", node->real);
             }
         } break;
     }
@@ -545,9 +550,9 @@ zpl_adt_error zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char cons
     char const* p = node->string, *b = p;
     do {
         p = zpl_str_skip_any(p, escaped_chars);
-        zpl_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
+        zpl__adt_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
         if (*p && !!zpl_strchr(escaped_chars, *p)) {
-            zpl_fprintf(file, "%s%c", escape_symbol, *p);
+            zpl__adt_fprintf(file, "%s%c", escape_symbol, *p);
             p++;
         }
         b = p;
@@ -568,5 +573,7 @@ zpl_adt_error zpl_adt_str_to_number(zpl_adt_node *node) {
 
     return ZPL_ADT_ERROR_NONE;
 }
+
+#undef zpl__adt_fprintf
 
 ZPL_END_C_DECLS

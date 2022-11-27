@@ -14,8 +14,8 @@ zpl_isize zpl_printf_err_va(char const *fmt, va_list va) {
 zpl_isize zpl_fprintf_va(struct zpl_file *f, char const *fmt, va_list va) {
     zpl_local_persist zpl_thread_local char buf[ZPL_PRINTF_MAXLEN];
     zpl_isize len = zpl_snprintf_va(buf, zpl_size_of(buf), fmt, va);
-    zpl_file_write(f, buf, len - 1); // NOTE: prevent extra whitespace
-    return len;
+    zpl_b32 res = zpl_file_write(f, buf, len - 1); // NOTE: prevent extra whitespace
+    return res ? len : -1;
 }
 
 char *zpl_bprintf_va(char const *fmt, va_list va) {
