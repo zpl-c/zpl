@@ -229,7 +229,8 @@ zpl_adt_node *zpl_adt_alloc_at(zpl_adt_node *parent, zpl_isize index) {
 
     zpl_adt_node o = {0};
     o.parent = parent;
-    zpl_array_append_at(parent->nodes, o, index);
+    if (!zpl_array_append_at(parent->nodes, o, index))
+        return NULL;
 
     return parent->nodes + index;
 }
