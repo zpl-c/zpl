@@ -383,7 +383,6 @@ zpl_b8 zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
 
     if (o->nodes) {
         zpl_isize cnt = zpl_array_count(o->nodes);
-        fprintf(stderr, "HERE %zi", cnt);
 
         for (int i = 0; i < cnt; ++i) {
             if (!zpl__json_write_value(f, o->nodes + i, o, indent, false, !(i < cnt - 1))) return false;
