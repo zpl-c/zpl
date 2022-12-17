@@ -89,7 +89,7 @@ ZPL_STATIC_ASSERT(ZPL_ARRAY_GROW_FORMULA(0) > 0, "ZPL_ARRAY_GROW_FORMULA(0) <= 0
 
 ZPL_IMPL_INLINE zpl_b8 zpl__array_init_reserve(void **zpl__array_, zpl_allocator allocator_, zpl_isize elem_size, zpl_isize cap) {
     zpl_array_header *zpl__ah =
-    cast(zpl_array_header *) zpl_alloc(allocator_, zpl_size_of(zpl_array_header) + elem_size * (cap));
+    cast(zpl_array_header *) zpl_alloc(allocator_, zpl_size_of(zpl_array_header) + elem_size * cap);
     if (!zpl__ah) return false;
     zpl__ah->allocator = allocator_;
     zpl__ah->elem_size = elem_size;
@@ -99,7 +99,7 @@ ZPL_IMPL_INLINE zpl_b8 zpl__array_init_reserve(void **zpl__array_, zpl_allocator
     return true;
 }
 
-#define zpl_array_init_reserve(x, allocator_, cap) zpl__array_init_reserve(cast(void **) & (x), allocator_, zpl_size_of(*(x)), cap)
+#define zpl_array_init_reserve(x, allocator_, cap) zpl__array_init_reserve(cast(void **) & (x), allocator_, zpl_size_of(*(x)), (cap))
 
 // NOTE: Give it an initial default capacity
 #define zpl_array_init(x, allocator) zpl_array_init_reserve(x, allocator, ZPL_ARRAY_GROW_FORMULA(0))
@@ -133,11 +133,11 @@ ZPL_IMPL_INLINE zpl_b8 zpl__array_set_capacity(void **array, zpl_isize capacity)
 
 ZPL_IMPL_INLINE zpl_b8 zpl__array_grow(void **x, zpl_isize min_capacity) {
     zpl_isize new_capacity = ZPL_ARRAY_GROW_FORMULA(zpl_array_capacity(*x));
-    if (new_capacity < (min_capacity)) new_capacity = (min_capacity);
+    if (new_capacity < min_capacity) new_capacity = min_capacity;
     return zpl__array_set_capacity(x, new_capacity);
 }
 
-#define zpl_array_grow(x, min_capacity) zpl__array_grow(cast(void **) & (x), min_capacity)
+#define zpl_array_grow(x, min_capacity) zpl__array_grow(cast(void **) & (x), (min_capacity))
 
 ZPL_IMPL_INLINE zpl_b8 zpl__array_append_helper(void **x) {
     if (zpl_array_capacity(*x) < zpl_array_count(*x) + 1) {
@@ -224,20 +224,20 @@ do {                                                                            
 do { ZPL_ARRAY_HEADER(x)->count = 0; } while (0)
 
 ZPL_IMPL_INLINE zpl_b8 zpl__array_resize(void **x, zpl_isize new_count) {
-    if (ZPL_ARRAY_HEADER(*x)->capacity < (new_count)) {
-        if (!zpl__array_grow(x, (new_count))) return false;
+    if (ZPL_ARRAY_HEADER(*x)->capacity < new_count) {
+        if (!zpl__array_grow(x, new_count)) return false;
     }
-    ZPL_ARRAY_HEADER(*x)->count = (new_count);
+    ZPL_ARRAY_HEADER(*x)->count = new_count;
     return true;
 }
 
-#define zpl_array_resize(x, new_count) zpl__array_resize(cast(void **) & (x), new_count)
+#define zpl_array_resize(x, new_count) zpl__array_resize(cast(void **) & (x), (new_count))
 
 ZPL_IMPL_INLINE zpl_b8 zpl__array_reserve(void **x, zpl_isize new_capacity) {
-    if (ZPL_ARRAY_HEADER(*x)->capacity < (new_capacity)) return zpl__array_set_capacity(x, new_capacity);
+    if (ZPL_ARRAY_HEADER(*x)->capacity < new_capacity) return zpl__array_set_capacity(x, new_capacity);
     return true;
 }
 
-#define zpl_array_reserve(x, new_capacity) zpl__array_reserve(cast(void **) & (x), new_capacity)
+#define zpl_array_reserve(x, new_capacity) zpl__array_reserve(cast(void **) & (x), (new_capacity))
 
 ZPL_END_C_DECLS

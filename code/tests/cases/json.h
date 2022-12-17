@@ -322,7 +322,23 @@ MODULE(json5_parser, {
 
             zpl_string a = zpl_json_write_string(allocator, &doc, 0);
             if (!a) continue;
-            fprintf(stderr, "%s", a);
+
+            zpl_string expected = zpl_string_make(mem_alloc, ""
+                    "{\n"
+                    "    \"test1\": \"test\",\n"
+                    "    \"test2\": 123,\n"
+                    "    \"test3\": {\n"
+                    "        \"test3.1\": 456\n"
+                    "    },\n"
+                    "    \"test4\": [789],\n"
+                    "    \"test5\": 1.000000,\n"
+                    "    \"test6\": 0,\n"
+                    "    \"test7\": \"foo\",\n"
+                    "    \"test8\": \"bar\",\n"
+                    "    \"test9\": \"test\"\n"
+                    "}\n"
+            );
+            STREQUALS(expected, a);
             break;
         }
     });
