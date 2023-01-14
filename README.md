@@ -5,7 +5,7 @@
 <br />
 
 <div align="center">
-    <a href="https://github.com/zpl-c/zpl/actions"><img src="https://img.shields.io/github/workflow/status/zpl-c/zpl/tester?label=Tests&style=for-the-badge" alt="Build status" /></a>
+    <a href="https://github.com/zpl-c/zpl/actions"><img src="https://img.shields.io/github/actions/workflow/status/zpl-c/zpl/tester.yml?branch=master&label=Tests&style=for-the-badge" alt="Build status" /></a>
     <a href="https://discord.gg/2fZVEym"><img src="https://img.shields.io/discord/354670964400848898?color=7289DA&style=for-the-badge" alt="discord" /></a>
 </div>
 
