@@ -790,20 +790,27 @@
 #if defined(ZPL_DIAGNOSTIC_PUSH)
 #  undef ZPL_DIAGNOSTIC_PUSH
 #endif
+#if defined(ZPL_DIAGNOSTIC_PUSH_WARNLEVEL)
+#  undef ZPL_DIAGNOSTIC_PUSH_WARNLEVEL
+#endif
 #if defined(ZPL_DIAGNOSTIC_POP)
 #  undef ZPL_DIAGNOSTIC_POP
 #endif
 #if defined(__clang__)
 #  define ZPL_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push")
+#  define ZPL_DIAGNOSTIC_PUSH_WARNLEVEL(x)
 #  define ZPL_DIAGNOSTIC_POP _Pragma("clang diagnostic pop")
 #elif ZPL_INTEL_VERSION_CHECK(13,0,0)
 #  define ZPL_DIAGNOSTIC_PUSH _Pragma("warning(push)")
+#  define ZPL_DIAGNOSTIC_PUSH_WARNLEVEL(x)
 #  define ZPL_DIAGNOSTIC_POP _Pragma("warning(pop)")
 #elif ZPL_GCC_VERSION_CHECK(4,6,0)
 #  define ZPL_DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push")
+#  define ZPL_DIAGNOSTIC_PUSH_WARNLEVEL(x)
 #  define ZPL_DIAGNOSTIC_POP _Pragma("GCC diagnostic pop")
 #elif ZPL_MSVC_VERSION_CHECK(15,0,0)
 #  define ZPL_DIAGNOSTIC_PUSH __pragma(warning(push))
+#  define ZPL_DIAGNOSTIC_PUSH_WARNLEVEL(x) __pragma(warning(push, x))
 #  define ZPL_DIAGNOSTIC_POP __pragma(warning(pop))
 #elif ZPL_ARM_VERSION_CHECK(5,6,0)
 #  define ZPL_DIAGNOSTIC_PUSH _Pragma("push")

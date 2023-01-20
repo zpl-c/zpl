@@ -1,3 +1,5 @@
+19.0.0  - Check all results of zpl_alloc() when using JSON parser/writer (rheatley-pervasid)
+
 18.1.5  - set parent to parsed JSON nodes (fixed)
 		- fix zpl_json/csv_write_string off-by-one issue
 18.1.4  - fix zpl_random_gen_isize/zpl_random_range_isize 32bit overflow

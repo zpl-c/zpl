@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<N10X>
+	<Workspace>
+		<IncludeFilter>*.c,*.cc,*.cpp,*.c++,*.cp,*.cxx,*.h,*.hh,*.hpp,*.h++,*.hp,*.hxx,*.inl,*.cs,*.rs,*.java,*.jav,*.js,*.jsc,*.jsx,*.json,*.cls,*.py,*.rpy,*.php,*.php3,*.phl,*.phtml,*.rhtml,*.tpl,*.phps,*.lua,*.html,*.html5,*.htm,*.xml,*.xaml,*.css,*.ssi,*.haml,*.yaml,*.bat,*.wbf,*.wbt,*.txt,*.cmake,*.make,*.makefile,*.mak,*.mk,*.sh,*.bash,*.csv,*.asp,*.pl,*.mac,*.ws,*.vbs,*.perl,*.src,*.rss,*.inc,*.f,*.go,*.prl,*.plx,*.rb,*.lsp,*.lpx,*.ps1,*.command,*.cbl,*.cob,*.qs,*.wxs,*.ph,*.msc,*.glsl,*.hlsl,*.fx,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.pssl,*.scons,</IncludeFilter>
+		<ExcludeFilter></ExcludeFilter>
+		<SyncFiles>true</SyncFiles>
+		<Recursive>true</Recursive>
+		<IsVirtual>false</IsVirtual>
+		<IsFolder>false</IsFolder>
+		<BuildCommand>build.bat</BuildCommand>
+		<RebuildCommand></RebuildCommand>
+		<BuildFileCommand></BuildFileCommand>
+		<CleanCommand></CleanCommand>
+		<BuildWorkingDirectory></BuildWorkingDirectory>
+		<RunCommand></RunCommand>
+		<DebugCommand></DebugCommand>
+		<ExePathCommand></ExePathCommand>
+		<DebugSln></DebugSln>
+		<UseVisualStudioEnvBat>false</UseVisualStudioEnvBat>
+		<Configurations>
+			<Configuration>Debug</Configuration>
+			<Configuration>Release</Configuration>
+		</Configurations>
+		<Platforms>
+			<Platform>x64</Platform>
+			<Platform>Win32</Platform>
+		</Platforms>
+		<AdditionalIncludePaths>
+			<AdditionalIncludePath>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\include</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\include</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\um</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\shared</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\winrt</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\cppwinrt</AdditionalIncludePath>
+			<AdditionalIncludePath>C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um</AdditionalIncludePath>
+		</AdditionalIncludePaths>
+		<Defines>
+			<Define>_MSC_VER=9999</Define>
+			<Define>_WIN32</Define>
+			<Define>ZPL_IMPL</Define>
+			<Define>EDITOR_10X</Define>
+		</Defines>
+		<ConfigProperties>
+			<ConfigAndPlatform>
+				<Name>Release:x64</Name>
+				<Defines></Defines>
+				<ForceIncludes>
+					<ForceInclude>code/zpl.h</ForceInclude>
+				</ForceIncludes>
+			</ConfigAndPlatform>
+			<Config>
+				<Name>Release</Name>
+				<Defines></Defines>
+			</Config>
+			<Platform>
+				<Name>x64</Name>
+				<Defines></Defines>
+			</Platform>
+		</ConfigProperties>
+		<Children></Children>
+	</Workspace>
+</N10X>

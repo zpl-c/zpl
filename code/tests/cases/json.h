@@ -267,27 +267,30 @@ MODULE(json5_parser, {
                     "test9": NaN,
                     "test10": -NaN
                 }));
+		char *buffer = zpl_malloc(1);
         for (int i = 1; true; i++) {
-            char buffer[i];
+			buffer = zpl_resize(zpl_heap(), buffer, i-1, i);
             zpl_arena arena;
-            zpl_arena_init_from_memory(&arena, buffer, sizeof(buffer));
+            zpl_arena_init_from_memory(&arena, buffer, i);
             zpl_allocator allocator = zpl_arena_allocator(&arena);
 
             zpl_json_object r={0};
             zpl_u8 err = zpl_json_parse(&r, (char *)t, allocator);
-            if (err == ZPL_JSON_ERROR_OUT_OF_MEMORY)
-                continue;
+			if (err == ZPL_JSON_ERROR_OUT_OF_MEMORY)
+				continue;
             EQUALS(err, ZPL_JSON_ERROR_NONE);
             EQUALS(zpl_array_count(r.nodes), 10);
             break;
         }
+		zpl_mfree(buffer);
     });
 
     IT("handles out of memory during construction", {
-        for (int i = 1; true; i++) {
-            char buffer[i];
+       char *buffer = zpl_malloc(1);
+	   for (int i = 1; true; i++) {
+		    buffer = zpl_resize(zpl_heap(), buffer, i-1, i);
             zpl_arena arena;
-            zpl_arena_init_from_memory(&arena, buffer, sizeof(buffer));
+            zpl_arena_init_from_memory(&arena, buffer, i);
             zpl_allocator allocator = zpl_arena_allocator(&arena);
 
             zpl_json_object doc, *o, *o2;
@@ -341,7 +344,8 @@ MODULE(json5_parser, {
             STREQUALS(expected, a);
             break;
         }
-    });
+	    zpl_mfree(buffer);
+	});
 });
 
 #undef __PARSE
