@@ -1,3 +1,4 @@
+19.0.1  - Fixed zpl_array_fill ZPL_ASSERT off-by-one error
 19.0.0  - Check all results of zpl_alloc() when using JSON parser/writer (rheatley-pervasid)
 
 18.1.5  - set parent to parsed JSON nodes (fixed)

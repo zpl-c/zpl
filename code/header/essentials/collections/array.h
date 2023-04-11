@@ -190,7 +190,7 @@ ZPL_IMPL_INLINE zpl_b8 zpl__array_appendv_at(void **x, void *items, zpl_isize it
 
 #define zpl_array_fill(x, begin, end, value)                                                                        \
 do {                                                                                                               \
-    ZPL_ASSERT((begin) >= 0 && (end) < zpl_array_count(x));                                               \
+    ZPL_ASSERT((begin) >= 0 && (end) <= zpl_array_count(x));                                               \
     ZPL_ASSERT(zpl_size_of(value) == zpl_size_of((x)[0]));                                                    \
     for (zpl_isize i = (begin); i < (end); i++) { x[i] = value; }                                                  \
 } while (0)
