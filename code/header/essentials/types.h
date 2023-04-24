@@ -129,9 +129,9 @@ typedef zpl_i32 zpl_b32;
 #    if defined(ZPL_ARCH_32_BIT)
 #        define ZPL_USIZE_MIN ZPL_U32_MIN
 #        define ZPL_USIZE_MAX ZPL_U32_MAX
-#        define ZPL_ISIZE_MIN ZPL_S32_MIN
-#    define ZPL_ISIZE_MAX ZPL_S32_MAX
-#        elif defined(ZPL_ARCH_64_BIT)
+#        define ZPL_ISIZE_MIN ZPL_I32_MIN
+#        define ZPL_ISIZE_MAX ZPL_I32_MAX
+#    elif defined(ZPL_ARCH_64_BIT)
 #        define ZPL_USIZE_MIN ZPL_U64_MIN
 #        define ZPL_USIZE_MAX ZPL_U64_MAX
 #        define ZPL_ISIZE_MIN ZPL_I64_MIN
