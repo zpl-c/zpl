@@ -22,4 +22,5 @@ This page lists all contributors improving this project over time, since the cre
 * GitHub: [BeastLe9enD](https://github.com/BeastLe9enD)
 * GitHub: [rheatley-pervasid](https://github.com/rheatley-pervasid)
 * GitHub: [mrossetti](https://github.com/mrossetti)
+* GitHub: [mbenniston](https://github.com/mbenniston)
 * YOU
