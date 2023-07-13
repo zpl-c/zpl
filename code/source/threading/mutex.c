@@ -3,19 +3,21 @@
 
 ZPL_BEGIN_C_DECLS
 
-void zpl_mutex_init(zpl_mutex *m) {
+zpl_b32 zpl_mutex_init(zpl_mutex *m) {
 #    if defined(ZPL_SYSTEM_WINDOWS)
         InitializeCriticalSection((CRITICAL_SECTION*)m->win32_critical_section);
+        return 1;
 #    else
-        pthread_mutex_init(&m->pthread_mutex, NULL);
+        return pthread_mutex_init(&m->pthread_mutex, NULL);
 #    endif
 }
 
-void zpl_mutex_destroy(zpl_mutex *m) {
+zpl_b32 zpl_mutex_destroy(zpl_mutex *m) {
 #    if defined(ZPL_SYSTEM_WINDOWS)
         DeleteCriticalSection((CRITICAL_SECTION*)m->win32_critical_section);
+        return 1;
 #    else
-        pthread_mutex_destroy(&m->pthread_mutex);
+        return pthread_mutex_destroy(&m->pthread_mutex);
 #    endif
 }
 

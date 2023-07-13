@@ -58,11 +58,11 @@ static void *zpl__thread_proc(void *arg) {
 }
 #endif
 
-void zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) {
-    zpl_thread_start_with_stack(t, proc, user_data, 0);
+zpl_b32 zpl_thread_start(zpl_thread *t, zpl_thread_proc proc, void *user_data) {
+    return zpl_thread_start_with_stack(t, proc, user_data, 0);
 }
 
-void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, zpl_isize stack_size) {
+zpl_b32 zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user_data, zpl_isize stack_size) {
     ZPL_ASSERT(!t->is_running);
     ZPL_ASSERT(proc != NULL);
     t->proc = proc;
@@ -79,12 +79,16 @@ void zpl_thread_start_with_stack(zpl_thread *t, zpl_thread_proc proc, void *user
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
         if (stack_size != 0)
             pthread_attr_setstacksize(&attr, stack_size);
-        pthread_create(&t->posix_handle, &attr, zpl__thread_proc, t);
+        zpl_b32 res = pthread_create(&t->posix_handle, &attr, zpl__thread_proc, t);
+        if (res != 0) {
+            return res;
+        }
         pthread_attr_destroy(&attr);
     }
 #    endif
     if (!t->nowait)
         zpl_semaphore_wait(&t->semaphore);
+    return 1;
 }
 
 void zpl_thread_join(zpl_thread *t) {
