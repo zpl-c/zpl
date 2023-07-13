@@ -112,6 +112,10 @@ typedef enum zpl_file_standard_type {
     ZPL_FILE_STANDARD_COUNT,
 } zpl_file_standard_type;
 
+#define ZPL_STDIO_IN  zpl_file_get_standard(ZPL_FILE_STANDARD_INPUT)
+#define ZPL_STDIO_OUT zpl_file_get_standard(ZPL_FILE_STANDARD_OUTPUT)
+#define ZPL_STDIO_ERR zpl_file_get_standard(ZPL_FILE_STANDARD_ERROR)
+
 /**
  * Get standard file I/O.
  * @param  std Check zpl_file_standard_type
