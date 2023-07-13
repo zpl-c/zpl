@@ -49,7 +49,7 @@ zpl_u8 zpl_uri_parse(zpl_adt_node *root, char *text, zpl_allocator a) {
     
     zpl_adt_set_obj(root, NULL, a);
     
-    char *p = text, *b = p, *e = p;
+    char *p = text, *b = p;
 
     if (*p == 0) {
         return err_code;
@@ -70,7 +70,6 @@ zpl_u8 zpl_uri_parse(zpl_adt_node *root, char *text, zpl_allocator a) {
     }
     
     b = ++p;
-    e = b;
     
     // NOTE(zaklaus): extract query params
     while (*p && !zpl_char_is_space(*p)) {
