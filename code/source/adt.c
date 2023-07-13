@@ -350,6 +350,24 @@ zpl_adt_node *zpl_adt_append_int(zpl_adt_node *parent, char const *name, zpl_i64
 }
 
 /* parser helpers */
+char *zpl_adt_parse_number_strict(zpl_adt_node *node, char* base_str) {
+    ZPL_ASSERT_NOT_NULL(node);
+    ZPL_ASSERT_NOT_NULL(base_str);
+    char *p = base_str, *e = p;
+
+    while (*e)
+        ++e;
+
+    while (*p && (zpl_strchr("eE.+-", *p) || zpl_char_is_hex_digit(*p))) {
+        ++p;
+    }
+
+    if (p >= e) {
+        return zpl_adt_parse_number(node, base_str);
+    }
+
+    return base_str;
+}
 
 char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
     ZPL_ASSERT_NOT_NULL(node);
@@ -549,6 +567,10 @@ zpl_adt_error zpl_adt_print_string(zpl_file *file, zpl_adt_node *node, char cons
 
     /* escape string */
     char const* p = node->string, *b = p;
+
+    if (!p)
+        return ZPL_ADT_ERROR_NONE;
+
     do {
         p = zpl_str_skip_any(p, escaped_chars);
         zpl__adt_fprintf(file, "%.*s", zpl_ptr_diff(b, p), b);
@@ -571,6 +593,19 @@ zpl_adt_error zpl_adt_str_to_number(zpl_adt_node *node) {
     }
 
     zpl_adt_parse_number(node, (char *)node->string);
+
+    return ZPL_ADT_ERROR_NONE;
+}
+
+zpl_adt_error zpl_adt_str_to_number_strict(zpl_adt_node *node) {
+    ZPL_ASSERT(node);
+
+    if (node->type == ZPL_ADT_TYPE_REAL || node->type == ZPL_ADT_TYPE_INTEGER) return ZPL_ADT_ERROR_ALREADY_CONVERTED; /* this is already converted/parsed */
+    if (node->type != ZPL_ADT_TYPE_STRING && node->type != ZPL_ADT_TYPE_MULTISTRING) {
+        return ZPL_ADT_ERROR_INVALID_TYPE;
+    }
+
+    zpl_adt_parse_number_strict(node, (char *)node->string);
 
     return ZPL_ADT_ERROR_NONE;
 }

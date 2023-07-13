@@ -292,6 +292,7 @@ License:
     /* parsers */
 #    include "header/parsers/json.h"
 #    include "header/parsers/csv.h"
+#    include "header/parsers/uri.h"
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
@@ -468,6 +469,7 @@ License:
     /* parsers */
 #    include "source/parsers/json.c"
 #    include "source/parsers/csv.c"
+#    include "source/parsers/uri.c"
 #endif
 
 #if defined(ZPL_COMPILER_MSVC)
@@ -535,6 +537,7 @@ License:
 // header/jobs.h
 // header/parsers/json.h
 // header/parsers/csv.h
+// header/parsers/uri.h
 // header/dll.h
 // header/adt.h
 // header/core/file_tar.h
@@ -568,6 +571,7 @@ License:
 // source/threading/fence.c
 // source/threading/sem.c
 // source/parsers/csv.c
+// source/parsers/uri.c
 // source/parsers/json.c
 // source/jobs.c
 // source/core/file_stream.c

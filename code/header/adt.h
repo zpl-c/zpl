@@ -321,12 +321,31 @@ ZPL_DEF zpl_adt_node *zpl_adt_append_int(zpl_adt_node *parent, char const *name,
 ZPL_DEF char         *zpl_adt_parse_number(zpl_adt_node *node, char* base);
 
 /**
+ * @brief Parses a text and stores the result into an unitialised node.
+ * This function expects the entire input to be a number.
+ *
+ * @param node
+ * @param base
+ * @return*
+ */
+ZPL_DEF char         *zpl_adt_parse_number_strict(zpl_adt_node *node, char* base_str);
+
+/**
  * @brief Parses and converts an existing string node into a number.
  *
  * @param node
  * @return
  */
 ZPL_DEF zpl_adt_error zpl_adt_str_to_number(zpl_adt_node *node);
+
+/**
+ * @brief Parses and converts an existing string node into a number.
+ * This function expects the entire input to be a number.
+ *
+ * @param node
+ * @return
+ */
+ZPL_DEF zpl_adt_error zpl_adt_str_to_number_strict(zpl_adt_node *node);
 
 /**
  * @brief Prints a number into a file stream.

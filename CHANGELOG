@@ -1,3 +1,4 @@
+19.1.0  - parser: introduce a new URI parser module
 19.0.4  - fix: zpl_buffer_copy_init missing macros (thanks Ed_ on Discord)
 19.0.3  - fix: zpl_str_skip_literal reading before start of string (mbenniston)
 19.0.2  - fixed ZPL_ISIZE_MIN and MAX for 32-bit architectures (mrossetti)
