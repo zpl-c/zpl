@@ -25,7 +25,7 @@ set final_link_flags=%~5 winmm.lib -opt:ref -incremental:no
 
 if not exist build mkdir build
 pushd build
-    %me%\ctime.exe -begin %2.ct
+    %me%\ctime.exe -begin %2_stats.ct
 	cl %final_build_opts% %final_compile_flags% ../%~1 /link %final_link_flags% /out:%~2.exe
-    %me%\ctime.exe -end %2.ct %ERRORLEVEL%
+    %me%\ctime.exe -end %2_stats.ct %ERRORLEVEL%
 popd
