@@ -8,6 +8,7 @@
 /* TEST CATEGORIES */
 #include "cases/json.h"
 #include "cases/csv.h"
+#include "cases/uri.h"
 #include "cases/alloc_pool.h"
 #include "cases/hashing.h"
 #include "cases/memory.h"
@@ -30,6 +31,7 @@ int main() {
     UNIT_MODULE(print);
     UNIT_MODULE(json5_parser);
     UNIT_MODULE(csv_parser);
+    UNIT_MODULE(uri_parser);
     UNIT_MODULE(adt);
 
     int32_t ret_code = UNIT_RUN();
