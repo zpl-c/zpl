@@ -10,7 +10,7 @@
 void exit_with_help(zpl_opts *opts) {
     zpl_opts_print_errors(opts);
     zpl_opts_print_help(opts);
-    zpl_exit(-1);
+    zpl_exit(1);
 }
 
 int main(int argc, char **argv) {
