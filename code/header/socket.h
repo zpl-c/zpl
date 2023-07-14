@@ -2,7 +2,7 @@
 
 ZPL_BEGIN_C_DECLS
 
-typedef zpl_i32 zpl_socket;
+typedef int zpl_socket;
 
 typedef struct zpl_socket_addr {
     char data[128];

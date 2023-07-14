@@ -37,7 +37,7 @@ ZPL_DEF zpl_socket zpl_socket_create(zpl_i32 protocol, zpl_i32 mode, char flags,
         return -1;
     }
 #   if defined(ZPL_SYSTEM_WINDOWS)
-    zpl_socket sock = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    zpl_socket sock = (zpl_socket)socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (sock == INVALID_SOCKET) {
         freeaddrinfo(result);
         return -1;
@@ -119,7 +119,7 @@ ZPL_DEF zpl_i32 zpl_socket_listen(zpl_socket socket, zpl_i32 backlog) {
 ZPL_DEF zpl_socket zpl_socket_accept(zpl_socket socket, zpl_socket_addr *addr) {
 #   if defined(ZPL_SYSTEM_WINDOWS)
     int len = sizeof(*addr);
-    zpl_socket sock = accept(socket, (struct sockaddr *)addr, &len);
+    zpl_socket sock = (zpl_socket)accept(socket, (struct sockaddr *)addr, &len);
     if (sock == INVALID_SOCKET) {
         return -1;
     }
