@@ -119,6 +119,7 @@ License:
 #    define ZPL_MODULE_THREADING
 #    define ZPL_MODULE_JOBS
 #    define ZPL_MODULE_PARSER
+#    define ZPL_MODULE_SOCKET
 
     /* zpl nano distribution */
 #    if defined(ZPL_NANO) || defined(ZPL_PICO)
@@ -133,6 +134,7 @@ License:
 #        undef ZPL_MODULE_THREADING
 #        undef ZPL_MODULE_JOBS
 #        undef ZPL_MODULE_PARSER
+#        undef ZPL_MODULE_SOCKET
 #    endif
 
 #    if defined(ZPL_PICO)
@@ -173,6 +175,9 @@ License:
 #    if defined(ZPL_ENABLE_PARSER) && !defined(ZPL_MODULE_PARSER)
 #        define ZPL_MODULE_PARSER
 #    endif
+#    if defined(ZPL_ENABLE_SOCKET) && !defined(ZPL_MODULE_SOCKET)
+#        define ZPL_MODULE_SOCKET
+#    endif
 
     /* module disabling overrides */
 #    if defined(ZPL_DISABLE_CORE) && defined(ZPL_MODULE_CORE)
@@ -207,6 +212,9 @@ License:
 #    endif
 #    if defined(ZPL_DISABLE_PARSER) && defined(ZPL_MODULE_PARSER)
 #        undef ZPL_MODULE_PARSER
+#    endif
+#    if defined(ZPL_DISABLE_SOCKET) && defined(ZPL_MODULE_SOCKET)
+#        undef ZPL_MODULE_SOCKET
 #    endif
 #endif
 
@@ -293,6 +301,10 @@ License:
 #    include "header/parsers/json.h"
 #    include "header/parsers/csv.h"
 #    include "header/parsers/uri.h"
+#endif
+
+#if defined(ZPL_MODULE_SOCKET)
+#    include "header/socket.h"
 #endif
 
 #if defined(ZPL_MODULE_THREADING)
@@ -472,6 +484,10 @@ License:
 #    include "source/parsers/uri.c"
 #endif
 
+#if defined(ZPL_MODULE_SOCKET)
+#    include "source/socket.c"
+#endif
+
 #if defined(ZPL_COMPILER_MSVC)
 #    pragma warning(pop)
 #endif
@@ -555,6 +571,7 @@ License:
 // header/core/time.h
 // header/hashing.h
 // header/regex.h
+// header/socket.h
 // source/hashing.c
 // source/adt.c
 // source/process.c
@@ -588,3 +605,4 @@ License:
 // source/core/file_tar.c
 // source/opts.c
 // source/math.c
+// source/socket.c
