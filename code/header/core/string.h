@@ -70,8 +70,8 @@ ZPL_DEF_INLINE const char *zpl_char_last_occurence(const char *str, char c);
 
 ZPL_DEF_INLINE void zpl_str_concat(char *dest, zpl_isize dest_len, const char *src_a, zpl_isize src_a_len, const char *src_b, zpl_isize src_b_len);
 
-ZPL_DEF zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
-ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base); // TODO: Support more than just decimal and hexadecimal
+ZPL_DEF zpl_u64 zpl_str_to_u64(const char *str, char **end_ptr, zpl_i32 base);
+ZPL_DEF zpl_i64 zpl_str_to_i64(const char *str, char **end_ptr, zpl_i32 base);
 ZPL_DEF zpl_f64 zpl_str_to_f64(const char *str, char **end_ptr);
 ZPL_DEF void    zpl_i64_to_str(zpl_i64 value, char *string, zpl_i32 base);
 ZPL_DEF void    zpl_u64_to_str(zpl_u64 value, char *string, zpl_i32 base);

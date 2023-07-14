@@ -197,7 +197,7 @@ ZPL_DEF void zpl_file_dirinfo_refresh(zpl_file *file);
  * Creates a temporary file
  * @param  file
  */
-zpl_file_error zpl_file_temp(zpl_file *file);
+ZPL_DEF zpl_file_error zpl_file_temp(zpl_file *file);
 
 /**
  * Closes the file
