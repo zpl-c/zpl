@@ -1,3 +1,4 @@
+19.3.1  - adt: zpl_adt_parse_number exit early on false hex value assumption
 19.3.0  - socket: new socket api cross-platform layer
 19.2.0  - file: add macros for standard i/o wrappers (ZPL_STDIO_IN, ...)
 19.1.1  - thread: return error values for POSIX calls

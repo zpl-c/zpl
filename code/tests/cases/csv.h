@@ -213,6 +213,24 @@ MODULE(csv_parser, {
         EQUALS(r.nodes[1].nodes[0].type, ZPL_ADT_TYPE_STRING);
         STREQUALS(r.nodes[1].nodes[0].string, "123.45.67.89");
     });
+
+    IT("parses 'x' field as string", {
+        zpl_string t = zpl_string_make(mem_alloc, "x\n");
+        __PARSE(false);
+
+        EQUALS(err, 0);
+        EQUALS(r.nodes[0].nodes[0].type, ZPL_ADT_TYPE_STRING);
+        STREQUALS(r.nodes[0].nodes[0].string, "x");
+    });
+
+    IT("parses 'n' field as string", {
+        zpl_string t = zpl_string_make(mem_alloc, "n\n");
+        __PARSE(false);
+
+        EQUALS(err, 0);
+        EQUALS(r.nodes[0].nodes[0].type, ZPL_ADT_TYPE_STRING);
+        STREQUALS(r.nodes[0].nodes[0].string, "n");
+    });
 });
 
 #undef __PARSE

@@ -410,6 +410,12 @@ char *zpl_adt_parse_number(zpl_adt_node *node, char* base_str) {
         } while (zpl_char_is_digit(*++e));
     } else {
         if (!zpl_strncmp(e, "0x", 2) || !zpl_strncmp(e, "0X", 2)) { node_props = ZPL_ADT_PROPS_IS_HEX; }
+
+        /* bail if ZPL_ADT_PROPS_IS_HEX is unset but we get 'x' on input */
+        if (zpl_char_to_lower(*e) == 'x' && (node_props != ZPL_ADT_PROPS_IS_HEX)) {
+            return ++base_str;
+        }
+
         while (zpl_char_is_hex_digit(*e) || zpl_char_to_lower(*e) == 'x') { buf[ib++] = *e++; }
 
         if (*e == '.') {
