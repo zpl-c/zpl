@@ -28,6 +28,32 @@ MODULE(json5_parser, {
         EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
     });
 
+    IT("can produce a compact JSON output", {
+        zpl_string t = zpl_string_make(mem_alloc, ZPL_MULTILINE(\
+                {
+                    "foo": "bar",
+                    "baz": 123
+                }));
+        __PARSE();
+
+        EQUALS(err, 0);
+        EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
+
+        zpl_string out = zpl_json_write_string(mem_alloc, &r, ZPL_JSON_INDENT_STYLE_COMPACT);
+        STREQUALS(out, "{\"foo\":\"bar\",\"baz\":123}");
+    });
+
+    IT("can produce a valid, compact SJSON output", {
+        zpl_string t = zpl_string_make(mem_alloc, "foo=\"bar\",baz=123");
+        __PARSE();
+
+        EQUALS(err, 0);
+        EQUALS(r.type, ZPL_ADT_TYPE_OBJECT);
+
+        zpl_string out = zpl_json_write_string(mem_alloc, &r, ZPL_JSON_INDENT_STYLE_COMPACT);
+        STREQUALS(out, "foo=\"bar\",baz=123");
+    });
+
     IT("fails to parse broken JSON5 array", {
         const char *t = "[   }";
         __PARSE();

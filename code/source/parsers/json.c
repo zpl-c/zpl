@@ -270,6 +270,9 @@ char *zpl__json_parse_object(zpl_adt_node *obj, char *base, zpl_allocator a, zpl
                 n->delim_line_width = cast(zpl_u8)(p-end_p);
             }
 #endif
+            if (*p == 0) {
+                return p;
+            }
             ++p;
         }
         p = zpl__json_trim(p, false);
@@ -437,7 +440,8 @@ zpl_b8 zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_
             if (o->assign_style == ZPL_ADT_ASSIGN_STYLE_COLON)
                 zpl__json_fprintf(f, ":%s", zpl__json_string_space(indent));
             else {
-                zpl___ind(zpl_max(o->assign_line_width, 1));
+                if (indent != ZPL_JSON_INDENT_STYLE_COMPACT)
+                    zpl___ind(zpl_max(o->assign_line_width, 1));
 
                 if (o->assign_style == ZPL_ADT_ASSIGN_STYLE_EQUALS)
                     zpl__json_fprintf(f, "=%s", zpl__json_string_space(indent));

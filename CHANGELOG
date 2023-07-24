@@ -1,3 +1,6 @@
+19.4.0  - json: introduce support for ZPL_JSON_INDENT_STYLE_COMPACT output (rheatley-pervasid)
+        - fix SJSON value parse not detecting EOF correctly when analysing delimiter used.
+            example: "foo=123,bar=456" would produce 1 extra garbage field.
 19.3.1  - adt: zpl_adt_parse_number exit early on false hex value assumption
 19.3.0  - socket: new socket api cross-platform layer
 19.2.0  - file: add macros for standard i/o wrappers (ZPL_STDIO_IN, ...)
