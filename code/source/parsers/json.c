@@ -79,6 +79,14 @@ item.nodes[i].parent = zpl_array_end(x);\
 
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_assign_char(char c) { return !!zpl_strchr(":=|", c); }
 static ZPL_ALWAYS_INLINE zpl_b32 zpl__json_is_delim_char(char c) { return !!zpl_strchr(",|\n", c); }
+static ZPL_ALWAYS_INLINE const char *zpl__json_string_space(zpl_isize indent) { return indent == ZPL_JSON_INDENT_STYLE_COMPACT ? "" : " "; }
+static ZPL_ALWAYS_INLINE const char *zpl__json_string_eol(zpl_adt_node *o, zpl_isize indent) {
+    zpl_b8 force_new_line = false;
+#ifndef ZPL_PARSER_DISABLE_ANALYSIS
+    force_new_line = (o->delim_style != ZPL_ADT_DELIM_STYLE_COMMA);
+#endif
+    return !force_new_line && indent == ZPL_JSON_INDENT_STYLE_COMPACT ? "" : "\n";
+}
 ZPL_DEF_INLINE zpl_b32 zpl__json_validate_name(char const *str, char *err);
 
 #define jx(x) !zpl_char_is_hex_digit(str[x])
@@ -375,7 +383,7 @@ zpl_b8 zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
 #else
     if (1)
 #endif
-    zpl__json_fprintf(f, "%c\n", o->type == ZPL_ADT_TYPE_OBJECT ? '{' : '[');
+    zpl__json_fprintf(f, "%c%s", o->type == ZPL_ADT_TYPE_OBJECT ? '{' : '[', zpl__json_string_eol(o, indent));
     else
     {
         indent -= 4;
@@ -397,7 +405,7 @@ zpl_b8 zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
 #ifndef ZPL_PARSER_DISABLE_ANALYSIS
         if (!o->cfg_mode)
 #endif
-        zpl__json_fprintf(f, "%c\n", o->type == ZPL_ADT_TYPE_OBJECT ? '}' : ']');
+        zpl__json_fprintf(f, "%c%s", o->type == ZPL_ADT_TYPE_OBJECT ? '}' : ']', zpl__json_string_eol(o, indent));
     }
 
     return true;
@@ -405,7 +413,7 @@ zpl_b8 zpl_json_write(zpl_file *f, zpl_adt_node *o, zpl_isize indent) {
 
 zpl_b8 zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_isize indent, zpl_b32 is_inline, zpl_b32 is_last) {
     zpl_adt_node *node = o;
-    indent += 4;
+    if (indent != ZPL_JSON_INDENT_STYLE_COMPACT) indent += 4;
 
     if (!is_inline) {
         zpl___ind(indent);
@@ -427,18 +435,18 @@ zpl_b8 zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_
             }
 
             if (o->assign_style == ZPL_ADT_ASSIGN_STYLE_COLON)
-                zpl__json_fprintf(f, ": ");
+                zpl__json_fprintf(f, ":%s", zpl__json_string_space(indent));
             else {
                 zpl___ind(zpl_max(o->assign_line_width, 1));
 
                 if (o->assign_style == ZPL_ADT_ASSIGN_STYLE_EQUALS)
-                    zpl__json_fprintf(f, "= ");
+                    zpl__json_fprintf(f, "=%s", zpl__json_string_space(indent));
                 else if (o->assign_style == ZPL_ADT_ASSIGN_STYLE_LINE) {
-                    zpl__json_fprintf(f, "| ");
+                    zpl__json_fprintf(f, "|%s", zpl__json_string_space(indent));
                 }
             }
 #else
-            zpl__json_fprintf(f, "\"%s\": ", node->name);
+            zpl__json_fprintf(f, "\"%s\":%s", node->name, zpl__json_string_space(indent));
 #endif
         }
     }
@@ -461,7 +469,7 @@ zpl_b8 zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_
             zpl_isize elemn = zpl_array_count(node->nodes);
             for (int j = 0; j < elemn; ++j) {
                 zpl_isize ind = ((node->nodes + j)->type == ZPL_ADT_TYPE_OBJECT || (node->nodes + j)->type == ZPL_ADT_TYPE_ARRAY) ? 0 : -4;
-                if (!zpl__json_write_value(f, node->nodes + j, o, ind, true, true)) return false;
+                if (!zpl__json_write_value(f, node->nodes + j, o, indent == ZPL_JSON_INDENT_STYLE_COMPACT ? indent : ind, true, true)) return false;
 
                 if (j < elemn - 1) { zpl__json_fprintf(f, ", "); }
             }
@@ -490,16 +498,16 @@ zpl_b8 zpl__json_write_value(zpl_file *f, zpl_adt_node *o, zpl_adt_node *t, zpl_
         }
         else {
             if (!is_last) {
-                zpl__json_fprintf(f, ",\n");
+                zpl__json_fprintf(f, ",%s", zpl__json_string_eol(o, indent));
             } else {
-                zpl__json_fprintf(f, "\n");
+                zpl__json_fprintf(f, "%s", zpl__json_string_eol(o, indent));
             }
         }
 #else
         if (!is_last) {
-            zpl__json_fprintf(f, ",\n");
+            zpl__json_fprintf(f, ",%s", zpl__json_string_eol(o, indent));
         } else {
-            zpl__json_fprintf(f, "\n");
+            zpl__json_fprintf(f, "%s", zpl__json_string_eol(o, indent));
         }
 #endif
     }

@@ -15,6 +15,10 @@ typedef enum zpl_json_error {
     ZPL_JSON_ERROR_OUT_OF_MEMORY,
 } zpl_json_error;
 
+typedef enum zpl_json_indent_style {
+    ZPL_JSON_INDENT_STYLE_COMPACT = -1000,
+} zpl_json_indent_style;
+
 typedef zpl_adt_node zpl_json_object;
 
 ZPL_DEF zpl_u8 zpl_json_parse(zpl_json_object *root, char *text, zpl_allocator allocator);
