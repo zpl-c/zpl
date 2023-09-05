@@ -1,3 +1,4 @@
+19.4.1  - file: zpl_file_read_contents now ignores folders.
 19.4.0  - json: introduce support for ZPL_JSON_INDENT_STYLE_COMPACT output (rheatley-pervasid)
         - fix SJSON value parse not detecting EOF correctly when analysing delimiter used.
             example: "foo=123,bar=456" would produce 1 extra garbage field.

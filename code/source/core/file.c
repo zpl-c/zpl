@@ -429,6 +429,13 @@ zpl_file_contents zpl_file_read_contents(zpl_allocator a, zpl_b32 zero_terminate
 
     result.allocator = a;
 
+    zpl_u8 entry_type = zpl_fs_get_type(filepath);
+
+    /* ignore folders */
+    if (entry_type == ZPL_DIR_TYPE_FOLDER) {
+        return result;
+    }
+
     if (zpl_file_open(&file, filepath) == ZPL_FILE_ERROR_NONE) {
         zpl_isize file_size = cast(zpl_isize) zpl_file_size(&file);
         if (file_size > 0) {
