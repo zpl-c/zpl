@@ -192,6 +192,7 @@ ZPL_DEF zpl_f32 zpl_rsqrt(zpl_f32 a);
 ZPL_DEF zpl_f32 zpl_quake_rsqrt(zpl_f32 a); /* NOTE: It's probably better to use 1.0f/zpl_sqrt(a)
                                      * And for simd, there is usually isqrt functions too!
                                      */
+ZPL_DEF zpl_f32 zpl_hypot(zpl_f32 x, zpl_f32 y);
 ZPL_DEF zpl_f32 zpl_sin(zpl_f32 radians);
 ZPL_DEF zpl_f32 zpl_cos(zpl_f32 radians);
 ZPL_DEF zpl_f32 zpl_tan(zpl_f32 radians);
