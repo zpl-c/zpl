@@ -207,7 +207,6 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
             r *= f;
             return flipped ? 1.0f / r : r;
         }
-
 #    else
 
         zpl_f32 zpl_rsqrt(zpl_f32 a)              { return 1.0f / __builtin_sqrt(a); }
@@ -225,6 +224,7 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
 
         // TODO: Should this be zpl_exp(y * zpl_log(x)) ???
         zpl_f32 zpl_pow(zpl_f32 x, zpl_f32 y) { return __builtin_powf(x, y); }
+        zpl_f32 zpl_hypot(zpl_f32 x, zpl_f32 y){ return __builtin_sqrt(zpl_square(x) + zpl_square(y)); }
 
 #    endif
 #else
@@ -241,6 +241,7 @@ zpl_f32 zpl_quake_rsqrt(zpl_f32 a) {
     zpl_f32 zpl_exp(zpl_f32 x)            { return expf(x); }
     zpl_f32 zpl_log(zpl_f32 x)            { return logf(x); }
     zpl_f32 zpl_pow(zpl_f32 x, zpl_f32 y) { return powf(x, y); }
+    zpl_f32 zpl_hypot(zpl_f32 x, zpl_f32 y) { return sqrtf(zpl_square(x) + zpl_square(y)); }
 #endif
 
 zpl_f32 zpl_exp2(zpl_f32 x) { return zpl_exp(ZPL_LOG_TWO * x); }
